@@ -1,6 +1,7 @@
 package com.akatsuki.pioms.order.entity;
 
 import com.akatsuki.pioms.franchise.entity.FranchiseEntity;
+import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,22 +19,23 @@ import java.util.Date;
 public class OrderEntity {
 
     @Id
-    @Column(name = "order_code")
+    @Column(name = "request_code")
     private int orderCode;
 
-    @Column(name = "order_date")
+    @Column(name = "request_date")
     private Date orderDate;
 
-    @Column(name = "order_total_price")
+    @Column(name = "request_total_price")
     private int orderTotalPrice;
 
-    @Column(name = "order_condition")
-    private boolean orderCondition;
+    @Column(name = "request_condition")
+    @Enumerated(EnumType.STRING)
+    private ORDER_CONDITION orderCondition;
 
-    @Column(name = "order_reason")
+    @Column(name = "request_reason")
     private String orderReason;
 
-    @Column(name = "order_status")
+    @Column(name = "request_status")
     private boolean orderStatus;
 
     @JoinColumn(name = "franchise_code")

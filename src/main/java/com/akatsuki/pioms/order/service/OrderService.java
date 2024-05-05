@@ -8,4 +8,6 @@ public interface OrderService {
     OrderListVO getFranchisesOrderList(int adminId);
 
     void postFranchiseOrder(OrderVO order);
+
+    OrderListVO getFranchisesUncheckedOrderList(int adminId);
 }

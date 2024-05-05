@@ -1,6 +1,7 @@
 package com.akatsuki.pioms.order.service;
 
 import com.akatsuki.pioms.order.entity.OrderEntity;
+import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
 import com.akatsuki.pioms.order.repository.OrderRepository;
 import com.akatsuki.pioms.order.vo.OrderListVO;
 import com.akatsuki.pioms.order.vo.OrderVO;
@@ -26,6 +27,17 @@ public class OrderServiceImpl implements OrderService{
         });
         return new OrderListVO(orderVOList);
     }
+
+    public OrderListVO getFranchisesUncheckedOrderList(int adminId){
+        List<OrderEntity> orderList = orderRepository.findAllByFranchiseAdminAdminCodeAndOrderCondition(adminId, ORDER_CONDITION.등록전);
+        System.out.println("orderList = " + orderList);
+        List<OrderVO> orderVOList = new ArrayList<>();
+        orderList.forEach(order-> {
+            orderVOList.add(new OrderVO(order));
+        });
+        return new OrderListVO(orderVOList);
+    }
+
 
     public void postFranchiseOrder(OrderVO order){
 //        OrderEntity orderEntity = new OrderEntity(order);

@@ -4,6 +4,7 @@ import com.akatsuki.pioms.order.service.OrderService;
 import com.akatsuki.pioms.order.vo.OrderListVO;
 import com.akatsuki.pioms.order.vo.OrderVO;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -40,11 +41,19 @@ public class OrderController {
      * <h2>모든 가맹점 발주 목록 조회</h2>
      * */
     @GetMapping("/admin/{adminId}/orders")
+    @Transactional(readOnly = true)
     public ResponseEntity<OrderListVO> getFranchisesOrderList(@PathVariable int adminId){
         OrderListVO orderListVO = orderService.getFranchisesOrderList(adminId);
         return ResponseEntity.ok().body(orderListVO);
     }
+
     @GetMapping("/admin/{adminId}/unchecked-orders")
+    @Transactional(readOnly = true)
+    public ResponseEntity<OrderListVO> getFranchisesUncheckedOrderList(@PathVariable int adminId){
+        OrderListVO orderListVO = orderService.getFranchisesUncheckedOrderList(adminId);
+        return ResponseEntity.ok().body(orderListVO);
+    }
+
 
     /**
      * <h2>발주 생성</h2>

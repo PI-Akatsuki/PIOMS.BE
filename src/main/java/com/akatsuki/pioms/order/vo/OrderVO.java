@@ -2,6 +2,7 @@ package com.akatsuki.pioms.order.vo;
 
 import com.akatsuki.pioms.franchise.etc.DELIVERY_DATE;
 import com.akatsuki.pioms.order.entity.OrderEntity;
+import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,7 +18,7 @@ public class OrderVO {
     private int orderCode;
     private Date orderDate;
     private int orderTotalPrice;
-    private boolean orderCondition;
+    private ORDER_CONDITION orderCondition;
     private String orderReason;
     private boolean orderStatus;
 
@@ -34,7 +35,7 @@ public class OrderVO {
         this.orderCode= order.getOrderCode();
         this.orderDate = order.getOrderDate();
         this.orderTotalPrice = order.getOrderTotalPrice();
-        this.orderCondition = order.isOrderCondition();
+        this.orderCondition = order.getOrderCondition();
         this.orderReason = order.getOrderReason();
         this.orderStatus = order.isOrderStatus();
         this.franchiseCode = order.getFranchise().getFranchiseCode();
