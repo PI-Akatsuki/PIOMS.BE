@@ -10,4 +10,8 @@ public interface OrderService {
     void postFranchiseOrder(OrderVO order);
 
     OrderListVO getFranchisesUncheckedOrderList(int adminId);
+
+    String acceptOrder(int orderId);
+
+    String denyOrder(int orderId);
 }
