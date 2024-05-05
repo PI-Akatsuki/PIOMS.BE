@@ -10,7 +10,7 @@ import lombok.ToString;
 import java.util.Date;
 
 @Entity
-@Table(name = "order")
+@Table(name = "request")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -37,7 +37,7 @@ public class OrderEntity {
     private boolean orderStatus;
 
     @JoinColumn(name = "franchise_code")
-    @ManyToOne
+    @OneToOne
     private FranchiseEntity franchise;
 
 }
