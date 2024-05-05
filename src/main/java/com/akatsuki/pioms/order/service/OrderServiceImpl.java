@@ -1,10 +1,13 @@
 package com.akatsuki.pioms.order.service;
 
+import com.akatsuki.pioms.event.OrderEvent;
 import com.akatsuki.pioms.order.entity.OrderEntity;
 import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
 import com.akatsuki.pioms.order.repository.OrderRepository;
 import com.akatsuki.pioms.order.vo.OrderListVO;
 import com.akatsuki.pioms.order.vo.OrderVO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,9 +18,12 @@ import java.util.List;
 @Service
 public class OrderServiceImpl implements OrderService{
     OrderRepository orderRepository;
+    ApplicationEventPublisher publisher;
 
-    public OrderServiceImpl(OrderRepository orderRepository) {
+    @Autowired
+    public OrderServiceImpl(OrderRepository orderRepository, ApplicationEventPublisher publisher) {
         this.orderRepository = orderRepository;
+        this.publisher = publisher;
     }
 
     @Override
@@ -54,6 +60,13 @@ public class OrderServiceImpl implements OrderService{
         order.setOrderCondition(ORDER_CONDITION.승인완료);
         // -> 재고 변경시켜야 함
         orderRepository.save(order);
+        try {
+//            publisher.publishEvent(new OrderEvent(orderId,order.getFranchise().getFranchiseCode()));
+            publisher.publishEvent(new OrderEvent(order));
+        }catch (Exception e){
+            System.out.println("exception occuered");
+        }
+
         return "This order is accepted";
     }
 
