@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Getter
@@ -16,7 +17,7 @@ import java.util.Date;
 @AllArgsConstructor
 public class OrderVO {
     private int orderCode;
-    private Date orderDate;
+    private LocalDateTime orderDate;
     private int orderTotalPrice;
     private ORDER_CONDITION orderCondition;
     private String orderReason;

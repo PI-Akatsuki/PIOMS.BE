@@ -23,10 +23,10 @@ public class SpecsServiceImpl implements SpecsService{
     }
 
     @EventListener
-    public void getOrder(OrderEvent orderEvent) throws InterruptedException{
-        System.out.println("event 발생");
+    public void getOrder(OrderEvent orderEvent){
+        System.out.println("명세서 생성 event 발생");
         postSpecs(orderEvent.getOrder());
-        System.out.println("event 완료");
+        System.out.println("명세서 생성 event 완료");
     }
 
 

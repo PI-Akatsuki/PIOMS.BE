@@ -41,7 +41,7 @@ public class OrderServiceImpl implements OrderService{
     @Override
     @Transactional(readOnly = true)
     public OrderListVO getFranchisesUncheckedOrderList(int adminId){
-        List<OrderEntity> orderList = orderRepository.findAllByFranchiseAdminAdminCodeAndOrderCondition(adminId, ORDER_CONDITION.등록전);
+        List<OrderEntity> orderList = orderRepository.findAllByFranchiseAdminAdminCodeAndOrderCondition(adminId, ORDER_CONDITION.승인대기);
         System.out.println("orderList = " + orderList);
         List<OrderVO> orderVOList = new ArrayList<>();
         orderList.forEach(order-> {

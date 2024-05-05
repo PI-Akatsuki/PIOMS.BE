@@ -5,6 +5,7 @@ import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -21,7 +22,7 @@ public class OrderEntity {
     private int orderCode;
 
     @Column(name = "request_date")
-    private Date orderDate;
+    private LocalDateTime orderDate;
 
     @Column(name = "request_total_price")
     private int orderTotalPrice;
