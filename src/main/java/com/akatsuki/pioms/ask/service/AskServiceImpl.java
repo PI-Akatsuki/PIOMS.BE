@@ -1,9 +1,11 @@
 package com.akatsuki.pioms.ask.service;
 
 import com.akatsuki.pioms.ask.dto.AskCreateDTO;
+import com.akatsuki.pioms.ask.dto.AskUpdateDTO;
 import com.akatsuki.pioms.ask.entity.AdminEntity;
 import com.akatsuki.pioms.ask.entity.AskEntity;
 import com.akatsuki.pioms.ask.entity.FranchiseOwnerEntity;
+import com.akatsuki.pioms.ask.etc.ASK_STATUS;
 import com.akatsuki.pioms.ask.repository.AdminRepository;
 import com.akatsuki.pioms.ask.repository.AskRepository;
 import com.akatsuki.pioms.ask.repository.FranchiseOwnerRepository;
@@ -87,10 +89,23 @@ public class AskServiceImpl implements AskService{
         // Admin 정보 가져오기
         AdminEntity admin = adminRepository.findById(1)  // 예: 관리자 ID가 1인 경우
                 .orElseThrow(() -> new RuntimeException("Admin not found"));
-        askEntity.setAdmin(admin);  // AskEntity에 Admin 설정
+        askEntity.setAdmin(admin);
 
         askRepository.save(askEntity);
         return new AskVO(askEntity);
+    }
+
+    public AskEntity updateAsk(int askCode, AskUpdateDTO askUpdateDTO) throws Exception {
+        AskEntity askEntity = askRepository.findById(askCode)
+                .orElseThrow(() -> new RuntimeException("Ask not found with id: " + askCode));
+
+        if (askEntity.getAskStatus() != ASK_STATUS.답변대기) {
+            throw new Exception("Only asks in 'Waiting for Reply' status can be updated.");
+        }
+
+        askEntity.setAskTitle(askUpdateDTO.getTitle());
+        askEntity.setAskContent(askUpdateDTO.getContent());
+        return askRepository.save(askEntity);
     }
 
 
