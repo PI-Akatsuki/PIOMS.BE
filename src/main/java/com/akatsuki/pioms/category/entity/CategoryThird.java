@@ -1,15 +1,15 @@
 package com.akatsuki.pioms.category.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name="category_third")
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Setter
+@Getter
+@ToString
 public class CategoryThird {
 
     @Id

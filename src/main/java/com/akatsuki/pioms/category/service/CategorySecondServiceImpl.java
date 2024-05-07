@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CategorySecondServiceImpl implements CategorySecondService{
@@ -25,5 +26,10 @@ public class CategorySecondServiceImpl implements CategorySecondService{
     @Override
     public List<CategorySecond> getAllCategorySecondofFirst() {
         return categorySecondDAO.findAll();
+    }
+
+    @Override
+    public Optional<CategorySecond> findCategorySecondByCode(int categorySecondCode) {
+        return categorySecondDAO.findById(categorySecondCode);
     }
 }

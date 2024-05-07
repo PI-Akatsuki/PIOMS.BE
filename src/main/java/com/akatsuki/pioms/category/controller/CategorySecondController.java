@@ -7,10 +7,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/category/second")
@@ -23,16 +25,17 @@ public class CategorySecondController {
     public CategorySecondController(CategorySecondService categorySecondService) {
         this.categorySecondService = categorySecondService;
     }
-    @GetMapping("/all")
+    @GetMapping("")
     @Operation(summary = "카테고리(중) 전체 조회", description = "단순 카테고리(중) 조회 기능")
     public ResponseEntity<List<CategorySecond>> getAllCategorySecond() {
         return ResponseEntity.ok().body(categorySecondService.getAllCategorySecond());
     }
 
-    @GetMapping("/all/{categoryFirstCode}")
-    @Operation(summary = "한 카테고리(대) code에 속한 카테고리(중) 조회", description = "카테고리(대) 속 카테고리(중) 조회")
-    public ResponseEntity<List<CategorySecond>> getAllCategorySecondofFirst() {
-        return ResponseEntity.ok().body(categorySecondService.getAllCategorySecondofFirst());
+    @GetMapping("/{categorySecondCode}")
+    @Operation(summary = "카테고리(중) code로 카테고리(중) 하나 조회", description = "카테고리(중)코드로 카테고리(중) 하나 조회")
+    public ResponseEntity<Optional<CategorySecond>> getCategorySecondByCode(@PathVariable int categorySecondCode) {
+        Optional<CategorySecond> categorySecond = categorySecondService.findCategorySecondByCode(categorySecondCode);
+        return ResponseEntity.ok().body(categorySecond);
     }
 
 }
