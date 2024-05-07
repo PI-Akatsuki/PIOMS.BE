@@ -7,10 +7,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/product")
@@ -28,6 +30,13 @@ public class ProductController {
     @Operation(summary = "상품 전체 조회", description = "상품 전체 단순 조회 기능")
     public ResponseEntity<List<Product>> getAllProduct() {
         return ResponseEntity.ok().body(productService.getAllProduct());
+    }
+
+    @GetMapping("/{productCode}")
+    @Operation(summary = "상품코드로 상품 조회", description = "상품 코드로 상품 하나 단순 조회")
+    public ResponseEntity<Optional<Product>> getProductByCode(@PathVariable int productCode) {
+        Optional<Product> product = productService.findProductByCode(productCode);
+        return ResponseEntity.ok().body(product);
     }
 
 }
