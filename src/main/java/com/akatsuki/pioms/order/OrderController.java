@@ -76,6 +76,17 @@ public class OrderController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/franchise/{franchiseCode}")
+    public ResponseEntity<OrderListVO> getFranchiseOrderList(@PathVariable int franchiseCode){
+        return ResponseEntity.ok(orderService.getOrderList(franchiseCode));
+    }
+
+    @GetMapping("/{orderCode}")
+    public ResponseEntity<OrderVO> getOrder(@PathVariable int orderCode){
+        return ResponseEntity.ok(orderService.getOrder(orderCode));
+    }
+
+
 
 
 

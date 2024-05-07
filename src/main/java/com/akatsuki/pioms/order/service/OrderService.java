@@ -15,4 +15,8 @@ public interface OrderService {
     String acceptOrder(int orderId);
 
     String denyOrder(int orderId,String denyMessage);
+
+    OrderListVO getOrderList(int franchiseCode);
+
+    OrderVO getOrder(int orderCode);
 }

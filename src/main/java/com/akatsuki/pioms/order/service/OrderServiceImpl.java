@@ -20,8 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.beans.EventHandler;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -134,8 +132,27 @@ public class OrderServiceImpl implements OrderService{
     private void findExchange(OrderEntity order) {
         // 반품신청 중인 요소 탐색
         ExchangeDTO exchange =  exchangeService.findExchangeToSend(order.getFranchise().getFranchiseCode());
+
         if(exchange!=null) {
             order.setExchange(new ExchangeEntity(exchange));
         }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public OrderListVO getOrderList(int franchiseCode){
+        List<OrderEntity> orderList= orderRepository.findByFranchiseFranchiseCode(franchiseCode);
+        List<OrderVO> orderVOList = new ArrayList<>();
+        orderList.forEach(order-> {
+            orderVOList.add(new OrderVO(order));
+        });
+        return new OrderListVO(orderVOList);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public OrderVO getOrder(int orderCode){
+        OrderEntity order = orderRepository.findById(orderCode).orElseThrow();
+        return new OrderVO(order);
     }
 }
