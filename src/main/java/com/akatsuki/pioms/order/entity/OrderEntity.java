@@ -9,6 +9,7 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "request")
@@ -16,7 +17,6 @@ import java.util.Date;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
 public class OrderEntity {
 
     @Id
@@ -47,5 +47,8 @@ public class OrderEntity {
     @JoinColumn(name = "exchange_code")
     @OneToOne
     private ExchangeEntity exchange;
+
+    @OneToMany(mappedBy = "order")
+    private List<OrderProductEntity> OrderProductList;
 
 }

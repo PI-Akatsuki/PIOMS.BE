@@ -5,6 +5,8 @@ import com.akatsuki.pioms.franchise.etc.DELIVERY_DATE;
 import com.akatsuki.pioms.invoice.entity.InvoiceEntity;
 import com.akatsuki.pioms.invoice.etc.DELIVERY_STATUS;
 import com.akatsuki.pioms.invoice.repository.InvoiceRepository;
+import com.akatsuki.pioms.invoice.vo.ResponseInvoice;
+import com.akatsuki.pioms.invoice.vo.ResponseInvoiceList;
 import com.akatsuki.pioms.order.entity.OrderEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
@@ -12,6 +14,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class InvoiceServiceImpl implements InvoiceService {
@@ -72,6 +76,16 @@ public class InvoiceServiceImpl implements InvoiceService {
     public void getOrder(OrderEvent orderEvent){
         System.out.println("Invoice event listen");
         postInvoice(orderEvent.getOrder());
+    }
+
+    public ResponseInvoiceList getAllInvoiceList(){
+        List<InvoiceEntity> invoiceList = invoiceRepository.findAll();
+        List<ResponseInvoice> responseInvoice = new ArrayList<>();
+
+        invoiceList.forEach(invoiceEntity -> {
+            responseInvoice.add(new ResponseInvoice(invoiceEntity));
+        });
+        return new ResponseInvoiceList(responseInvoice);
     }
 
 }

@@ -75,6 +75,7 @@ public class OrderServiceImpl implements OrderService{
 
         try {
             order.setOrderCondition(ORDER_CONDITION.승인완료);
+
             findExchange(order);
             orderRepository.save(order);
             publisher.publishEvent(new OrderEvent(order));
@@ -109,10 +110,7 @@ public class OrderServiceImpl implements OrderService{
         order.setFranchise(franchise);
         order= orderRepository.save(order);
 
-        System.out.println("order = " + order);
-
         int orderId = order.getOrderCode();
-        System.out.println("orderId = " + orderId);
         requestorder.getProducts().forEach((productId, count)->{
             OrderEntity order1 = orderRepository.findById(orderId).orElseThrow();
             ProductEntity product = productService.getProduct(productId);
@@ -153,6 +151,8 @@ public class OrderServiceImpl implements OrderService{
     @Transactional(readOnly = true)
     public OrderVO getOrder(int orderCode){
         OrderEntity order = orderRepository.findById(orderCode).orElseThrow();
+        System.out.println("order = " + order);
+        System.out.println(order.getOrderProductList());
         return new OrderVO(order);
     }
 }
