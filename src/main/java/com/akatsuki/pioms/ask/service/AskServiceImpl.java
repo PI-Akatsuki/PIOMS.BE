@@ -34,4 +34,15 @@ public class AskServiceImpl implements AskService{
         return new AskListVO(askVOList);
     }
 
+    public AskListVO getWaitingForReplyAsks() {
+        List<AskEntity> askList = askRepository.findAllByStatusWaitingForReply();
+        return convertToAskListVO(askList);
+    }
+
+    private AskListVO convertToAskListVO(List<AskEntity> askList) {
+        List<AskVO> askVOList = new ArrayList<>();
+        askList.forEach(ask -> askVOList.add(new AskVO(ask)));
+        return new AskListVO(askVOList);
+    }
+
 }

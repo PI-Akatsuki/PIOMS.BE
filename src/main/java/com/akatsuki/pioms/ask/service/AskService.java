@@ -5,5 +5,5 @@ import com.akatsuki.pioms.ask.vo.AskVO;
 
 public interface AskService {
     AskListVO getAllAskList();
-
+    AskListVO getWaitingForReplyAsks();
 }

@@ -39,5 +39,14 @@ public class AskAdminController {
         return ResponseEntity.ok().body(askListVO);
     }
 
+    /**
+     * 답변대기 문의사항 목록 조회
+     * */
+    @GetMapping("/ask/waiting")
+    public ResponseEntity<AskListVO> getWaitingForReplyAsks() {
+        AskListVO askListVO = askService.getWaitingForReplyAsks();
+        return ResponseEntity.ok().body(askListVO);
+    }
+
 
 }

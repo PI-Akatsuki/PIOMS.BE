@@ -9,4 +9,6 @@ import java.util.List;
 
 @Repository
 public interface AskRepository extends JpaRepository<AskEntity, Integer> {
+    @Query("SELECT a FROM AskEntity a WHERE a.askStatus = '답변대기'")
+    List<AskEntity> findAllByStatusWaitingForReply();
 }
