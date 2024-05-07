@@ -10,12 +10,12 @@ import java.util.Date;
 @Entity
 @Table(name = "ask")
 @AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
 @ToString
 public class AskEntity {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ask_code")
     private int askCode;
 
@@ -24,13 +24,14 @@ public class AskEntity {
 
     @Column(name = "ask_status")
     @Enumerated(EnumType.STRING)
-    private ASK_STATUS askStatus;
+    private ASK_STATUS askStatus = ASK_STATUS.답변대기;
 
     @Column(name = "ask_answer")
     private String askAnswer;
 
     @Column(name = "ask_enroll_date")
-    private LocalDateTime askEnrollDate;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date askEnrollDate;
 
     @Column(name = "ask_update_date")
     private Date askUpdateDate;
@@ -49,7 +50,13 @@ public class AskEntity {
     @OneToOne
     private AdminEntity admin;
 
+    public AskEntity() {
+        this.admin = new AdminEntity(); // 이 부분은 AdminEntity의 기본 생성자가 필요합니다.
+        this.admin.setAdminCode(1); // 관리자 ID를 1로 설정
+    }
 
-
-
+    @PrePersist
+    protected void onPrePersist() {
+        this.askEnrollDate = new Date();
+    }
 }

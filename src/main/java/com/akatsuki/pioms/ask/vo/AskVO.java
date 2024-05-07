@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 
 @Getter
@@ -20,7 +21,7 @@ public class AskVO {
     private String askContent;
     private ASK_STATUS askStatus;
     private String askAnswer;
-    private LocalDateTime askEnrollDate;
+    private Date askEnrollDate;
     private String askTitle;
 
     private int franchiseOwnerCode;
