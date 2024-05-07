@@ -20,8 +20,7 @@ public class SpecsServiceImpl implements SpecsService{
 
     public void postSpecs(OrderEntity orderEntity){
         specsRepository.save(new SpecsEntity(orderEntity));
-        //만약 교환할 것이 있다면?
-
+        System.out.println("orderEntity = " + orderEntity);
     }
 
     @EventListener

@@ -22,6 +22,7 @@ public class InvoiceEntity {
     private int invoiceCode;
 
     @Column(name = "delivery_status")
+    @Enumerated(EnumType.STRING)
     private DELIVERY_STATUS deliveryStatus;
 
     @Column(name = "delivery_date")

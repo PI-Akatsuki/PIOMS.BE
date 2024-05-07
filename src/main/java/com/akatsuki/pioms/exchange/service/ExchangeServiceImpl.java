@@ -23,20 +23,15 @@ public class ExchangeServiceImpl implements ExchangeService{
         System.out.println("반품신청 찾기. franchisecode: " + franchiseCode);
         ExchangeEntity exchange = exchangeRepository.findByFranchiseFranchiseCodeAndExchangeStatus(franchiseCode,EXCHANGE_STATUS.반송신청);
         System.out.println("exchange = " + exchange);
-        if(exchange!=null) {
-            exchange.setExchangeStatus(EXCHANGE_STATUS.반송중);
-            exchangeRepository.save(exchange);
-        }
+        if(exchange==null)
+            return null;
+        exchange.setExchangeStatus(EXCHANGE_STATUS.반송중);
+        exchangeRepository.save(exchange);
         return new ExchangeDTO(exchange);
     }
 
     //반송 생성
 
-
-
     //가맹점의 반송 대기중인 상품 배송
-
-
-
 
 }

@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.*;
  * 2.
 
  * <br><h2>관리자</h2>
- * 1. 모든 가맹점 발주 목록 조회(order/admin/{adminId}/orders)<br>
- * 2. 모든 가맹점 미처리된 발주 조회(order/admin/{adminId}/orders/unchecked)<br>
+ * 1. 모든 가맹점 발주 목록 조회(order/admin/{adminCode}/orders)<br>
+ * 2. 모든 가맹점 미처리된 발주 조회(order/admin/{adminCode}/orders/unchecked)<br>
  * 3. 발주 승인(order/{orderId}/accept)<br>
  * 4. 발주 반려(order/{orderId}/deny)<br>
 
@@ -39,17 +39,17 @@ public class OrderController {
     /**
      * <h2>모든 가맹점 발주 목록 조회</h2>
      * */
-    @GetMapping("/admin/{adminId}/orders")
-    public ResponseEntity<OrderListVO> getFranchisesOrderList(@PathVariable int adminId){
-        OrderListVO orderListVO = orderService.getFranchisesOrderList(adminId);
+    @GetMapping("/admin/{adminCode}/orders")
+    public ResponseEntity<OrderListVO> getFranchisesOrderList(@PathVariable int adminCode){
+        OrderListVO orderListVO = orderService.getFranchisesOrderList(adminCode);
         return ResponseEntity.ok().body(orderListVO);
     }
     /**
      * <h2>모든 가맹점 승인대기 발주 목록 조회</h2>
      * */
-    @GetMapping("/admin/{adminId}/unchecked-orders")
-    public ResponseEntity<OrderListVO> getFranchisesUncheckedOrderList(@PathVariable int adminId){
-        OrderListVO orderListVO = orderService.getFranchisesUncheckedOrderList(adminId);
+    @GetMapping("/admin/{adminCode}/unchecked-orders")
+    public ResponseEntity<OrderListVO> getFranchisesUncheckedOrderList(@PathVariable int adminCode){
+        OrderListVO orderListVO = orderService.getFranchisesUncheckedOrderList(adminCode);
         return ResponseEntity.ok().body(orderListVO);
     }
 
@@ -59,8 +59,8 @@ public class OrderController {
         return ResponseEntity.ok(returnValue);
     }
     @PutMapping("/{orderId}/deny")
-    public ResponseEntity<String> denyOrder(@PathVariable int orderId){
-        String returnValue = orderService.denyOrder(orderId);
+    public ResponseEntity<String> denyOrder(@PathVariable int orderId, @RequestParam String denyMessage){
+        String returnValue = orderService.denyOrder(orderId,denyMessage);
         return ResponseEntity.ok(returnValue);
     }
 

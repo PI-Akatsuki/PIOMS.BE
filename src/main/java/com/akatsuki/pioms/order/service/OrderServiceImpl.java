@@ -34,8 +34,8 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     @Transactional(readOnly = true)
-    public OrderListVO getFranchisesOrderList(int adminId){
-        List<OrderEntity> orderList = orderRepository.findAllByFranchiseAdminAdminCode(adminId);
+    public OrderListVO getFranchisesOrderList(int adminCode){
+        List<OrderEntity> orderList = orderRepository.findAllByFranchiseAdminAdminCode(adminCode);
         System.out.println("orderList = " + orderList);
         List<OrderVO> orderVOList = new ArrayList<>();
         orderList.forEach(order-> {
@@ -46,8 +46,8 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     @Transactional(readOnly = true)
-    public OrderListVO getFranchisesUncheckedOrderList(int adminId){
-        List<OrderEntity> orderList = orderRepository.findAllByFranchiseAdminAdminCodeAndOrderCondition(adminId, ORDER_CONDITION.승인대기);
+    public OrderListVO getFranchisesUncheckedOrderList(int adminCode){
+        List<OrderEntity> orderList = orderRepository.findAllByFranchiseAdminAdminCodeAndOrderCondition(adminCode, ORDER_CONDITION.승인대기);
         System.out.println("orderList = " + orderList);
         List<OrderVO> orderVOList = new ArrayList<>();
         orderList.forEach(order-> {
@@ -61,20 +61,14 @@ public class OrderServiceImpl implements OrderService{
     public String acceptOrder(int orderId) {
         // 주문 찾기
         OrderEntity order = orderRepository.findById(orderId).orElseThrow();
-        if(order.getOrderCondition() != ORDER_CONDITION.승인대기){
-            return "This order is unavailable to accept. This order's condition is '" + order.getOrderCondition().name() +"', not '승인대기'. ";
-        }
+
+        if (!checkOrderCondition(order))
+            return "This order is unavailable to accept. This order's condition is '" + order.getOrderCondition().name() + "', not '승인대기'. ";
+
         order.setOrderCondition(ORDER_CONDITION.승인완료);
-        // 반품신청 중인 요소 탐색
-        ExchangeDTO exchange =  exchangeService.findExchangeToSend(order.getFranchise().getFranchiseCode());
-        if(exchange!=null) {
-            order.setExchange(new ExchangeEntity(exchange));
-        }
-        // 승인 후, 명세서 생성.
-        // 명세서 생성 시 해당 가맹점의 반품 리스트도 같이 조회할 수 있도록 해야할 듯
+        findExchange(order);
         orderRepository.save(order);
         try {
-//            publisher.publishEvent(new OrderEvent(orderId,order.getFranchise().getFranchiseCode()));
             publisher.publishEvent(new OrderEvent(order));
         }catch (Exception e){
             System.out.println("exception occuered");
@@ -85,12 +79,12 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     @Transactional
-    public String denyOrder(int orderId){
+    public String denyOrder(int orderId, String denyMessage){
         OrderEntity order = orderRepository.findById(orderId).orElseThrow();
-        if(order.getOrderCondition() != ORDER_CONDITION.승인대기){
-            return "This order is unavailable to accept. This order's condition is '" + order.getOrderCondition().name() +"', not '승인대기'. ";
-        }
+        if (!checkOrderCondition(order))
+            return "This order is unavailable to accept. This order's condition is '" + order.getOrderCondition().name() + "', not '승인대기'. ";;
         order.setOrderCondition(ORDER_CONDITION.승인거부);
+        order.setOrderReason(denyMessage);
         orderRepository.save(order);
         return "This order is denied.";
     }
@@ -101,4 +95,19 @@ public class OrderServiceImpl implements OrderService{
     }
 
 
+
+    private static boolean checkOrderCondition(OrderEntity order) {
+        if(order.getOrderCondition() != ORDER_CONDITION.승인대기){
+            return false;
+        }
+        return true;
+    }
+
+    private void findExchange(OrderEntity order) {
+        // 반품신청 중인 요소 탐색
+        ExchangeDTO exchange =  exchangeService.findExchangeToSend(order.getFranchise().getFranchiseCode());
+        if(exchange!=null) {
+            order.setExchange(new ExchangeEntity(exchange));
+        }
+    }
 }

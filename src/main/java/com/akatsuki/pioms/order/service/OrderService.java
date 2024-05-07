@@ -13,5 +13,5 @@ public interface OrderService {
 
     String acceptOrder(int orderId);
 
-    String denyOrder(int orderId);
+    String denyOrder(int orderId,String denyMessage);
 }
