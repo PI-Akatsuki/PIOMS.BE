@@ -48,6 +48,15 @@ public class AskAdminController {
         return ResponseEntity.ok().body(askListVO);
     }
     /**
+     * 점주 별 작성한 문의사항 전체 조회
+     * */
+    @GetMapping("/ask/franchise/{franchiseOwnerId}")
+    public ResponseEntity<AskListVO> getAsksByFranchiseOwnerId(@PathVariable Integer franchiseOwnerId) {
+        AskListVO askListVO = askService.getAsksByFranchiseOwnerId(franchiseOwnerId);
+        return ResponseEntity.ok().body(askListVO);
+    }
+
+    /**
      * 답변작성후 상태 '답변완료'변경
      * */
     @PostMapping("/ask/answer/{askId}")

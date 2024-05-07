@@ -39,6 +39,12 @@ public class AskServiceImpl implements AskService{
         return convertToAskListVO(askList);
     }
 
+    @Override
+    public AskListVO getAsksByFranchiseOwnerId(Integer franchiseOwnerId) {
+        List<AskEntity> askList = askRepository.findByFranchiseOwner_FranchiseOwnerCode(franchiseOwnerId);
+        return convertToAskListVO(askList);
+    }
+
     private AskListVO convertToAskListVO(List<AskEntity> askList) {
         List<AskVO> askVOList = new ArrayList<>();
         askList.forEach(ask -> askVOList.add(new AskVO(ask)));
@@ -57,5 +63,7 @@ public class AskServiceImpl implements AskService{
             throw new RuntimeException("Ask not found with id: " + askId);
         }
     }
+
+
 
 }

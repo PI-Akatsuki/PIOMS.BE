@@ -7,4 +7,5 @@ public interface AskService {
     AskListVO getAllAskList();
     AskListVO getWaitingForReplyAsks();
     AskVO answerAsk(Integer askId, String answer);
+    AskListVO getAsksByFranchiseOwnerId(Integer franchiseOwnerId);
 }
