@@ -13,11 +13,11 @@ import lombok.NoArgsConstructor;
 
 public class CategorySecond {
     @Id
-    @Column
+    @Column(name = "category_second_code")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int category_second_code;
 
-    @Column
+    @Column(name = "category_second_name")
     private String category_second_name;
 
     @ManyToOne
