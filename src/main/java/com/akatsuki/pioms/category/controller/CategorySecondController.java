@@ -34,4 +34,5 @@ public class CategorySecondController {
     public ResponseEntity<List<CategorySecond>> getAllCategorySecondofFirst() {
         return ResponseEntity.ok().body(categorySecondService.getAllCategorySecondofFirst());
     }
+
 }
