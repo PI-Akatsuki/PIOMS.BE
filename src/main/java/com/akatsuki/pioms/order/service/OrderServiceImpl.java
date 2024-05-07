@@ -1,6 +1,10 @@
 package com.akatsuki.pioms.order.service;
 
 import com.akatsuki.pioms.event.OrderEvent;
+import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
+import com.akatsuki.pioms.exchange.entity.EXCHANGE_STATUS;
+import com.akatsuki.pioms.exchange.entity.ExchangeEntity;
+import com.akatsuki.pioms.exchange.service.ExchangeService;
 import com.akatsuki.pioms.order.entity.OrderEntity;
 import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
 import com.akatsuki.pioms.order.repository.OrderRepository;
@@ -19,11 +23,13 @@ import java.util.List;
 public class OrderServiceImpl implements OrderService{
     OrderRepository orderRepository;
     ApplicationEventPublisher publisher;
+    ExchangeService exchangeService;
 
     @Autowired
-    public OrderServiceImpl(OrderRepository orderRepository, ApplicationEventPublisher publisher) {
+    public OrderServiceImpl(OrderRepository orderRepository, ApplicationEventPublisher publisher, ExchangeService exchangeService) {
         this.orderRepository = orderRepository;
         this.publisher = publisher;
+        this.exchangeService = exchangeService;
     }
 
     @Override
@@ -53,12 +59,19 @@ public class OrderServiceImpl implements OrderService{
     @Override
     @Transactional(readOnly = false)
     public String acceptOrder(int orderId) {
+        // 주문 찾기
         OrderEntity order = orderRepository.findById(orderId).orElseThrow();
         if(order.getOrderCondition() != ORDER_CONDITION.승인대기){
             return "This order is unavailable to accept. This order's condition is '" + order.getOrderCondition().name() +"', not '승인대기'. ";
         }
         order.setOrderCondition(ORDER_CONDITION.승인완료);
-        // -> 재고 변경시켜야 함
+        // 반품신청 중인 요소 탐색
+        ExchangeDTO exchange =  exchangeService.findExchangeToSend(order.getFranchise().getFranchiseCode());
+        if(exchange!=null) {
+            order.setExchange(new ExchangeEntity(exchange));
+        }
+        // 승인 후, 명세서 생성.
+        // 명세서 생성 시 해당 가맹점의 반품 리스트도 같이 조회할 수 있도록 해야할 듯
         orderRepository.save(order);
         try {
 //            publisher.publishEvent(new OrderEvent(orderId,order.getFranchise().getFranchiseCode()));

@@ -1,5 +1,6 @@
 package com.akatsuki.pioms.order.entity;
 
+import com.akatsuki.pioms.exchange.entity.ExchangeEntity;
 import com.akatsuki.pioms.franchise.entity.FranchiseEntity;
 import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
 import jakarta.persistence.*;
@@ -38,7 +39,11 @@ public class OrderEntity {
     private boolean orderStatus;
 
     @JoinColumn(name = "franchise_code")
-    @OneToOne
+    @ManyToOne
     private FranchiseEntity franchise;
+
+    @JoinColumn(name = "exchange_code")
+    @OneToOne
+    private ExchangeEntity exchange;
 
 }
