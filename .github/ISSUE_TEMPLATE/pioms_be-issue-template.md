@@ -10,7 +10,7 @@ assignees: ''
 <h1 align="center">⚙️PIOMS⚙️</h1>
 
 ### 🌈 Function Implementation
-> 개발하거나 이슈사항에 대헤 작성 및 선택해주세요!
+> 개발하거나 이슈사항에 대해 선택 사항으로 작성 및 선택해주세요!
 
 #### ⌨️ BE 개발
 - [ ] 생성 create
