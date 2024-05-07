@@ -13,11 +13,11 @@ import lombok.*;
 public class CategoryThird {
 
     @Id
-    @Column
+    @Column(name = "category_third_code")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int category_third_code;
 
-    @Column
+    @Column(name = "category_third_name")
     private String category_third_name;
 
     @ManyToOne
