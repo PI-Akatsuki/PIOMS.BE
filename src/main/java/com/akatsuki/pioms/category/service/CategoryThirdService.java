@@ -2,6 +2,7 @@ package com.akatsuki.pioms.category.service;
 
 import com.akatsuki.pioms.category.entity.CategoryThird;
 import com.akatsuki.pioms.category.vo.RequestCategoryPost;
+import com.akatsuki.pioms.category.vo.RequestCategoryUpdate;
 import com.akatsuki.pioms.category.vo.ResponseCategoryPost;
 
 import java.util.List;
@@ -13,4 +14,6 @@ public interface CategoryThirdService {
     Optional<CategoryThird> findCategoryThirdByCode(int categoryThirdCode);
 
     ResponseCategoryPost postCategory(RequestCategoryPost request);
+
+    ResponseCategoryPost updateCategory(int categoryThirdCode, RequestCategoryUpdate request);
 }

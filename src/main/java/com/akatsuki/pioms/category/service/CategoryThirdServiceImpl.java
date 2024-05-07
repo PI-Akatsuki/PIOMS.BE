@@ -2,13 +2,13 @@ package com.akatsuki.pioms.category.service;
 
 import com.akatsuki.pioms.category.entity.CategorySecond;
 import com.akatsuki.pioms.category.entity.CategoryThird;
-import com.akatsuki.pioms.category.repository.CategorySecondDAO;
 import com.akatsuki.pioms.category.repository.CategoryThirdDAO;
 import com.akatsuki.pioms.category.vo.RequestCategoryPost;
+import com.akatsuki.pioms.category.vo.RequestCategoryUpdate;
 import com.akatsuki.pioms.category.vo.ResponseCategoryPost;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -48,5 +48,19 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
         ResponseCategoryPost responseValue = new ResponseCategoryPost(savedCategoryThird.getCategory_third_code(), savedCategoryThird.getCategory_third_name());
         return responseValue;
     }
+
+    @Override
+    public ResponseCategoryPost updateCategory(int categoryThirdCode, RequestCategoryUpdate request) {
+        CategoryThird categoryThird = categoryThirdDAO.findById(categoryThirdCode)
+                .orElseThrow(() -> new EntityNotFoundException("CategoryThird not found"));
+
+        categoryThird.setCategory_third_name(request.getCategory_third_name());
+
+        CategoryThird updatedCategoryThird = categoryThirdDAO.save(categoryThird);
+
+        ResponseCategoryPost responseValue = new ResponseCategoryPost(updatedCategoryThird.getCategory_third_code(), updatedCategoryThird.getCategory_third_name());
+        return responseValue;
+    }
+
 
 }
