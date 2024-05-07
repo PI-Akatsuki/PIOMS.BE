@@ -47,6 +47,14 @@ public class AskAdminController {
         AskListVO askListVO = askService.getWaitingForReplyAsks();
         return ResponseEntity.ok().body(askListVO);
     }
+    /**
+     * 답변작성후 상태 '답변완료'변경
+     * */
+    @PostMapping("/ask/answer/{askId}")
+    public ResponseEntity<AskVO> answerAsk(@PathVariable Integer askId, @RequestBody String answer) {
+        AskVO askVO = askService.answerAsk(askId, answer);
+        return ResponseEntity.ok(askVO);
+    }
 
 
 }

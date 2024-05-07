@@ -45,4 +45,17 @@ public class AskServiceImpl implements AskService{
         return new AskListVO(askVOList);
     }
 
+    public AskVO answerAsk(Integer askId, String answer) {
+        Optional<AskEntity> ask = askRepository.findById(askId);
+        if (ask.isPresent()) {
+            AskEntity askEntity = ask.get();
+            askEntity.setAskAnswer(answer);
+            askEntity.setAskStatus(답변완료);
+            askRepository.save(askEntity);
+            return new AskVO(askEntity);
+        } else {
+            throw new RuntimeException("Ask not found with id: " + askId);
+        }
+    }
+
 }
