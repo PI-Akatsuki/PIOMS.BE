@@ -61,14 +61,13 @@ public class OrderServiceImpl implements OrderService{
     public String acceptOrder(int orderId) {
         // 주문 찾기
         OrderEntity order = orderRepository.findById(orderId).orElseThrow();
-
         if (!checkOrderCondition(order))
             return "This order is unavailable to accept. This order's condition is '" + order.getOrderCondition().name() + "', not '승인대기'. ";
 
-        order.setOrderCondition(ORDER_CONDITION.승인완료);
-        findExchange(order);
-        orderRepository.save(order);
         try {
+            order.setOrderCondition(ORDER_CONDITION.승인완료);
+            findExchange(order);
+            orderRepository.save(order);
             publisher.publishEvent(new OrderEvent(order));
         }catch (Exception e){
             System.out.println("exception occuered");

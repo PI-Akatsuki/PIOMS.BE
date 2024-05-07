@@ -10,4 +10,10 @@ public interface ExchangeRepository extends JpaRepository<ExchangeEntity, Intege
     ExchangeEntity findByFranchiseFranchiseCodeAndExchangeStatus(int franchiseCode,EXCHANGE_STATUS exchangeStatus);
 
     ExchangeEntity findByExchangeStatus(EXCHANGE_STATUS exchangeStatus);
+
+    List<ExchangeEntity> findAllByFranchiseFranchiseCodeAndExchangeStatus(int franchiseCode, EXCHANGE_STATUS exchangeStatus);
+
+    void deleteAllByFranchiseFranchiseCodeAndExchangeStatus(int franchiseCode, EXCHANGE_STATUS exchangeStatus);
+
+    List<ExchangeEntity> findAllByFranchiseFranchiseCodeAndExchangeStatusOrderByExchangeDateAsc(int franchiseCode, EXCHANGE_STATUS exchangeStatus);
 }
