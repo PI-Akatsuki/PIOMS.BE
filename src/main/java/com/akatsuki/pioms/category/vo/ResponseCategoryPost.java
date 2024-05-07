@@ -11,4 +11,5 @@ public class ResponseCategoryPost {
         this.category_third_code = category_third_code;
         this.category_third_name = category_third_name;
     }
+
 }

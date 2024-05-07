@@ -1,10 +1,14 @@
 package com.akatsuki.pioms.category.service;
 
+import com.akatsuki.pioms.category.entity.CategorySecond;
 import com.akatsuki.pioms.category.entity.CategoryThird;
 import com.akatsuki.pioms.category.repository.CategorySecondDAO;
 import com.akatsuki.pioms.category.repository.CategoryThirdDAO;
+import com.akatsuki.pioms.category.vo.RequestCategoryPost;
+import com.akatsuki.pioms.category.vo.ResponseCategoryPost;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,13 +17,10 @@ import java.util.Optional;
 public class CategoryThirdServiceImpl implements CategoryThirdService{
 
     private final CategoryThirdDAO categoryThirdDAO;
-    private final CategorySecondDAO categorySecondDAO;
-
 
     @Autowired
-    public CategoryThirdServiceImpl(CategoryThirdDAO categoryThirdDAO, CategorySecondDAO categorySecondDAO) {
+    public CategoryThirdServiceImpl(CategoryThirdDAO categoryThirdDAO) {
         this.categoryThirdDAO = categoryThirdDAO;
-        this.categorySecondDAO = categorySecondDAO;
     }
 
     @Override
@@ -31,29 +32,21 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
     public Optional<CategoryThird> findCategoryThirdByCode(int categoryThirdCode) {
         return categoryThirdDAO.findById(categoryThirdCode);
     }
+    @Override
+    public ResponseCategoryPost postCategory(RequestCategoryPost request) {
+        CategoryThird categoryThird = new CategoryThird();
 
+        // CategorySecond 엔티티를 참조하는 필드에 해당 CategorySecond 엔티티를 설정
+        CategorySecond categorySecond = new CategorySecond();
+        categorySecond.setCategory_second_code(request.getCategory_second_code());
+        categoryThird.setCategory_second_code(categorySecond);
 
+        categoryThird.setCategory_third_name(request.getCategory_third_name());
 
-//    @Override
-//    public ResponseCategoryPost postCategoryThird(int categorySecondCode, String categoryThirdName) {
-//        CategorySecond categorySecond = findCategorySecondByCode(categorySecondCode);
-//
-//        CategoryThird categoryThird = new CategoryThird();
-//        categoryThird.setCategory_third_name(categoryThirdName);
-//        categoryThird.setCategory_second_code(categorySecond);
-//
-//        CategoryThird savedCategoryThird = categoryThirdDAO.save(categoryThird);
-//
-//        ResponseCategoryPost response =
-//                new ResponseCategoryPost(
-//                        savedCategoryThird.getCategory_third_code(),
-//                        savedCategoryThird.getCategory_third_name());
-//        return response;
-//    }
-//
-//    @Override
-//    public CategorySecond findCategorySecondByCode(int categorySecondCode) {
-//        return categorySecondDAO.findByCode(categorySecondCode);
-//    }
+        CategoryThird savedCategoryThird = categoryThirdDAO.save(categoryThird);
+
+        ResponseCategoryPost responseValue = new ResponseCategoryPost(savedCategoryThird.getCategory_third_code(), savedCategoryThird.getCategory_third_name());
+        return responseValue;
+    }
 
 }
