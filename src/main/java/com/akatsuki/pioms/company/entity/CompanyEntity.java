@@ -9,6 +9,7 @@ import lombok.*;
 @Builder
 @ToString
 @Entity
+@Table(name = "company")
 public class CompanyEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
