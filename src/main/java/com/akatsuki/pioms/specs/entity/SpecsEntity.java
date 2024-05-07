@@ -19,6 +19,7 @@ public class SpecsEntity {
 
     @Id
     @Column(name = "specs_code")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int specsCode;
 
     @Column(name = "specs_date")

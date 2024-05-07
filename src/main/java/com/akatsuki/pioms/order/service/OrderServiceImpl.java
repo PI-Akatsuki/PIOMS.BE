@@ -5,17 +5,24 @@ import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import com.akatsuki.pioms.exchange.entity.EXCHANGE_STATUS;
 import com.akatsuki.pioms.exchange.entity.ExchangeEntity;
 import com.akatsuki.pioms.exchange.service.ExchangeService;
+import com.akatsuki.pioms.franchise.entity.FranchiseEntity;
 import com.akatsuki.pioms.order.entity.OrderEntity;
+import com.akatsuki.pioms.order.entity.OrderProductEntity;
 import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
+import com.akatsuki.pioms.order.repository.OrderProductRepository;
 import com.akatsuki.pioms.order.repository.OrderRepository;
 import com.akatsuki.pioms.order.vo.OrderListVO;
 import com.akatsuki.pioms.order.vo.OrderVO;
+import com.akatsuki.pioms.order.vo.RequestOrderVO;
+import com.akatsuki.pioms.product.entity.ProductEntity;
+import com.akatsuki.pioms.product.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.beans.EventHandler;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,12 +31,16 @@ public class OrderServiceImpl implements OrderService{
     OrderRepository orderRepository;
     ApplicationEventPublisher publisher;
     ExchangeService exchangeService;
+    OrderProductRepository orderProductRepository;
+    ProductService productService;
 
     @Autowired
-    public OrderServiceImpl(OrderRepository orderRepository, ApplicationEventPublisher publisher, ExchangeService exchangeService) {
+    public OrderServiceImpl(OrderRepository orderRepository, ApplicationEventPublisher publisher, ExchangeService exchangeService, OrderProductRepository orderProductRepository,ProductService productService) {
         this.orderRepository = orderRepository;
         this.publisher = publisher;
         this.exchangeService = exchangeService;
+        this.orderProductRepository = orderProductRepository;
+        this.productService = productService;
     }
 
     @Override
@@ -88,9 +99,27 @@ public class OrderServiceImpl implements OrderService{
         return "This order is denied.";
     }
 
-    public void postFranchiseOrder(OrderVO order){
-//        OrderEntity orderEntity = new OrderEntity(order);
+    @Override
+    @Transactional
+    public void postFranchiseOrder(RequestOrderVO requestorder){
+        OrderEntity order = new OrderEntity();
+        order.setOrderDate(LocalDateTime.now());
+        order.setOrderCondition(ORDER_CONDITION.승인대기);
+        order.setOrderStatus(false);
+        FranchiseEntity franchise = new FranchiseEntity();
+        franchise.setFranchiseCode(requestorder.getFranchiseCode());
+        order.setFranchise(franchise);
+        order= orderRepository.save(order);
 
+        System.out.println("order = " + order);
+
+        int orderId = order.getOrderCode();
+        System.out.println("orderId = " + orderId);
+        requestorder.getProducts().forEach((productId, count)->{
+            OrderEntity order1 = orderRepository.findById(orderId).orElseThrow();
+            ProductEntity product = productService.getProduct(productId);
+            orderProductRepository.save(new OrderProductEntity(count,0, order1, product));
+        });
     }
 
 

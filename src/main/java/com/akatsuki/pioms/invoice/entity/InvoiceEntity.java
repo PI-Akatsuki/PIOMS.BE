@@ -19,6 +19,7 @@ public class InvoiceEntity {
 
     @Id
     @Column(name = "invoice_code")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int invoiceCode;
 
     @Column(name = "delivery_status")

@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 public class ExchangeEntity {
     @Id
     @Column(name = "exchange_code")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int exchangeCode;
 
     @Column(name = "exchange_date")

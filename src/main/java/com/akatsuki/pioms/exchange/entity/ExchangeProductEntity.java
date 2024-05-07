@@ -14,6 +14,7 @@ import lombok.*;
 public class ExchangeProductEntity {
     @Id
     @Column(name = "exchange_product_code")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int exchangeProductCode;
     @Column(name = "exchange_product_status")
     private EXCHANGE_PRODUCT_STATUS exchangeProductStatus;

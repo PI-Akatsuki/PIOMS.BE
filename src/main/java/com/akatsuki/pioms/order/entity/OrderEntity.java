@@ -3,6 +3,7 @@ package com.akatsuki.pioms.order.entity;
 import com.akatsuki.pioms.exchange.entity.ExchangeEntity;
 import com.akatsuki.pioms.franchise.entity.FranchiseEntity;
 import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
+import com.akatsuki.pioms.order.vo.OrderVO;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,6 +21,7 @@ public class OrderEntity {
 
     @Id
     @Column(name = "request_code")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int orderCode;
 
     @Column(name = "request_date")

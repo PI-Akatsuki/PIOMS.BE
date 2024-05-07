@@ -3,6 +3,7 @@ package com.akatsuki.pioms.order;
 import com.akatsuki.pioms.order.service.OrderService;
 import com.akatsuki.pioms.order.vo.OrderListVO;
 import com.akatsuki.pioms.order.vo.OrderVO;
+import com.akatsuki.pioms.order.vo.RequestOrderVO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -69,9 +70,9 @@ public class OrderController {
     /**
      * <h2>발주 생성</h2>
      * */
-    @PostMapping("order/franchise")
-    public ResponseEntity postFranchiseOrder(@RequestParam(name = "order") OrderVO order){
-        orderService.postFranchiseOrder(order);
+    @PostMapping("/franchise")
+    public ResponseEntity postFranchiseOrder(@RequestBody RequestOrderVO orders){
+        orderService.postFranchiseOrder(orders);
         return ResponseEntity.ok().build();
     }
 

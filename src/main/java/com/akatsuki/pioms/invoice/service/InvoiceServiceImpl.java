@@ -48,8 +48,8 @@ public class InvoiceServiceImpl implements InvoiceService {
             deliveryDay1 = 3;
             deliveryDay2 = 5;
         }
-        System.out.println("deliveryDay1 = " + deliveryDay1);
-        System.out.println("deliveryDay2 = " + deliveryDay2);
+//        System.out.println("deliveryDay1 = " + deliveryDay1);
+//        System.out.println("deliveryDay2 = " + deliveryDay2);
 
         int changeDay=0;
         if(day < deliveryDay1 || day>=deliveryDay2){
