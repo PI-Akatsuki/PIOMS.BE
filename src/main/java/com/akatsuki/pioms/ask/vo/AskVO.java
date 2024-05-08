@@ -21,7 +21,9 @@ public class AskVO {
     private String askContent;
     private ASK_STATUS askStatus;
     private String askAnswer;
-    private Date askEnrollDate;
+    private LocalDateTime askEnrollDate;
+    private LocalDateTime askUpdateDate;
+    private LocalDateTime askCommentDate;
     private String askTitle;
 
     private int franchiseOwnerCode;
@@ -36,6 +38,8 @@ public class AskVO {
         this.askStatus = ask.getAskStatus();
         this.askAnswer = ask.getAskAnswer();
         this.askEnrollDate = ask.getAskEnrollDate();
+        this.askUpdateDate = ask.getAskUpdateDate();
+        this.askCommentDate = ask.getAskCommentDate();
         this.askTitle = ask.getAskTitle();
         this.franchiseOwnerCode = ask.getFranchiseOwner().getFranchiseOwnerCode();
         this.franchiseOwnerName = ask.getFranchiseOwner().getFranchiseOwnerName();

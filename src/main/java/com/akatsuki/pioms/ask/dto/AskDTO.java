@@ -13,8 +13,8 @@ public class AskDTO {
     private String askComment;
     private ASK_STATUS askCondition;
     private LocalDateTime askEnrollDate;
-    private Date askUpdateDate;
-    private Date askCommentDate;
+    private LocalDateTime askUpdateDate;
+    private LocalDateTime askCommentDate;
     private String askTitle;
     private FranchiseOwnerEntity franchiseOwner;
     private AdminEntity admin;

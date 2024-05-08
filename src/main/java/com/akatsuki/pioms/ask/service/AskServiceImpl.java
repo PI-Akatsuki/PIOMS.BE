@@ -105,6 +105,7 @@ public class AskServiceImpl implements AskService{
 
         askEntity.setAskTitle(askUpdateDTO.getTitle());
         askEntity.setAskContent(askUpdateDTO.getContent());
+        askRepository.save(askEntity);
         return askRepository.save(askEntity);
     }
 

@@ -4,7 +4,9 @@ import com.akatsuki.pioms.ask.etc.ASK_STATUS;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Date;
 
 @Entity
@@ -31,13 +33,13 @@ public class AskEntity {
 
     @Column(name = "ask_enroll_date")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date askEnrollDate;
+    private LocalDateTime askEnrollDate;
 
     @Column(name = "ask_update_date")
-    private Date askUpdateDate;
+    private LocalDateTime askUpdateDate;
 
     @Column(name = "ask_comment_date")
-    private Date askCommentDate;
+    private LocalDateTime askCommentDate;
 
     @Column(name = "ask_title")
     private String askTitle;
@@ -57,6 +59,11 @@ public class AskEntity {
 
     @PrePersist
     protected void onPrePersist() {
-        this.askEnrollDate = new Date();
+        this.askEnrollDate = LocalDateTime.now();;
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.askUpdateDate = LocalDateTime.now();;
     }
 }
