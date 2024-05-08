@@ -1,5 +1,9 @@
 package com.akatsuki.pioms.exchange.service;
 
+import com.akatsuki.pioms.exchange.entity.ExchangeProductEntity;
+import com.akatsuki.pioms.exchange.entity.RequestExchange;
+import com.akatsuki.pioms.exchange.vo.ExchangeProductVO;
+import com.akatsuki.pioms.exchange.vo.ResponseExchange;
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import com.akatsuki.pioms.exchange.entity.EXCHANGE_STATUS;
 import com.akatsuki.pioms.exchange.entity.ExchangeEntity;
@@ -9,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -40,6 +45,40 @@ public class ExchangeServiceImpl implements ExchangeService{
         exchangeRepository.save(exchange);
         return new ExchangeDTO(exchange);
     }
+
+    @Override
+    public List<ResponseExchange> getExchanges() {
+        List<ExchangeEntity> exchangeEntityList = exchangeRepository.findAll();
+        List<ResponseExchange> exchanges = new ArrayList<>();
+        exchangeEntityList.forEach(exchangeEntity -> {
+            exchanges.add(new ResponseExchange(exchangeEntity));
+        });
+        return exchanges;
+    }
+
+    @Override
+    @Transactional
+    public ResponseExchange putExchange(int exchangeCode, RequestExchange requestExchange) {
+        // 관리자가 반품온 상품들 처리하기 위한 메서드
+        ExchangeEntity exchangeEntity = exchangeRepository.findById(exchangeCode).orElseThrow(IllegalArgumentException::new);
+        exchangeEntity.setExchangeStatus(requestExchange.getExchangeStatus());
+        exchangeRepository.save(exchangeEntity);
+        requestExchange.getProducts().forEach(this::updateExchangeProduct);
+        return new ResponseExchange(exchangeRepository.findById(exchangeCode).orElseThrow());
+    }
+
+    private void updateExchangeProduct(ExchangeProductVO product) {
+        ExchangeProductEntity exchangeProductEntity = exchangeProductRepository.findById(product.getExchangeProductCode()).orElseThrow();
+        exchangeProductEntity.setExchangeProductDiscount(product.getExchangeProductDiscount());
+        exchangeProductEntity.setExchangeProductDiscount(product.getExchangeProductCode());
+        exchangeProductEntity.getProduct().setProductDiscount(
+                exchangeProductEntity.getProduct().getProductDiscount()+ product.getExchangeProductDiscount()
+        );
+        exchangeProductEntity.getProduct().setProductCount(
+                exchangeProductEntity.getProduct().getProductCount()+ product.getExchangeProductNormalCount()
+        );
+    }
+
 
     //반송 생성
 

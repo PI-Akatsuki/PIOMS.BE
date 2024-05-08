@@ -88,4 +88,18 @@ public class InvoiceServiceImpl implements InvoiceService {
         return new ResponseInvoiceList(responseInvoice);
     }
 
+    @Override
+    public ResponseInvoice putInvoice(int invoiceCode, String invoiceStatus) {
+        InvoiceEntity invoiceEntity = invoiceRepository.findById(invoiceCode).orElseThrow(IllegalArgumentException::new);
+        invoiceEntity.setDeliveryStatus(DELIVERY_STATUS.valueOf(invoiceStatus));
+        invoiceRepository.save(invoiceEntity);
+        return new ResponseInvoice(invoiceEntity);
+    }
+
+    @Override
+    public ResponseInvoice getInvoice(int invoiceCode) {
+        InvoiceEntity invoice = invoiceRepository.findById(invoiceCode).orElseThrow(IllegalArgumentException::new);
+        return new ResponseInvoice(invoice);
+    }
+
 }

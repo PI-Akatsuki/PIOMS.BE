@@ -29,4 +29,5 @@ public class ProductEntity {
     @Column(name = "product_exposure_status")
     private boolean productExposureStatus;
 
+
 }

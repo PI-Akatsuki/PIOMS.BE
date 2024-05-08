@@ -1,6 +1,7 @@
 package com.akatsuki.pioms.exchange.entity;
 
 
+import com.akatsuki.pioms.product.entity.ProductEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -8,7 +9,6 @@ import lombok.*;
 @AllArgsConstructor
 @Getter
 @Setter
-@ToString
 @Entity
 @Table(name = "exchange_product")
 public class ExchangeProductEntity {
@@ -17,6 +17,7 @@ public class ExchangeProductEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int exchangeProductCode;
     @Column(name = "exchange_product_status")
+    @Enumerated(EnumType.STRING)
     private EXCHANGE_PRODUCT_STATUS exchangeProductStatus;
     @Column(name = "exchange_product_count")
     private int exchangeProductCount;
@@ -25,10 +26,10 @@ public class ExchangeProductEntity {
     @Column(name = "exchange_product_normal_count")
     private int exchangeProductNormalCount;
 
-//    @JoinColumn(name = "product_code")
-//    @ManyToOne
-    @Column(name = "product_code")
-    private int productCode;
+    @JoinColumn(name = "product_code")
+    @ManyToOne
+//    @Column(name = "product_code")
+    private ProductEntity product;
 
     @JoinColumn(name = "exchange_code")
     @ManyToOne

@@ -51,4 +51,5 @@ public class SpecsServiceImpl implements SpecsService{
         return new ResponseSpecs(specsEntity);
     }
 
+
 }

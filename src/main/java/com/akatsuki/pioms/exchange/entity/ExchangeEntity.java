@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -30,6 +31,9 @@ public class ExchangeEntity {
     @JoinColumn(name = "franchise_code")
     @ManyToOne
     private FranchiseEntity franchise;
+
+    @OneToMany(mappedBy = "exchange")
+    List<ExchangeProductEntity> products;
 
 
     public ExchangeEntity(ExchangeDTO exchange) {

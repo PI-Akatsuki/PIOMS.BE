@@ -10,4 +10,5 @@ public interface SpecsService {
     List<ResponseSpecs> getSpecsList();
 
     ResponseSpecs getSpecs(int specsCode);
+
 }
