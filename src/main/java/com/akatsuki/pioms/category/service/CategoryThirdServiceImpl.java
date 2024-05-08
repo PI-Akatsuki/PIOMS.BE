@@ -2,10 +2,12 @@ package com.akatsuki.pioms.category.service;
 
 import com.akatsuki.pioms.category.entity.CategorySecond;
 import com.akatsuki.pioms.category.entity.CategoryThird;
-import com.akatsuki.pioms.category.repository.CategoryThirdDAO;
+import com.akatsuki.pioms.category.repository.CategoryThirdRepository;
 import com.akatsuki.pioms.category.vo.RequestCategoryPost;
 import com.akatsuki.pioms.category.vo.RequestCategoryUpdate;
 import com.akatsuki.pioms.category.vo.ResponseCategoryPost;
+import com.akatsuki.pioms.product.entity.Product;
+import com.akatsuki.pioms.product.repository.ProductRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,21 +19,23 @@ import java.util.Optional;
 @Service
 public class CategoryThirdServiceImpl implements CategoryThirdService{
 
-    private final CategoryThirdDAO categoryThirdDAO;
+    private CategoryThirdRepository categoryThirdRepository;
+    private ProductRepository productRepository;
 
     @Autowired
-    public CategoryThirdServiceImpl(CategoryThirdDAO categoryThirdDAO) {
-        this.categoryThirdDAO = categoryThirdDAO;
+    public CategoryThirdServiceImpl(CategoryThirdRepository categoryThirdRepository, ProductRepository productRepository) {
+        this.categoryThirdRepository = categoryThirdRepository;
+        this.productRepository = productRepository;
     }
 
     @Override
     public List<CategoryThird> getAllCategoryThird() {
-        return categoryThirdDAO.findAll();
+        return categoryThirdRepository.findAll();
     }
 
     @Override
     public Optional<CategoryThird> findCategoryThirdByCode(int categoryThirdCode) {
-        return categoryThirdDAO.findById(categoryThirdCode);
+        return categoryThirdRepository.findById(categoryThirdCode);
     }
     @Override
     @Transactional
@@ -45,7 +49,7 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
 
         categoryThird.setCategory_third_name(request.getCategory_third_name());
 
-        CategoryThird savedCategoryThird = categoryThirdDAO.save(categoryThird);
+        CategoryThird savedCategoryThird = categoryThirdRepository.save(categoryThird);
 
         ResponseCategoryPost responseValue = new ResponseCategoryPost(savedCategoryThird.getCategory_third_code(), savedCategoryThird.getCategory_third_name());
         return responseValue;
@@ -54,16 +58,21 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
     @Override
     @Transactional
     public ResponseCategoryPost updateCategory(int categoryThirdCode, RequestCategoryUpdate request) {
-        CategoryThird categoryThird = categoryThirdDAO.findById(categoryThirdCode)
+        CategoryThird categoryThird = categoryThirdRepository.findById(categoryThirdCode)
                 .orElseThrow(() -> new EntityNotFoundException("CategoryThird not found"));
 
         categoryThird.setCategory_third_name(request.getCategory_third_name());
 
-        CategoryThird updatedCategoryThird = categoryThirdDAO.save(categoryThird);
+        CategoryThird updatedCategoryThird = categoryThirdRepository.save(categoryThird);
 
         ResponseCategoryPost responseValue = new ResponseCategoryPost(updatedCategoryThird.getCategory_third_code(), updatedCategoryThird.getCategory_third_name());
         return responseValue;
     }
 
-
+    @Override
+    @Transactional
+    public CategoryThird deleteCategory(int categoryThirdCode) {
+        categoryThirdRepository.deleteById(categoryThirdCode);
+        return null;
+    }
 }

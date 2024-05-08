@@ -2,7 +2,7 @@ package com.akatsuki.pioms.product.service;
 
 import com.akatsuki.pioms.category.entity.CategoryThird;
 import com.akatsuki.pioms.product.entity.Product;
-import com.akatsuki.pioms.product.repository.ProductDAO;
+import com.akatsuki.pioms.product.repository.ProductRepository;
 import com.akatsuki.pioms.product.vo.RequestProductPost;
 import com.akatsuki.pioms.product.vo.ResponseProductPost;
 import jakarta.persistence.EntityNotFoundException;
@@ -15,20 +15,20 @@ import java.util.Optional;
 
 @Service
 public class ProductServiceImpl implements ProductService{
-    private final ProductDAO productDAO;
+    private final ProductRepository productRepository;
 
     @Autowired
-    public ProductServiceImpl(ProductDAO productDAO) {
-        this.productDAO = productDAO;
+    public ProductServiceImpl(ProductRepository productRepository) {
+        this.productRepository = productRepository;
     }
     @Override
     public List<Product> getAllProduct() {
-        return productDAO.findAll();
+        return productRepository.findAll();
     }
 
     @Override
     public Optional<Product> findProductByCode(int productCode) {
-        return productDAO.findById(productCode);
+        return productRepository.findById(productCode);
     }
 
     @Override
@@ -54,7 +54,7 @@ public class ProductServiceImpl implements ProductService{
         product.setProduct_dis_count(request.getProduct_dis_count());
         product.setProduct_count(request.getProduct_count());
 
-        Product updatedProduct = productDAO.save(product);
+        Product updatedProduct = productRepository.save(product);
 
         ResponseProductPost responseValue =
                 new ResponseProductPost(
@@ -79,13 +79,13 @@ public class ProductServiceImpl implements ProductService{
     @Override
     @Transactional
     public Product deleteProduct(int productCode) {
-        productDAO.deleteById(productCode);
+        productRepository.deleteById(productCode);
         return null;
     }
 
     @Override
     public ResponseProductPost updateProduct(int productCode, RequestProductPost request) {
-        Product product = productDAO.findById(productCode)
+        Product product = productRepository.findById(productCode)
                 .orElseThrow(() -> new EntityNotFoundException("Product not found"));
 
         CategoryThird categoryThird = new CategoryThird();
@@ -106,7 +106,7 @@ public class ProductServiceImpl implements ProductService{
         product.setProduct_dis_count(request.getProduct_dis_count());
         product.setProduct_count(request.getProduct_count());
 
-        Product updatedProduct = productDAO.save(product);
+        Product updatedProduct = productRepository.save(product);
 
         ResponseProductPost responseValue =
                 new ResponseProductPost(

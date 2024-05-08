@@ -1,7 +1,7 @@
 package com.akatsuki.pioms.category.service;
 
 import com.akatsuki.pioms.category.entity.CategoryFirst;
-import com.akatsuki.pioms.category.repository.CategoryFirstDAO;
+import com.akatsuki.pioms.category.repository.CategoryFirstRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,20 +10,20 @@ import java.util.Optional;
 
 @Service
 public class CategoryFirstServiceImpl implements CategoryFirstService {
-    private final CategoryFirstDAO categoryFirstDAO;
+    private final CategoryFirstRepository categoryFirstRepository;
 
     @Autowired
-    public CategoryFirstServiceImpl(CategoryFirstDAO categoryFirstDAO) {
-        this.categoryFirstDAO = categoryFirstDAO;
+    public CategoryFirstServiceImpl(CategoryFirstRepository categoryFirstRepository) {
+        this.categoryFirstRepository = categoryFirstRepository;
     }
 
     @Override
     public List<CategoryFirst> getAllCategoryFirst() {
-        return categoryFirstDAO.findAll();
+        return categoryFirstRepository.findAll();
     }
 
     @Override
     public Optional<CategoryFirst> findCategoryFirstByCode(int categoryFirstCode) {
-        return categoryFirstDAO.findById(categoryFirstCode);
+        return categoryFirstRepository.findById(categoryFirstCode);
     }
 }
