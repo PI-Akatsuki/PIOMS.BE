@@ -172,4 +172,13 @@ public class OrderServiceImpl implements OrderService{
         System.out.println(order.getOrderProductList());
         return new OrderVO(order);
     }
+
+    @Override
+    public OrderVO getAdminOrder(int adminCode, int orderCode) {
+        OrderEntity order = orderRepository.findById(orderCode).orElseThrow(IllegalArgumentException::new);
+        if(adminCode != order.getFranchise().getAdmin().getAdminCode()){
+            return null;
+        }
+        return new OrderVO(order);
+    }
 }

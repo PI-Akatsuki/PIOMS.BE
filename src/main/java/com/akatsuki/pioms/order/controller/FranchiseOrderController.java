@@ -23,7 +23,7 @@ public class FranchiseOrderController {
     /**
      * <h2>발주 생성</h2>
      * */
-    @PostMapping("/franchise/{franchiseCode}")
+    @PostMapping("/{franchiseCode}")
     public ResponseEntity<String> postFranchiseOrder(@PathVariable int franchiseCode, @RequestBody RequestOrderVO orders){
         boolean result = orderService.postFranchiseOrder(franchiseCode,orders);
         if(!result)
@@ -31,12 +31,12 @@ public class FranchiseOrderController {
         return ResponseEntity.ok().body("Post finished");
     }
 
-    @GetMapping("/franchise/{franchiseCode}")
+    @GetMapping("/{franchiseCode}")
     public ResponseEntity<OrderListVO> getFranchiseOrderList(@PathVariable int franchiseCode){
         return ResponseEntity.ok(orderService.getOrderList(franchiseCode));
     }
 
-    @GetMapping("/franchise/{franchiseCode}/order/{orderCode}")
+    @GetMapping("/{franchiseCode}/order/{orderCode}")
     public ResponseEntity<OrderVO> getOrder(@PathVariable int franchiseCode, @PathVariable int orderCode){
         OrderVO orderVO = orderService.getOrder(franchiseCode,orderCode);
         if(orderVO==null)

@@ -65,4 +65,13 @@ public class AdminOrderController {
         String returnValue = orderService.denyOrder(adminCode,orderId,denyMessage);
         return ResponseEntity.ok(returnValue);
     }
+
+    @GetMapping("/{adminCode}/order/{orderCode}")
+    public ResponseEntity<OrderVO> getOrder(@PathVariable int adminCode, @PathVariable int orderCode){
+        OrderVO order = orderService.getAdminOrder(adminCode,orderCode);
+        if(order == null){
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(null);
+        }
+        return ResponseEntity.ok(order);
+    }
 }

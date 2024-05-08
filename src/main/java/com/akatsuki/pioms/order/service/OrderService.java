@@ -19,4 +19,6 @@ public interface OrderService {
     OrderListVO getOrderList(int franchiseCode);
 
     OrderVO getOrder(int franchiseCode,int orderCode);
+
+    OrderVO getAdminOrder(int adminCode, int orderCode);
 }
