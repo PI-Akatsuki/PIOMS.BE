@@ -23,11 +23,18 @@ repositories {
 
 dependencies {
     // JPA Data
-//    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
     // Web
     implementation 'org.springframework.boot:spring-boot-starter-web'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    // Spring Security
+//    implementation 'org.springframework.boot:spring-boot-starter-security'
+//    testImplementation 'org.springframework.security:spring-security-test'
+
+    // ModelMapper
+    implementation 'org.modelmapper:modelmapper:2.4.4'
 
     // Lombok
     compileOnly 'org.projectlombok:lombok'
@@ -37,7 +44,7 @@ dependencies {
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
     // Mysql Driver
-//    runtimeOnly 'com.mysql:mysql-connector-j'
+    runtimeOnly 'com.mysql:mysql-connector-j'
 
     // Swagger
     implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.3.0'
