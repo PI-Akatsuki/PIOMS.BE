@@ -2,8 +2,8 @@ package com.akatsuki.pioms.specs.service;
 
 import com.akatsuki.pioms.event.OrderEvent;
 import com.akatsuki.pioms.order.entity.OrderEntity;
-import com.akatsuki.pioms.specs.controller.ResponseSpecs;
-import com.akatsuki.pioms.specs.entity.SpecsEntity;
+import com.akatsuki.pioms.specs.aggregate.ResponseSpecs;
+import com.akatsuki.pioms.specs.aggregate.SpecsEntity;
 import com.akatsuki.pioms.specs.repository.SpecsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
@@ -42,6 +42,7 @@ public class SpecsServiceImpl implements SpecsService{
         specsList.forEach(specs -> {
             responseSpecs.add(new ResponseSpecs(specs));
         });
+        System.out.println(responseSpecs.size());
         return responseSpecs;
     }
 
@@ -51,5 +52,14 @@ public class SpecsServiceImpl implements SpecsService{
         return new ResponseSpecs(specsEntity);
     }
 
+    @Override
+    public List<ResponseSpecs> getFranchiseSpecsList(int franchiseCode) {
+        List<SpecsEntity> specsEntities = specsRepository.findAllByFranchiseFranchiseCode(franchiseCode);
+        List<ResponseSpecs> responseSpecs = new ArrayList<>();
+        specsEntities.forEach(specs -> {
+             responseSpecs.add(new ResponseSpecs(specs));
+        });
+        return responseSpecs;
+    }
 
 }

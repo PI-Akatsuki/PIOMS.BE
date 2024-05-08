@@ -1,6 +1,5 @@
-package com.akatsuki.pioms.specs.controller;
+package com.akatsuki.pioms.specs.aggregate;
 
-import com.akatsuki.pioms.specs.entity.SpecsEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
