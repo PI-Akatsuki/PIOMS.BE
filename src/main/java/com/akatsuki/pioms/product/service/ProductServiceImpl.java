@@ -1,5 +1,7 @@
 package com.akatsuki.pioms.product.service;
 
+import com.akatsuki.pioms.product.entity.ProductEntity;
+import com.akatsuki.pioms.product.repository.ProductRepository;
 import com.akatsuki.pioms.category.entity.CategoryThird;
 import com.akatsuki.pioms.product.entity.Product;
 import com.akatsuki.pioms.product.repository.ProductRepository;
@@ -15,12 +17,19 @@ import java.util.Optional;
 
 @Service
 public class ProductServiceImpl implements ProductService{
+
     private final ProductRepository productRepository;
 
     @Autowired
     public ProductServiceImpl(ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
+  
+    @Override
+    public ProductEntity getProduct(int productId){
+        return productRepository.findById(productId).orElseThrow();
+    }
+  
     @Override
     public List<Product> getAllProduct() {
         return productRepository.findAll();
