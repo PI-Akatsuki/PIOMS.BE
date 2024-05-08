@@ -109,25 +109,29 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     @Transactional
-    public void postFranchiseOrder(RequestOrderVO requestorder){
+    public boolean postFranchiseOrder(int franchiseCode,RequestOrderVO requestOrder){
+        if(franchiseCode != requestOrder.getFranchiseCode()){
+            System.out.println("가맹점 코드, 주문의 가맹점 코드 불일치! ");
+            return false;
+        }
         OrderEntity order = new OrderEntity();
+
         order.setOrderDate(LocalDateTime.now());
         order.setOrderCondition(ORDER_CONDITION.승인대기);
         order.setOrderStatus(false);
         FranchiseEntity franchise = new FranchiseEntity();
-        franchise.setFranchiseCode(requestorder.getFranchiseCode());
+        franchise.setFranchiseCode(requestOrder.getFranchiseCode());
         order.setFranchise(franchise);
         order= orderRepository.save(order);
 
         int orderId = order.getOrderCode();
-        requestorder.getProducts().forEach((productId, count)->{
+        requestOrder.getProducts().forEach((productId, count)->{
             OrderEntity order1 = orderRepository.findById(orderId).orElseThrow();
             ProductEntity product = productService.getProduct(productId);
             orderProductRepository.save(new OrderProductEntity(count,0, order1, product));
         });
+        return true;
     }
-
-
 
     private static boolean checkOrderCondition(OrderEntity order) {
         if(order.getOrderCondition() != ORDER_CONDITION.승인대기){
@@ -158,8 +162,12 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     @Transactional(readOnly = true)
-    public OrderVO getOrder(int orderCode){
+    public OrderVO getOrder(int franchiseCode,int orderCode){
         OrderEntity order = orderRepository.findById(orderCode).orElseThrow();
+        if(franchiseCode!= order.getFranchise().getFranchiseCode()){
+            System.out.println("가맹점 코드, 주문의 가맹점 코드 불일치!");
+            return null;
+        }
         System.out.println("order = " + order);
         System.out.println(order.getOrderProductList());
         return new OrderVO(order);

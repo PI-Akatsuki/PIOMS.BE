@@ -8,7 +8,7 @@ public interface OrderService {
 
     OrderListVO getFranchisesOrderList(int adminId);
 
-    void postFranchiseOrder(RequestOrderVO order);
+    boolean postFranchiseOrder(int franchiseCode, RequestOrderVO order);
 
     OrderListVO getFranchisesUncheckedOrderList(int adminId);
 
@@ -18,5 +18,5 @@ public interface OrderService {
 
     OrderListVO getOrderList(int franchiseCode);
 
-    OrderVO getOrder(int orderCode);
+    OrderVO getOrder(int franchiseCode,int orderCode);
 }

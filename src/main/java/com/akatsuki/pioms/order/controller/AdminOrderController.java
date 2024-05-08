@@ -4,6 +4,7 @@ import com.akatsuki.pioms.order.service.OrderService;
 import com.akatsuki.pioms.order.vo.OrderListVO;
 import com.akatsuki.pioms.order.vo.OrderVO;
 import com.akatsuki.pioms.order.vo.RequestOrderVO;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,17 +30,18 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-public class OrderController {
+@RequestMapping("/admin")
+public class AdminOrderController {
     OrderService orderService;
 
-    public OrderController(OrderService orderService) {
+    public AdminOrderController(OrderService orderService) {
         this.orderService = orderService;
     }
 
     /**
      * <h2>모든 가맹점 발주 목록 조회</h2>
      * */
-    @GetMapping("/admin/{adminCode}/orders")
+    @GetMapping("/{adminCode}/orders")
     public ResponseEntity<OrderListVO> getFranchisesOrderList(@PathVariable int adminCode){
         OrderListVO orderListVO = orderService.getFranchisesOrderList(adminCode);
         return ResponseEntity.ok().body(orderListVO);
@@ -47,46 +49,20 @@ public class OrderController {
     /**
      * <h2>모든 가맹점 승인대기 발주 목록 조회</h2>
      * */
-    @GetMapping("/admin/{adminCode}/unchecked-orders")
+    @GetMapping("/{adminCode}/unchecked-orders")
     public ResponseEntity<OrderListVO> getFranchisesUncheckedOrderList(@PathVariable int adminCode){
         OrderListVO orderListVO = orderService.getFranchisesUncheckedOrderList(adminCode);
         return ResponseEntity.ok().body(orderListVO);
     }
 
-    @PutMapping("/admin/{adminCode}/order/{orderId}/accept")
+    @PutMapping("/{adminCode}/order/{orderId}/accept")
     public ResponseEntity<String> acceptOrder(@PathVariable int adminCode,@PathVariable int orderId){
         String returnValue = orderService.acceptOrder(adminCode, orderId);
         return ResponseEntity.ok(returnValue);
     }
-    @PutMapping("/admin/{adminCode}/order/{orderId}/deny")
+    @PutMapping("/{adminCode}/order/{orderId}/deny")
     public ResponseEntity<String> denyOrder(@PathVariable int adminCode,@PathVariable int orderId, @RequestParam String denyMessage){
         String returnValue = orderService.denyOrder(adminCode,orderId,denyMessage);
         return ResponseEntity.ok(returnValue);
     }
-
-
-
-    /**
-     * <h2>발주 생성</h2>
-     * */
-    @PostMapping("/franchise")
-    public ResponseEntity postFranchiseOrder(@RequestBody RequestOrderVO orders){
-        orderService.postFranchiseOrder(orders);
-        return ResponseEntity.ok().build();
-    }
-
-    @GetMapping("/franchise/{franchiseCode}")
-    public ResponseEntity<OrderListVO> getFranchiseOrderList(@PathVariable int franchiseCode){
-        return ResponseEntity.ok(orderService.getOrderList(franchiseCode));
-    }
-
-    @GetMapping("/{orderCode}")
-    public ResponseEntity<OrderVO> getOrder(@PathVariable int orderCode){
-        return ResponseEntity.ok(orderService.getOrder(orderCode));
-    }
-
-
-
-
-
 }
