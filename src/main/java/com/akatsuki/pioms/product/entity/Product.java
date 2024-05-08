@@ -69,6 +69,6 @@ public class Product {
 
     @ManyToOne
     @JoinColumn(name="category_third_code")
-    private CategoryThird categoryThird;
+    private CategoryThird category_third_code;
 
 }
