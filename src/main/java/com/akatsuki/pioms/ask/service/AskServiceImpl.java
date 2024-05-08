@@ -11,10 +11,10 @@ import com.akatsuki.pioms.ask.repository.AskRepository;
 import com.akatsuki.pioms.ask.repository.FranchiseOwnerRepository;
 import com.akatsuki.pioms.ask.vo.AskListVO;
 import com.akatsuki.pioms.ask.vo.AskVO;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -45,6 +45,14 @@ public class AskServiceImpl implements AskService{
             askVOList.add(new AskVO(ask));
         });
         return new AskListVO(askVOList);
+    }
+
+    @Override
+    public AskVO getAskDetails(int askCode) throws EntityNotFoundException {
+        AskEntity askEntity = askRepository.findById(askCode)
+                .orElseThrow(() -> new EntityNotFoundException("Ask not found with id: " + askCode));
+
+        return new AskVO(askEntity);
     }
 
     public AskListVO getWaitingForReplyAsks() {

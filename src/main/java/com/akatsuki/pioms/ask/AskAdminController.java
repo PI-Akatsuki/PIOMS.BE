@@ -3,6 +3,8 @@ package com.akatsuki.pioms.ask;
 import com.akatsuki.pioms.ask.service.AskService;
 import com.akatsuki.pioms.ask.vo.AskListVO;
 import com.akatsuki.pioms.ask.vo.AskVO;
+import jakarta.persistence.EntityNotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -55,6 +57,22 @@ public class AskAdminController {
         AskListVO askListVO = askService.getAsksByFranchiseOwnerId(franchiseOwnerId);
         return ResponseEntity.ok().body(askListVO);
     }
+    /**
+     * 문의사항 상세 조회
+     * */
+    @GetMapping("/ask/{askCode}")
+    public ResponseEntity<AskVO> getAskDetails(@PathVariable int askCode) {
+        try {
+            AskVO askVO = askService.getAskDetails(askCode);
+            return ResponseEntity.ok(askVO);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+
 
     /**
      * 답변작성후 상태 '답변완료'변경
