@@ -25,11 +25,9 @@ public class AskVO {
     private LocalDateTime askUpdateDate;
     private LocalDateTime askCommentDate;
     private String askTitle;
-
-    private int franchiseOwnerCode;
+//    private int franchiseOwnerCode;
     private String franchiseOwnerName;
-
-    private int adminCode;
+//    private int adminCode;
     private String adminName;
 
     public AskVO(AskEntity ask) {
@@ -41,9 +39,9 @@ public class AskVO {
         this.askUpdateDate = ask.getAskUpdateDate();
         this.askCommentDate = ask.getAskCommentDate();
         this.askTitle = ask.getAskTitle();
-        this.franchiseOwnerCode = ask.getFranchiseOwner().getFranchiseOwnerCode();
+//        this.franchiseOwnerCode = ask.getFranchiseOwner().getFranchiseOwnerCode();
         this.franchiseOwnerName = ask.getFranchiseOwner().getFranchiseOwnerName();
-        this.adminCode = ask.getAdmin().getAdminCode();
+//        this.adminCode = ask.getAdmin().getAdminCode();
         this.adminName = ask.getAdmin().getAdminName();
     }
 }

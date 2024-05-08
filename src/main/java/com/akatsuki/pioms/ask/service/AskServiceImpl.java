@@ -14,6 +14,7 @@ import com.akatsuki.pioms.ask.vo.AskVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -69,12 +70,16 @@ public class AskServiceImpl implements AskService{
             AskEntity askEntity = ask.get();
             askEntity.setAskAnswer(answer);
             askEntity.setAskStatus(답변완료);
+            askEntity.setAskCommentDateNow();  // 답변 등록 시각 설정
             askRepository.save(askEntity);
             return new AskVO(askEntity);
         } else {
             throw new RuntimeException("Ask not found with id: " + askId);
         }
     }
+
+
+
 
     @Override
     public AskVO createAsk(AskCreateDTO askDTO) {
@@ -90,7 +95,6 @@ public class AskServiceImpl implements AskService{
         AdminEntity admin = adminRepository.findById(1)  // 예: 관리자 ID가 1인 경우
                 .orElseThrow(() -> new RuntimeException("Admin not found"));
         askEntity.setAdmin(admin);
-
         askRepository.save(askEntity);
         return new AskVO(askEntity);
     }
@@ -100,12 +104,12 @@ public class AskServiceImpl implements AskService{
                 .orElseThrow(() -> new RuntimeException("Ask not found with id: " + askCode));
 
         if (askEntity.getAskStatus() != ASK_STATUS.답변대기) {
-            throw new Exception("Only asks in 'Waiting for Reply' status can be updated.");
+            throw new Exception("답변완료의 경우 수정할 수 없습니다.");
         }
 
         askEntity.setAskTitle(askUpdateDTO.getTitle());
         askEntity.setAskContent(askUpdateDTO.getContent());
-        askRepository.save(askEntity);
+        askEntity.updateAskUpdateDate();  // Ensure this method is implemented to only update ask_update_date
         return askRepository.save(askEntity);
     }
 

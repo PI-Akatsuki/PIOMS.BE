@@ -4,6 +4,7 @@ import com.akatsuki.pioms.ask.dto.AskCreateDTO;
 import com.akatsuki.pioms.ask.dto.AskUpdateDTO;
 import com.akatsuki.pioms.ask.entity.AskEntity;
 import com.akatsuki.pioms.ask.service.AskService;
+import com.akatsuki.pioms.ask.vo.AskListVO;
 import com.akatsuki.pioms.ask.vo.AskVO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,15 @@ public class AskFranchiseController {
     AskService askService;
 
     public AskFranchiseController(AskService askService){this.askService = askService;}
+
+    /**
+     * 문의사항 작성
+     * */
+    @GetMapping("/ask/list")
+    public ResponseEntity<AskListVO> getAllAskList(){
+        AskListVO askListVO = askService.getAllAskList();
+        return ResponseEntity.ok().body(askListVO);
+    }
 
     /**
      * 문의사항 작성

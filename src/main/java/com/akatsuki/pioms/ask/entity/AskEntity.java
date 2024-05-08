@@ -62,8 +62,11 @@ public class AskEntity {
         this.askEnrollDate = LocalDateTime.now();;
     }
 
-    @PreUpdate
-    protected void onUpdate() {
-        this.askUpdateDate = LocalDateTime.now();;
+    public void setAskCommentDateNow() {
+        this.askCommentDate = LocalDateTime.now();
+    }
+
+    public void updateAskUpdateDate() {
+        this.askUpdateDate = LocalDateTime.now();
     }
 }
