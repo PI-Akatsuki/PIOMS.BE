@@ -29,7 +29,6 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("/order")
 public class OrderController {
     OrderService orderService;
 
@@ -54,14 +53,14 @@ public class OrderController {
         return ResponseEntity.ok().body(orderListVO);
     }
 
-    @PutMapping("/{orderId}/accept")
-    public ResponseEntity<String> acceptOrder(@PathVariable int orderId){
-        String returnValue = orderService.acceptOrder(orderId);
+    @PutMapping("/admin/{adminCode}/order/{orderId}/accept")
+    public ResponseEntity<String> acceptOrder(@PathVariable int adminCode,@PathVariable int orderId){
+        String returnValue = orderService.acceptOrder(adminCode, orderId);
         return ResponseEntity.ok(returnValue);
     }
-    @PutMapping("/{orderId}/deny")
-    public ResponseEntity<String> denyOrder(@PathVariable int orderId, @RequestParam String denyMessage){
-        String returnValue = orderService.denyOrder(orderId,denyMessage);
+    @PutMapping("/admin/{adminCode}/order/{orderId}/deny")
+    public ResponseEntity<String> denyOrder(@PathVariable int adminCode,@PathVariable int orderId, @RequestParam String denyMessage){
+        String returnValue = orderService.denyOrder(adminCode,orderId,denyMessage);
         return ResponseEntity.ok(returnValue);
     }
 

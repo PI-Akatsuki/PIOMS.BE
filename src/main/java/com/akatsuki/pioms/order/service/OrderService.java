@@ -12,9 +12,9 @@ public interface OrderService {
 
     OrderListVO getFranchisesUncheckedOrderList(int adminId);
 
-    String acceptOrder(int orderId);
+    String acceptOrder(int adminCOde,int orderId);
 
-    String denyOrder(int orderId,String denyMessage);
+    String denyOrder(int adminCode,int orderId,String denyMessage);
 
     OrderListVO getOrderList(int franchiseCode);
 

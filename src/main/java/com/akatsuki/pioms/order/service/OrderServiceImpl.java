@@ -41,6 +41,7 @@ public class OrderServiceImpl implements OrderService{
         this.productService = productService;
     }
 
+
     @Override
     @Transactional(readOnly = true)
     public OrderListVO getFranchisesOrderList(int adminCode){
@@ -67,9 +68,12 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     @Transactional(readOnly = false)
-    public String acceptOrder(int orderId) {
-        // 주문 찾기
+    public String acceptOrder(int adminCode,int orderId) {
+
         OrderEntity order = orderRepository.findById(orderId).orElseThrow();
+        if(order.getFranchise().getAdmin().getAdminCode() != adminCode){
+            return "You dont\'t have permission to manage this franchise";
+        }
         if (!checkOrderCondition(order))
             return "This order is unavailable to accept. This order's condition is '" + order.getOrderCondition().name() + "', not '승인대기'. ";
 
@@ -86,10 +90,15 @@ public class OrderServiceImpl implements OrderService{
         return "This order is accepted";
     }
 
+
+
     @Override
     @Transactional
-    public String denyOrder(int orderId, String denyMessage){
+    public String denyOrder(int adminCode,int orderId, String denyMessage){
         OrderEntity order = orderRepository.findById(orderId).orElseThrow();
+        if(order.getFranchise().getAdmin().getAdminCode() != adminCode){
+            return "You dont\'t have permission to manage this franchise";
+        }
         if (!checkOrderCondition(order))
             return "This order is unavailable to accept. This order's condition is '" + order.getOrderCondition().name() + "', not '승인대기'. ";;
         order.setOrderCondition(ORDER_CONDITION.승인거부);
