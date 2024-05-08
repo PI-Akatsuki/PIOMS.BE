@@ -2,14 +2,13 @@ package com.akatsuki.pioms.product.controller;
 
 import com.akatsuki.pioms.product.entity.Product;
 import com.akatsuki.pioms.product.service.ProductService;
+import com.akatsuki.pioms.product.vo.RequestProductPost;
+import com.akatsuki.pioms.product.vo.ResponseProductPost;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -37,6 +36,13 @@ public class ProductController {
     public ResponseEntity<Optional<Product>> getProductByCode(@PathVariable int productCode) {
         Optional<Product> product = productService.findProductByCode(productCode);
         return ResponseEntity.ok().body(product);
+    }
+
+    @PostMapping("/create")
+    @Operation(summary = "상품 등록")
+    public ResponseEntity<ResponseProductPost> postProduct(@RequestBody RequestProductPost request) {
+        ResponseProductPost response = productService.postProduct(request);
+        return ResponseEntity.ok().body(response);
     }
 
 }
