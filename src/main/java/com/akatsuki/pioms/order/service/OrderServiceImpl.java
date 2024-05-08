@@ -14,6 +14,7 @@ import com.akatsuki.pioms.order.repository.OrderRepository;
 import com.akatsuki.pioms.order.vo.OrderListVO;
 import com.akatsuki.pioms.order.vo.OrderVO;
 import com.akatsuki.pioms.order.vo.RequestOrderVO;
+import com.akatsuki.pioms.order.vo.RequestPutOrder;
 import com.akatsuki.pioms.product.entity.ProductEntity;
 import com.akatsuki.pioms.product.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -180,5 +181,23 @@ public class OrderServiceImpl implements OrderService{
             return null;
         }
         return new OrderVO(order);
+    }
+
+    @Override
+    @Transactional
+    public boolean putFranchiseOrder(int franchiseCode, RequestPutOrder requestOrder) {
+        OrderEntity order = orderRepository.findById(requestOrder.getOrderCode()).orElseThrow(IllegalArgumentException::new);
+        if(order.getFranchise().getFranchiseCode() != franchiseCode)
+            return false;
+        orderProductRepository.deleteAllByOrderOrderCode(order.getOrderCode());
+        OrderEntity deletedorder = orderRepository.findById(requestOrder.getOrderCode()).orElseThrow(IllegalArgumentException::new);
+
+        requestOrder.getProducts().forEach((productId, count)->{
+            ProductEntity product = productService.getProduct(productId);
+            orderProductRepository.save(new OrderProductEntity(count,0, deletedorder, product));
+        });
+        System.out.println(deletedorder.getOrderProductList());
+        orderRepository.save(deletedorder);
+        return true;
     }
 }

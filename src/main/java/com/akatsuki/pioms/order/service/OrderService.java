@@ -3,6 +3,7 @@ package com.akatsuki.pioms.order.service;
 import com.akatsuki.pioms.order.vo.OrderListVO;
 import com.akatsuki.pioms.order.vo.OrderVO;
 import com.akatsuki.pioms.order.vo.RequestOrderVO;
+import com.akatsuki.pioms.order.vo.RequestPutOrder;
 
 public interface OrderService {
 
@@ -21,4 +22,6 @@ public interface OrderService {
     OrderVO getOrder(int franchiseCode,int orderCode);
 
     OrderVO getAdminOrder(int adminCode, int orderCode);
+
+    boolean putFranchiseOrder(int franchiseCode, RequestPutOrder order);
 }
