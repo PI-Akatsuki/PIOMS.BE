@@ -9,6 +9,7 @@ import com.akatsuki.pioms.category.vo.ResponseCategoryPost;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +34,7 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
         return categoryThirdDAO.findById(categoryThirdCode);
     }
     @Override
+    @Transactional
     public ResponseCategoryPost postCategory(RequestCategoryPost request) {
         CategoryThird categoryThird = new CategoryThird();
 
@@ -50,6 +52,7 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
     }
 
     @Override
+    @Transactional
     public ResponseCategoryPost updateCategory(int categoryThirdCode, RequestCategoryUpdate request) {
         CategoryThird categoryThird = categoryThirdDAO.findById(categoryThirdCode)
                 .orElseThrow(() -> new EntityNotFoundException("CategoryThird not found"));

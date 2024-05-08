@@ -45,4 +45,10 @@ public class ProductController {
         return ResponseEntity.ok().body(response);
     }
 
+    @DeleteMapping("/delete/{productCode}")
+    @Operation(summary = "상품 삭제", description = "상품 코드로 상품 삭제")
+    public ResponseEntity<Product> deleteProduct(@PathVariable int productCode) {
+        Product product = productService.deleteProduct(productCode);
+        return ResponseEntity.ok().body(product);
+    }
 }

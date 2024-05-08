@@ -2,7 +2,6 @@ package com.akatsuki.pioms.product.service;
 
 import com.akatsuki.pioms.category.entity.CategoryThird;
 import com.akatsuki.pioms.product.entity.Product;
-import com.akatsuki.pioms.product.etc.PRODUCT_COLOR;
 import com.akatsuki.pioms.product.repository.ProductDAO;
 import com.akatsuki.pioms.product.vo.RequestProductPost;
 import com.akatsuki.pioms.product.vo.ResponseProductPost;
@@ -35,6 +34,7 @@ public class ProductServiceImpl implements ProductService{
     @Transactional
     public ResponseProductPost postProduct(RequestProductPost request) {
         Product product = new Product();
+
         CategoryThird categoryThird = new CategoryThird();
         categoryThird.setCategory_third_code(request.getCategory_third_code());
         product.setCategory_third_code(categoryThird);
@@ -73,5 +73,12 @@ public class ProductServiceImpl implements ProductService{
                         savedProduct.getProduct_count()
                 );
         return responseValue;
+    }
+
+    @Override
+    @Transactional
+    public Product deleteProduct(int productCode) {
+        productDAO.deleteById(productCode);
+        return null;
     }
 }

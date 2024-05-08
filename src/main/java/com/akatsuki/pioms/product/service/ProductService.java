@@ -13,4 +13,6 @@ public interface ProductService {
     Optional<Product> findProductByCode(int productCode);
 
     ResponseProductPost postProduct(RequestProductPost request);
+
+    Product deleteProduct(int productCode);
 }
