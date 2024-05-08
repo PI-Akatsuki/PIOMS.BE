@@ -1,4 +1,4 @@
-package com.akatsuki.pioms.order;
+package com.akatsuki.pioms.order.controller;
 
 import com.akatsuki.pioms.order.service.OrderService;
 import com.akatsuki.pioms.order.vo.OrderListVO;
