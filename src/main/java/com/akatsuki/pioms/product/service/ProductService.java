@@ -15,4 +15,6 @@ public interface ProductService {
     ResponseProductPost postProduct(RequestProductPost request);
 
     Product deleteProduct(int productCode);
+
+    ResponseProductPost updateProduct(int productCode, RequestProductPost request);
 }
