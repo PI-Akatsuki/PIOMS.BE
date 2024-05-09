@@ -1,7 +1,7 @@
 package com.akatsuki.pioms.company.service;
 
 import com.akatsuki.pioms.company.dto.CompanyDTO;
-import com.akatsuki.pioms.company.entity.CompanyEntity;
+import com.akatsuki.pioms.company.entity.Company;
 import com.akatsuki.pioms.company.repository.CompanyRepository;
 import com.akatsuki.pioms.company.vo.CompanyVO;
 import lombok.extern.log4j.Log4j2;
@@ -29,7 +29,27 @@ public class CompanyServiceImpl implements CompanyService {
                 .orElse(null);
     }
 
-    private CompanyDTO getCompanyDTO(CompanyEntity companyEntity) {
+    @Override
+    public Company updateCompanyInfo(Company companyEntity) {
+        return companyRepository.findById(1)
+                .map(existingCompany -> {
+                    Company updatedCompany = Company.builder()
+                            .companyCode(existingCompany.getCompanyCode())
+                            .companyName(companyEntity.getCompanyName())
+                            .companyCall(companyEntity.getCompanyCall())
+                            .companyEmail(companyEntity.getCompanyEmail())
+                            .companyBusinessNum(companyEntity.getCompanyBusinessNum())
+                            .companyAddress(companyEntity.getCompanyAddress())
+                            .companyCeo(companyEntity.getCompanyCeo())
+                            .companyFax(companyEntity.getCompanyFax())
+                            .build();
+                    return companyRepository.save(updatedCompany);
+                })
+                .orElseThrow(() -> new RuntimeException("ID로 회사를 못찾음: " + companyEntity.getCompanyCode()));
+    }
+
+
+    private CompanyDTO getCompanyDTO(Company companyEntity) {
         // Entity -> DTO
         CompanyDTO companyDTO = CompanyDTO.builder()
                 .companyCode(companyEntity.getCompanyCode())
