@@ -1,9 +1,9 @@
 package com.akatsuki.pioms.company.service;
 
 import com.akatsuki.pioms.company.dto.CompanyDTO;
-import com.akatsuki.pioms.company.entity.Company;
+import com.akatsuki.pioms.company.aggregate.Company;
 import com.akatsuki.pioms.company.repository.CompanyRepository;
-import com.akatsuki.pioms.company.vo.CompanyVO;
+import com.akatsuki.pioms.company.aggregate.CompanyVO;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

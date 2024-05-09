@@ -1,4 +1,4 @@
-package com.akatsuki.pioms.company.vo;
+package com.akatsuki.pioms.company.aggregate;
 
 import lombok.*;
 

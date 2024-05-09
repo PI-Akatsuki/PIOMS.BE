@@ -1,8 +1,8 @@
 package com.akatsuki.pioms.company.controller;
 
-import com.akatsuki.pioms.company.entity.Company;
+import com.akatsuki.pioms.company.aggregate.Company;
 import com.akatsuki.pioms.company.service.CompanyService;
-import com.akatsuki.pioms.company.vo.CompanyVO;
+import com.akatsuki.pioms.company.aggregate.CompanyVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;

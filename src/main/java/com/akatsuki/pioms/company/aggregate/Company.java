@@ -1,4 +1,4 @@
-package com.akatsuki.pioms.company.entity;
+package com.akatsuki.pioms.company.aggregate;
 
 import jakarta.persistence.*;
 import lombok.*;
