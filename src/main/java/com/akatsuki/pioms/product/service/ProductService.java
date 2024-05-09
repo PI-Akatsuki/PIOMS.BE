@@ -13,4 +13,8 @@ public interface ProductService {
     ProductEntity getProduct(int productId);
     Optional<Product> findProductByCode(int productCode);
     ResponseProductPost postProduct(RequestProductPost request);
+
+    Product deleteProduct(int productCode);
+
+    ResponseProductPost updateProduct(int productCode, RequestProductPost request);
 }
