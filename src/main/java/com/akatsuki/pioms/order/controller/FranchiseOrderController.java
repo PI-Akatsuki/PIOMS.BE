@@ -43,7 +43,7 @@ public class FranchiseOrderController {
         return ResponseEntity.ok("put finished");
     }
 
-    @GetMapping("/{franchiseCode}")
+    @GetMapping("/{franchiseCode}/orders")
     public ResponseEntity<OrderListVO> getFranchiseOrderList(@PathVariable int franchiseCode){
         return ResponseEntity.ok(orderService.getOrderList(franchiseCode));
     }
