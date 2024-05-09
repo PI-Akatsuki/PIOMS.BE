@@ -1,21 +1,20 @@
-package com.akatsuki.pioms.ask.entity;
+package com.akatsuki.pioms.admin.aggregate;
 
-import com.akatsuki.pioms.ask.etc.ADMIN_ROLE;
+import com.akatsuki.pioms.franchise.entity.FranchiseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.UUID;
+import java.util.List;
 
-@Entity
-@Table(name = "admin")
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
+@Builder
 @Setter
 @ToString
-public class AdminEntity {
+@Entity
+@Table(name = "admin")
+public class Admin {
     @Id
     @Column(name = "admin_code")
     private int adminCode;
@@ -30,13 +29,13 @@ public class AdminEntity {
     private String adminPwd;
 
     @Column(name = "admin_enroll_date")
-    private LocalDateTime adminEnrollDate;
+    private String enrollDate;
 
     @Column(name = "admin_update_date")
-    private Date adminUpdateDate;
+    private String updateDate;
 
     @Column(name = "admin_delete_date")
-    private Date adminDeleteDate;
+    private String deleteDate;
 
     @Column(name = "admin_email")
     private String adminEmail;
@@ -45,9 +44,11 @@ public class AdminEntity {
     private String adminPhone;
 
     @Column(name = "admin_access_number")
-    private UUID adminAccessNumber;
+    private String accessNumber;
 
-    @Column(name = "admin_role")
-    private boolean adminRole;
+    @Column(name = "admin_status")
+    private boolean adminStatus;
 
+    @OneToMany(mappedBy = "admin")
+    private List<FranchiseEntity> franchiseEntities;
 }
