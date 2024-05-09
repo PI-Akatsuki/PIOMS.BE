@@ -4,6 +4,9 @@ import com.akatsuki.pioms.franchiseWarehouse.aggregate.FranchiseWarehouse;
 import com.akatsuki.pioms.franchiseWarehouse.repository.FranchiseWarehouseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
@@ -25,6 +28,20 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
         franchiseWarehouse.setFranchiseWarehouseEnable(franchiseWarehouse.getFranchiseWarehouseEnable()+changeVal);
         franchiseWarehouseRepository.save(franchiseWarehouse);
         System.out.println("franchiseWarehouse = " + franchiseWarehouse);
+    }
+
+    @Override
+    @Transactional
+    public void toggleFavorite(int warehouseId) {
+        FranchiseWarehouse warehouse = franchiseWarehouseRepository.findById(warehouseId)
+                .orElseThrow(() -> new RuntimeException("Warehouse not found"));
+        warehouse.setFranchiseWarehouseFavorite(!warehouse.isFranchiseWarehouseFavorite());
+        franchiseWarehouseRepository.save(warehouse);
+    }
+
+    @Override
+    public List<FranchiseWarehouse> findAllFavorites() {
+        return franchiseWarehouseRepository.findByFranchiseWarehouseFavoriteTrue();
     }
 
 }
