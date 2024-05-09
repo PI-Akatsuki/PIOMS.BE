@@ -6,10 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,7 +23,7 @@ public class AdminController {
         this.adminService = adminService;
     }
 
-    // 관리자 조회
+    // 관리자 전체 조회
     @Operation(summary = "본사 관리자 전체 조회", description = "본사 관리자 전체 조회")
     @GetMapping("/list")
     public ResponseEntity<List<Admin>> getAdminList() {
@@ -45,6 +42,12 @@ public class AdminController {
 
     // 관리자 등록
     // 관리자 수정
-    // 관리자 삭제
+    // 관리자 비활성화(삭제)
+    @Operation(summary = "본사 관리자 삭제", description = "본사 관리자를 삭제합니다.")
+    @DeleteMapping("/delete/{adminCode}")
+    public ResponseEntity<String> deleteAdmin(@PathVariable int adminCode) {
+        return adminService.deleteAdmin(adminCode);
+    }
+
 
 }

@@ -1,7 +1,10 @@
 package com.akatsuki.pioms.admin.aggregate;
 
+import com.akatsuki.pioms.franchise.entity.FranchiseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -43,6 +46,9 @@ public class Admin {
     @Column(name = "admin_access_number")
     private String accessNumber;
 
-    @Column(name = "admin_role")
-    private boolean adminRole;
+    @Column(name = "admin_status")
+    private boolean adminStatus;
+
+    @OneToMany(mappedBy = "admin")
+    private List<FranchiseEntity> franchiseEntities;
 }

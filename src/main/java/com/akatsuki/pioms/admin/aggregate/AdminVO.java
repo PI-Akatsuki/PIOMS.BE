@@ -27,6 +27,6 @@ public class AdminVO {
 
     private String accessNumber;
 
-    private boolean adminRole;
+    private boolean adminStatus;
 
 }
