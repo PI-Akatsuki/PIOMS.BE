@@ -1,7 +1,7 @@
 package com.akatsuki.pioms.franchise.entity;
 
 
-import com.akatsuki.pioms.admin.entity.AdminEntity;
+import com.akatsuki.pioms.admin.entity.Admin;
 import com.akatsuki.pioms.franchise.etc.DELIVERY_DATE;
 import jakarta.persistence.*;
 import lombok.*;
@@ -45,11 +45,11 @@ public class FranchiseEntity {
 
     @JoinColumn(name = "franchise_owner_code")
     @OneToOne
-    private FranchiseOwnerEntity franchiseOwner;
+    private FranchiseOwner franchiseOwner;
 
     @JoinColumn(name = "admin_code")
     @ManyToOne
-    private AdminEntity admin;
+    private Admin admin;
 
     @Column(name = "company_code")
     private int companyCode;

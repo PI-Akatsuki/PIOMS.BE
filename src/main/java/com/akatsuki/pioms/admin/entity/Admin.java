@@ -16,7 +16,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Entity
 @Table(name = "admin")
-public class AdminEntity {
+public class Admin {
     @Id
     @Column(name = "admin_code")
     private int adminCode;

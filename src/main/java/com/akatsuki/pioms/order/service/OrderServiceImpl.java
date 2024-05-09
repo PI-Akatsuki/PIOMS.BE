@@ -13,7 +13,7 @@ import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
 import com.akatsuki.pioms.order.repository.OrderProductRepository;
 import com.akatsuki.pioms.order.repository.OrderRepository;
 import com.akatsuki.pioms.order.vo.*;
-import com.akatsuki.pioms.product.entity.ProductEntity;
+import com.akatsuki.pioms.product.entity.Product;
 import com.akatsuki.pioms.product.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -130,7 +130,7 @@ public class OrderServiceImpl implements OrderService{
         int orderId = order.getOrderCode();
         requestOrder.getProducts().forEach((productId, count)->{
             OrderEntity order1 = orderRepository.findById(orderId).orElseThrow();
-            ProductEntity product = productService.getProduct(productId);
+            Product product = productService.getProduct(productId);
             orderProductRepository.save(new OrderProductEntity(count,0, order1, product));
         });
         return true;
@@ -195,7 +195,7 @@ public class OrderServiceImpl implements OrderService{
         OrderEntity deletedorder = orderRepository.findById(requestOrder.getOrderCode()).orElseThrow(IllegalArgumentException::new);
 
         requestOrder.getProducts().forEach((productId, count)->{
-            ProductEntity product = productService.getProduct(productId);
+            Product product = productService.getProduct(productId);
             orderProductRepository.save(new OrderProductEntity(count,0, deletedorder, product));
         });
         System.out.println(deletedorder.getOrderProductList());
