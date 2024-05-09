@@ -6,6 +6,7 @@ import com.akatsuki.pioms.exchange.entity.EXCHANGE_STATUS;
 import com.akatsuki.pioms.exchange.entity.ExchangeEntity;
 import com.akatsuki.pioms.exchange.service.ExchangeService;
 import com.akatsuki.pioms.franchise.entity.FranchiseEntity;
+import com.akatsuki.pioms.invoice.service.InvoiceService;
 import com.akatsuki.pioms.order.entity.OrderEntity;
 import com.akatsuki.pioms.order.entity.OrderProductEntity;
 import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
@@ -29,14 +30,16 @@ public class OrderServiceImpl implements OrderService{
     ExchangeService exchangeService;
     OrderProductRepository orderProductRepository;
     ProductService productService;
+    InvoiceService invoiceService;
 
     @Autowired
-    public OrderServiceImpl(OrderRepository orderRepository, ApplicationEventPublisher publisher, ExchangeService exchangeService, OrderProductRepository orderProductRepository,ProductService productService) {
+    public OrderServiceImpl(OrderRepository orderRepository, ApplicationEventPublisher publisher, ExchangeService exchangeService, OrderProductRepository orderProductRepository,ProductService productService, InvoiceService invoiceService) {
         this.orderRepository = orderRepository;
         this.publisher = publisher;
         this.exchangeService = exchangeService;
         this.orderProductRepository = orderProductRepository;
         this.productService = productService;
+        this.invoiceService = invoiceService;
     }
 
 
@@ -202,22 +205,21 @@ public class OrderServiceImpl implements OrderService{
     public boolean putFranchiseOrderCheck(int franchiseCode, RequestPutOrderCheck requestPutOrder) {
         OrderEntity order = orderRepository.findById(requestPutOrder.getOrderCode()).orElseThrow(IllegalArgumentException::new);
         System.out.println("requestPutOrder = " + requestPutOrder);
-        if(franchiseCode != order.getFranchise().getFranchiseCode()){
-            System.out.println("franchiseCode is not equal");
+        if(franchiseCode != order.getFranchise().getFranchiseCode() || order.isOrderStatus() || !invoiceService.checkInvoiceStatus(order.getOrderCode())){
+            System.out.println("franchiseCode is not equal or this order's status is true or delivery's status is not \"배송완료\" ");
             return false;
         }
         // 인수 완료 표시
         order.setOrderStatus(true);
-
         order.getOrderProductList().forEach(orderProduct->{
             if(requestPutOrder.getRequestProduct().get(orderProduct.getProduct().getProductCocde())!=null) {
                 int changeVal = requestPutOrder.getRequestProduct().get(orderProduct.getProduct().getProductCocde());
                 System.out.println("changeVal = " + changeVal);
                 orderProduct.setRequestProductGetCount(changeVal);
+                
                 orderProductRepository.save(orderProduct);
             }
         });
-
         return true;
     }
 }

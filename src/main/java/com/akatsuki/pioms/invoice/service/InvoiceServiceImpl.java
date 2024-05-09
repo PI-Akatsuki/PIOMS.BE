@@ -102,4 +102,13 @@ public class InvoiceServiceImpl implements InvoiceService {
         return new ResponseInvoice(invoice);
     }
 
+    public Boolean checkInvoiceStatus(int orderCode){
+        InvoiceEntity invoice = invoiceRepository.findByOrderOrderCode(orderCode);
+        if (invoice.getDeliveryStatus() == DELIVERY_STATUS.배송완료){
+            System.out.println("invoice = " + invoice.getDeliveryStatus());
+            return true;
+        }
+        return false;
+    }
+
 }

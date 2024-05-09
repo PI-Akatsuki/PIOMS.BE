@@ -9,4 +9,6 @@ public interface InvoiceService {
     ResponseInvoice putInvoice(int invoiceCode, String invoiceStatus);
 
     ResponseInvoice getInvoice(int invoiceCode);
+
+    Boolean checkInvoiceStatus(int orderCode);
 }
