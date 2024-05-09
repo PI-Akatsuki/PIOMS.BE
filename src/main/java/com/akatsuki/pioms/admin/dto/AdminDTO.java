@@ -28,5 +28,5 @@ public class AdminDTO {
 
     private String accessNumber;
 
-    private boolean adminRole;
+    private boolean adminStatus;
 }
