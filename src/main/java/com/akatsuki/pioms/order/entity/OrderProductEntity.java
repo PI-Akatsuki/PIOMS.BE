@@ -1,6 +1,6 @@
 package com.akatsuki.pioms.order.entity;
 
-import com.akatsuki.pioms.product.entity.ProductEntity;
+import com.akatsuki.pioms.product.entity.Product;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,12 +26,22 @@ public class OrderProductEntity {
 
     @JoinColumn(name = "product_code")
     @ManyToOne(cascade = CascadeType.PERSIST)
-    private ProductEntity product;
+    private Product product;
 
-    public OrderProductEntity(Integer count, int findCount, OrderEntity order, ProductEntity product) {
+    public OrderProductEntity(Integer count, int findCount, OrderEntity order, Product product) {
         this.requestProductCount = count;
         this.requestProductGetCount = findCount;
         this.order = order;
         this.product = product;
+    }
+
+    public OrderProductEntity(OrderEntity order1, int productCode, int count) {
+        Product product1 = new Product();
+        product1.setProductCode(productCode);
+        this.product = product1;
+        this.requestProductCount = count;
+        this.requestProductGetCount = 0;
+        this.order = order1;
+
     }
 }

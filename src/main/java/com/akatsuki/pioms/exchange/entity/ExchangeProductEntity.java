@@ -1,7 +1,7 @@
 package com.akatsuki.pioms.exchange.entity;
 
 
-import com.akatsuki.pioms.product.entity.ProductEntity;
+import com.akatsuki.pioms.product.entity.Product;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -29,7 +29,7 @@ public class ExchangeProductEntity {
     @JoinColumn(name = "product_code")
     @ManyToOne
 //    @Column(name = "product_code")
-    private ProductEntity product;
+    private Product product;
 
     @JoinColumn(name = "exchange_code")
     @ManyToOne

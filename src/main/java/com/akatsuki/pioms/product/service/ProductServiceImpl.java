@@ -1,10 +1,8 @@
 package com.akatsuki.pioms.product.service;
 
-import com.akatsuki.pioms.product.entity.ProductEntity;
 import com.akatsuki.pioms.product.repository.ProductRepository;
 import com.akatsuki.pioms.category.entity.CategoryThird;
 import com.akatsuki.pioms.product.entity.Product;
-import com.akatsuki.pioms.product.repository.ProductRepository;
 import com.akatsuki.pioms.product.vo.RequestProductPost;
 import com.akatsuki.pioms.product.vo.ResponseProductPost;
 import jakarta.persistence.EntityNotFoundException;
@@ -27,7 +25,7 @@ public class ProductServiceImpl implements ProductService{
     }
   
     @Override
-    public ProductEntity getProduct(int productId){
+    public Product getProduct(int productId){
         return productRepository.findById(productId).orElseThrow();
     }
   
@@ -48,40 +46,40 @@ public class ProductServiceImpl implements ProductService{
 
         CategoryThird categoryThird = new CategoryThird();
         categoryThird.setCategory_third_code(request.getCategory_third_code());
-        product.setCategory_third_code(categoryThird);
+        product.setCategoryThirdCode(categoryThird);
 
-        product.setProduct_name(request.getProduct_name());
-        product.setProduct_price(request.getProduct_price());
-        product.setProduct_enroll_date(request.getProduct_enroll_date());
-        product.setProduct_content(request.getProduct_content());
-        product.setProduct_color(request.getProduct_color());
-        product.setProduct_size(request.getProduct_size());
-        product.setProduct_gender(request.getProduct_gender());
-        product.setProduct_total_count(request.getProduct_total_count());
-        product.setProduct_status(request.getProduct_status());
-        product.setProduct_exposure_status(request.isProduct_exposure_status());
-        product.setProduct_notice_count(request.getProduct_notice_count());
-        product.setProduct_dis_count(request.getProduct_dis_count());
-        product.setProduct_count(request.getProduct_count());
+        product.setProductName(request.getProduct_name());
+        product.setProductPrice(request.getProduct_price());
+        product.setProductEnrollDate(request.getProduct_enroll_date());
+        product.setProductContent(request.getProduct_content());
+        product.setProductColor(request.getProduct_color());
+        product.setProductSize(request.getProduct_size());
+        product.setProductGender(request.getProduct_gender());
+        product.setProductTotalCount(request.getProduct_total_count());
+        product.setProductStatus(request.getProduct_status());
+        product.setProductExposureStatus(request.isProduct_exposure_status());
+        product.setProductNoticeCount(request.getProduct_notice_count());
+        product.setProductDiscount(request.getProduct_dis_count());
+        product.setProductCount(request.getProduct_count());
 
         Product updatedProduct = productRepository.save(product);
 
         ResponseProductPost responseValue =
                 new ResponseProductPost(
-                        updatedProduct.getProduct_code(),
-                        updatedProduct.getProduct_name(),
-                        updatedProduct.getProduct_price(),
-                        updatedProduct.getProduct_enroll_date(),
-                        updatedProduct.getProduct_content(),
-                        updatedProduct.getProduct_color(),
-                        updatedProduct.getProduct_size(),
-                        updatedProduct.getProduct_gender(),
-                        updatedProduct.getProduct_total_count(),
-                        updatedProduct.getProduct_status(),
-                        updatedProduct.isProduct_exposure_status(),
-                        updatedProduct.getProduct_notice_count(),
-                        updatedProduct.getProduct_dis_count(),
-                        updatedProduct.getProduct_count()
+                        updatedProduct.getProductCode(),
+                        updatedProduct.getProductName(),
+                        updatedProduct.getProductPrice(),
+                        updatedProduct.getProductEnrollDate(),
+                        updatedProduct.getProductContent(),
+                        updatedProduct.getProductColor(),
+                        updatedProduct.getProductSize(),
+                        updatedProduct.getProductGender(),
+                        updatedProduct.getProductTotalCount(),
+                        updatedProduct.getProductStatus(),
+                        updatedProduct.isProductExposureStatus(),
+                        updatedProduct.getProductNoticeCount(),
+                        updatedProduct.getProductDiscount(),
+                        updatedProduct.getProductCount()
                 );
         return responseValue;
     }
@@ -100,40 +98,40 @@ public class ProductServiceImpl implements ProductService{
 
         CategoryThird categoryThird = new CategoryThird();
         categoryThird.setCategory_third_code(request.getCategory_third_code());
-        product.setCategory_third_code(categoryThird);
+        product.setCategoryThirdCode(categoryThird);
 
-        product.setProduct_name(request.getProduct_name());
-        product.setProduct_price(request.getProduct_price());
-        product.setProduct_enroll_date(request.getProduct_enroll_date());
-        product.setProduct_content(request.getProduct_content());
-        product.setProduct_color(request.getProduct_color());
-        product.setProduct_size(request.getProduct_size());
-        product.setProduct_gender(request.getProduct_gender());
-        product.setProduct_total_count(request.getProduct_total_count());
-        product.setProduct_status(request.getProduct_status());
-        product.setProduct_exposure_status(request.isProduct_exposure_status());
-        product.setProduct_notice_count(request.getProduct_notice_count());
-        product.setProduct_dis_count(request.getProduct_dis_count());
-        product.setProduct_count(request.getProduct_count());
-
+        product.setProductName(request.getProduct_name());
+        product.setProductPrice(request.getProduct_price());
+        product.setProductEnrollDate(request.getProduct_enroll_date());
+        product.setProductContent(request.getProduct_content());
+        product.setProductColor(request.getProduct_color());
+        product.setProductSize(request.getProduct_size());
+        product.setProductGender(request.getProduct_gender());
+        product.setProductTotalCount(request.getProduct_total_count());
+        product.setProductStatus(request.getProduct_status());
+        product.setProductExposureStatus(request.isProduct_exposure_status());
+        product.setProductNoticeCount(request.getProduct_notice_count());
+        product.setProductDiscount(request.getProduct_dis_count());
+        product.setProductCount(request.getProduct_count());
+        Product savedProduct = productRepository.save(product);
         Product updatedProduct = productRepository.save(product);
 
         ResponseProductPost responseValue =
                 new ResponseProductPost(
-                        updatedProduct.getProduct_code(),
-                        updatedProduct.getProduct_name(),
-                        updatedProduct.getProduct_price(),
-                        updatedProduct.getProduct_enroll_date(),
-                        updatedProduct.getProduct_content(),
-                        updatedProduct.getProduct_color(),
-                        updatedProduct.getProduct_size(),
-                        updatedProduct.getProduct_gender(),
-                        updatedProduct.getProduct_total_count(),
-                        updatedProduct.getProduct_status(),
-                        updatedProduct.isProduct_exposure_status(),
-                        updatedProduct.getProduct_notice_count(),
-                        updatedProduct.getProduct_dis_count(),
-                        updatedProduct.getProduct_count()
+                        savedProduct.getProductCode(),
+                        savedProduct.getProductName(),
+                        updatedProduct.getProductPrice(),
+                        updatedProduct.getProductEnrollDate(),
+                        updatedProduct.getProductContent(),
+                        updatedProduct.getProductColor(),
+                        updatedProduct.getProductSize(),
+                        updatedProduct.getProductGender(),
+                        updatedProduct.getProductTotalCount(),
+                        updatedProduct.getProductStatus(),
+                        updatedProduct.isProductExposureStatus(),
+                        updatedProduct.getProductNoticeCount(),
+                        updatedProduct.getProductDiscount(),
+                        updatedProduct.getProductCount()
                 );
         return responseValue;
     }

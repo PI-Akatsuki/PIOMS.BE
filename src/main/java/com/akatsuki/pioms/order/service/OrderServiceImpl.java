@@ -2,19 +2,18 @@ package com.akatsuki.pioms.order.service;
 
 import com.akatsuki.pioms.event.OrderEvent;
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
-import com.akatsuki.pioms.exchange.entity.EXCHANGE_STATUS;
 import com.akatsuki.pioms.exchange.entity.ExchangeEntity;
 import com.akatsuki.pioms.exchange.service.ExchangeService;
 import com.akatsuki.pioms.franchise.entity.FranchiseEntity;
+import com.akatsuki.pioms.franchiseWarehouse.service.FranchiseWarehouseService;
+import com.akatsuki.pioms.invoice.service.InvoiceService;
 import com.akatsuki.pioms.order.entity.OrderEntity;
 import com.akatsuki.pioms.order.entity.OrderProductEntity;
 import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
 import com.akatsuki.pioms.order.repository.OrderProductRepository;
 import com.akatsuki.pioms.order.repository.OrderRepository;
-import com.akatsuki.pioms.order.vo.OrderListVO;
-import com.akatsuki.pioms.order.vo.OrderVO;
-import com.akatsuki.pioms.order.vo.RequestOrderVO;
-import com.akatsuki.pioms.product.entity.ProductEntity;
+import com.akatsuki.pioms.order.vo.*;
+import com.akatsuki.pioms.product.entity.Product;
 import com.akatsuki.pioms.product.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -31,15 +30,20 @@ public class OrderServiceImpl implements OrderService{
     ExchangeService exchangeService;
     OrderProductRepository orderProductRepository;
     ProductService productService;
+    InvoiceService invoiceService;
+    FranchiseWarehouseService franchiseWarehouseService;
 
     @Autowired
-    public OrderServiceImpl(OrderRepository orderRepository, ApplicationEventPublisher publisher, ExchangeService exchangeService, OrderProductRepository orderProductRepository,ProductService productService) {
+    public OrderServiceImpl(OrderRepository orderRepository, ApplicationEventPublisher publisher, ExchangeService exchangeService, OrderProductRepository orderProductRepository,ProductService productService, InvoiceService invoiceService, FranchiseWarehouseService franchiseWarehouseService) {
         this.orderRepository = orderRepository;
         this.publisher = publisher;
         this.exchangeService = exchangeService;
         this.orderProductRepository = orderProductRepository;
         this.productService = productService;
+        this.invoiceService = invoiceService;
+        this.franchiseWarehouseService = franchiseWarehouseService;
     }
+
 
     @Override
     @Transactional(readOnly = true)
@@ -67,9 +71,12 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     @Transactional(readOnly = false)
-    public String acceptOrder(int orderId) {
-        // 주문 찾기
+    public String acceptOrder(int adminCode,int orderId) {
+
         OrderEntity order = orderRepository.findById(orderId).orElseThrow();
+        if(order.getFranchise().getAdmin().getAdminCode() != adminCode){
+            return "You dont\'t have permission to manage this franchise";
+        }
         if (!checkOrderCondition(order))
             return "This order is unavailable to accept. This order's condition is '" + order.getOrderCondition().name() + "', not '승인대기'. ";
 
@@ -86,10 +93,15 @@ public class OrderServiceImpl implements OrderService{
         return "This order is accepted";
     }
 
+
+
     @Override
     @Transactional
-    public String denyOrder(int orderId, String denyMessage){
+    public String denyOrder(int adminCode,int orderId, String denyMessage){
         OrderEntity order = orderRepository.findById(orderId).orElseThrow();
+        if(order.getFranchise().getAdmin().getAdminCode() != adminCode){
+            return "You dont\'t have permission to manage this franchise";
+        }
         if (!checkOrderCondition(order))
             return "This order is unavailable to accept. This order's condition is '" + order.getOrderCondition().name() + "', not '승인대기'. ";;
         order.setOrderCondition(ORDER_CONDITION.승인거부);
@@ -100,25 +112,29 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     @Transactional
-    public void postFranchiseOrder(RequestOrderVO requestorder){
+    public boolean postFranchiseOrder(int franchiseCode,RequestOrderVO requestOrder){
+        if(franchiseCode != requestOrder.getFranchiseCode()){
+            System.out.println("가맹점 코드, 주문의 가맹점 코드 불일치! ");
+            return false;
+        }
         OrderEntity order = new OrderEntity();
+
         order.setOrderDate(LocalDateTime.now());
         order.setOrderCondition(ORDER_CONDITION.승인대기);
         order.setOrderStatus(false);
         FranchiseEntity franchise = new FranchiseEntity();
-        franchise.setFranchiseCode(requestorder.getFranchiseCode());
+        franchise.setFranchiseCode(requestOrder.getFranchiseCode());
         order.setFranchise(franchise);
         order= orderRepository.save(order);
 
         int orderId = order.getOrderCode();
-        requestorder.getProducts().forEach((productId, count)->{
+        requestOrder.getProducts().forEach((productId, count)->{
             OrderEntity order1 = orderRepository.findById(orderId).orElseThrow();
-            ProductEntity product = productService.getProduct(productId);
+            Product product = productService.getProduct(productId);
             orderProductRepository.save(new OrderProductEntity(count,0, order1, product));
         });
+        return true;
     }
-
-
 
     private static boolean checkOrderCondition(OrderEntity order) {
         if(order.getOrderCondition() != ORDER_CONDITION.승인대기){
@@ -149,10 +165,65 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     @Transactional(readOnly = true)
-    public OrderVO getOrder(int orderCode){
+    public OrderVO getOrder(int franchiseCode,int orderCode){
         OrderEntity order = orderRepository.findById(orderCode).orElseThrow();
+        if(franchiseCode!= order.getFranchise().getFranchiseCode()){
+            System.out.println("가맹점 코드, 주문의 가맹점 코드 불일치!");
+            return null;
+        }
         System.out.println("order = " + order);
         System.out.println(order.getOrderProductList());
         return new OrderVO(order);
+    }
+
+    @Override
+    public OrderVO getAdminOrder(int adminCode, int orderCode) {
+        OrderEntity order = orderRepository.findById(orderCode).orElseThrow(IllegalArgumentException::new);
+        if(adminCode != order.getFranchise().getAdmin().getAdminCode()){
+            return null;
+        }
+        return new OrderVO(order);
+    }
+
+    @Override
+    @Transactional
+    public boolean putFranchiseOrder(int franchiseCode, RequestPutOrder requestOrder) {
+        OrderEntity order = orderRepository.findById(requestOrder.getOrderCode()).orElseThrow(IllegalArgumentException::new);
+        if(order.getFranchise().getFranchiseCode() != franchiseCode)
+            return false;
+        orderProductRepository.deleteAllByOrderOrderCode(order.getOrderCode());
+        OrderEntity deletedorder = orderRepository.findById(requestOrder.getOrderCode()).orElseThrow(IllegalArgumentException::new);
+
+        requestOrder.getProducts().forEach((productId, count)->{
+            Product product = productService.getProduct(productId);
+            orderProductRepository.save(new OrderProductEntity(count,0, deletedorder, product));
+        });
+        System.out.println(deletedorder.getOrderProductList());
+        orderRepository.save(deletedorder);
+        return true;
+    }
+
+    @Override
+    public boolean putFranchiseOrderCheck(int franchiseCode, RequestPutOrderCheck requestPutOrder) {
+        OrderEntity order = orderRepository.findById(requestPutOrder.getOrderCode()).orElseThrow(IllegalArgumentException::new);
+        System.out.println("requestPutOrder = " + requestPutOrder);
+        if(franchiseCode != order.getFranchise().getFranchiseCode() || order.isOrderStatus() || !invoiceService.checkInvoiceStatus(order.getOrderCode())){
+            System.out.println("franchiseCode is not equal or this order's status is true or delivery's status is not \"배송완료\" ");
+            return false;
+        }
+        // 인수 완료 표시
+        order.setOrderStatus(true);
+        order.getOrderProductList().forEach(orderProduct->{
+            if(requestPutOrder.getRequestProduct().get(orderProduct.getProduct().getProductCode())!=null) {
+                int changeVal = requestPutOrder.getRequestProduct().get(orderProduct.getProduct().getProductCode());
+                System.out.println("changeVal = " + changeVal);
+                orderProduct.setRequestProductGetCount(changeVal);
+                //검수 결과 가맹 창고에 저장
+                franchiseWarehouseService.saveProduct(orderProduct.getProduct().getProductCode(), changeVal, orderProduct.getOrder().getFranchise().getFranchiseCode());
+
+                orderProductRepository.save(orderProduct);
+            }
+        });
+        return true;
     }
 }
