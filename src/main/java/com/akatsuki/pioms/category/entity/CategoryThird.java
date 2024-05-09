@@ -1,7 +1,10 @@
 package com.akatsuki.pioms.category.entity;
 
+import com.akatsuki.pioms.product.entity.Product;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Entity
 @Table(name="category_third")
@@ -23,4 +26,6 @@ public class CategoryThird {
     @ManyToOne
     @JoinColumn(name="category_second_code")
     private CategorySecond category_second_code;
+
+
 }

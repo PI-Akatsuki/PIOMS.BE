@@ -58,4 +58,10 @@ public class ProductController {
         ResponseProductPost response = productService.updateProduct(productCode, request);
         return ResponseEntity.ok().body(response);
     }
+
+//    @GetMapping("/category/{categoryThirdCode}/")
+//    public List<Product> getAllProductsByCategoryThird(@PathVariable int categoryThirdCode) {
+//        return productService.getAllProductsByCategoryThird(categoryThirdCode);
+//    }
+
 }

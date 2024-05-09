@@ -4,6 +4,7 @@ import com.akatsuki.pioms.category.entity.CategoryThird;
 import com.akatsuki.pioms.category.vo.RequestCategoryPost;
 import com.akatsuki.pioms.category.vo.RequestCategoryUpdate;
 import com.akatsuki.pioms.category.vo.ResponseCategoryPost;
+import com.akatsuki.pioms.product.entity.Product;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,5 +18,5 @@ public interface CategoryThirdService {
 
     ResponseCategoryPost updateCategory(int categoryThirdCode, RequestCategoryUpdate request);
 
-    CategoryThird deleteCategory(int categoryThirdCode);
+//    CategoryThird deleteCategory(int categoryThirdCode);
 }

@@ -28,15 +28,19 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
         this.productRepository = productRepository;
     }
 
+    /* 카테고리(소) 전체 조회 */
     @Override
     public List<CategoryThird> getAllCategoryThird() {
         return categoryThirdRepository.findAll();
     }
 
+    /* 카테고리(소) 코드로 카테고리(소) 조회 */
     @Override
     public Optional<CategoryThird> findCategoryThirdByCode(int categoryThirdCode) {
         return categoryThirdRepository.findById(categoryThirdCode);
     }
+
+    /* 카테고리(소) 신규 등록 */
     @Override
     @Transactional
     public ResponseCategoryPost postCategory(RequestCategoryPost request) {
@@ -55,6 +59,7 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
         return responseValue;
     }
 
+    /* 카테고리(소) 수정 */
     @Override
     @Transactional
     public ResponseCategoryPost updateCategory(int categoryThirdCode, RequestCategoryUpdate request) {
@@ -69,10 +74,18 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
         return responseValue;
     }
 
-    @Override
-    @Transactional
-    public CategoryThird deleteCategory(int categoryThirdCode) {
-        categoryThirdRepository.deleteById(categoryThirdCode);
-        return null;
-    }
+//    @Override
+//    @Transactional
+//    public CategoryThird deleteCategory(int categoryThirdCode) {
+//        System.out.println("serviceImpl 왔음.");
+//        CategoryThird categoryThird = categoryThirdRepository.findById(categoryThirdCode)
+//                .orElseThrow(() -> new EntityNotFoundException("category_third_code가 " + categoryThirdCode + "인 카테고리(소)가 없음."));
+//
+//        return null;
+//        Optional<Product> products = productRepository.findById(categoryThirdCode);
+//        if(products.isEmpty()) {
+//            categoryThirdRepository.deleteById(categoryThirdCode);
+//            return null;
+//        }
+//    }
 }
