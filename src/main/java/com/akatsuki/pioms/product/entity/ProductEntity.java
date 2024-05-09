@@ -7,8 +7,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @Getter
 @Setter
 @AllArgsConstructor
@@ -19,7 +17,7 @@ import java.time.LocalDateTime;
 public class ProductEntity {
     @Id
     @Column(name = "product_code")
-    private int productCocde;
+    private int productCode;
     @Column(name = "product_name")
     private String productName;
     @Column(name = "product_count")

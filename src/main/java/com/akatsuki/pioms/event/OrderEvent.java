@@ -14,6 +14,7 @@ public class OrderEvent{
         this.orderId = orderId;
         this.franchiseId = franchiseId;
     }
+
     public OrderEvent(OrderEntity order){
         this.order = order;
     }

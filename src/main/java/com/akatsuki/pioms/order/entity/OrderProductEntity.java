@@ -34,4 +34,14 @@ public class OrderProductEntity {
         this.order = order;
         this.product = product;
     }
+
+    public OrderProductEntity(OrderEntity order1, int productCode, int count) {
+        ProductEntity product1 = new ProductEntity();
+        product1.setProductCode(productCode);
+        this.product = product1;
+        this.requestProductCount = count;
+        this.requestProductGetCount = 0;
+        this.order = order1;
+
+    }
 }

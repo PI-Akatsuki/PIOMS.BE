@@ -5,4 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface OrderProductRepository  extends JpaRepository<OrderProductEntity, Integer> {
 
+    void deleteAllByOrderOrderCode(int orderCode);
 }

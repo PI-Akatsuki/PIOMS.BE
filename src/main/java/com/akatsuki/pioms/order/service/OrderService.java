@@ -1,22 +1,26 @@
 package com.akatsuki.pioms.order.service;
 
-import com.akatsuki.pioms.order.vo.OrderListVO;
-import com.akatsuki.pioms.order.vo.OrderVO;
-import com.akatsuki.pioms.order.vo.RequestOrderVO;
+import com.akatsuki.pioms.order.vo.*;
 
 public interface OrderService {
 
     OrderListVO getFranchisesOrderList(int adminId);
 
-    void postFranchiseOrder(RequestOrderVO order);
+    boolean postFranchiseOrder(int franchiseCode, RequestOrderVO order);
 
     OrderListVO getFranchisesUncheckedOrderList(int adminId);
 
-    String acceptOrder(int orderId);
+    String acceptOrder(int adminCOde,int orderId);
 
-    String denyOrder(int orderId,String denyMessage);
+    String denyOrder(int adminCode,int orderId,String denyMessage);
 
     OrderListVO getOrderList(int franchiseCode);
 
-    OrderVO getOrder(int orderCode);
+    OrderVO getOrder(int franchiseCode,int orderCode);
+
+    OrderVO getAdminOrder(int adminCode, int orderCode);
+
+    boolean putFranchiseOrder(int franchiseCode, RequestPutOrder order);
+
+    boolean putFranchiseOrderCheck(int franchiseCode, RequestPutOrderCheck requestPutOrder);
 }

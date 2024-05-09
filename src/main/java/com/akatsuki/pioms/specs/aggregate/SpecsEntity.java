@@ -1,4 +1,4 @@
-package com.akatsuki.pioms.specs.entity;
+package com.akatsuki.pioms.specs.aggregate;
 
 import com.akatsuki.pioms.franchise.entity.FranchiseEntity;
 import com.akatsuki.pioms.order.entity.OrderEntity;
