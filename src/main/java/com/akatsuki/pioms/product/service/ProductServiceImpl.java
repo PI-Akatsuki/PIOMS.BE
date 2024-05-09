@@ -48,7 +48,7 @@ public class ProductServiceImpl implements ProductService{
         categoryThird.setCategory_third_code(request.getCategory_third_code());
         product.setCategory_third_code(categoryThird);
 
-        product.setProduct_name(request.getProduct_name());
+        product.setProductName(request.getProduct_name());
         product.setProduct_price(request.getProduct_price());
         product.setProduct_enroll_date(request.getProduct_enroll_date());
         product.setProduct_content(request.getProduct_content());
@@ -66,8 +66,8 @@ public class ProductServiceImpl implements ProductService{
 
         ResponseProductPost responseValue =
                 new ResponseProductPost(
-                        savedProduct.getProduct_code(),
-                        savedProduct.getProduct_name(),
+                        savedProduct.getProductCode(),
+                        savedProduct.getProductName(),
                         savedProduct.getProduct_price(),
                         savedProduct.getProduct_enroll_date(),
                         savedProduct.getProduct_content(),

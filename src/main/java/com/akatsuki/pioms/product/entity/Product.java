@@ -20,10 +20,10 @@ public class Product {
     @Id
     @Column(name = "product_code")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int product_code;
+    private int productCode;
 
     @Column(name = "product_name")
-    private String product_name;
+    private String productName;
 
     @Column(name = "product_price")
     private int product_price;

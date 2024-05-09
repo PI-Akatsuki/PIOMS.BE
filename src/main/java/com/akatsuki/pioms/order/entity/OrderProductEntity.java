@@ -37,7 +37,7 @@ public class OrderProductEntity {
 
     public OrderProductEntity(OrderEntity order1, int productCode, int count) {
         ProductEntity product1 = new ProductEntity();
-        product1.setProductCocde(productCode);
+        product1.setProductCode(productCode);
         this.product = product1;
         this.requestProductCount = count;
         this.requestProductGetCount = 0;

@@ -2,10 +2,10 @@ package com.akatsuki.pioms.order.service;
 
 import com.akatsuki.pioms.event.OrderEvent;
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
-import com.akatsuki.pioms.exchange.entity.EXCHANGE_STATUS;
 import com.akatsuki.pioms.exchange.entity.ExchangeEntity;
 import com.akatsuki.pioms.exchange.service.ExchangeService;
 import com.akatsuki.pioms.franchise.entity.FranchiseEntity;
+import com.akatsuki.pioms.franchiseWarehouse.service.FranchiseWarehouseService;
 import com.akatsuki.pioms.invoice.service.InvoiceService;
 import com.akatsuki.pioms.order.entity.OrderEntity;
 import com.akatsuki.pioms.order.entity.OrderProductEntity;
@@ -31,15 +31,17 @@ public class OrderServiceImpl implements OrderService{
     OrderProductRepository orderProductRepository;
     ProductService productService;
     InvoiceService invoiceService;
+    FranchiseWarehouseService franchiseWarehouseService;
 
     @Autowired
-    public OrderServiceImpl(OrderRepository orderRepository, ApplicationEventPublisher publisher, ExchangeService exchangeService, OrderProductRepository orderProductRepository,ProductService productService, InvoiceService invoiceService) {
+    public OrderServiceImpl(OrderRepository orderRepository, ApplicationEventPublisher publisher, ExchangeService exchangeService, OrderProductRepository orderProductRepository,ProductService productService, InvoiceService invoiceService, FranchiseWarehouseService franchiseWarehouseService) {
         this.orderRepository = orderRepository;
         this.publisher = publisher;
         this.exchangeService = exchangeService;
         this.orderProductRepository = orderProductRepository;
         this.productService = productService;
         this.invoiceService = invoiceService;
+        this.franchiseWarehouseService = franchiseWarehouseService;
     }
 
 
@@ -212,11 +214,13 @@ public class OrderServiceImpl implements OrderService{
         // 인수 완료 표시
         order.setOrderStatus(true);
         order.getOrderProductList().forEach(orderProduct->{
-            if(requestPutOrder.getRequestProduct().get(orderProduct.getProduct().getProductCocde())!=null) {
-                int changeVal = requestPutOrder.getRequestProduct().get(orderProduct.getProduct().getProductCocde());
+            if(requestPutOrder.getRequestProduct().get(orderProduct.getProduct().getProductCode())!=null) {
+                int changeVal = requestPutOrder.getRequestProduct().get(orderProduct.getProduct().getProductCode());
                 System.out.println("changeVal = " + changeVal);
                 orderProduct.setRequestProductGetCount(changeVal);
-                
+                //검수 결과 가맹 창고에 저장
+                franchiseWarehouseService.saveProduct(orderProduct.getProduct().getProductCode(), changeVal, orderProduct.getOrder().getFranchise().getFranchiseCode());
+
                 orderProductRepository.save(orderProduct);
             }
         });
