@@ -11,10 +11,7 @@ import com.akatsuki.pioms.order.entity.OrderProductEntity;
 import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
 import com.akatsuki.pioms.order.repository.OrderProductRepository;
 import com.akatsuki.pioms.order.repository.OrderRepository;
-import com.akatsuki.pioms.order.vo.OrderListVO;
-import com.akatsuki.pioms.order.vo.OrderVO;
-import com.akatsuki.pioms.order.vo.RequestOrderVO;
-import com.akatsuki.pioms.order.vo.RequestPutOrder;
+import com.akatsuki.pioms.order.vo.*;
 import com.akatsuki.pioms.product.entity.ProductEntity;
 import com.akatsuki.pioms.product.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -198,6 +195,29 @@ public class OrderServiceImpl implements OrderService{
         });
         System.out.println(deletedorder.getOrderProductList());
         orderRepository.save(deletedorder);
+        return true;
+    }
+
+    @Override
+    public boolean putFranchiseOrderCheck(int franchiseCode, RequestPutOrderCheck requestPutOrder) {
+        OrderEntity order = orderRepository.findById(requestPutOrder.getOrderCode()).orElseThrow(IllegalArgumentException::new);
+        System.out.println("requestPutOrder = " + requestPutOrder);
+        if(franchiseCode != order.getFranchise().getFranchiseCode()){
+            System.out.println("franchiseCode is not equal");
+            return false;
+        }
+        // 인수 완료 표시
+        order.setOrderStatus(true);
+
+        order.getOrderProductList().forEach(orderProduct->{
+            if(requestPutOrder.getRequestProduct().get(orderProduct.getProduct().getProductCocde())!=null) {
+                int changeVal = requestPutOrder.getRequestProduct().get(orderProduct.getProduct().getProductCocde());
+                System.out.println("changeVal = " + changeVal);
+                orderProduct.setRequestProductGetCount(changeVal);
+                orderProductRepository.save(orderProduct);
+            }
+        });
+
         return true;
     }
 }
