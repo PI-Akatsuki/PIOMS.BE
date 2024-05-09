@@ -17,6 +17,7 @@ import java.util.List;
 public class FranchiseWarehouse {
     @Id
     @Column(name = "franchise_warehouse_code")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int franchiseWarehouseCode;
     @Column(name = "franchise_warehouse_total")
     private int franchiseWarehouseTotal;

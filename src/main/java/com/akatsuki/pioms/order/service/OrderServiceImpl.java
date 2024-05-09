@@ -84,6 +84,7 @@ public class OrderServiceImpl implements OrderService{
             order.setOrderCondition(ORDER_CONDITION.승인완료);
 
             findExchange(order);
+            System.out.println("order = " + order);
             orderRepository.save(order);
             publisher.publishEvent(new OrderEvent(order));
         }catch (Exception e){
@@ -204,6 +205,7 @@ public class OrderServiceImpl implements OrderService{
     }
 
     @Override
+    @Transactional
     public boolean putFranchiseOrderCheck(int franchiseCode, RequestPutOrderCheck requestPutOrder) {
         OrderEntity order = orderRepository.findById(requestPutOrder.getOrderCode()).orElseThrow(IllegalArgumentException::new);
         System.out.println("requestPutOrder = " + requestPutOrder);
@@ -218,6 +220,7 @@ public class OrderServiceImpl implements OrderService{
                 int changeVal = requestPutOrder.getRequestProduct().get(orderProduct.getProduct().getProductCode());
                 System.out.println("changeVal = " + changeVal);
                 orderProduct.setRequestProductGetCount(changeVal);
+                System.out.println("orderProduct = " + orderProduct);
                 //검수 결과 가맹 창고에 저장
                 franchiseWarehouseService.saveProduct(orderProduct.getProduct().getProductCode(), changeVal, orderProduct.getOrder().getFranchise().getFranchiseCode());
 

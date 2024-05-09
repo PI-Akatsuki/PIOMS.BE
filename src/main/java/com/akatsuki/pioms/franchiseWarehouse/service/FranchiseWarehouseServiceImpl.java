@@ -4,6 +4,7 @@ import com.akatsuki.pioms.franchiseWarehouse.aggregate.FranchiseWarehouse;
 import com.akatsuki.pioms.franchiseWarehouse.repository.FranchiseWarehouseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
@@ -14,6 +15,7 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
         this.franchiseWarehouseRepository = franchiseWarehouseRepository;
     }
 
+    @Transactional
     public void saveProduct(int productCode, int changeVal, int franchiseCode){
         FranchiseWarehouse franchiseWarehouse
                 = franchiseWarehouseRepository.findByProductProductCodeAndFranchiseCode(productCode,franchiseCode);
@@ -23,8 +25,8 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
         franchiseWarehouse.setFranchiseWarehouseTotal(franchiseWarehouse.getFranchiseWarehouseTotal()+changeVal);
         franchiseWarehouse.setFranchiseWarehouseCount(franchiseWarehouse.getFranchiseWarehouseCount()+changeVal);
         franchiseWarehouse.setFranchiseWarehouseEnable(franchiseWarehouse.getFranchiseWarehouseEnable()+changeVal);
-        franchiseWarehouseRepository.save(franchiseWarehouse);
         System.out.println("franchiseWarehouse = " + franchiseWarehouse);
+        franchiseWarehouseRepository.save(franchiseWarehouse);
     }
 
 }
