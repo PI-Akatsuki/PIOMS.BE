@@ -8,10 +8,16 @@ import java.util.Optional;
 
 public interface AdminService {
 
+    // 전체 목록 조회
     List<Admin> findAdminList();
 
+    // 상세 조회
     Optional<Admin> findAdminById(int adminCode);
 
+    // 관리자 등록
+    ResponseEntity<String> saveAdmin(Admin admin, int requestorAdminCode);
+
+    // 비활성화(삭제)
     ResponseEntity<String> deleteAdmin(int adminCode);
 
 }

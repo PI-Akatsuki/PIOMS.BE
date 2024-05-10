@@ -14,12 +14,12 @@ import java.util.Optional;
 @RestController
 @RequestMapping("admin")
 @Tag(name = "본사 관리자", description = "Company admin")
-public class AdminController {
+public class AdminInfoController {
 
     private final AdminService adminService;
 
     @Autowired
-    public AdminController(AdminService adminService) {
+    public AdminInfoController(AdminService adminService) {
         this.adminService = adminService;
     }
 
@@ -41,6 +41,18 @@ public class AdminController {
     }
 
     // 관리자 등록
+    @Operation(summary = "본사 관리자 등록", description = "본사 관리자를 등록합니다.")
+    @PostMapping("/register")
+    public ResponseEntity<String> registerAdmin(
+            // Root관리자만 등록이 가능
+            @RequestBody Admin admin,
+            @RequestParam int requestorAdminCode
+    ) {
+        return adminService.saveAdmin(admin, requestorAdminCode);
+    }
+
+
+
     // 관리자 수정
     // 관리자 비활성화(삭제)
     @Operation(summary = "본사 관리자 삭제", description = "본사 관리자를 삭제합니다.")
