@@ -1,7 +1,7 @@
 package com.akatsuki.pioms.admin.controller;
 
 import com.akatsuki.pioms.admin.aggregate.Admin;
-import com.akatsuki.pioms.admin.service.AdminService;
+import com.akatsuki.pioms.admin.service.AdminInfoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +16,10 @@ import java.util.Optional;
 @Tag(name = "본사 관리자", description = "Company admin")
 public class AdminInfoController {
 
-    private final AdminService adminService;
+    private final AdminInfoService adminService;
 
     @Autowired
-    public AdminInfoController(AdminService adminService) {
+    public AdminInfoController(AdminInfoService adminService) {
         this.adminService = adminService;
     }
 
@@ -65,8 +65,11 @@ public class AdminInfoController {
     // 관리자 비활성화(삭제)
     @Operation(summary = "본사 관리자 삭제", description = "본사 관리자를 삭제합니다.")
     @DeleteMapping("/delete/{adminCode}")
-    public ResponseEntity<String> deleteAdmin(@PathVariable int adminCode) {
-        return adminService.deleteAdmin(adminCode);
+    public ResponseEntity<String> deleteAdmin(
+            @PathVariable int adminCode,
+            @RequestParam int requestorAdminCode
+    ) {
+        return adminService.deleteAdmin(adminCode, requestorAdminCode);
     }
 
 }

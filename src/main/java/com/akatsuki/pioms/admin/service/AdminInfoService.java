@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 import java.util.Optional;
 
-public interface AdminService {
+public interface AdminInfoService {
 
     // 전체 목록 조회
     List<Admin> findAdminList();
@@ -21,6 +21,6 @@ public interface AdminService {
     ResponseEntity<String> updateAdminInfo(int adminCode, Admin updatedAdmin);
 
     // 비활성화(삭제)
-    ResponseEntity<String> deleteAdmin(int adminCode);
+    ResponseEntity<String> deleteAdmin(int adminCode, int requestorAdminCode);
 
 }

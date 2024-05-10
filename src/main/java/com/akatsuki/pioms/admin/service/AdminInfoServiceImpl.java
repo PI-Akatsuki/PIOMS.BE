@@ -14,11 +14,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class AdminServiceImpl implements AdminService {
+public class AdminInfoServiceImpl implements AdminInfoService {
     private final AdminRepository adminRepository;
 
     @Autowired
-    public AdminServiceImpl(AdminRepository adminRepository) {
+    public AdminInfoServiceImpl(AdminRepository adminRepository) {
         this.adminRepository = adminRepository;
     }
 
@@ -101,10 +101,16 @@ public class AdminServiceImpl implements AdminService {
     // 비활성화
     @Override
     @Transactional
-    public ResponseEntity<String> deleteAdmin(int adminCode) {
+    public ResponseEntity<String> deleteAdmin(int adminCode, int requestorAdminCode) {
         // adminCode가 1인 경우 비활성화 방지
         if (adminCode == 1) {
             return ResponseEntity.badRequest().body("adminCode 1번은 비활성화(삭제)할 수 없습니다.");
+        }
+
+        // 루트 관리자 확인
+        Optional<Admin> requestorAdmin = adminRepository.findById(requestorAdminCode);
+        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
+            return ResponseEntity.status(403).body("관리자 비활성화(삭제)는 루트 관리자만 가능합니다.");
         }
 
         Optional<Admin> adminOptional = adminRepository.findById(adminCode);
