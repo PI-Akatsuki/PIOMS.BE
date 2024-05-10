@@ -49,4 +49,10 @@ public class Order {
     @OneToMany(mappedBy = "order")
     private List<OrderProduct> OrderProductList;
 
+    public Order(ORDER_CONDITION orderCondition, boolean orderStatus, Franchise franchise) {
+        this.orderDate = LocalDateTime.now();
+        this.orderCondition = orderCondition;
+        this.orderStatus = orderStatus;
+        this.franchise = franchise;
+    }
 }

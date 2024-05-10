@@ -35,7 +35,10 @@ public class OrderServiceImpl implements OrderService{
 
 
     @Autowired
-    public OrderServiceImpl(OrderRepository orderRepository, ApplicationEventPublisher publisher, ExchangeService exchangeService, OrderProductRepository orderProductRepository,ProductService productService, InvoiceService invoiceService, FranchiseWarehouseService franchiseWarehouseService) {
+    public OrderServiceImpl(OrderRepository orderRepository, ApplicationEventPublisher publisher,
+                            ExchangeService exchangeService, OrderProductRepository orderProductRepository,
+                            ProductService productService, InvoiceService invoiceService,
+                            FranchiseWarehouseService franchiseWarehouseService) {
         this.orderRepository = orderRepository;
         this.publisher = publisher;
         this.exchangeService = exchangeService;
@@ -83,7 +86,6 @@ public class OrderServiceImpl implements OrderService{
             return "This order is unavailable to accept. This order's condition is '" + order.getOrderCondition().name() + "', not '승인대기'. ";
 
         try {
-
             if(!checkProductCnt(order)) {
                return "상품 제고가 부족하여 처리할 수 없습니다!";
             }
@@ -111,12 +113,11 @@ public class OrderServiceImpl implements OrderService{
     }
 
     private boolean checkProductCnt(Order order) {
-        // 상품 제고 체크
+        // 해당 상품의 수량이 본사 재고를 초과하는지 검사
         for (int i = 0; i < order.getOrderProductList().size(); i++) {
             if(order.getOrderProductList().get(i).getRequestProductCount() > order.getOrderProductList().get(i).getProduct().getProductCount())
                 return false;
         }
-
         return true;
     }
 
@@ -143,13 +144,13 @@ public class OrderServiceImpl implements OrderService{
             return false;
         }
         // 발주 생성
-        Order order = new Order();
-        order.setOrderDate(LocalDateTime.now());
-        order.setOrderCondition(ORDER_CONDITION.승인대기);
-        order.setOrderStatus(false);
+//        order.setOrderDate(LocalDateTime.now());
+//        order.setOrderCondition(ORDER_CONDITION.승인대기);
+//        order.setOrderStatus(false);
         Franchise franchise = new Franchise();
         franchise.setFranchiseCode(requestOrder.getFranchiseCode());
-        order.setFranchise(franchise)
+//        order.setFranchise(franchise)
+        Order order = new Order(ORDER_CONDITION.승인대기,false,franchise);
         ;
         order= orderRepository.save(order);
 
