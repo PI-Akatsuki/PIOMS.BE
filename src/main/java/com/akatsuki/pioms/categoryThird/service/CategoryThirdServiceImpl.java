@@ -48,8 +48,8 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
 
         // CategorySecond 엔티티를 참조하는 필드에 해당 CategorySecond 엔티티를 설정
         CategorySecond categorySecond = new CategorySecond();
-        categorySecond.setCategory_second_code(request.getCategorySecondCode());
-        categoryThird.setCategory_second_code(categorySecond);
+        categorySecond.setCategorySecondCode(request.getCategorySecondCode());
+        categoryThird.setCategorySecondCode(categorySecond);
 
         categoryThird.setCategoryThirdName(request.getCategoryThirdName());
         categoryThird.setCategoryThirdEnrollDate(formattedDateTime);

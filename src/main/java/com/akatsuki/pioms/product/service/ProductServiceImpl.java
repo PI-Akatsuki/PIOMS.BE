@@ -18,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -53,24 +55,26 @@ public class ProductServiceImpl implements ProductService{
     @Transactional
     public ResponseProduct postProduct(RequestProduct request) {
         Product product = new Product();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String formattedDateTime = LocalDateTime.now().format(formatter);
 
         CategoryThird categoryThird = new CategoryThird();
-        categoryThird.setCategoryThirdCode(request.getCategory_third_code());
+        categoryThird.setCategoryThirdCode(request.getCategoryThirdCode());
         product.setCategoryThird(categoryThird);
 
-        product.setProductName(request.getProduct_name());
-        product.setProductPrice(request.getProduct_price());
-        product.setProductEnrollDate(request.getProduct_enroll_date());
-        product.setProductContent(request.getProduct_content());
-        product.setProductColor(request.getProduct_color());
-        product.setProductSize(request.getProduct_size());
-        product.setProductGender(request.getProduct_gender());
-        product.setProductTotalCount(request.getProduct_total_count());
-        product.setProductStatus(request.getProduct_status());
-        product.setProductExposureStatus(request.isProduct_exposure_status());
-        product.setProductNoticeCount(request.getProduct_notice_count());
-        product.setProductDiscount(request.getProduct_dis_count());
-        product.setProductCount(request.getProduct_count());
+        product.setProductName(request.getProductName());
+        product.setProductPrice(request.getProductPrice());
+        product.setProductContent(request.getProductContent());
+        product.setProductEnrollDate(formattedDateTime);
+        product.setProductColor(request.getProductColor());
+        product.setProductSize(request.getProductSize());
+        product.setProductGender(request.getProductGender());
+        product.setProductTotalCount(request.getProductTotalCount());
+        product.setProductStatus(request.getProductStatus());
+        product.setProductExposureStatus(request.isProductExposureStatus());
+        product.setProductNoticeCount(request.getProductNoticeCount());
+        product.setProductDiscount(request.getProductDisCount());
+        product.setProductCount(request.getProductCount());
 
         Product updatedProduct = productRepository.save(product);
 
@@ -106,23 +110,26 @@ public class ProductServiceImpl implements ProductService{
         Product product = productRepository.findById(productCode)
                 .orElseThrow(() -> new EntityNotFoundException("Product not found"));
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String formattedDateTime = LocalDateTime.now().format(formatter);
+
         CategoryThird categoryThird = new CategoryThird();
-        categoryThird.setCategoryThirdCode(request.getCategory_third_code());
+        categoryThird.setCategoryThirdCode(request.getCategoryThirdCode());
         product.setCategoryThird(categoryThird);
 
-        product.setProductName(request.getProduct_name());
-        product.setProductPrice(request.getProduct_price());
-        product.setProductEnrollDate(request.getProduct_enroll_date());
-        product.setProductContent(request.getProduct_content());
-        product.setProductColor(request.getProduct_color());
-        product.setProductSize(request.getProduct_size());
-        product.setProductGender(request.getProduct_gender());
-        product.setProductTotalCount(request.getProduct_total_count());
-        product.setProductStatus(request.getProduct_status());
-        product.setProductExposureStatus(request.isProduct_exposure_status());
-        product.setProductNoticeCount(request.getProduct_notice_count());
-        product.setProductDiscount(request.getProduct_dis_count());
-        product.setProductCount(request.getProduct_count());
+        product.setProductName(request.getProductName());
+        product.setProductPrice(request.getProductPrice());
+        product.setProductContent(request.getProductContent());
+        product.setProductUpdateDate(formattedDateTime);
+        product.setProductColor(request.getProductColor());
+        product.setProductSize(request.getProductSize());
+        product.setProductGender(request.getProductGender());
+        product.setProductTotalCount(request.getProductTotalCount());
+        product.setProductStatus(request.getProductStatus());
+        product.setProductExposureStatus(request.isProductExposureStatus());
+        product.setProductNoticeCount(request.getProductNoticeCount());
+        product.setProductDiscount(request.getProductDisCount());
+        product.setProductCount(request.getProductCount());
         Product savedProduct = productRepository.save(product);
         Product updatedProduct = productRepository.save(product);
 
@@ -132,6 +139,7 @@ public class ProductServiceImpl implements ProductService{
                         savedProduct.getProductName(),
                         updatedProduct.getProductPrice(),
                         updatedProduct.getProductEnrollDate(),
+                        updatedProduct.getProductUpdateDate(),
                         updatedProduct.getProductContent(),
                         updatedProduct.getProductColor(),
                         updatedProduct.getProductSize(),
