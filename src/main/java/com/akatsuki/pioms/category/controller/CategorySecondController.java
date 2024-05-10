@@ -2,14 +2,15 @@ package com.akatsuki.pioms.category.controller;
 
 import com.akatsuki.pioms.category.entity.CategorySecond;
 import com.akatsuki.pioms.category.service.CategorySecondService;
+import com.akatsuki.pioms.category.vo.RequestCategorySecondPost;
+import com.akatsuki.pioms.category.vo.RequestCategorySecondUpdate;
+import com.akatsuki.pioms.category.vo.ResponseCategorySecondPost;
+import com.akatsuki.pioms.category.vo.ResponseCategorySecondUpdate;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -36,6 +37,18 @@ public class CategorySecondController {
     public ResponseEntity<Optional<CategorySecond>> getCategorySecondByCode(@PathVariable int categorySecondCode) {
         Optional<CategorySecond> categorySecond = categorySecondService.findCategorySecondByCode(categorySecondCode);
         return ResponseEntity.ok().body(categorySecond);
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<ResponseCategorySecondPost> postCategorySecond(@RequestBody RequestCategorySecondPost request) {
+        ResponseCategorySecondPost response = categorySecondService.postCategorySecond(request);
+        return ResponseEntity.ok().body(response);
+    }
+
+    @PostMapping("/update/{categorySecondCode}")
+    public ResponseEntity<ResponseCategorySecondUpdate> updateCategorySecond(@PathVariable int categorySecondCode, @RequestBody RequestCategorySecondUpdate request) {
+        ResponseCategorySecondUpdate response = categorySecondService.updateCategorySecond(categorySecondCode, request);
+        return ResponseEntity.ok().body(response);
     }
 
 }
