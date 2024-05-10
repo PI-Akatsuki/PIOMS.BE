@@ -1,4 +1,4 @@
-package com.akatsuki.pioms.ask.entity;
+package com.akatsuki.pioms.frowner.aggregate;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -13,7 +13,7 @@ import java.util.Date;
 @Getter
 @Setter
 @ToString
-public class FranchiseOwnerEntity {
+public class FranchiseOwner {
     @Id
     @Column(name = "franchise_owner_code")
     private int franchiseOwnerCode;

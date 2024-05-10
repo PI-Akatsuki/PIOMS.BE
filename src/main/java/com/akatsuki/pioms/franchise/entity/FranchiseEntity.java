@@ -3,6 +3,7 @@ package com.akatsuki.pioms.franchise.entity;
 
 import com.akatsuki.pioms.admin.aggregate.Admin;
 import com.akatsuki.pioms.franchise.etc.DELIVERY_DATE;
+import com.akatsuki.pioms.frowner.aggregate.FranchiseOwner;
 import jakarta.persistence.*;
 import lombok.*;
 

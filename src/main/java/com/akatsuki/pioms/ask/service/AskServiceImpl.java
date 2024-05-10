@@ -6,13 +6,14 @@ import com.akatsuki.pioms.ask.dto.AskCreateDTO;
 import com.akatsuki.pioms.ask.dto.AskUpdateDTO;
 
 import com.akatsuki.pioms.ask.entity.AskEntity;
-import com.akatsuki.pioms.ask.entity.FranchiseOwnerEntity;
+
 import com.akatsuki.pioms.ask.etc.ASK_STATUS;
 
 import com.akatsuki.pioms.ask.repository.AskRepository;
-import com.akatsuki.pioms.ask.repository.FranchiseOwnerRepository;
 import com.akatsuki.pioms.ask.vo.AskListVO;
 import com.akatsuki.pioms.ask.vo.AskVO;
+import com.akatsuki.pioms.frowner.aggregate.FranchiseOwner;
+import com.akatsuki.pioms.frowner.repository.FranchiseOwnerRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -97,7 +98,7 @@ public class AskServiceImpl implements AskService{
         askEntity.setAskTitle(askDTO.getTitle());
         askEntity.setAskContent(askDTO.getContent());
 
-        FranchiseOwnerEntity owner = franchiseOwnerRepository.findById(askDTO.getFranchiseOwnerCode())
+        FranchiseOwner owner = franchiseOwnerRepository.findById(askDTO.getFranchiseOwnerCode())
                 .orElseThrow(() -> new RuntimeException("Franchise owner not found"));
         askEntity.setFranchiseOwner(owner);
 
