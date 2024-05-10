@@ -1,6 +1,6 @@
-package com.akatsuki.pioms.order.entity;
+package com.akatsuki.pioms.order.aggregate;
 
-import com.akatsuki.pioms.exchange.entity.ExchangeEntity;
+import com.akatsuki.pioms.exchange.aggregate.ExchangeEntity;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
 import jakarta.persistence.*;

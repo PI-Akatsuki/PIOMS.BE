@@ -1,6 +1,5 @@
-package com.akatsuki.pioms.invoice.vo;
+package com.akatsuki.pioms.invoice.aggregate;
 
-import com.akatsuki.pioms.invoice.entity.InvoiceEntity;
 import com.akatsuki.pioms.invoice.etc.DELIVERY_STATUS;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

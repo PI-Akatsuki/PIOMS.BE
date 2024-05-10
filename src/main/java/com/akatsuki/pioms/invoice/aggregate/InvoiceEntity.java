@@ -1,8 +1,8 @@
-package com.akatsuki.pioms.invoice.entity;
+package com.akatsuki.pioms.invoice.aggregate;
 
 
 import com.akatsuki.pioms.invoice.etc.DELIVERY_STATUS;
-import com.akatsuki.pioms.order.entity.Order;
+import com.akatsuki.pioms.order.aggregate.Order;
 import jakarta.persistence.*;
 import lombok.*;
 

@@ -2,33 +2,32 @@ package com.akatsuki.pioms.order.service;
 
 import com.akatsuki.pioms.event.OrderEvent;
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
-import com.akatsuki.pioms.exchange.entity.ExchangeEntity;
+import com.akatsuki.pioms.exchange.aggregate.ExchangeEntity;
 import com.akatsuki.pioms.exchange.service.ExchangeService;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import com.akatsuki.pioms.frwarehouse.service.FranchiseWarehouseService;
 import com.akatsuki.pioms.invoice.service.InvoiceService;
-import com.akatsuki.pioms.order.entity.Order;
-import com.akatsuki.pioms.order.entity.OrderProduct;
+import com.akatsuki.pioms.order.aggregate.*;
 import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
 import com.akatsuki.pioms.order.repository.OrderProductRepository;
 import com.akatsuki.pioms.order.repository.OrderRepository;
-import com.akatsuki.pioms.order.vo.*;
 import com.akatsuki.pioms.product.aggregate.Product;
 import com.akatsuki.pioms.product.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.time.LocalDateTime;
+
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class OrderServiceImpl implements OrderService{
     OrderRepository orderRepository;
-    ApplicationEventPublisher publisher;
-    ExchangeService exchangeService;
     OrderProductRepository orderProductRepository;
+    ApplicationEventPublisher publisher;
+
+    ExchangeService exchangeService;
     ProductService productService;
     InvoiceService invoiceService;
     FranchiseWarehouseService franchiseWarehouseService;
@@ -89,7 +88,6 @@ public class OrderServiceImpl implements OrderService{
             if(!checkProductCnt(order)) {
                return "상품 제고가 부족하여 처리할 수 없습니다!";
             }
-
             productService.exportProducts(order);
             order.setOrderCondition(ORDER_CONDITION.승인완료);
 
@@ -106,7 +104,7 @@ public class OrderServiceImpl implements OrderService{
             publisher.publishEvent(new OrderEvent(order));
 
         }catch (Exception e){
-            System.out.println("exception occuered");
+            System.out.println("exception occuered: check accept order service...");
         }
 
         return "This order is accepted";
@@ -138,20 +136,15 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     @Transactional
-    public boolean postFranchiseOrder(int franchiseCode,RequestOrderVO requestOrder){
+    public boolean postFranchiseOrder(int franchiseCode, RequestOrderVO requestOrder){
         if(franchiseCode != requestOrder.getFranchiseCode()){
             System.out.println("가맹점 코드, 주문의 가맹점 코드 불일치! ");
             return false;
         }
         // 발주 생성
-//        order.setOrderDate(LocalDateTime.now());
-//        order.setOrderCondition(ORDER_CONDITION.승인대기);
-//        order.setOrderStatus(false);
         Franchise franchise = new Franchise();
         franchise.setFranchiseCode(requestOrder.getFranchiseCode());
-//        order.setFranchise(franchise)
         Order order = new Order(ORDER_CONDITION.승인대기,false,franchise);
-        ;
         order= orderRepository.save(order);
 
         int orderId = order.getOrderCode();
@@ -243,7 +236,7 @@ public class OrderServiceImpl implements OrderService{
                 //검수 결과 가맹 창고에 저장
                 franchiseWarehouseService.saveProduct(orderProduct.getProduct().getProductCode(), changeVal, orderProduct.getOrder().getFranchise().getFranchiseCode());
                 if(changeVal != requestVal){
-                    productService.editUncorrectCount(orderProduct.getProduct(), requestVal-changeVal);
+                    productService.editIncorrectCount(orderProduct.getProduct(), requestVal-changeVal);
                 }
                 orderProductRepository.save(orderProduct);
             }

@@ -2,12 +2,12 @@ package com.akatsuki.pioms.invoice.service;
 
 import com.akatsuki.pioms.event.OrderEvent;
 import com.akatsuki.pioms.franchise.aggregate.DELIVERY_DATE;
-import com.akatsuki.pioms.invoice.entity.InvoiceEntity;
+import com.akatsuki.pioms.invoice.aggregate.InvoiceEntity;
 import com.akatsuki.pioms.invoice.etc.DELIVERY_STATUS;
 import com.akatsuki.pioms.invoice.repository.InvoiceRepository;
-import com.akatsuki.pioms.invoice.vo.ResponseInvoice;
-import com.akatsuki.pioms.invoice.vo.ResponseInvoiceList;
-import com.akatsuki.pioms.order.entity.Order;
+import com.akatsuki.pioms.invoice.aggregate.ResponseInvoice;
+import com.akatsuki.pioms.invoice.aggregate.ResponseInvoiceList;
+import com.akatsuki.pioms.order.aggregate.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;

@@ -1,4 +1,4 @@
-package com.akatsuki.pioms.invoice.vo;
+package com.akatsuki.pioms.invoice.aggregate;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

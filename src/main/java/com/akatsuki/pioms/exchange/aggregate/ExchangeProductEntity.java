@@ -1,8 +1,7 @@
-package com.akatsuki.pioms.exchange.entity;
+package com.akatsuki.pioms.exchange.aggregate;
 
 
 
-import com.akatsuki.pioms.exchange.vo.ExchangeProductVO;
 import com.akatsuki.pioms.product.aggregate.Product;
 
 import jakarta.persistence.*;

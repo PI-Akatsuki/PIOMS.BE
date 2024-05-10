@@ -1,8 +1,10 @@
 package com.akatsuki.pioms.frwarehouse.service;
 
 
-import com.akatsuki.pioms.exchange.entity.*;
-import com.akatsuki.pioms.exchange.vo.ExchangeProductVO;
+import com.akatsuki.pioms.exchange.aggregate.ExchangeEntity;
+import com.akatsuki.pioms.exchange.aggregate.ExchangeProductEntity;
+import com.akatsuki.pioms.exchange.aggregate.RequestExchange;
+import com.akatsuki.pioms.exchange.aggregate.ExchangeProductVO;
 import com.akatsuki.pioms.frwarehouse.aggregate.FranchiseWarehouse;
 import com.akatsuki.pioms.frwarehouse.repository.FranchiseWarehouseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +16,7 @@ import java.util.List;
 
 @Service
 public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
-    private FranchiseWarehouseRepository franchiseWarehouseRepository;
+    private final FranchiseWarehouseRepository franchiseWarehouseRepository;
 
     @Autowired
     public FranchiseWarehouseServiceImpl(FranchiseWarehouseRepository franchiseWarehouseRepository) {
@@ -49,6 +51,7 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
     }
 
     @Override
+    @Transactional
     public boolean checkEnableToAddExchange(RequestExchange requestExchange) {
         System.out.println("checkEnableToAddExchange 발생");
 

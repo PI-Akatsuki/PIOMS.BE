@@ -1,8 +1,8 @@
 package com.akatsuki.pioms.invoice.service;
 
 import com.akatsuki.pioms.invoice.etc.DELIVERY_STATUS;
-import com.akatsuki.pioms.invoice.vo.ResponseInvoice;
-import com.akatsuki.pioms.invoice.vo.ResponseInvoiceList;
+import com.akatsuki.pioms.invoice.aggregate.ResponseInvoice;
+import com.akatsuki.pioms.invoice.aggregate.ResponseInvoiceList;
 
 public interface InvoiceService {
     ResponseInvoiceList getAllInvoiceList();
