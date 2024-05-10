@@ -2,7 +2,7 @@ package com.akatsuki.pioms.invoice.entity;
 
 
 import com.akatsuki.pioms.invoice.etc.DELIVERY_STATUS;
-import com.akatsuki.pioms.order.entity.OrderEntity;
+import com.akatsuki.pioms.order.entity.Order;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -34,6 +34,6 @@ public class InvoiceEntity {
 
     @JoinColumn(name = "request_code")
     @OneToOne
-    private OrderEntity order;
+    private Order order;
 
 }

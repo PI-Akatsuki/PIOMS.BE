@@ -33,6 +33,7 @@ public class ExchangeEntity {
     private Franchise franchise;
 
     @OneToMany(mappedBy = "exchange")
+    @ToString.Exclude
     List<ExchangeProductEntity> products;
 
 
@@ -42,4 +43,5 @@ public class ExchangeEntity {
         this.exchangeStatus = exchange.getExchangeStatus();
         this.franchise = exchange.getFranchise();
     }
+
 }

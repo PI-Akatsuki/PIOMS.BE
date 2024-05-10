@@ -1,7 +1,5 @@
 package com.akatsuki.pioms.invoice.vo;
 
-import com.akatsuki.pioms.order.entity.OrderProductEntity;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

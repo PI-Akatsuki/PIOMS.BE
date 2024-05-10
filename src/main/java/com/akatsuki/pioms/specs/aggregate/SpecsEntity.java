@@ -1,10 +1,10 @@
 package com.akatsuki.pioms.specs.aggregate;
 
+
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
-import com.akatsuki.pioms.order.entity.OrderEntity;
+import com.akatsuki.pioms.order.entity.Order;
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.time.LocalDateTime;
 
 @Getter
@@ -30,7 +30,7 @@ public class SpecsEntity {
 
     @JoinColumn(name = "request_code")
     @OneToOne
-    private OrderEntity order;
+    private Order order;
 
     public SpecsEntity(int orderId, int franchiseId) {
         this.specsDate = LocalDateTime.now();
@@ -38,7 +38,7 @@ public class SpecsEntity {
         this.franchise.setFranchiseCode(franchiseId);
     }
 
-    public SpecsEntity(OrderEntity orderEntity) {
+    public SpecsEntity(Order orderEntity) {
         this.specsDate = LocalDateTime.now();
         this.order=orderEntity;
         this.franchise = orderEntity.getFranchise();

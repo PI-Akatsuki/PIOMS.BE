@@ -8,4 +8,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface FranchiseWarehouseRepository extends JpaRepository<FranchiseWarehouse,Integer> {
     FranchiseWarehouse findByProductProductCodeAndFranchiseCode(int productCode, int franchiseCode);
+
+    FranchiseWarehouse findByProductProductCode(int productCode);
+
 }

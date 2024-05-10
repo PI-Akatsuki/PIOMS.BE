@@ -15,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-public class OrderEntity {
+public class Order {
 
     @Id
     @Column(name = "request_code")
@@ -47,6 +47,6 @@ public class OrderEntity {
     private ExchangeEntity exchange;
 
     @OneToMany(mappedBy = "order")
-    private List<OrderProductEntity> OrderProductList;
+    private List<OrderProduct> OrderProductList;
 
 }

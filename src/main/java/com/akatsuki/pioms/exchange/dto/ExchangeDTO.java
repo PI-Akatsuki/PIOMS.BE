@@ -1,5 +1,6 @@
 package com.akatsuki.pioms.exchange.dto;
 
+import com.akatsuki.pioms.exchange.entity.EXCHANGE_PRODUCT_STATUS;
 import com.akatsuki.pioms.exchange.entity.EXCHANGE_STATUS;
 import com.akatsuki.pioms.exchange.entity.ExchangeEntity;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
@@ -11,6 +12,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Getter
@@ -27,10 +30,16 @@ public class ExchangeDTO {
 
     private Franchise franchise;
 
+    private List<ExchangeProduct> exchangeProducts;
+
     public ExchangeDTO(ExchangeEntity exchange) {
         this.exchangeCode = exchange.getExchangeCode();
         this.exchangeDate = exchange.getExchangeDate();
         this.exchangeStatus = exchange.getExchangeStatus();
         this.franchise = exchange.getFranchise();
+        this.exchangeProducts = new ArrayList<>();
+        exchange.getProducts().forEach(exchangeProductEntity -> {
+            exchangeProducts.add(new ExchangeProduct(exchangeProductEntity));
+        });
     }
 }
