@@ -1,11 +1,9 @@
 package com.akatsuki.pioms.franchiseWarehouse.aggregate;
 
 
-import com.akatsuki.pioms.product.entity.Product;
+import com.akatsuki.pioms.product.aggregate.Product;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor

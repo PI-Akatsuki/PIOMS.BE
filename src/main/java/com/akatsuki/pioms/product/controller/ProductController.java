@@ -1,9 +1,10 @@
 package com.akatsuki.pioms.product.controller;
 
-import com.akatsuki.pioms.product.entity.Product;
+import com.akatsuki.pioms.product.aggregate.Product;
+import com.akatsuki.pioms.product.aggregate.ResponseProducts;
 import com.akatsuki.pioms.product.service.ProductService;
-import com.akatsuki.pioms.product.vo.RequestProductPost;
-import com.akatsuki.pioms.product.vo.ResponseProductPost;
+import com.akatsuki.pioms.product.aggregate.RequestProduct;
+import com.akatsuki.pioms.product.aggregate.ResponseProduct;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,8 +41,8 @@ public class ProductController {
 
     @PostMapping("/create")
     @Operation(summary = "상품 등록")
-    public ResponseEntity<ResponseProductPost> postProduct(@RequestBody RequestProductPost request) {
-        ResponseProductPost response = productService.postProduct(request);
+    public ResponseEntity<ResponseProduct> postProduct(@RequestBody RequestProduct request) {
+        ResponseProduct response = productService.postProduct(request);
         return ResponseEntity.ok().body(response);
     }
 
@@ -54,15 +55,13 @@ public class ProductController {
 
     @PostMapping("/update/{productCode}")
     @Operation(summary = "상품 정보 수정", description = "상품 수정 기능")
-    public ResponseEntity<ResponseProductPost> updateProduct(@PathVariable int productCode, @RequestBody RequestProductPost request) {
-        ResponseProductPost response = productService.updateProduct(productCode, request);
+    public ResponseEntity<ResponseProduct> updateProduct(@PathVariable int productCode, @RequestBody RequestProduct request) {
+        ResponseProduct response = productService.updateProduct(productCode, request);
         return ResponseEntity.ok().body(response);
     }
 
-//    @GetMapping("/category/{categoryThirdCode}")
-//    @Operation(summary = "카테고리(소) 코드로 상품 목록 조회")
-//    public ResponseEntity<RequestProductPost> getCategoryProduct(@PathVariable Integer categoryThirdCode) {
-//        RequestProductPost requestProduct = productService.getProductsByCategoryThirdCode(categoryThirdCode);
-//        return ResponseEntity.ok().body(requestProduct);
-//    }
+    @GetMapping("/category/{categoryThirdCode}")
+    public ResponseEntity<List<ResponseProducts>> getCategoryProductList(@PathVariable int categoryThirdCode) {
+        return ResponseEntity.ok(productService.getCategoryProductList(categoryThirdCode));
+    }
 }
