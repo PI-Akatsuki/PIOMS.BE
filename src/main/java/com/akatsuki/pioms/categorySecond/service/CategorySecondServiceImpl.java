@@ -3,6 +3,8 @@ package com.akatsuki.pioms.categorySecond.service;
 import com.akatsuki.pioms.categoryFirst.aggregate.CategoryFirst;
 import com.akatsuki.pioms.categorySecond.aggregate.*;
 import com.akatsuki.pioms.categorySecond.repository.CategorySecondRepository;
+import com.akatsuki.pioms.log.etc.LogStatus;
+import com.akatsuki.pioms.log.service.LogService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,9 +20,12 @@ public class CategorySecondServiceImpl implements CategorySecondService{
 
     private final CategorySecondRepository categorySecondRepository;
 
+    LogService logService;
+
     @Autowired
-    public CategorySecondServiceImpl(CategorySecondRepository categorySecondRepository) {
+    public CategorySecondServiceImpl(CategorySecondRepository categorySecondRepository,LogService logService) {
         this.categorySecondRepository = categorySecondRepository;
+        this.logService = logService;
     }
 
     @Override
@@ -55,6 +60,7 @@ public class CategorySecondServiceImpl implements CategorySecondService{
         CategorySecond savedCategorySecond = categorySecondRepository.save(categorySecond);
 
         ResponseCategorySecondPost responseValue = new ResponseCategorySecondPost(savedCategorySecond.getCategorySecondCode(), savedCategorySecond.getCategorySecondName(), savedCategorySecond.getCategorySecondEnrollDate());
+        logService.saveLog("root", LogStatus.등록,savedCategorySecond.getCategorySecondName(),"CategorySecond");
         return responseValue;
     }
 
@@ -73,6 +79,7 @@ public class CategorySecondServiceImpl implements CategorySecondService{
         categorySecond.setCategorySecondUpdateDate(formattedDateTime);
 
         ResponseCategorySecondUpdate responseValue = new ResponseCategorySecondUpdate(updatedCategorySecond.getCategorySecondCode(), updatedCategorySecond.getCategorySecondName(), updatedCategorySecond.getCategorySecondUpdateDate());
+        logService.saveLog("root", LogStatus.수정,updatedCategorySecond.getCategorySecondName(),"CategorySecond");
         return responseValue;
     }
 }

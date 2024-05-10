@@ -236,10 +236,14 @@ public class OrderServiceImpl implements OrderService{
         order.getOrderProductList().forEach(orderProduct->{
             if(requestPutOrder.getRequestProduct().get(orderProduct.getProduct().getProductCode())!=null) {
                 int changeVal = requestPutOrder.getRequestProduct().get(orderProduct.getProduct().getProductCode());
+                int requestVal = orderProduct.getRequestProductCount();
+
                 orderProduct.setRequestProductGetCount(changeVal);
                 //검수 결과 가맹 창고에 저장
                 franchiseWarehouseService.saveProduct(orderProduct.getProduct().getProductCode(), changeVal, orderProduct.getOrder().getFranchise().getFranchiseCode());
-
+                if(changeVal != requestVal){
+                    productService.editUncorrectCount(orderProduct.getProduct(), requestVal-changeVal);
+                }
                 orderProductRepository.save(orderProduct);
             }
         });
