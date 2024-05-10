@@ -51,7 +51,7 @@ public class AskEntity {
     private Admin admin;
 
     public AskEntity() {
-        this.admin = new Admin(); // 이 부분은 AdminEntity의 기본 생성자가 필요합니다.
+        this.admin = new Admin(); // 이 부분은 Admin의 기본 생성자가 필요합니다.
         this.admin.setAdminCode(1); // 관리자 ID를 1로 설정
     }
 
