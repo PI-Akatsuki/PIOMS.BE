@@ -9,13 +9,14 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-@Builder
 @Setter
+@Builder
 @ToString
 @Entity
 @Table(name = "admin")
 public class Admin {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "admin_code")
     private int adminCode;
 
