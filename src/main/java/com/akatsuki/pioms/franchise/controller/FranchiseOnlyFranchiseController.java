@@ -45,4 +45,25 @@ public class FranchiseOnlyFranchiseController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    // 내가맹 수정
+    @Operation(summary = "내가맹 수정", description = "내가맹 정보를 수정합니다.")
+    @PutMapping("/update")
+    public ResponseEntity<String> updateMyFranchise(
+            @RequestParam int requestorOwnerCode,
+            @RequestBody Franchise updatedFranchise) {
+        Optional<Franchise> franchiseOptional = franchiseService.findFranchiseById(updatedFranchise.getFranchiseCode());
+
+        if (franchiseOptional.isPresent()) {
+            Franchise franchise = franchiseOptional.get();
+            // 프랜차이즈 소유주 코드 확인
+            if (franchise.getFranchiseOwner().getFranchiseOwnerCode() == requestorOwnerCode) {
+                return franchiseService.updateFranchise(updatedFranchise.getFranchiseCode(), updatedFranchise, requestorOwnerCode, true);
+            } else {
+                return ResponseEntity.status(403).body("수정 권한이 없습니다."); // 접근 권한 없음
+            }
+        } else {
+            return ResponseEntity.notFound().build(); // 프랜차이즈를 찾을 수 없음
+        }
+    }
 }
