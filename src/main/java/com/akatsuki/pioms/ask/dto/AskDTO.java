@@ -1,6 +1,7 @@
 package com.akatsuki.pioms.ask.dto;
 
-import com.akatsuki.pioms.ask.entity.AdminEntity;
+
+import com.akatsuki.pioms.admin.aggregate.Admin;
 import com.akatsuki.pioms.ask.entity.FranchiseOwnerEntity;
 import com.akatsuki.pioms.ask.etc.ASK_STATUS;
 
@@ -17,5 +18,5 @@ public class AskDTO {
     private LocalDateTime askCommentDate;
     private String askTitle;
     private FranchiseOwnerEntity franchiseOwner;
-    private AdminEntity admin;
+    private Admin admin;
 }

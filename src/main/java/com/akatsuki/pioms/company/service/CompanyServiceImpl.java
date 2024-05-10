@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 @Log4j2
-public class CompanyServiceImpl implements CompanyService {
+public class                             CompanyServiceImpl implements CompanyService {
     private final CompanyRepository companyRepository;
 
     @Autowired

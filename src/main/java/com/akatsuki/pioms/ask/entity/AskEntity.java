@@ -1,5 +1,6 @@
 package com.akatsuki.pioms.ask.entity;
 
+import com.akatsuki.pioms.admin.aggregate.Admin;
 import com.akatsuki.pioms.ask.etc.ASK_STATUS;
 import jakarta.persistence.*;
 import lombok.*;
@@ -50,10 +51,10 @@ public class AskEntity {
 
     @JoinColumn(name = "admin_code")
     @OneToOne
-    private AdminEntity admin;
+    private Admin admin;
 
     public AskEntity() {
-        this.admin = new AdminEntity(); // 이 부분은 AdminEntity의 기본 생성자가 필요합니다.
+        this.admin = new Admin(); // 이 부분은 Admin의 기본 생성자가 필요합니다.
         this.admin.setAdminCode(1); // 관리자 ID를 1로 설정
     }
 
