@@ -30,10 +30,10 @@ public class Product {
     private int productPrice;
 
     @Column(name = "product_enroll_date")
-    private Date productEnrollDate;
+    private String productEnrollDate;
 
     @Column(name = "product_update_date")
-    private Date productUpdateDate;
+    private String productUpdateDate;
 
     @Column(name = "product_content")
     private String productContent;

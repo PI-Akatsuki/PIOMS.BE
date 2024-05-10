@@ -17,8 +17,8 @@ public class ResponseProducts {
     private int productCode;
     private String productName;
     private int productPrice;
-    private Date productEnrollDate;
-    private Date productUpdateDate;
+    private String productEnrollDate;
+    private String productUpdateDate;
     private String productContent;
     private PRODUCT_COLOR productColor;
     private int productSize;
