@@ -1,11 +1,9 @@
-package com.akatsuki.pioms.franchiseWarehouse.aggregate;
+package com.akatsuki.pioms.frwarehouse.aggregate;
 
 
 import com.akatsuki.pioms.product.entity.Product;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -27,11 +25,12 @@ public class FranchiseWarehouse {
     private int franchiseWarehouseEnable;
     @Column(name = "franchise_warehouse_favorite")
     private boolean franchiseWarehouseFavorite;
+
     @Column(name = "franchise_code")
     private int franchiseCode;
+
     @JoinColumn(name = "product_code")
-    @OneToOne
-    @ToString.Exclude
+    @ManyToOne
     private Product product;
 
     public FranchiseWarehouse(boolean franchiseWarehouseFavorite, int franchiseCode, int productCode) {

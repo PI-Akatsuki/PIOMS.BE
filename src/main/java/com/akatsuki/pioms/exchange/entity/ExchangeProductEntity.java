@@ -27,12 +27,10 @@ public class ExchangeProductEntity {
     private int exchangeProductDiscount;
     @Column(name = "exchange_product_normal_count")
     private int exchangeProductNormalCount;
-
     @JoinColumn(name = "product_code")
     @ManyToOne
 //    @Column(name = "product_code")
     private Product product;
-
     @JoinColumn(name = "exchange_code")
     @ManyToOne
     private ExchangeEntity exchange;

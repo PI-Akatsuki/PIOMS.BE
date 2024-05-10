@@ -13,6 +13,7 @@ import lombok.ToString;
 @ToString
 public class ExchangeProductVO {
     private int exchangeProductCode;
+    private int productCode;
     private int exchangeProductCount;
     private int exchangeProductNormalCount;
     private int exchangeProductDiscount;
@@ -20,6 +21,7 @@ public class ExchangeProductVO {
 
     public ExchangeProductVO(ExchangeProductEntity product) {
         this.exchangeProductCode = product.getExchangeProductCode();
+        this.productCode = product.getProduct().getProductCode();
         this.exchangeProductCount = product.getExchangeProductCount();
         this.exchangeProductNormalCount = product.getExchangeProductNormalCount();
         this.exchangeProductDiscount = product.getExchangeProductDiscount();

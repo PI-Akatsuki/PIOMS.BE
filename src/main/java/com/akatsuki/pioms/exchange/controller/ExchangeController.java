@@ -4,6 +4,7 @@ import com.akatsuki.pioms.exchange.entity.RequestExchange;
 import com.akatsuki.pioms.exchange.vo.ResponseExchange;
 import com.akatsuki.pioms.exchange.service.ExchangeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +27,11 @@ public class ExchangeController {
 
     @PostMapping("/{franchiseCode}")
     public ResponseEntity<ResponseExchange> postExchange(@PathVariable int franchiseCode, @RequestBody RequestExchange requestExchange){
-        return ResponseEntity.ok(exchangeService.postExchange(franchiseCode, requestExchange));
+        ResponseExchange exchange=  exchangeService.postExchange(franchiseCode, requestExchange);
+        if (exchange==null)
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+
+        return ResponseEntity.ok(exchange);
     }
 
 

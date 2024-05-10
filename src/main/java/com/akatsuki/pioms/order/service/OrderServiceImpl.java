@@ -2,12 +2,10 @@ package com.akatsuki.pioms.order.service;
 
 import com.akatsuki.pioms.event.OrderEvent;
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
-import com.akatsuki.pioms.exchange.entity.EXCHANGE_PRODUCT_STATUS;
 import com.akatsuki.pioms.exchange.entity.ExchangeEntity;
-import com.akatsuki.pioms.exchange.repository.ExchangeProductRepository;
 import com.akatsuki.pioms.exchange.service.ExchangeService;
 import com.akatsuki.pioms.franchise.entity.FranchiseEntity;
-import com.akatsuki.pioms.franchiseWarehouse.service.FranchiseWarehouseService;
+import com.akatsuki.pioms.frwarehouse.service.FranchiseWarehouseService;
 import com.akatsuki.pioms.invoice.service.InvoiceService;
 import com.akatsuki.pioms.order.entity.Order;
 import com.akatsuki.pioms.order.entity.OrderProduct;
@@ -52,6 +50,8 @@ public class OrderServiceImpl implements OrderService{
     @Transactional(readOnly = true)
     public OrderListVO getFranchisesOrderList(int adminCode){
         List<Order> orderList = orderRepository.findAllByFranchiseAdminAdminCode(adminCode);
+        if (orderList == null)
+            return null;
         List<OrderVO> orderVOList = new ArrayList<>();
         orderList.forEach(order-> {
             orderVOList.add(new OrderVO(order));
@@ -63,6 +63,8 @@ public class OrderServiceImpl implements OrderService{
     @Transactional(readOnly = true)
     public OrderListVO getFranchisesUncheckedOrderList(int adminCode){
         List<Order> orderList = orderRepository.findAllByFranchiseAdminAdminCodeAndOrderCondition(adminCode, ORDER_CONDITION.승인대기);
+        if (orderList == null)
+            return null;
         List<OrderVO> orderVOList = new ArrayList<>();
         orderList.forEach(order-> {
             orderVOList.add(new OrderVO(order));
@@ -77,24 +79,26 @@ public class OrderServiceImpl implements OrderService{
 
         if(order.getFranchise().getAdmin().getAdminCode() != adminCode)
             return "You dont\'t have permission to manage this franchise";
-        if ( !checkOrderCondition(order))
+        if (!checkOrderCondition(order))
             return "This order is unavailable to accept. This order's condition is '" + order.getOrderCondition().name() + "', not '승인대기'. ";
 
         try {
 
-            if(checkProductCnt(order)){
-                productService.exportProducts(order);
+            if(!checkProductCnt(order)) {
+               return "상품 제고가 부족하여 처리할 수 없습니다!";
             }
 
+            productService.exportProducts(order);
             order.setOrderCondition(ORDER_CONDITION.승인완료);
+
             // 프랜차이즈에 보내야할 반품 신청 조회
             // 반품신청 중인 요소 탐색
             ExchangeDTO exchange =  exchangeService.findExchangeToSend(order.getFranchise().getFranchiseCode());
+
             if(exchange!=null&& productService.checkExchangeProduct(order,exchange)) {
-                productService.exportExchangeProducts(exchange.getExchangeCode());
-                System.out.println("배송할 반품상품 없거나 반송할 상품 재고가 부족합니다.");
                 order.setExchange(new ExchangeEntity(exchange));
-            }
+            }else
+                System.out.println("반품할 상품 없음 또는 재고 부족");
 
             orderRepository.save(order);
             publisher.publishEvent(new OrderEvent(order));
@@ -193,7 +197,8 @@ public class OrderServiceImpl implements OrderService{
     @Override
     public OrderVO getAdminOrder(int adminCode, int orderCode) {
         Order order = orderRepository.findById(orderCode).orElseThrow(IllegalArgumentException::new);
-        if(adminCode != order.getFranchise().getAdmin().getAdminCode()){
+
+        if(order==null || adminCode != order.getFranchise().getAdmin().getAdminCode()){
             return null;
         }
         return new OrderVO(order);
@@ -203,7 +208,7 @@ public class OrderServiceImpl implements OrderService{
     @Transactional
     public boolean putFranchiseOrder(int franchiseCode, RequestPutOrder requestOrder) {
         Order order = orderRepository.findById(requestOrder.getOrderCode()).orElseThrow(IllegalArgumentException::new);
-        if(order.getFranchise().getFranchiseCode() != franchiseCode)
+        if(order.getFranchise().getFranchiseCode() != franchiseCode || order.getOrderCondition() != ORDER_CONDITION.승인대기)
             return false;
         orderProductRepository.deleteAllByOrderOrderCode(order.getOrderCode());
         Order deletedorder = orderRepository.findById(requestOrder.getOrderCode()).orElseThrow(IllegalArgumentException::new);

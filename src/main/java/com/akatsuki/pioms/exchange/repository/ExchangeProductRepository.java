@@ -7,6 +7,7 @@ import com.akatsuki.pioms.exchange.entity.ExchangeProductEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ExchangeProductRepository extends JpaRepository<ExchangeProductEntity, Integer> {
 
@@ -16,4 +17,7 @@ public interface ExchangeProductRepository extends JpaRepository<ExchangeProduct
 
     List<ExchangeProductEntity> findAllByExchangeExchangeCodeAndExchangeProductStatus(int exchangeCode, EXCHANGE_PRODUCT_STATUS exchangeProductStatus);
 
+    List<ExchangeProductEntity> findByProductProductCodeAndExchangeExchangeCode(int exchangeProductCode, int exchangeCode);
+
+    List<ExchangeProductEntity> findByExchangeExchangeCode(int exchangeCode);
 }

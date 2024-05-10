@@ -2,6 +2,7 @@ package com.akatsuki.pioms.invoice.controller;
 
 
 import com.akatsuki.pioms.invoice.entity.InvoiceEntity;
+import com.akatsuki.pioms.invoice.etc.DELIVERY_STATUS;
 import com.akatsuki.pioms.invoice.service.InvoiceService;
 import com.akatsuki.pioms.invoice.vo.ResponseInvoice;
 import com.akatsuki.pioms.invoice.vo.ResponseInvoiceList;
@@ -32,7 +33,7 @@ public class InvoiceController {
     }
 
     @PutMapping("/{invoiceCode}/{invoiceStatus}")
-    public ResponseEntity<ResponseInvoice> putInvoice(@PathVariable int invoiceCode, @PathVariable String invoiceStatus){
+    public ResponseEntity<ResponseInvoice> putInvoice(@PathVariable int invoiceCode, @PathVariable DELIVERY_STATUS invoiceStatus){
         ResponseInvoice invoice = invoiceService.putInvoice(invoiceCode, invoiceStatus);
         return ResponseEntity.ok(invoice);
     }

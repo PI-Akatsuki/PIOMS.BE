@@ -13,13 +13,15 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 public class ExchangeProduct {
-    private  int code;
+    private int exchangeProductCode;
+    private  int productCode;
     private int requestCnt;
     private int productRemainCnt;
     public EXCHANGE_PRODUCT_STATUS exchangeProductStatus;
 
     public ExchangeProduct(ExchangeProductEntity exchangeProductEntity) {
-        this.code = exchangeProductEntity.getProduct().getProductCode();
+        this.exchangeProductCode = exchangeProductEntity.getExchangeProductCode();
+        this.productCode = exchangeProductEntity.getProduct().getProductCode();
         this.requestCnt = exchangeProductEntity.getExchangeProductCount();
         this.productRemainCnt = exchangeProductEntity.getProduct().getProductCount();
         this.exchangeProductStatus = exchangeProductEntity.getExchangeProductStatus();
