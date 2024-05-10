@@ -1,4 +1,4 @@
-package com.akatsuki.pioms.franchise.etc;
+package com.akatsuki.pioms.franchise.aggregate;
 
 public enum DELIVERY_DATE {
     월_목,

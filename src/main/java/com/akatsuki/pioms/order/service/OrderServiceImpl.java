@@ -5,7 +5,7 @@ import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import com.akatsuki.pioms.exchange.entity.ExchangeEntity;
 import com.akatsuki.pioms.exchange.service.ExchangeService;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
-import com.akatsuki.pioms.franchiseWarehouse.service.FranchiseWarehouseService;
+import com.akatsuki.pioms.frwarehouse.service.FranchiseWarehouseService;
 import com.akatsuki.pioms.invoice.service.InvoiceService;
 import com.akatsuki.pioms.order.entity.OrderEntity;
 import com.akatsuki.pioms.order.entity.OrderProductEntity;

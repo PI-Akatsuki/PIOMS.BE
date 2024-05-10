@@ -1,4 +1,4 @@
-package com.akatsuki.pioms.franchiseWarehouse.controller;
+package com.akatsuki.pioms.frwarehouse.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 

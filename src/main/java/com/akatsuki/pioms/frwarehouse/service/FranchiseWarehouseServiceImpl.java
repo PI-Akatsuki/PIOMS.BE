@@ -1,7 +1,7 @@
-package com.akatsuki.pioms.franchiseWarehouse.service;
+package com.akatsuki.pioms.frwarehouse.service;
 
-import com.akatsuki.pioms.franchiseWarehouse.aggregate.FranchiseWarehouse;
-import com.akatsuki.pioms.franchiseWarehouse.repository.FranchiseWarehouseRepository;
+import com.akatsuki.pioms.frwarehouse.aggregate.FranchiseWarehouse;
+import com.akatsuki.pioms.frwarehouse.repository.FranchiseWarehouseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
