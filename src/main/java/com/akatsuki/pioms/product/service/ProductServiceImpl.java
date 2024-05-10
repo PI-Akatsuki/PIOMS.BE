@@ -199,5 +199,12 @@ public class ProductServiceImpl implements ProductService{
         return responseProducts;
     }
 
+    @Override
+    public void editUncorrectCount(Product product, int cnt) {
+        // 가맹에서 검수 시 수량 불일치인 경우 처리하기 위한 로직
+        product.setProductCount(product.getProductCount()+cnt);
+        productRepository.save(product);
+    }
+
 
 }

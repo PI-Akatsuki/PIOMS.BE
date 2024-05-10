@@ -26,4 +26,6 @@ public interface ProductService {
     void exportExchangeProducts(int exchange);
     boolean checkExchangeProduct(Order order, ExchangeDTO exchange);
     List<ResponseProducts> getCategoryProductList(int categoryThirdCode);
+
+    void editUncorrectCount(Product product, int i);
 }
