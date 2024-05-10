@@ -1,6 +1,5 @@
 package com.akatsuki.pioms.order.vo;
 
-import com.akatsuki.pioms.order.entity.OrderEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

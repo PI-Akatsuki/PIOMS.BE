@@ -13,7 +13,7 @@ import com.akatsuki.pioms.ask.repository.AskRepository;
 import com.akatsuki.pioms.ask.vo.AskListVO;
 import com.akatsuki.pioms.ask.vo.AskVO;
 import com.akatsuki.pioms.frowner.aggregate.FranchiseOwner;
-import com.akatsuki.pioms.frowner.repository.FranchiseOwnerRepository;
+
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

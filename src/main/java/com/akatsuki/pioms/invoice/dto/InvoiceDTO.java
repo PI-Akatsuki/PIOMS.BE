@@ -2,8 +2,6 @@ package com.akatsuki.pioms.invoice.dto;
 
 import com.akatsuki.pioms.invoice.etc.DELIVERY_STATUS;
 import com.akatsuki.pioms.order.dto.OrderDTO;
-import com.akatsuki.pioms.order.entity.OrderEntity;
-import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;

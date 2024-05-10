@@ -1,13 +1,13 @@
 package com.akatsuki.pioms.invoice.service;
 
 import com.akatsuki.pioms.event.OrderEvent;
-import com.akatsuki.pioms.franchise.etc.DELIVERY_DATE;
+import com.akatsuki.pioms.franchise.aggregate.DELIVERY_DATE;
 import com.akatsuki.pioms.invoice.entity.InvoiceEntity;
 import com.akatsuki.pioms.invoice.etc.DELIVERY_STATUS;
 import com.akatsuki.pioms.invoice.repository.InvoiceRepository;
 import com.akatsuki.pioms.invoice.vo.ResponseInvoice;
 import com.akatsuki.pioms.invoice.vo.ResponseInvoiceList;
-import com.akatsuki.pioms.order.entity.OrderEntity;
+import com.akatsuki.pioms.order.entity.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -26,7 +26,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         this.invoiceRepository = invoiceRepository;
     }
 
-    public void postInvoice(OrderEntity order){
+    public void postInvoice(Order order){
         InvoiceEntity invoice = new InvoiceEntity();
         invoice.setOrder(order);
         invoice.setDeliveryStatus(DELIVERY_STATUS.배송전);
@@ -76,6 +76,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     public void getOrder(OrderEvent orderEvent){
         System.out.println("Invoice event listen");
         postInvoice(orderEvent.getOrder());
+        System.out.println("Invoice event End");
     }
 
     public ResponseInvoiceList getAllInvoiceList(){
@@ -85,13 +86,16 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoiceList.forEach(invoiceEntity -> {
             responseInvoice.add(new ResponseInvoice(invoiceEntity));
         });
+
         return new ResponseInvoiceList(responseInvoice);
     }
 
     @Override
-    public ResponseInvoice putInvoice(int invoiceCode, String invoiceStatus) {
+    public ResponseInvoice putInvoice(int invoiceCode, DELIVERY_STATUS invoiceStatus) {
+        System.out.println("invoiceStatus = " + invoiceStatus);
         InvoiceEntity invoiceEntity = invoiceRepository.findById(invoiceCode).orElseThrow(IllegalArgumentException::new);
-        invoiceEntity.setDeliveryStatus(DELIVERY_STATUS.valueOf(invoiceStatus));
+
+        invoiceEntity.setDeliveryStatus(invoiceStatus);
         invoiceRepository.save(invoiceEntity);
         return new ResponseInvoice(invoiceEntity);
     }
