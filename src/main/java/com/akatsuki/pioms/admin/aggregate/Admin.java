@@ -50,5 +50,5 @@ public class Admin {
     private boolean adminStatus;
 
     @OneToMany(mappedBy = "admin")
-    private List<FranchiseEntity> franchiseEntities;
+    private List<FranchiseEntity> franchise;
 }
