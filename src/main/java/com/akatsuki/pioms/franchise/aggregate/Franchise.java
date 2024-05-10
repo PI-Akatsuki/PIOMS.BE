@@ -1,4 +1,4 @@
-package com.akatsuki.pioms.franchise.entity;
+package com.akatsuki.pioms.franchise.aggregate;
 
 
 import com.akatsuki.pioms.admin.aggregate.Admin;
@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString
-public class FranchiseEntity {
+public class Franchise {
     @Id
     @Column(name = "franchise_code")
     private int franchiseCode;

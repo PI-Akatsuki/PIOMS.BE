@@ -1,19 +1,25 @@
-package com.akatsuki.pioms.ask.entity;
+package com.akatsuki.pioms.franchise.aggregate;
 
-import jakarta.persistence.*;
-import lombok.*;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
-import java.util.Date;
+
 
 @Entity
-@Table(name = "franchiseOwner")
+@Table(name = "franchise_owner")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@Setter
 @ToString
-public class FranchiseOwnerEntity {
+public class FranchiseOwner {
     @Id
     @Column(name = "franchise_owner_code")
     private int franchiseOwnerCode;
@@ -21,7 +27,7 @@ public class FranchiseOwnerEntity {
     @Column(name = "franchise_owner_name")
     private String franchiseOwnerName;
 
-    @Column(name = "franchise_owner_Id")
+    @Column(name = "franchise_owner_id")
     private String franchiseOwnerId;
 
     @Column(name = "franchise_owner_pwd")
@@ -30,13 +36,16 @@ public class FranchiseOwnerEntity {
     @Column(name = "franchise_owner_email")
     private String franchiseOwnerEmail;
 
+    @Column(name = "franchise_owner_phone")
+    private String franchiseOwnerPhone;
+
     @Column(name = "franchise_owner_enroll_date")
     private LocalDateTime franchiseOwnerEnrollDate;
 
     @Column(name = "franchise_owner_update_date")
-    private Date franchiseOwnerUpdateDate;
+    private LocalDateTime franchiseOwnerUpdateDate;
 
     @Column(name = "franchise_owner_delete_date")
-    private Date franchiseOwnerDeleteDate;
+    private LocalDateTime franchiseOwnerDeleteDate;
 
 }

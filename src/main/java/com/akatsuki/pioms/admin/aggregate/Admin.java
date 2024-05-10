@@ -1,6 +1,6 @@
 package com.akatsuki.pioms.admin.aggregate;
 
-import com.akatsuki.pioms.franchise.entity.FranchiseEntity;
+import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -50,5 +50,5 @@ public class Admin {
     private boolean adminStatus;
 
     @OneToMany(mappedBy = "admin")
-    private List<FranchiseEntity> franchise;
+    private List<Franchise> franchise;
 }

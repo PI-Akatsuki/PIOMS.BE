@@ -1,12 +1,11 @@
 package com.akatsuki.pioms.specs.aggregate;
 
-import com.akatsuki.pioms.franchise.entity.FranchiseEntity;
+import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import com.akatsuki.pioms.order.entity.OrderEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Getter
 @Setter
@@ -27,7 +26,7 @@ public class SpecsEntity {
 
     @JoinColumn(name = "franchise_code")
     @ManyToOne
-    private FranchiseEntity franchise;
+    private Franchise franchise;
 
     @JoinColumn(name = "request_code")
     @OneToOne

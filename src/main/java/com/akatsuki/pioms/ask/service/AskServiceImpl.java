@@ -2,11 +2,11 @@ package com.akatsuki.pioms.ask.service;
 
 import com.akatsuki.pioms.admin.aggregate.Admin;
 import com.akatsuki.pioms.admin.repository.AdminRepository;
+import com.akatsuki.pioms.ask.aggregate.FranchiseOwnerEntity;
 import com.akatsuki.pioms.ask.dto.AskCreateDTO;
 import com.akatsuki.pioms.ask.dto.AskUpdateDTO;
 
 import com.akatsuki.pioms.ask.entity.AskEntity;
-import com.akatsuki.pioms.ask.entity.FranchiseOwnerEntity;
 import com.akatsuki.pioms.ask.etc.ASK_STATUS;
 
 import com.akatsuki.pioms.ask.repository.AskRepository;

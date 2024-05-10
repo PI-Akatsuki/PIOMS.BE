@@ -1,6 +1,7 @@
 package com.akatsuki.pioms.ask.entity;
 
 import com.akatsuki.pioms.admin.aggregate.Admin;
+import com.akatsuki.pioms.ask.aggregate.FranchiseOwnerEntity;
 import com.akatsuki.pioms.ask.etc.ASK_STATUS;
 import jakarta.persistence.*;
 import lombok.*;

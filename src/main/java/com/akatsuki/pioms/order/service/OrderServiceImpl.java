@@ -4,7 +4,7 @@ import com.akatsuki.pioms.event.OrderEvent;
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import com.akatsuki.pioms.exchange.entity.ExchangeEntity;
 import com.akatsuki.pioms.exchange.service.ExchangeService;
-import com.akatsuki.pioms.franchise.entity.FranchiseEntity;
+import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import com.akatsuki.pioms.franchiseWarehouse.service.FranchiseWarehouseService;
 import com.akatsuki.pioms.invoice.service.InvoiceService;
 import com.akatsuki.pioms.order.entity.OrderEntity;
@@ -122,7 +122,7 @@ public class OrderServiceImpl implements OrderService{
         order.setOrderDate(LocalDateTime.now());
         order.setOrderCondition(ORDER_CONDITION.승인대기);
         order.setOrderStatus(false);
-        FranchiseEntity franchise = new FranchiseEntity();
+        Franchise franchise = new Franchise();
         franchise.setFranchiseCode(requestOrder.getFranchiseCode());
         order.setFranchise(franchise);
         order= orderRepository.save(order);

@@ -2,11 +2,9 @@ package com.akatsuki.pioms.exchange.dto;
 
 import com.akatsuki.pioms.exchange.entity.EXCHANGE_STATUS;
 import com.akatsuki.pioms.exchange.entity.ExchangeEntity;
-import com.akatsuki.pioms.franchise.entity.FranchiseEntity;
+import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,7 +25,7 @@ public class ExchangeDTO {
     @Enumerated(EnumType.ORDINAL)
     private EXCHANGE_STATUS exchangeStatus;
 
-    private FranchiseEntity franchise;
+    private Franchise franchise;
 
     public ExchangeDTO(ExchangeEntity exchange) {
         this.exchangeCode = exchange.getExchangeCode();

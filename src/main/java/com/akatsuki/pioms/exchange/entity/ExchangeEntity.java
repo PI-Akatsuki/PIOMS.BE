@@ -1,7 +1,7 @@
 package com.akatsuki.pioms.exchange.entity;
 
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
-import com.akatsuki.pioms.franchise.entity.FranchiseEntity;
+import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -30,7 +30,7 @@ public class ExchangeEntity {
 
     @JoinColumn(name = "franchise_code")
     @ManyToOne
-    private FranchiseEntity franchise;
+    private Franchise franchise;
 
     @OneToMany(mappedBy = "exchange")
     List<ExchangeProductEntity> products;
