@@ -18,7 +18,7 @@ public interface AdminService {
     ResponseEntity<String> saveAdmin(Admin admin, int requestorAdminCode);
 
     // 관리자 수정
-    ResponseEntity<String> updateAdminInfo(int adminCode, Admin updatedAdmin, int requestorAdminCode);
+    ResponseEntity<String> updateAdminInfo(int adminCode, Admin updatedAdmin);
 
     // 비활성화(삭제)
     ResponseEntity<String> deleteAdmin(int adminCode);

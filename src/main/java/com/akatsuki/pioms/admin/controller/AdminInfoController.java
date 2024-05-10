@@ -56,11 +56,11 @@ public class AdminInfoController {
     @PutMapping("/update/{adminCode}")
     public ResponseEntity<String> updateAdmin(
             @PathVariable int adminCode,
-            @RequestBody Admin updatedAdmin,
-            @RequestParam int requestorAdminCode
+            @RequestBody Admin updatedAdmin
     ) {
-        return adminService.updateAdminInfo(adminCode, updatedAdmin, requestorAdminCode);
+        return adminService.updateAdminInfo(adminCode, updatedAdmin);
     }
+
 
     // 관리자 비활성화(삭제)
     @Operation(summary = "본사 관리자 삭제", description = "본사 관리자를 삭제합니다.")

@@ -75,13 +75,7 @@ public class AdminServiceImpl implements AdminService {
     // 관리자 정보 수정
     @Override
     @Transactional
-    public ResponseEntity<String> updateAdminInfo(int adminCode, Admin updatedAdmin, int requestorAdminCode) {
-
-        Optional<Admin> requestorAdmin = adminRepository.findById(requestorAdminCode);
-        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
-            return ResponseEntity.status(403).body("관리자 정보 수정은 루트 관리자만 가능합니다.");
-        }
-
+    public ResponseEntity<String> updateAdminInfo(int adminCode, Admin updatedAdmin) {
         Optional<Admin> adminOptional = adminRepository.findById(adminCode);
         if (adminOptional.isPresent()) {
             Admin admin = adminOptional.get();
@@ -90,7 +84,7 @@ public class AdminServiceImpl implements AdminService {
                 return ResponseEntity.badRequest().body("관리자는 최대 6개의 가맹점만 등록할 수 있습니다.");
             }
 
-            // 정보
+            // 정보 수정
             admin.setAdminPwd(updatedAdmin.getAdminPwd());
             admin.setAdminEmail(updatedAdmin.getAdminEmail());
             admin.setAdminPhone(updatedAdmin.getAdminPhone());
@@ -104,7 +98,6 @@ public class AdminServiceImpl implements AdminService {
             return ResponseEntity.notFound().build();
         }
     }
-
     // 비활성화
     @Override
     @Transactional
@@ -138,6 +131,5 @@ public class AdminServiceImpl implements AdminService {
             return ResponseEntity.notFound().build();
         }
     }
-
 
 }
