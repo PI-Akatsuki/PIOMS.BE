@@ -1,6 +1,7 @@
 package com.akatsuki.pioms.exchange.entity;
 
 
+import com.akatsuki.pioms.exchange.vo.ExchangeProductVO;
 import com.akatsuki.pioms.product.entity.Product;
 import jakarta.persistence.*;
 import lombok.*;
@@ -11,6 +12,7 @@ import lombok.*;
 @Setter
 @Entity
 @Table(name = "exchange_product")
+@ToString
 public class ExchangeProductEntity {
     @Id
     @Column(name = "exchange_product_code")
@@ -34,4 +36,14 @@ public class ExchangeProductEntity {
     @JoinColumn(name = "exchange_code")
     @ManyToOne
     private ExchangeEntity exchange;
+
+    public ExchangeProductEntity(ExchangeProductVO product) {
+        this.exchangeProductStatus = product.getExchangeProductStatus();
+        this.exchangeProductCount = product.getExchangeProductCount();
+        this.exchangeProductDiscount = 0;
+        this.exchangeProductNormalCount = 0;
+        Product product1 = new Product();
+        product1.setProductCode(product.getExchangeProductCode());
+        this.product = product1;
+    }
 }

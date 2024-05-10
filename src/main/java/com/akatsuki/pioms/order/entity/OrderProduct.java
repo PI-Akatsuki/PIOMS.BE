@@ -11,7 +11,7 @@ import lombok.*;
 @ToString
 @Entity
 @Table(name = "request_product")
-public class OrderProductEntity {
+public class OrderProduct {
     @Id
     @Column(name = "request_product_code")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,20 +22,20 @@ public class OrderProductEntity {
     private int requestProductGetCount;
     @JoinColumn(name = "request_code")
     @ManyToOne(cascade = CascadeType.PERSIST)
-    private OrderEntity order;
+    private Order order;
 
     @JoinColumn(name = "product_code")
     @ManyToOne(cascade = CascadeType.PERSIST)
     private Product product;
 
-    public OrderProductEntity(Integer count, int findCount, OrderEntity order, Product product) {
+    public OrderProduct(Integer count, int findCount, Order order, Product product) {
         this.requestProductCount = count;
         this.requestProductGetCount = findCount;
         this.order = order;
         this.product = product;
     }
 
-    public OrderProductEntity(OrderEntity order1, int productCode, int count) {
+    public OrderProduct(Order order1, int productCode, int count) {
         Product product1 = new Product();
         product1.setProductCode(productCode);
         this.product = product1;

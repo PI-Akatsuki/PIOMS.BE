@@ -3,12 +3,10 @@ package com.akatsuki.pioms.order.entity;
 import com.akatsuki.pioms.exchange.entity.ExchangeEntity;
 import com.akatsuki.pioms.franchise.entity.FranchiseEntity;
 import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
-import com.akatsuki.pioms.order.vo.OrderVO;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -17,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-public class OrderEntity {
+public class Order {
 
     @Id
     @Column(name = "request_code")
@@ -49,6 +47,6 @@ public class OrderEntity {
     private ExchangeEntity exchange;
 
     @OneToMany(mappedBy = "order")
-    private List<OrderProductEntity> OrderProductList;
+    private List<OrderProduct> OrderProductList;
 
 }

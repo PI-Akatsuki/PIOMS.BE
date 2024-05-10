@@ -1,7 +1,7 @@
 package com.akatsuki.pioms.order.repository;
 
 
-import com.akatsuki.pioms.order.entity.OrderEntity;
+import com.akatsuki.pioms.order.entity.Order;
 import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -9,9 +9,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface OrderRepository extends JpaRepository<OrderEntity, Integer> {
-    List<OrderEntity> findAllByFranchiseAdminAdminCode(int adminId);
-    List<OrderEntity> findAllByFranchiseAdminAdminCodeAndOrderCondition(int adminId, ORDER_CONDITION orderCondition);
+public interface OrderRepository extends JpaRepository<Order, Integer> {
+    List<Order> findAllByFranchiseAdminAdminCode(int adminId);
+    List<Order> findAllByFranchiseAdminAdminCodeAndOrderCondition(int adminId, ORDER_CONDITION orderCondition);
 
-    List<OrderEntity> findByFranchiseFranchiseCode(int franchiseCode);
+    List<Order> findByFranchiseFranchiseCode(int franchiseCode);
 }

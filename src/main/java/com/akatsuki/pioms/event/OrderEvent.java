@@ -1,6 +1,6 @@
 package com.akatsuki.pioms.event;
 
-import com.akatsuki.pioms.order.entity.OrderEntity;
+import com.akatsuki.pioms.order.entity.Order;
 import lombok.Getter;
 
 @Getter
@@ -8,14 +8,14 @@ public class OrderEvent{
 
     private int orderId;
     private int franchiseId;
-    private OrderEntity order;
+    private Order order;
 
     public OrderEvent(int orderId, int franchiseId) {
         this.orderId = orderId;
         this.franchiseId = franchiseId;
     }
 
-    public OrderEvent(OrderEntity order){
+    public OrderEvent(Order order){
         this.order = order;
     }
 

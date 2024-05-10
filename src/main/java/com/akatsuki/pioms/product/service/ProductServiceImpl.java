@@ -1,5 +1,12 @@
 package com.akatsuki.pioms.product.service;
 
+import com.akatsuki.pioms.event.OrderEvent;
+import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
+import com.akatsuki.pioms.exchange.entity.EXCHANGE_PRODUCT_STATUS;
+import com.akatsuki.pioms.exchange.entity.ExchangeProductEntity;
+import com.akatsuki.pioms.exchange.service.ExchangeService;
+import com.akatsuki.pioms.order.entity.Order;
+import com.akatsuki.pioms.order.entity.OrderProduct;
 import com.akatsuki.pioms.product.repository.ProductRepository;
 import com.akatsuki.pioms.category.entity.CategoryThird;
 import com.akatsuki.pioms.product.entity.Product;
@@ -7,6 +14,8 @@ import com.akatsuki.pioms.product.vo.RequestProductPost;
 import com.akatsuki.pioms.product.vo.ResponseProductPost;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,10 +26,12 @@ import java.util.Optional;
 public class ProductServiceImpl implements ProductService{
 
     private final ProductRepository productRepository;
+    private final ExchangeService exchangeService;
 
     @Autowired
-    public ProductServiceImpl(ProductRepository productRepository) {
+    public ProductServiceImpl(ProductRepository productRepository, ExchangeService exchangeService) {
         this.productRepository = productRepository;
+        this.exchangeService = exchangeService;
     }
   
     @Override
@@ -134,4 +145,43 @@ public class ProductServiceImpl implements ProductService{
                 );
         return responseValue;
     }
+
+    public void exportProducts(Order order) {
+        // 발주 상품에 대해 재고 수정
+        order.getOrderProductList().forEach(requestProduct->{
+            productMinusCnt(requestProduct.getRequestProductCount(), requestProduct.getProduct());
+        });
+    }
+    public void exportExchangeProducts(int exchangeCode) {
+        // 교환 상품에 대해서만 처리해야한다.
+        List<ExchangeProductEntity> exchangeProductList = exchangeService.getExchangeProductsWithStatus(exchangeCode, EXCHANGE_PRODUCT_STATUS.교환);
+        if (exchangeProductList == null) {
+            System.out.println("Exchange Products not found!!");
+            return;
+        }
+        exchangeProductList.forEach(requestProduct->{
+            productMinusCnt(requestProduct.getExchangeProductNormalCount(), requestProduct.getProduct());
+        });
+    }
+
+    @Override
+    public boolean checkExchangeProduct(Order order, ExchangeDTO exchange) {
+
+        for (int i = 0; i < exchange.getExchangeProducts().size(); i++) {
+            if (exchange.getExchangeProducts().get(i).getExchangeProductStatus() != EXCHANGE_PRODUCT_STATUS.폐기 ){
+                Product product = productRepository.findById(exchange.getExchangeProducts().get(i).getCode()).orElseThrow();
+                if (product.getProductCount()< exchange.getExchangeProducts().get(i).getProductRemainCnt()){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private void productMinusCnt(int requestProduct, Product requestProduct1) {
+        Product product = productRepository.findById(requestProduct1.getProductCode()).orElseThrow();
+        product.setProductCount(product.getProductCount() - requestProduct);
+        productRepository.save(product);
+    }
+
 }

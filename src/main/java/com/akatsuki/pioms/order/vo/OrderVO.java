@@ -1,7 +1,7 @@
 package com.akatsuki.pioms.order.vo;
 
 import com.akatsuki.pioms.franchise.etc.DELIVERY_DATE;
-import com.akatsuki.pioms.order.entity.OrderEntity;
+import com.akatsuki.pioms.order.entity.Order;
 import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Getter
 @ToString
@@ -32,7 +31,7 @@ public class OrderVO {
     private int adminCode;
     private String adminName;
 
-    public OrderVO(OrderEntity order) {
+    public OrderVO(Order order) {
         this.orderCode= order.getOrderCode();
         this.orderDate = order.getOrderDate();
         this.orderTotalPrice = order.getOrderTotalPrice();

@@ -2,8 +2,6 @@ package com.akatsuki.pioms.invoice.vo;
 
 import com.akatsuki.pioms.invoice.entity.InvoiceEntity;
 import com.akatsuki.pioms.invoice.etc.DELIVERY_STATUS;
-import com.akatsuki.pioms.order.dto.OrderDTO;
-import com.akatsuki.pioms.order.entity.OrderProductEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

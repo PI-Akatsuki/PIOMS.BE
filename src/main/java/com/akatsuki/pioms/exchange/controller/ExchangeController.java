@@ -24,6 +24,10 @@ public class ExchangeController {
         return ResponseEntity.ok(exchangeService.getExchanges());
     }
 
+    @PostMapping("/{franchiseCode}")
+    public ResponseEntity<ResponseExchange> postExchange(@PathVariable int franchiseCode, @RequestBody RequestExchange requestExchange){
+        return ResponseEntity.ok(exchangeService.postExchange(franchiseCode, requestExchange));
+    }
 
 
     @PutMapping("/{exchangeCode}")

@@ -1,18 +1,17 @@
 package com.akatsuki.pioms.exchange.service;
 
-import com.akatsuki.pioms.exchange.entity.ExchangeProductEntity;
-import com.akatsuki.pioms.exchange.entity.RequestExchange;
+import com.akatsuki.pioms.exchange.entity.*;
 import com.akatsuki.pioms.exchange.vo.ExchangeProductVO;
 import com.akatsuki.pioms.exchange.vo.ResponseExchange;
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
-import com.akatsuki.pioms.exchange.entity.EXCHANGE_STATUS;
-import com.akatsuki.pioms.exchange.entity.ExchangeEntity;
 import com.akatsuki.pioms.exchange.repository.ExchangeProductRepository;
 import com.akatsuki.pioms.exchange.repository.ExchangeRepository;
+import com.akatsuki.pioms.franchise.entity.FranchiseEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,6 +65,40 @@ public class ExchangeServiceImpl implements ExchangeService{
         requestExchange.getProducts().forEach(this::updateExchangeProduct);
         return new ResponseExchange(exchangeRepository.findById(exchangeCode).orElseThrow());
     }
+
+    @Override
+    @Transactional
+    public ResponseExchange postExchange(int franchiseCode, RequestExchange requestExchange) {
+        ExchangeEntity exchange = new ExchangeEntity();
+        exchange.setExchangeDate(LocalDateTime.now());
+        exchange.setExchangeStatus(EXCHANGE_STATUS.반송신청);
+        FranchiseEntity franchise = new FranchiseEntity();
+        franchise.setFranchiseCode(franchiseCode);
+        exchange.setFranchise(franchise);
+
+        ExchangeEntity exchange1 = exchangeRepository.save(exchange);
+        exchange1.setProducts(new ArrayList<>());
+
+        requestExchange.getProducts().forEach(product->{
+            ExchangeProductEntity exchangeProduct = new ExchangeProductEntity(product);
+            exchangeProduct.setExchange(exchange1);
+            exchangeProduct= exchangeProductRepository.save(exchangeProduct);
+            exchange1.getProducts().add(exchangeProduct);
+        });
+        return new ResponseExchange(exchange1);
+
+    }
+
+    @Override
+    public List<ExchangeProductEntity> getExchangeProducts(int exchangeCode) {
+        return exchangeProductRepository.findAllByExchangeExchangeCode(exchangeCode);
+    }
+
+    @Override
+    public List<ExchangeProductEntity> getExchangeProductsWithStatus(int exchangeCode, EXCHANGE_PRODUCT_STATUS exchangeProductStatus) {
+        return exchangeProductRepository.findAllByExchangeExchangeCodeAndExchangeProductStatus(exchangeCode,exchangeProductStatus);
+    }
+
 
     private void updateExchangeProduct(ExchangeProductVO product) {
         ExchangeProductEntity exchangeProductEntity = exchangeProductRepository.findById(product.getExchangeProductCode()).orElseThrow();
