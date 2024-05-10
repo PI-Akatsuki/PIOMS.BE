@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -66,6 +67,16 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
         }
         editCountByPostExchange(requestExchange);
         return true;
+    }
+
+    @Override
+    public List<FranchiseWarehouse> getAllWarehouse() {
+        return franchiseWarehouseRepository.findAll();
+    }
+
+    @Override
+    public Optional<FranchiseWarehouse> getWarehouseByWarehouseCode(int franchiseWarehouseCode) {
+        return franchiseWarehouseRepository.findById(franchiseWarehouseCode);
     }
 
     @Transactional

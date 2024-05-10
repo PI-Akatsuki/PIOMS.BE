@@ -1,6 +1,10 @@
 package com.akatsuki.pioms.frwarehouse.service;
 import com.akatsuki.pioms.exchange.entity.ExchangeEntity;
 import com.akatsuki.pioms.exchange.entity.RequestExchange;
+import com.akatsuki.pioms.frwarehouse.aggregate.FranchiseWarehouse;
+
+import java.util.List;
+import java.util.Optional;
 
 public interface FranchiseWarehouseService {
     void saveProduct(int productCocde, int changeVal, int franchiseCode);
@@ -8,4 +12,8 @@ public interface FranchiseWarehouseService {
     void saveExchangeProduct(ExchangeEntity exchange, int franchiseCode);
 
     boolean checkEnableToAddExchange(RequestExchange requestExchange);
+
+    List<FranchiseWarehouse> getAllWarehouse();
+
+    Optional<FranchiseWarehouse> getWarehouseByWarehouseCode(int franchiseWarehouseCode);
 }
