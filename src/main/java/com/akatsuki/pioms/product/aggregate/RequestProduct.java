@@ -15,36 +15,36 @@ import java.util.List;
 @Setter
 public class RequestProduct {
 
-    private String product_name;
-    private int product_price;
-    private Date product_enroll_date;
-    private String product_content;
-    private PRODUCT_COLOR product_color;
-    private int product_size;
-    private PRODUCT_GENDER product_gender;
-    private int product_total_count;
-    private PRODUCT_STATUS product_status;
-    private boolean product_exposure_status;
-    private int product_notice_count;
-    private int product_dis_count;
-    private int product_count;
-    private int category_third_code;
+    private int productCode;
+    private String productName;
+    private int productPrice;
+    private String productContent;
+    private PRODUCT_COLOR productColor;
+    private int productSize;
+    private PRODUCT_GENDER productGender;
+    private int productTotalCount;
+    private PRODUCT_STATUS productStatus;
+    private boolean productExposureStatus;
+    private int productNoticeCount;
+    private int productDisCount;
+    private int productCount;
+    private int categoryThirdCode;
 
-    public RequestProduct(String product_name, int product_price, Date product_enroll_date, String product_content, PRODUCT_COLOR product_color, int product_size, PRODUCT_GENDER product_gender, int product_total_count, PRODUCT_STATUS product_status, boolean product_exposure_status, int product_notice_count, int product_dis_count, int product_count, int category_third_code) {
-        this.product_name = product_name;
-        this.product_price = product_price;
-        this.product_enroll_date = product_enroll_date;
-        this.product_content = product_content;
-        this.product_color = product_color;
-        this.product_size = product_size;
-        this.product_gender = product_gender;
-        this.product_total_count = product_total_count;
-        this.product_status = product_status;
-        this.product_exposure_status = product_exposure_status;
-        this.product_notice_count = product_notice_count;
-        this.product_dis_count = product_dis_count;
-        this.product_count = product_count;
-        this.category_third_code = category_third_code;
+    public RequestProduct(int productCode, String productName, int productPrice, String productContent, PRODUCT_COLOR productColor, int productSize, PRODUCT_GENDER productGender, int productTotalCount, PRODUCT_STATUS productStatus, boolean productExposureStatus, int productNoticeCount, int productDisCount, int productCount, int categoryThirdCode) {
+        this.productCode = productCode;
+        this.productName = productName;
+        this.productPrice = productPrice;
+        this.productContent = productContent;
+        this.productColor = productColor;
+        this.productSize = productSize;
+        this.productGender = productGender;
+        this.productTotalCount = productTotalCount;
+        this.productStatus = productStatus;
+        this.productExposureStatus = productExposureStatus;
+        this.productNoticeCount = productNoticeCount;
+        this.productDisCount = productDisCount;
+        this.productCount = productCount;
+        this.categoryThirdCode = categoryThirdCode;
     }
 
     public RequestProduct(List<ResponseProduct> responseProductList) {

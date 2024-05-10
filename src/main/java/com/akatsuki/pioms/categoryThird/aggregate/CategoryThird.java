@@ -33,6 +33,6 @@ public class CategoryThird {
 
     @ManyToOne
     @JoinColumn(name="category_second_code")
-    private CategorySecond category_second_code;
+    private CategorySecond categorySecondCode;
 
 }

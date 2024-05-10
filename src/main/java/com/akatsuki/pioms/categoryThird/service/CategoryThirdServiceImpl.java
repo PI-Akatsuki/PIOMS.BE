@@ -6,6 +6,8 @@ import com.akatsuki.pioms.categoryThird.aggregate.RequestCategoryThirdUpdate;
 import com.akatsuki.pioms.categoryThird.repository.CategoryThirdRepository;
 import com.akatsuki.pioms.categoryThird.aggregate.RequestCategoryThirdPost;
 import com.akatsuki.pioms.categoryThird.aggregate.ResponseCategoryThirdPost;
+import com.akatsuki.pioms.log.etc.LogStatus;
+import com.akatsuki.pioms.log.service.LogService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,10 +22,12 @@ import java.util.Optional;
 public class CategoryThirdServiceImpl implements CategoryThirdService{
 
     private final CategoryThirdRepository categoryThirdRepository;
+    LogService logService;
 
     @Autowired
-    public CategoryThirdServiceImpl(CategoryThirdRepository categoryThirdRepository) {
+    public CategoryThirdServiceImpl(CategoryThirdRepository categoryThirdRepository,LogService logService) {
         this.categoryThirdRepository = categoryThirdRepository;
+        this.logService = logService;
     }
 
     /* 카테고리(소) 전체 조회 */
@@ -48,8 +52,8 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
 
         // CategorySecond 엔티티를 참조하는 필드에 해당 CategorySecond 엔티티를 설정
         CategorySecond categorySecond = new CategorySecond();
-        categorySecond.setCategory_second_code(request.getCategorySecondCode());
-        categoryThird.setCategory_second_code(categorySecond);
+        categorySecond.setCategorySecondCode(request.getCategorySecondCode());
+        categoryThird.setCategorySecondCode(categorySecond);
 
         categoryThird.setCategoryThirdName(request.getCategoryThirdName());
         categoryThird.setCategoryThirdEnrollDate(formattedDateTime);
@@ -57,6 +61,7 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
         CategoryThird savedCategoryThird = categoryThirdRepository.save(categoryThird);
 
         ResponseCategoryThirdPost responseValue = new ResponseCategoryThirdPost(savedCategoryThird.getCategoryThirdCode(), savedCategoryThird.getCategoryThirdName(), savedCategoryThird.getCategoryThirdEnrollDate());
+        logService.saveLog("root", LogStatus.등록,savedCategoryThird.getCategoryThirdName(),"CategoryThird");
         return responseValue;
     }
 
@@ -78,6 +83,7 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
         categoryThird.setCategoryThirdUpdateDate(formattedDateTime);
 
         ResponseCategoryThirdPost responseValue = new ResponseCategoryThirdPost(updatedCategoryThird.getCategoryThirdCode(), updatedCategoryThird.getCategoryThirdName(), updatedCategoryThird.getCategoryThirdUpdateDate());
+        logService.saveLog("root", LogStatus.수정,updatedCategoryThird.getCategoryThirdName(),"CategoryThird");
         return responseValue;
     }
 
