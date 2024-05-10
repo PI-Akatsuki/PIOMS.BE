@@ -3,8 +3,6 @@ package com.akatsuki.pioms.category.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Date;
-
 @Entity
 @Table(name="category_third")
 @AllArgsConstructor
@@ -24,13 +22,13 @@ public class CategoryThird {
 
     @Column(name = "category_third_enroll_date")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date category_third_enroll_date;
+    private String category_third_enroll_date;
 
     @Column(name = "category_third_update_date")
-    private Date category_third_update_date;
+    private String category_third_update_date;
 
     @Column(name = "category_third_delete_date")
-    private Date category_thrid_delete_date;
+    private String category_third_delete_date;
 
     @ManyToOne
     @JoinColumn(name="category_second_code")

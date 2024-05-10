@@ -2,9 +2,9 @@ package com.akatsuki.pioms.category.controller;
 
 import com.akatsuki.pioms.category.entity.CategoryThird;
 import com.akatsuki.pioms.category.service.CategoryThirdService;
-import com.akatsuki.pioms.category.vo.RequestCategoryPost;
-import com.akatsuki.pioms.category.vo.RequestCategoryUpdate;
-import com.akatsuki.pioms.category.vo.ResponseCategoryPost;
+import com.akatsuki.pioms.category.vo.RequestCategoryThirdPost;
+import com.akatsuki.pioms.category.vo.RequestCategoryThirdUpdate;
+import com.akatsuki.pioms.category.vo.ResponseCategoryThirdPost;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,14 +39,14 @@ public class CategoryThirdController {
         return ResponseEntity.ok().body(categoryThird);
     }
     @PostMapping("/create")
-    public ResponseEntity<ResponseCategoryPost> postCategoryThird(@RequestBody RequestCategoryPost request) {
-        ResponseCategoryPost response = categoryThirdService.postCategory(request);
+    public ResponseEntity<ResponseCategoryThirdPost> postCategoryThird(@RequestBody RequestCategoryThirdPost request) {
+        ResponseCategoryThirdPost response = categoryThirdService.postCategory(request);
         return ResponseEntity.ok().body(response);
     }
 
     @PostMapping("/update/{categoryThirdCode}")
-    public ResponseEntity<ResponseCategoryPost> updateCategoryThird(@PathVariable int categoryThirdCode, @RequestBody RequestCategoryUpdate request) {
-        ResponseCategoryPost response = categoryThirdService.updateCategory(categoryThirdCode, request);
+    public ResponseEntity<ResponseCategoryThirdPost> updateCategoryThird(@PathVariable int categoryThirdCode, @RequestBody RequestCategoryThirdUpdate request) {
+        ResponseCategoryThirdPost response = categoryThirdService.updateCategory(categoryThirdCode, request);
         return ResponseEntity.ok().body(response);
     }
 

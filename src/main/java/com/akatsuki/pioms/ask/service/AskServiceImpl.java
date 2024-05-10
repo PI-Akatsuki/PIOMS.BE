@@ -2,11 +2,11 @@ package com.akatsuki.pioms.ask.service;
 
 import com.akatsuki.pioms.ask.dto.AskCreateDTO;
 import com.akatsuki.pioms.ask.dto.AskUpdateDTO;
-import com.akatsuki.pioms.ask.entity.AdminEntity;
+import com.akatsuki.pioms.admin.aggregate.Admin;
 import com.akatsuki.pioms.ask.entity.AskEntity;
 import com.akatsuki.pioms.ask.entity.FranchiseOwnerEntity;
 import com.akatsuki.pioms.ask.etc.ASK_STATUS;
-import com.akatsuki.pioms.ask.repository.AdminRepository;
+import com.akatsuki.pioms.admin.repository.AdminRepository;
 import com.akatsuki.pioms.ask.repository.AskRepository;
 import com.akatsuki.pioms.ask.repository.FranchiseOwnerRepository;
 import com.akatsuki.pioms.ask.vo.AskListVO;
@@ -100,7 +100,7 @@ public class AskServiceImpl implements AskService{
         askEntity.setFranchiseOwner(owner);
 
         // Admin 정보 가져오기
-        AdminEntity admin = adminRepository.findById(1)  // 예: 관리자 ID가 1인 경우
+        Admin admin = adminRepository.findById(1)  // 예: 관리자 ID가 1인 경우
                 .orElseThrow(() -> new RuntimeException("Admin not found"));
         askEntity.setAdmin(admin);
         askRepository.save(askEntity);

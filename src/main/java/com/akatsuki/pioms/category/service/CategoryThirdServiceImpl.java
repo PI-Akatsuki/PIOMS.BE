@@ -1,19 +1,12 @@
 package com.akatsuki.pioms.category.service;
 
-import com.akatsuki.pioms.admin.entity.Admin;
-import com.akatsuki.pioms.category.dto.CategoryThirdDTO;
 import com.akatsuki.pioms.category.entity.CategorySecond;
 import com.akatsuki.pioms.category.entity.CategoryThird;
 import com.akatsuki.pioms.category.repository.CategoryThirdRepository;
-import com.akatsuki.pioms.category.vo.RequestCategoryPost;
-import com.akatsuki.pioms.category.vo.RequestCategoryUpdate;
-import com.akatsuki.pioms.category.vo.ResponseCategoryPost;
-import com.akatsuki.pioms.product.controller.ProductController;
-import com.akatsuki.pioms.product.entity.Product;
-import com.akatsuki.pioms.product.repository.ProductRepository;
+import com.akatsuki.pioms.category.vo.RequestCategoryThirdPost;
+import com.akatsuki.pioms.category.vo.RequestCategoryThirdUpdate;
+import com.akatsuki.pioms.category.vo.ResponseCategoryThirdPost;
 import jakarta.persistence.EntityNotFoundException;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.spi.MatchingStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,8 +41,10 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
     /* 카테고리(소) 신규 등록 */
     @Override
     @Transactional
-    public ResponseCategoryPost postCategory(RequestCategoryPost request) {
+    public ResponseCategoryThirdPost postCategory(RequestCategoryThirdPost request) {
         CategoryThird categoryThird = new CategoryThird();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String formattedDateTime = LocalDateTime.now().format(formatter);
 
         // CategorySecond 엔티티를 참조하는 필드에 해당 CategorySecond 엔티티를 설정
         CategorySecond categorySecond = new CategorySecond();
@@ -57,29 +52,32 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
         categoryThird.setCategory_second_code(categorySecond);
 
         categoryThird.setCategory_third_name(request.getCategory_third_name());
+        categoryThird.setCategory_third_enroll_date(formattedDateTime);
 
         CategoryThird savedCategoryThird = categoryThirdRepository.save(categoryThird);
 
-        ResponseCategoryPost responseValue = new ResponseCategoryPost(savedCategoryThird.getCategory_third_code(), savedCategoryThird.getCategory_third_name());
+        ResponseCategoryThirdPost responseValue = new ResponseCategoryThirdPost(savedCategoryThird.getCategory_third_code(), savedCategoryThird.getCategory_third_name(), savedCategoryThird.getCategory_third_enroll_date());
         return responseValue;
     }
 
     /* 카테고리(소) 수정 */
     @Override
     @Transactional
-    public ResponseCategoryPost updateCategory(int categoryThirdCode, RequestCategoryUpdate request) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        String formattedDateTime = LocalDateTime.now().format(formatter);
-        admin.setDeleteDate(formattedDateTime);
+    public ResponseCategoryThirdPost updateCategory(int categoryThirdCode, RequestCategoryThirdUpdate request) {
 
         CategoryThird categoryThird = categoryThirdRepository.findById(categoryThirdCode)
                 .orElseThrow(() -> new EntityNotFoundException("CategoryThird not found"));
 
-        categoryThird.setCategory_third_name(request.getCategory_third_name());
 
         CategoryThird updatedCategoryThird = categoryThirdRepository.save(categoryThird);
 
-        ResponseCategoryPost responseValue = new ResponseCategoryPost(updatedCategoryThird.getCategory_third_code(), updatedCategoryThird.getCategory_third_name());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String formattedDateTime = LocalDateTime.now().format(formatter);
+
+        categoryThird.setCategory_third_name(request.getCategory_third_name());
+        categoryThird.setCategory_third_update_date(formattedDateTime);
+
+        ResponseCategoryThirdPost responseValue = new ResponseCategoryThirdPost(updatedCategoryThird.getCategory_third_code(), updatedCategoryThird.getCategory_third_name(), updatedCategoryThird.getCategory_third_update_date());
         return responseValue;
     }
 

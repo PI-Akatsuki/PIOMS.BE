@@ -1,11 +1,9 @@
 package com.akatsuki.pioms.category.service;
 
-import com.akatsuki.pioms.category.dto.CategoryThirdDTO;
 import com.akatsuki.pioms.category.entity.CategoryThird;
-import com.akatsuki.pioms.category.vo.RequestCategoryPost;
-import com.akatsuki.pioms.category.vo.RequestCategoryUpdate;
-import com.akatsuki.pioms.category.vo.ResponseCategoryPost;
-import com.akatsuki.pioms.product.entity.Product;
+import com.akatsuki.pioms.category.vo.RequestCategoryThirdPost;
+import com.akatsuki.pioms.category.vo.RequestCategoryThirdUpdate;
+import com.akatsuki.pioms.category.vo.ResponseCategoryThirdPost;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,9 +13,9 @@ public interface CategoryThirdService {
 
     Optional<CategoryThird> findCategoryThirdByCode(int categoryThirdCode);
 
-    ResponseCategoryPost postCategory(RequestCategoryPost request);
+    ResponseCategoryThirdPost postCategory(RequestCategoryThirdPost request);
 
-    ResponseCategoryPost updateCategory(int categoryThirdCode, RequestCategoryUpdate request);
+    ResponseCategoryThirdPost updateCategory(int categoryThirdCode, RequestCategoryThirdUpdate request);
 
 
 
