@@ -112,4 +112,30 @@ public class FranchiseServiceImpl implements FranchiseService {
         franchiseRepository.save(franchise);
         return ResponseEntity.ok("프랜차이즈 정보가 성공적으로 업데이트되었습니다.");
     }
+
+    // 프랜차이즈 삭제 (비활성화)
+    @Transactional
+    @Override
+    public ResponseEntity<String> deleteFranchise(int franchiseCode, int requestorAdminCode) {
+        // 루트 관리자만 삭제 가능
+        Optional<Admin> requestorAdmin = adminRepository.findById(requestorAdminCode);
+        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
+            return ResponseEntity.status(403).body("프랜차이즈 삭제는 루트 관리자만 가능합니다.");
+        }
+
+        Optional<Franchise> franchiseOptional = franchiseRepository.findById(franchiseCode);
+        if (franchiseOptional.isPresent()) {
+            Franchise franchise = franchiseOptional.get();
+
+            if (franchise.getFranchiseDeleteDate() != null && !franchise.getFranchiseDeleteDate().isEmpty()) {
+                return ResponseEntity.badRequest().body("해당 프랜차이즈는 이미 삭제되었습니다.");
+            }
+
+            franchise.setFranchiseDeleteDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+            franchiseRepository.save(franchise);
+            return ResponseEntity.ok("프랜차이즈가 삭제되었습니다.");
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }

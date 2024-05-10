@@ -59,5 +59,11 @@ public class AdminOnlyFranchiseController {
     }
 
     // 프랜차이즈 삭제
+    @DeleteMapping("/delete/{franchiseCode}")
+    public ResponseEntity<String> deleteFranchise(
+            @PathVariable int franchiseCode,
+            @RequestParam int requestorAdminCode) {
+        return franchiseService.deleteFranchise(franchiseCode, requestorAdminCode);
+    }
 
 }
