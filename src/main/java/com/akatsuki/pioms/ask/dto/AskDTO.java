@@ -2,7 +2,8 @@ package com.akatsuki.pioms.ask.dto;
 
 
 import com.akatsuki.pioms.admin.aggregate.Admin;
-import com.akatsuki.pioms.ask.entity.FranchiseOwnerEntity;
+
+import com.akatsuki.pioms.ask.aggregate.FranchiseOwnerEntity;
 import com.akatsuki.pioms.ask.etc.ASK_STATUS;
 
 import java.time.LocalDateTime;
