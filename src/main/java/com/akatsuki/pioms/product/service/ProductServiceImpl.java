@@ -1,15 +1,18 @@
 package com.akatsuki.pioms.product.service;
 
+
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import com.akatsuki.pioms.exchange.entity.EXCHANGE_PRODUCT_STATUS;
 import com.akatsuki.pioms.exchange.entity.ExchangeProductEntity;
 import com.akatsuki.pioms.exchange.service.ExchangeService;
 import com.akatsuki.pioms.order.entity.Order;
+import com.akatsuki.pioms.product.aggregate.ResponseProducts;
+
 import com.akatsuki.pioms.product.repository.ProductRepository;
-import com.akatsuki.pioms.category.entity.CategoryThird;
-import com.akatsuki.pioms.product.entity.Product;
-import com.akatsuki.pioms.product.vo.RequestProductPost;
-import com.akatsuki.pioms.product.vo.ResponseProductPost;
+import com.akatsuki.pioms.categoryThird.aggregate.CategoryThird;
+import com.akatsuki.pioms.product.aggregate.Product;
+import com.akatsuki.pioms.product.aggregate.RequestProduct;
+import com.akatsuki.pioms.product.aggregate.ResponseProduct;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,12 +51,12 @@ public class ProductServiceImpl implements ProductService{
 
     @Override
     @Transactional
-    public ResponseProductPost postProduct(RequestProductPost request) {
+    public ResponseProduct postProduct(RequestProduct request) {
         Product product = new Product();
 
         CategoryThird categoryThird = new CategoryThird();
         categoryThird.setCategory_third_code(request.getCategory_third_code());
-        product.setCategoryThirdCode(categoryThird);
+        product.setCategoryThird(categoryThird);
 
         product.setProductName(request.getProduct_name());
         product.setProductPrice(request.getProduct_price());
@@ -71,8 +74,8 @@ public class ProductServiceImpl implements ProductService{
 
         Product updatedProduct = productRepository.save(product);
 
-        ResponseProductPost responseValue =
-                new ResponseProductPost(
+        ResponseProduct responseValue =
+                new ResponseProduct(
                         updatedProduct.getProductCode(),
                         updatedProduct.getProductName(),
                         updatedProduct.getProductPrice(),
@@ -99,13 +102,13 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public ResponseProductPost updateProduct(int productCode, RequestProductPost request) {
+    public ResponseProduct updateProduct(int productCode, RequestProduct request) {
         Product product = productRepository.findById(productCode)
                 .orElseThrow(() -> new EntityNotFoundException("Product not found"));
 
         CategoryThird categoryThird = new CategoryThird();
         categoryThird.setCategory_third_code(request.getCategory_third_code());
-        product.setCategoryThirdCode(categoryThird);
+        product.setCategoryThird(categoryThird);
 
         product.setProductName(request.getProduct_name());
         product.setProductPrice(request.getProduct_price());
@@ -123,8 +126,8 @@ public class ProductServiceImpl implements ProductService{
         Product savedProduct = productRepository.save(product);
         Product updatedProduct = productRepository.save(product);
 
-        ResponseProductPost responseValue =
-                new ResponseProductPost(
+        ResponseProduct responseValue =
+                new ResponseProduct(
                         savedProduct.getProductCode(),
                         savedProduct.getProductName(),
                         updatedProduct.getProductPrice(),
@@ -144,6 +147,7 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
+
     public void exportProducts(Order order) {
         // 발주 상품에 대해 재고 수정
         order.getOrderProductList().forEach(requestProduct->{
@@ -184,5 +188,16 @@ public class ProductServiceImpl implements ProductService{
         product.setProductCount(product.getProductCount() - requestProduct);
         productRepository.save(product);
     }
+
+
+    public List<ResponseProducts> getCategoryProductList(int categoryThirdCode) {
+        List<Product> products = productRepository.findAllByCategoryThirdCategoryThirdCode(categoryThirdCode);
+        List<ResponseProducts> responseProducts = new ArrayList<>();
+        products.forEach(product -> {
+            responseProducts.add(new ResponseProducts(product));
+        });
+        return responseProducts;
+    }
+
 
 }

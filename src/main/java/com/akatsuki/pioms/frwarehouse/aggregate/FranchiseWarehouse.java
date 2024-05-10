@@ -1,7 +1,7 @@
 package com.akatsuki.pioms.frwarehouse.aggregate;
 
 
-import com.akatsuki.pioms.product.entity.Product;
+import com.akatsuki.pioms.product.aggregate.Product;
 import jakarta.persistence.*;
 import lombok.*;
 
