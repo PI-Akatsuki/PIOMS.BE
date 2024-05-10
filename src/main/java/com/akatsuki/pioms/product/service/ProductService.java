@@ -21,11 +21,9 @@ public interface ProductService {
     ResponseProduct postProduct(RequestProduct request);
 
     Product deleteProduct(int productCode);
-    ResponseProductPost updateProduct(int productCode, RequestProductPost request);
+    ResponseProduct updateProduct(int productCode, RequestProduct request);
     void exportProducts(Order order);
     void exportExchangeProducts(int exchange);
     boolean checkExchangeProduct(Order order, ExchangeDTO exchange);
-    ResponseProduct updateProduct(int productCode, RequestProduct request);
-
     List<ResponseProducts> getCategoryProductList(int categoryThirdCode);
 }

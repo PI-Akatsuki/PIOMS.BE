@@ -47,7 +47,7 @@ public class ResponseProducts {
         this.productNoticeCount = products.getProductNoticeCount();
         this.productDiscount = products.getProductDiscount();
         this.productCount = products.getProductCount();
-        this.categoryThirdCode = products.getCategoryThird().getCategory_third_code();
+        this.categoryThirdCode = products.getCategoryThird().getCategoryThirdCode();
     }
 
 }

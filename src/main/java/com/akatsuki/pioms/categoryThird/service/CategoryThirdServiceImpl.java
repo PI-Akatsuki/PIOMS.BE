@@ -48,15 +48,15 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
 
         // CategorySecond 엔티티를 참조하는 필드에 해당 CategorySecond 엔티티를 설정
         CategorySecond categorySecond = new CategorySecond();
-        categorySecond.setCategory_second_code(request.getCategory_second_code());
+        categorySecond.setCategory_second_code(request.getCategorySecondCode());
         categoryThird.setCategory_second_code(categorySecond);
 
-        categoryThird.setCategory_third_name(request.getCategory_third_name());
-        categoryThird.setCategory_third_enroll_date(formattedDateTime);
+        categoryThird.setCategoryThirdName(request.getCategoryThirdName());
+        categoryThird.setCategoryThirdEnrollDate(formattedDateTime);
 
         CategoryThird savedCategoryThird = categoryThirdRepository.save(categoryThird);
 
-        ResponseCategoryThirdPost responseValue = new ResponseCategoryThirdPost(savedCategoryThird.getCategory_third_code(), savedCategoryThird.getCategory_third_name(), savedCategoryThird.getCategory_third_enroll_date());
+        ResponseCategoryThirdPost responseValue = new ResponseCategoryThirdPost(savedCategoryThird.getCategoryThirdCode(), savedCategoryThird.getCategoryThirdName(), savedCategoryThird.getCategoryThirdEnrollDate());
         return responseValue;
     }
 
@@ -74,10 +74,10 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formattedDateTime = LocalDateTime.now().format(formatter);
 
-        categoryThird.setCategory_third_name(request.getCategory_third_name());
-        categoryThird.setCategory_third_update_date(formattedDateTime);
+        categoryThird.setCategoryThirdName(request.getCategoryThirdName());
+        categoryThird.setCategoryThirdUpdateDate(formattedDateTime);
 
-        ResponseCategoryThirdPost responseValue = new ResponseCategoryThirdPost(updatedCategoryThird.getCategory_third_code(), updatedCategoryThird.getCategory_third_name(), updatedCategoryThird.getCategory_third_update_date());
+        ResponseCategoryThirdPost responseValue = new ResponseCategoryThirdPost(updatedCategoryThird.getCategoryThirdCode(), updatedCategoryThird.getCategoryThirdName(), updatedCategoryThird.getCategoryThirdUpdateDate());
         return responseValue;
     }
 

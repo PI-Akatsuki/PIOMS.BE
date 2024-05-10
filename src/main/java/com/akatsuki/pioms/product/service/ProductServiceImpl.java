@@ -55,7 +55,7 @@ public class ProductServiceImpl implements ProductService{
         Product product = new Product();
 
         CategoryThird categoryThird = new CategoryThird();
-        categoryThird.setCategory_third_code(request.getCategory_third_code());
+        categoryThird.setCategoryThirdCode(request.getCategory_third_code());
         product.setCategoryThird(categoryThird);
 
         product.setProductName(request.getProduct_name());
@@ -107,7 +107,7 @@ public class ProductServiceImpl implements ProductService{
                 .orElseThrow(() -> new EntityNotFoundException("Product not found"));
 
         CategoryThird categoryThird = new CategoryThird();
-        categoryThird.setCategory_third_code(request.getCategory_third_code());
+        categoryThird.setCategoryThirdCode(request.getCategory_third_code());
         product.setCategoryThird(categoryThird);
 
         product.setProductName(request.getProduct_name());

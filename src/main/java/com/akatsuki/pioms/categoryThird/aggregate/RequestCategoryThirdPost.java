@@ -8,11 +8,11 @@ import lombok.Setter;
 @Getter
 @Setter
 public class RequestCategoryThirdPost {
-    private int category_second_code;
-    private String category_third_name;
+    private int categorySecondCode;
+    private String categoryThirdName;
 
-    public RequestCategoryThirdPost(int category_second_code, String category_third_name) {
-        this.category_second_code = category_second_code;
-        this.category_third_name = category_third_name;
+    public RequestCategoryThirdPost(int categorySecondCode, String categoryThirdName) {
+        this.categorySecondCode = categorySecondCode;
+        this.categoryThirdName = categoryThirdName;
     }
 }

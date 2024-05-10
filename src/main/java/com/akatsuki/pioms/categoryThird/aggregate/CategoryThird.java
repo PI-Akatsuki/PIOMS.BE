@@ -16,20 +16,20 @@ public class CategoryThird {
     @Id
     @Column(name = "category_third_code")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int category_third_code;
+    private int categoryThirdCode;
 
     @Column(name = "category_third_name")
-    private String category_third_name;
+    private String categoryThirdName;
 
     @Column(name = "category_third_enroll_date")
     @Temporal(TemporalType.TIMESTAMP)
-    private String category_third_enroll_date;
+    private String categoryThirdEnrollDate;
 
     @Column(name = "category_third_update_date")
-    private String category_third_update_date;
+    private String categoryThirdUpdateDate;
 
     @Column(name = "category_third_delete_date")
-    private String category_third_delete_date;
+    private String categoryThirdDeleteDate;
 
     @ManyToOne
     @JoinColumn(name="category_second_code")

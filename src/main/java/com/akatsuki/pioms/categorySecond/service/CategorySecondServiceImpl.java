@@ -46,7 +46,7 @@ public class CategorySecondServiceImpl implements CategorySecondService{
         String formattedDateTime = LocalDateTime.now().format(formatter);
 
         CategoryFirst categoryFirst = new CategoryFirst();
-        categoryFirst.setCategory_first_code(request.getCategory_first_code());
+        categoryFirst.setCategoryFirstCode(request.getCategory_first_code());
         categorySecond.setCategory_first_code(categoryFirst);
 
         categorySecond.setCategory_second_name(request.getCategory_second_name());
