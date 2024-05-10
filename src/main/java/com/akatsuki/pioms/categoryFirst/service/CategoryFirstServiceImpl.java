@@ -6,6 +6,8 @@ import com.akatsuki.pioms.categoryFirst.aggregate.RequestCategoryFirstPost;
 import com.akatsuki.pioms.categoryFirst.aggregate.RequestCategoryFirstUpdate;
 import com.akatsuki.pioms.categoryFirst.aggregate.ResponseCategoryFirstPost;
 import com.akatsuki.pioms.categoryFirst.aggregate.ResponseCategoryFirstUpdate;
+import com.akatsuki.pioms.log.etc.LogStatus;
+import com.akatsuki.pioms.log.service.LogService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,10 +21,12 @@ import java.util.Optional;
 @Service
 public class CategoryFirstServiceImpl implements CategoryFirstService {
     private final CategoryFirstRepository categoryFirstRepository;
+    LogService logService;
 
     @Autowired
-    public CategoryFirstServiceImpl(CategoryFirstRepository categoryFirstRepository) {
+    public CategoryFirstServiceImpl(CategoryFirstRepository categoryFirstRepository,LogService logService) {
         this.categoryFirstRepository = categoryFirstRepository;
+        this.logService =  logService;
     }
 
     @Override
@@ -50,6 +54,7 @@ public class CategoryFirstServiceImpl implements CategoryFirstService {
         categoryFirst.setCategoryFirstUpdateDate(formattedDateTime);
 
         ResponseCategoryFirstUpdate responseValue = new ResponseCategoryFirstUpdate(updatedCategoryFirst.getCategoryFirstCode(), updatedCategoryFirst.getCategoryFirstName(), updatedCategoryFirst.getCategoryFirstUpdateDate());
+        logService.saveLog("root", LogStatus.수정,updatedCategoryFirst.getCategoryFirstName(),"CategoryFirst");
         return responseValue;
     }
 
@@ -67,6 +72,7 @@ public class CategoryFirstServiceImpl implements CategoryFirstService {
         CategoryFirst savedCategoryFirst = categoryFirstRepository.save(categoryFirst);
 
         ResponseCategoryFirstPost responseValue = new ResponseCategoryFirstPost(savedCategoryFirst.getCategoryFirstCode(),savedCategoryFirst.getCategoryFirstName(), savedCategoryFirst.getCategoryFirstEnrollDate());
+        logService.saveLog("root", LogStatus.등록,savedCategoryFirst.getCategoryFirstName(),"CategoryFirst");
         return responseValue;
     }
 }
