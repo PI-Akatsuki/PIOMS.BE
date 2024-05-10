@@ -59,9 +59,10 @@ public class ProductController {
         return ResponseEntity.ok().body(response);
     }
 
-//    @GetMapping("/category/{categoryThirdCode}/")
-//    public List<Product> getAllProductsByCategoryThird(@PathVariable int categoryThirdCode) {
-//        return productService.getAllProductsByCategoryThird(categoryThirdCode);
+//    @GetMapping("/category/{categoryThirdCode}")
+//    @Operation(summary = "카테고리(소) 코드로 상품 목록 조회")
+//    public ResponseEntity<RequestProductPost> getCategoryProduct(@PathVariable Integer categoryThirdCode) {
+//        RequestProductPost requestProduct = productService.getProductsByCategoryThirdCode(categoryThirdCode);
+//        return ResponseEntity.ok().body(requestProduct);
 //    }
-
 }

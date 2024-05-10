@@ -5,7 +5,6 @@ import com.akatsuki.pioms.category.service.CategoryThirdService;
 import com.akatsuki.pioms.category.vo.RequestCategoryPost;
 import com.akatsuki.pioms.category.vo.RequestCategoryUpdate;
 import com.akatsuki.pioms.category.vo.ResponseCategoryPost;
-import com.akatsuki.pioms.product.entity.Product;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +49,7 @@ public class CategoryThirdController {
         ResponseCategoryPost response = categoryThirdService.updateCategory(categoryThirdCode, request);
         return ResponseEntity.ok().body(response);
     }
+
 
 //    @DeleteMapping("/delete/{categoryThirdCode}")
 //    @Operation(summary = "카테고리(소) 카테고리 삭제", description = "포함되어 있는 상품이 0개인 카테고리(소) 카테고리 삭제 기능")

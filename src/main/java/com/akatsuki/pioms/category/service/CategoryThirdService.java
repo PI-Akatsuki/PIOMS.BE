@@ -1,5 +1,6 @@
 package com.akatsuki.pioms.category.service;
 
+import com.akatsuki.pioms.category.dto.CategoryThirdDTO;
 import com.akatsuki.pioms.category.entity.CategoryThird;
 import com.akatsuki.pioms.category.vo.RequestCategoryPost;
 import com.akatsuki.pioms.category.vo.RequestCategoryUpdate;
@@ -18,5 +19,6 @@ public interface CategoryThirdService {
 
     ResponseCategoryPost updateCategory(int categoryThirdCode, RequestCategoryUpdate request);
 
-//    CategoryThird deleteCategory(int categoryThirdCode);
+
+
 }

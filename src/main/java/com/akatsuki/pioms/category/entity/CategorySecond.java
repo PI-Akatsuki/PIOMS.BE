@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Entity
 @Table(name="category_second")
 @Data
@@ -19,6 +21,12 @@ public class CategorySecond {
 
     @Column(name = "category_second_name")
     private String category_second_name;
+
+    @Column(name = "category_second_enroll_date")
+    private Date category_second_enroll_date;
+
+    @Column(name = "category_second_update_date")
+    private Date category_second_update_date;
 
     @ManyToOne
     @JoinColumn(name="category_first_code")

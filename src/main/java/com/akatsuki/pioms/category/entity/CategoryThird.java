@@ -1,10 +1,9 @@
 package com.akatsuki.pioms.category.entity;
 
-import com.akatsuki.pioms.product.entity.Product;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
+import java.util.Date;
 
 @Entity
 @Table(name="category_third")
@@ -23,9 +22,18 @@ public class CategoryThird {
     @Column(name = "category_third_name")
     private String category_third_name;
 
+    @Column(name = "category_third_enroll_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date category_third_enroll_date;
+
+    @Column(name = "category_third_update_date")
+    private Date category_third_update_date;
+
+    @Column(name = "category_third_delete_date")
+    private Date category_thrid_delete_date;
+
     @ManyToOne
     @JoinColumn(name="category_second_code")
     private CategorySecond category_second_code;
-
 
 }

@@ -1,31 +1,36 @@
 package com.akatsuki.pioms.category.service;
 
+import com.akatsuki.pioms.admin.entity.Admin;
+import com.akatsuki.pioms.category.dto.CategoryThirdDTO;
 import com.akatsuki.pioms.category.entity.CategorySecond;
 import com.akatsuki.pioms.category.entity.CategoryThird;
 import com.akatsuki.pioms.category.repository.CategoryThirdRepository;
 import com.akatsuki.pioms.category.vo.RequestCategoryPost;
 import com.akatsuki.pioms.category.vo.RequestCategoryUpdate;
 import com.akatsuki.pioms.category.vo.ResponseCategoryPost;
+import com.akatsuki.pioms.product.controller.ProductController;
 import com.akatsuki.pioms.product.entity.Product;
 import com.akatsuki.pioms.product.repository.ProductRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.spi.MatchingStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class CategoryThirdServiceImpl implements CategoryThirdService{
 
-    private CategoryThirdRepository categoryThirdRepository;
-    private ProductRepository productRepository;
+    private final CategoryThirdRepository categoryThirdRepository;
 
     @Autowired
-    public CategoryThirdServiceImpl(CategoryThirdRepository categoryThirdRepository, ProductRepository productRepository) {
+    public CategoryThirdServiceImpl(CategoryThirdRepository categoryThirdRepository) {
         this.categoryThirdRepository = categoryThirdRepository;
-        this.productRepository = productRepository;
     }
 
     /* 카테고리(소) 전체 조회 */
@@ -63,6 +68,10 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
     @Override
     @Transactional
     public ResponseCategoryPost updateCategory(int categoryThirdCode, RequestCategoryUpdate request) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String formattedDateTime = LocalDateTime.now().format(formatter);
+        admin.setDeleteDate(formattedDateTime);
+
         CategoryThird categoryThird = categoryThirdRepository.findById(categoryThirdCode)
                 .orElseThrow(() -> new EntityNotFoundException("CategoryThird not found"));
 
@@ -73,6 +82,7 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
         ResponseCategoryPost responseValue = new ResponseCategoryPost(updatedCategoryThird.getCategory_third_code(), updatedCategoryThird.getCategory_third_name());
         return responseValue;
     }
+
 
 //    @Override
 //    @Transactional

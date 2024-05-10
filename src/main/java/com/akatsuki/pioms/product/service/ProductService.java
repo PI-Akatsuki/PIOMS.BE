@@ -19,5 +19,6 @@ public interface ProductService {
 
     ResponseProductPost updateProduct(int productCode, RequestProductPost request);
 
-//    List<Product> getAllProductsByCategoryThird(int categoryThirdCode);
+//    RequestProductPost getProductsByCategoryThirdCode(Integer categoryThirdCode);
+
 }

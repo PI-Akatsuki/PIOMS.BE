@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Entity
 @Table(name="category_first")
 @Data
@@ -19,5 +21,11 @@ public class CategoryFirst {
 
     @Column(name = "category_first_name")
     private String category_first_name;
+
+    @Column(name = "category_first_enroll_date")
+    private Date category_first_enroll_date;
+
+    @Column(name = "category_first_update_date")
+    private Date category_first_update_date;
 }
 

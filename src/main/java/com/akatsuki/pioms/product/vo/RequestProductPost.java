@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Getter
@@ -46,4 +47,7 @@ public class RequestProductPost {
         this.category_third_code = category_third_code;
     }
 
+    public RequestProductPost(List<ResponseProductPost> responseProductList) {
+
+    }
 }
