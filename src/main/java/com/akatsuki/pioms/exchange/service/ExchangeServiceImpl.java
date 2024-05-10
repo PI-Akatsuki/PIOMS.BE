@@ -6,7 +6,7 @@ import com.akatsuki.pioms.exchange.vo.ResponseExchange;
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import com.akatsuki.pioms.exchange.repository.ExchangeProductRepository;
 import com.akatsuki.pioms.exchange.repository.ExchangeRepository;
-import com.akatsuki.pioms.franchise.entity.FranchiseEntity;
+import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import com.akatsuki.pioms.frwarehouse.service.FranchiseWarehouseService;
 import com.akatsuki.pioms.product.entity.Product;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,7 +72,7 @@ public class ExchangeServiceImpl implements ExchangeService{
         ExchangeEntity exchange = new ExchangeEntity();
         exchange.setExchangeDate(LocalDateTime.now());
         exchange.setExchangeStatus(EXCHANGE_STATUS.반송신청);
-        FranchiseEntity franchise = new FranchiseEntity();
+        Franchise franchise = new Franchise();
         franchise.setFranchiseCode(franchiseCode);
         exchange.setFranchise(franchise);
 

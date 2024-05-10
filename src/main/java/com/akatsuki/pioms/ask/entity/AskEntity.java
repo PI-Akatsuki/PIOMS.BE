@@ -1,8 +1,8 @@
 package com.akatsuki.pioms.ask.entity;
 
 import com.akatsuki.pioms.admin.aggregate.Admin;
-import com.akatsuki.pioms.ask.aggregate.FranchiseOwnerEntity;
 import com.akatsuki.pioms.ask.etc.ASK_STATUS;
+import com.akatsuki.pioms.frowner.aggregate.FranchiseOwner;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -45,7 +45,7 @@ public class AskEntity {
 
     @JoinColumn(name = "franchise_owner_code")
     @OneToOne
-    private FranchiseOwnerEntity franchiseOwner;
+    private FranchiseOwner franchiseOwner;
 
     @JoinColumn(name = "admin_code")
     @OneToOne
