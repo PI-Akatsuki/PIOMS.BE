@@ -1,15 +1,15 @@
 package com.akatsuki.pioms.category.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name="category_second")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 
 public class CategorySecond {
     @Id
@@ -19,6 +19,12 @@ public class CategorySecond {
 
     @Column(name = "category_second_name")
     private String category_second_name;
+
+    @Column(name = "category_second_enroll_date")
+    private String category_second_enroll_date;
+
+    @Column(name = "category_second_update_date")
+    private String category_second_update_date;
 
     @ManyToOne
     @JoinColumn(name="category_first_code")

@@ -1,15 +1,15 @@
 package com.akatsuki.pioms.category.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name="category_first")
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Setter
+@Getter
+@ToString
 
 public class CategoryFirst {
     @Id
@@ -19,5 +19,11 @@ public class CategoryFirst {
 
     @Column(name = "category_first_name")
     private String category_first_name;
+
+    @Column(name = "category_first_enroll_date")
+    private String category_first_enroll_date;
+
+    @Column(name = "category_first_update_date")
+    private String category_first_update_date;
 }
 

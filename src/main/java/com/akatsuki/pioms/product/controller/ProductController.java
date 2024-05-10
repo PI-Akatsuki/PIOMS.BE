@@ -58,4 +58,11 @@ public class ProductController {
         ResponseProductPost response = productService.updateProduct(productCode, request);
         return ResponseEntity.ok().body(response);
     }
+
+//    @GetMapping("/category/{categoryThirdCode}")
+//    @Operation(summary = "카테고리(소) 코드로 상품 목록 조회")
+//    public ResponseEntity<RequestProductPost> getCategoryProduct(@PathVariable Integer categoryThirdCode) {
+//        RequestProductPost requestProduct = productService.getProductsByCategoryThirdCode(categoryThirdCode);
+//        return ResponseEntity.ok().body(requestProduct);
+//    }
 }

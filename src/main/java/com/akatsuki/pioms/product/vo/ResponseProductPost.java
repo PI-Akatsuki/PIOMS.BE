@@ -1,5 +1,6 @@
 package com.akatsuki.pioms.product.vo;
 
+import com.akatsuki.pioms.product.entity.Product;
 import com.akatsuki.pioms.product.etc.PRODUCT_COLOR;
 import com.akatsuki.pioms.product.etc.PRODUCT_GENDER;
 import com.akatsuki.pioms.product.etc.PRODUCT_STATUS;
@@ -43,5 +44,9 @@ public class ResponseProductPost {
         this.product_notice_count = product_notice_count;
         this.product_dis_count = product_dis_count;
         this.product_count = product_count;
+    }
+
+    public ResponseProductPost(Product product) {
+
     }
 }

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -134,4 +135,26 @@ public class ProductServiceImpl implements ProductService{
                 );
         return responseValue;
     }
+
+//    @Override
+//    public RequestProductPost getProductsByCategoryThirdCode(Integer categoryThirdCode) {
+//        List<Product> productList = productRepository.findByCategoryThird_CategoryThirdCode(categoryThirdCode);
+//        return getAllProduct(productList);
+//    }
+//
+//    private RequestProductPost getAllProduct(List<Product> productList) {
+//        List<ResponseProductPost> responseProductList = new ArrayList<>();
+//        productList.forEach(product -> responseProductList.add(new ResponseProductPost(product)));
+//        return new RequestProductPost(responseProductList);
+//    }
+
+//    @Override
+//    public List<Product> getCategoryProduct(int categoryThirdCode) {
+//        return productRepository.findProductsByCategoryThirdCode(categoryThirdCode);
+//    }
+
+//    @Override
+//    public List<Product> getAllProductsByCategoryThird(int categoryThirdCode) {
+//        return productRepository.findByCategoryThirdCode_CategoryThirdCode(categoryThirdCode);
+//    }
 }

@@ -5,10 +5,7 @@ import com.akatsuki.pioms.ask.etc.ASK_STATUS;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.Date;
 
 @Entity
 @Table(name = "ask")

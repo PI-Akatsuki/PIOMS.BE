@@ -3,14 +3,15 @@ package com.akatsuki.pioms.category.controller;
 
 import com.akatsuki.pioms.category.entity.CategoryFirst;
 import com.akatsuki.pioms.category.service.CategoryFirstService;
+import com.akatsuki.pioms.category.vo.RequestCategoryFirstPost;
+import com.akatsuki.pioms.category.vo.RequestCategoryFirstUpdate;
+import com.akatsuki.pioms.category.vo.ResponseCategoryFirstPost;
+import com.akatsuki.pioms.category.vo.ResponseCategoryFirstUpdate;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -38,5 +39,18 @@ public class CategoryFirstController {
     public ResponseEntity<Optional<CategoryFirst>> getCategoryFirstByCode(@PathVariable int categoryFirstCode) {
         Optional<CategoryFirst> categoryFirst = categoryFirstService.findCategoryFirstByCode(categoryFirstCode);
         return ResponseEntity.ok().body(categoryFirst);
+    }
+
+    @PostMapping("/post")
+    public ResponseEntity<ResponseCategoryFirstPost> postCategoryFirst(@RequestBody RequestCategoryFirstPost request) {
+        ResponseCategoryFirstPost response = categoryFirstService.postCategoryFirst(request);
+        return ResponseEntity.ok().body(response);
+    }
+
+    @PostMapping("/update/{categoryFirstCode}")
+    @Operation(summary = "카테고리(대) code로 카테고리(대) 수정" ,description = "update_date 자동 기입")
+    public ResponseEntity<ResponseCategoryFirstUpdate> updateCategoryFirst(@PathVariable int categoryFirstCode, @RequestBody RequestCategoryFirstUpdate request) {
+        ResponseCategoryFirstUpdate response = categoryFirstService.updateCategoryFirst(categoryFirstCode, request);
+        return ResponseEntity.ok().body(response);
     }
 }
