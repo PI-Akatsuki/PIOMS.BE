@@ -34,14 +34,4 @@ public class OrderProduct {
         this.order = order;
         this.product = product;
     }
-
-    public OrderProduct(Order order1, int productCode, int count) {
-        Product product1 = new Product();
-        product1.setProductCode(productCode);
-        this.product = product1;
-        this.requestProductCount = count;
-        this.requestProductGetCount = 0;
-        this.order = order1;
-
-    }
 }

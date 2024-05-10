@@ -4,6 +4,8 @@ import com.akatsuki.pioms.order.service.OrderService;
 import com.akatsuki.pioms.order.vo.OrderListVO;
 import com.akatsuki.pioms.order.vo.OrderVO;
 import com.akatsuki.pioms.order.vo.RequestOrderVO;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +33,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/admin")
+@Tag(name = "Admin Order API" ,description = "관리자 관련 API 명세서입니다.")
 public class AdminOrderController {
     OrderService orderService;
 
@@ -38,10 +41,8 @@ public class AdminOrderController {
         this.orderService = orderService;
     }
 
-    /**
-     * <h2>모든 가맹점 발주 목록 조회</h2>
-     * */
     @GetMapping("/{adminCode}/orders")
+    @Operation(summary = "관리자가 관리하고 있는 모든 가맹점들의 발주 리스트를 조회합니다.")
     public ResponseEntity<OrderListVO> getFranchisesOrderList(@PathVariable int adminCode){
         OrderListVO orderListVO = orderService.getFranchisesOrderList(adminCode);
         return ResponseEntity.ok().body(orderListVO);
@@ -50,23 +51,27 @@ public class AdminOrderController {
      * <h2>모든 가맹점 승인대기 발주 목록 조회</h2>
      * */
     @GetMapping("/{adminCode}/unchecked-orders")
+    @Operation(summary = "관리자가 관리하는 모든 가맹점들 중 승인 하지 않은 발주 리스틀 조회합니다.")
     public ResponseEntity<OrderListVO> getFranchisesUncheckedOrderList(@PathVariable int adminCode){
         OrderListVO orderListVO = orderService.getFranchisesUncheckedOrderList(adminCode);
         return ResponseEntity.ok().body(orderListVO);
     }
 
     @PutMapping("/{adminCode}/order/{orderId}/accept")
+    @Operation(summary = "승인 대기 중인 발주를 승인합니다.")
     public ResponseEntity<String> acceptOrder(@PathVariable int adminCode,@PathVariable int orderId){
         String returnValue = orderService.acceptOrder(adminCode, orderId);
         return ResponseEntity.ok(returnValue);
     }
     @PutMapping("/{adminCode}/order/{orderId}/deny")
+    @Operation(summary = "승인 대기 중인 발주를 거절합니다.")
     public ResponseEntity<String> denyOrder(@PathVariable int adminCode,@PathVariable int orderId, @RequestParam String denyMessage){
         String returnValue = orderService.denyOrder(adminCode,orderId,denyMessage);
         return ResponseEntity.ok(returnValue);
     }
 
     @GetMapping("/{adminCode}/order/{orderCode}")
+    @Operation(summary = "발주를 상세 조회합니다.")
     public ResponseEntity<OrderVO> getOrder(@PathVariable int adminCode, @PathVariable int orderCode){
         OrderVO order = orderService.getAdminOrder(adminCode,orderCode);
         if(order == null){
