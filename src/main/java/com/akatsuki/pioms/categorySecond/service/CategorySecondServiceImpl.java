@@ -46,15 +46,15 @@ public class CategorySecondServiceImpl implements CategorySecondService{
         String formattedDateTime = LocalDateTime.now().format(formatter);
 
         CategoryFirst categoryFirst = new CategoryFirst();
-        categoryFirst.setCategoryFirstCode(request.getCategory_first_code());
-        categorySecond.setCategory_first_code(categoryFirst);
+        categoryFirst.setCategoryFirstCode(request.getCategoryFirstCode());
+        categorySecond.setCategoryFirstCode(categoryFirst);
 
-        categorySecond.setCategory_second_name(request.getCategory_second_name());
-        categorySecond.setCategory_second_enroll_date(formattedDateTime);
+        categorySecond.setCategorySecondName(request.getCategorySecondName());
+        categorySecond.setCategorySecondEnrollDate(formattedDateTime);
 
         CategorySecond savedCategorySecond = categorySecondRepository.save(categorySecond);
 
-        ResponseCategorySecondPost responseValue = new ResponseCategorySecondPost(savedCategorySecond.getCategory_second_code(), savedCategorySecond.getCategory_second_name(), savedCategorySecond.getCategory_second_enroll_date());
+        ResponseCategorySecondPost responseValue = new ResponseCategorySecondPost(savedCategorySecond.getCategorySecondCode(), savedCategorySecond.getCategorySecondName(), savedCategorySecond.getCategorySecondEnrollDate());
         return responseValue;
     }
 
@@ -69,10 +69,10 @@ public class CategorySecondServiceImpl implements CategorySecondService{
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formattedDateTime = LocalDateTime.now().format(formatter);
 
-        categorySecond.setCategory_second_name(request.getCategory_second_name());
-        categorySecond.setCategory_second_update_date(formattedDateTime);
+        categorySecond.setCategorySecondName(request.getCategorySecondName());
+        categorySecond.setCategorySecondUpdateDate(formattedDateTime);
 
-        ResponseCategorySecondUpdate responseValue = new ResponseCategorySecondUpdate(updatedCategorySecond.getCategory_second_code(), updatedCategorySecond.getCategory_second_name(), updatedCategorySecond.getCategory_second_update_date());
+        ResponseCategorySecondUpdate responseValue = new ResponseCategorySecondUpdate(updatedCategorySecond.getCategorySecondCode(), updatedCategorySecond.getCategorySecondName(), updatedCategorySecond.getCategorySecondUpdateDate());
         return responseValue;
     }
 }
