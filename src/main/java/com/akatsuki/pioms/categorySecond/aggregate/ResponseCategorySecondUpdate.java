@@ -8,13 +8,13 @@ import lombok.Setter;
 @Setter
 @Getter
 public class ResponseCategorySecondUpdate {
-    private int category_second_code;
-    private String category_second_name;
-    private String category_second_update_date;
+    private int categorySecondCode;
+    private String categorySecondName;
+    private String categorySecondUpdateDate;
 
-    public ResponseCategorySecondUpdate(int category_second_code, String category_second_name, String category_second_update_date) {
-        this.category_second_code = category_second_code;
-        this.category_second_name = category_second_name;
-        this.category_second_update_date = category_second_update_date;
+    public ResponseCategorySecondUpdate(int categorySecondCode, String categorySecondName, String categorySecondUpdateDate) {
+        this.categorySecondCode = categorySecondCode;
+        this.categorySecondName = categorySecondName;
+        this.categorySecondUpdateDate = categorySecondUpdateDate;
     }
 }
