@@ -1,7 +1,7 @@
 package com.akatsuki.pioms.invoice.service;
 
 import com.akatsuki.pioms.event.OrderEvent;
-import com.akatsuki.pioms.franchise.etc.DELIVERY_DATE;
+import com.akatsuki.pioms.franchise.aggregate.DELIVERY_DATE;
 import com.akatsuki.pioms.invoice.entity.InvoiceEntity;
 import com.akatsuki.pioms.invoice.etc.DELIVERY_STATUS;
 import com.akatsuki.pioms.invoice.repository.InvoiceRepository;

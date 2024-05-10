@@ -1,4 +1,4 @@
-package com.akatsuki.pioms.franchiseWarehouse.service;
+package com.akatsuki.pioms.frwarehouse.service;
 
 public interface FranchiseWarehouseService {
     void saveProduct(int productCocde, int changeVal, int franchiseCode);

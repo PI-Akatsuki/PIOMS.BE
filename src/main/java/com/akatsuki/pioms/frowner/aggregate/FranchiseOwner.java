@@ -1,4 +1,4 @@
-package com.akatsuki.pioms.franchise.aggregate;
+package com.akatsuki.pioms.frowner.aggregate;
 
 
 import jakarta.persistence.Column;
