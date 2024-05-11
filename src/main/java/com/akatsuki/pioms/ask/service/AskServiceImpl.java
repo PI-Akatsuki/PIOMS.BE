@@ -4,16 +4,12 @@ import com.akatsuki.pioms.admin.aggregate.Admin;
 import com.akatsuki.pioms.admin.repository.AdminRepository;
 import com.akatsuki.pioms.ask.dto.AskCreateDTO;
 import com.akatsuki.pioms.ask.dto.AskUpdateDTO;
-
 import com.akatsuki.pioms.ask.entity.AskEntity;
-
 import com.akatsuki.pioms.ask.etc.ASK_STATUS;
-
 import com.akatsuki.pioms.ask.repository.AskRepository;
 import com.akatsuki.pioms.ask.vo.AskListVO;
 import com.akatsuki.pioms.ask.vo.AskVO;
 import com.akatsuki.pioms.frowner.aggregate.FranchiseOwner;
-
 import com.akatsuki.pioms.frowner.repository.FranchiseOwnerRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +24,9 @@ import static com.akatsuki.pioms.ask.etc.ASK_STATUS.답변완료;
 @Service
 public class AskServiceImpl implements AskService{
 
-    AskRepository askRepository;
-    FranchiseOwnerRepository franchiseOwnerRepository;
-    AdminRepository adminRepository;
+    private final AskRepository askRepository;
+    private final FranchiseOwnerRepository franchiseOwnerRepository;
+    private final AdminRepository adminRepository;
 
     @Autowired
     public AskServiceImpl(AskRepository askRepository,FranchiseOwnerRepository franchiseOwnerRepository,AdminRepository adminRepository){
