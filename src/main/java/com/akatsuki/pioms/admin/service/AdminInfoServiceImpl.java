@@ -85,6 +85,7 @@ public class AdminInfoServiceImpl implements AdminInfoService {
             }
 
             // 정보 수정
+            admin.setAdminName(updatedAdmin.getAdminName());
             admin.setAdminPwd(updatedAdmin.getAdminPwd());
             admin.setAdminEmail(updatedAdmin.getAdminEmail());
             admin.setAdminPhone(updatedAdmin.getAdminPhone());
