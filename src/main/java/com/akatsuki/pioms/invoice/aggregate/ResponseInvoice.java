@@ -27,12 +27,11 @@ public class ResponseInvoice {
         this.deliveryStatus = invoiceEntity.getDeliveryStatus();
         this.invoiceDate = invoiceEntity.getInvoiceDate();
         this.invoiceRegionCode = invoiceEntity.getInvoiceRegionCode();
-        this.orderCode = invoiceEntity.getOrder().getOrderCode();
-        this.orderProductVOList = new ArrayList<>();
-        invoiceEntity.getOrder().getOrderProductList()
-                .forEach(product-> this.orderProductVOList.add(new OrderProductVO(product.getProduct().getProductName(), product.getRequestProductCount()))
-                );
-
-
+        if(invoiceEntity.getOrder()!=null){
+            this.orderCode = invoiceEntity.getOrder().getOrderCode();
+            this.orderProductVOList = new ArrayList<>();
+            invoiceEntity.getOrder().getOrderProductList()
+                .forEach(product-> this.orderProductVOList.add(new OrderProductVO(product.getProduct().getProductName(), product.getRequestProductCount())));
+        }
     }
 }
