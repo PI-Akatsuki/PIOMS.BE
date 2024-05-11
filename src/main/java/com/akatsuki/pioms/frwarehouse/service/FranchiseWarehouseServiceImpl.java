@@ -4,12 +4,19 @@ package com.akatsuki.pioms.frwarehouse.service;
 import com.akatsuki.pioms.exchange.entity.*;
 import com.akatsuki.pioms.exchange.vo.ExchangeProductVO;
 import com.akatsuki.pioms.frwarehouse.aggregate.FranchiseWarehouse;
+import com.akatsuki.pioms.frwarehouse.aggregate.RequestFranchiseWarehouseUpdate;
+import com.akatsuki.pioms.frwarehouse.aggregate.ResponseFranchiseWarehouseUpdate;
 import com.akatsuki.pioms.frwarehouse.repository.FranchiseWarehouseRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -66,6 +73,41 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
         }
         editCountByPostExchange(requestExchange);
         return true;
+    }
+
+    @Override
+    public List<FranchiseWarehouse> getAllWarehouse() {
+        return franchiseWarehouseRepository.findAll();
+    }
+
+    @Override
+    public Optional<FranchiseWarehouse> getWarehouseByWarehouseCode(int franchiseWarehouseCode) {
+        return franchiseWarehouseRepository.findById(franchiseWarehouseCode);
+    }
+
+    @Override
+    public ResponseFranchiseWarehouseUpdate updateWarehouseCount(int franchiseWarehouseCode, RequestFranchiseWarehouseUpdate request) {
+        FranchiseWarehouse franchiseWarehouse = franchiseWarehouseRepository.findById(franchiseWarehouseCode)
+                .orElseThrow(() -> new EntityNotFoundException("FranchiseWarehouse not found"));
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String formattedDateTime = LocalDateTime.now().format(formatter);
+
+        franchiseWarehouse.setFranchiseWarehouseTotal(request.getFranchiseWarehouseTotal());
+        franchiseWarehouse.setFranchiseWarehouseEnable(request.getFranchiseWarehouseEnable());
+        franchiseWarehouse.setFranchiseWarehouseCount(request.getFranchiseWarehouseCount());
+
+        FranchiseWarehouse updatedWarehouseCount = franchiseWarehouseRepository.save(franchiseWarehouse);
+
+        ResponseFranchiseWarehouseUpdate responseValue =
+                new ResponseFranchiseWarehouseUpdate(
+                        updatedWarehouseCount.getFranchiseWarehouseCode(),
+                        updatedWarehouseCount.getFranchiseWarehouseTotal(),
+                        updatedWarehouseCount.getFranchiseWarehouseEnable(),
+                        updatedWarehouseCount.getFranchiseWarehouseCount()
+                );
+        return responseValue;
+
     }
 
     @Transactional
