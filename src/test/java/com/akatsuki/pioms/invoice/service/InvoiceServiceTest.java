@@ -21,11 +21,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 class InvoiceServiceTest {
@@ -105,7 +106,20 @@ class InvoiceServiceTest {
 
     @Test
     void getInvoice() {
+        int invoiceCode = 1;
+        when(invoiceRepository.findById(invoiceCode) )
+                .thenReturn(
+                        Optional.of(new InvoiceEntity(1, DELIVERY_STATUS.배송전, null, 1, null))
+                );
+        assertEquals(1, invoiceService.getInvoice(1).getInvoiceCode());
+    }
 
+    @Test
+    void deleteInvoice(){
+        InvoiceEntity invoiceEntity =
+                new InvoiceEntity(1,DELIVERY_STATUS.배송전,null,1,null);
+        invoiceService.deleteInvoice(invoiceEntity);
+        verify(invoiceRepository,times(1)).delete(invoiceEntity);
     }
 
     @Test

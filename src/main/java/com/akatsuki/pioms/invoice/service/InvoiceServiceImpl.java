@@ -123,4 +123,9 @@ public class InvoiceServiceImpl implements InvoiceService {
         return invoiceRepository.save(invoiceEntity);
     }
 
+    @Override
+    public void deleteInvoice(InvoiceEntity invoiceEntity) {
+        invoiceRepository.delete(invoiceEntity);
+    }
+
 }

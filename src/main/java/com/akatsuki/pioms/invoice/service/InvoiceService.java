@@ -17,4 +17,6 @@ public interface InvoiceService {
     Boolean checkInvoiceStatus(int orderCode);
 
     InvoiceEntity saveInvoice(InvoiceEntity invoiceEntity);
+
+    void deleteInvoice(InvoiceEntity invoiceEntity);
 }
