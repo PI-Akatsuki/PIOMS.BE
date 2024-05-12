@@ -62,7 +62,6 @@ class InvoiceServiceTest {
                 .thenReturn(
                 Stream.of(
                     new InvoiceEntity(1,DELIVERY_STATUS.배송전,null,1
-//                            , new Order(1,null, 0,null,null,false,null,null,null)),
                             ,null),
                     new InvoiceEntity(2,DELIVERY_STATUS.배송중,null,1
                             , null)
@@ -78,15 +77,15 @@ class InvoiceServiceTest {
     @Test
     @DisplayName("post new invoice")
     public void postInvoice(){
-        //when
+        //given
         InvoiceEntity invoiceEntity =
                 new InvoiceEntity(1,DELIVERY_STATUS.배송전,null,1,null);
         when(invoiceRepository.save(invoiceEntity)).thenReturn(
           invoiceEntity
         );
-//        InvoiceEntity invoiceEntityCmp = invoiceService.postInvoice(order);
-//        System.out.println("invoiceEntityCmp = " + invoiceEntityCmp);
+        //when
         InvoiceEntity invoice = invoiceService.saveInvoice(invoiceEntity);
+        //then
         assertEquals(invoiceEntity, invoice);
     }
 
@@ -95,54 +94,81 @@ class InvoiceServiceTest {
         //given
         InvoiceEntity invoiceEntity =
                 new InvoiceEntity(1,DELIVERY_STATUS.배송전,null,1,null);
-        when(invoiceRepository.save(invoiceEntity)).thenReturn(
-                invoiceEntity
+        InvoiceEntity invoiceToSave =
+                new InvoiceEntity(1,DELIVERY_STATUS.배송완료,LocalDateTime.now(),1,null);
+        int invoiceCode = 1;
+        when(invoiceRepository.findById(invoiceCode)).thenReturn(
+                Optional.of(invoiceEntity)
         );
+        when(invoiceRepository.save(invoiceEntity)).thenReturn(
+                invoiceToSave
+        );
+        invoiceRepository.save(invoiceEntity);
 
         //when
-//        assertEquals(invoiceEntity,);
-
+        DELIVERY_STATUS pastStatus = invoiceEntity.getDeliveryStatus();
+        ResponseInvoice responseInvoice = invoiceService.putInvoice(invoiceCode,DELIVERY_STATUS.배송완료);
+        //then
+        System.out.println("responseInvoice = " + responseInvoice);
+        System.out.println("invoiceEntity = " + invoiceEntity);
+        assertEquals(invoiceEntity.getDeliveryStatus(), responseInvoice.getDeliveryStatus());
+        assertNotEquals(pastStatus, responseInvoice.getDeliveryStatus());
     }
 
     @Test
     void getInvoice() {
+        //given
         int invoiceCode = 1;
         when(invoiceRepository.findById(invoiceCode) )
                 .thenReturn(
                         Optional.of(new InvoiceEntity(1, DELIVERY_STATUS.배송전, null, 1, null))
                 );
-        assertEquals(1, invoiceService.getInvoice(1).getInvoiceCode());
+        //when
+        ResponseInvoice invoice =  invoiceService.getInvoice(invoiceCode);
+        //then
+        assertEquals(invoiceCode, invoice.getInvoiceCode());
     }
 
     @Test
     void deleteInvoice(){
+        //given
         InvoiceEntity invoiceEntity =
                 new InvoiceEntity(1,DELIVERY_STATUS.배송전,null,1,null);
+        //when
         invoiceService.deleteInvoice(invoiceEntity);
+        //then
         verify(invoiceRepository,times(1)).delete(invoiceEntity);
     }
 
     @Test
     void getInvoiceByOrderCode(){
+        //given
         InvoiceEntity invoiceEntity =
                 new InvoiceEntity(1,DELIVERY_STATUS.배송완료,null,1,order);
         when(invoiceRepository.findByOrderOrderCode(order.getOrderCode())).thenReturn(
                 invoiceEntity
         );
+        //when
         InvoiceEntity invoiceCmp = invoiceService.getInvoiceByOrderCode(order.getOrderCode());
+        //then
         assertEquals(1,invoiceCmp.getOrder().getOrderCode());
     }
 
     @Test
     void checkInvoiceStatus() {
+        //given
         InvoiceEntity invoiceEntity =
                 new InvoiceEntity(1,DELIVERY_STATUS.배송완료,null,1,order);
         when(invoiceRepository.findByOrderOrderCode(order.getOrderCode())).thenReturn(
                 invoiceEntity
         );
+        //when
         InvoiceEntity invoiceCmp = invoiceService.getInvoiceByOrderCode(order.getOrderCode());
+        //then
         assertEquals(DELIVERY_STATUS.배송완료, invoiceCmp.getDeliveryStatus());
         assertNotEquals(DELIVERY_STATUS.배송전, invoiceService.getInvoiceByOrderCode(1).getDeliveryStatus());
         assertNotEquals(DELIVERY_STATUS.배송중, invoiceService.getInvoiceByOrderCode(1).getDeliveryStatus());
     }
+
+
 }
