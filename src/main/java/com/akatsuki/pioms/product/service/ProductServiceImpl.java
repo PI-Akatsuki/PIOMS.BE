@@ -57,12 +57,15 @@ public class ProductServiceImpl implements ProductService{
 
     @Override
     @Transactional
-    public ResponseProduct postProduct(RequestProduct request) {
+    public String postProduct(RequestProduct request) {
         Product product = new Product();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formattedDateTime = LocalDateTime.now().format(formatter);
 
         CategoryThird categoryThird = new CategoryThird();
+        if(product.getCategoryThird() == null) {
+            return "해당 카테고리가 존재하지 않습니다.다시 확인해주세요.";
+        }
         categoryThird.setCategoryThirdCode(request.getCategoryThirdCode());
         product.setCategoryThird(categoryThird);
 
@@ -83,24 +86,24 @@ public class ProductServiceImpl implements ProductService{
         Product updatedProduct = productRepository.save(product);
         logService.saveLog("root", LogStatus.등록, updatedProduct.getProductName(), "Product");
 
-        ResponseProduct responseValue =
-                new ResponseProduct(
-                        updatedProduct.getProductCode(),
-                        updatedProduct.getProductName(),
-                        updatedProduct.getProductPrice(),
-                        updatedProduct.getProductEnrollDate(),
-                        updatedProduct.getProductContent(),
-                        updatedProduct.getProductColor(),
-                        updatedProduct.getProductSize(),
-                        updatedProduct.getProductGender(),
-                        updatedProduct.getProductTotalCount(),
-                        updatedProduct.getProductStatus(),
-                        updatedProduct.isProductExposureStatus(),
-                        updatedProduct.getProductNoticeCount(),
-                        updatedProduct.getProductDiscount(),
-                        updatedProduct.getProductCount()
-                );
-        return responseValue;
+//        ResponseProduct responseValue =
+//                new ResponseProduct(
+//                        updatedProduct.getProductCode(),
+//                        updatedProduct.getProductName(),
+//                        updatedProduct.getProductPrice(),
+//                        updatedProduct.getProductEnrollDate(),
+//                        updatedProduct.getProductContent(),
+//                        updatedProduct.getProductColor(),
+//                        updatedProduct.getProductSize(),
+//                        updatedProduct.getProductGender(),
+//                        updatedProduct.getProductTotalCount(),
+//                        updatedProduct.getProductStatus(),
+//                        updatedProduct.isProductExposureStatus(),
+//                        updatedProduct.getProductNoticeCount(),
+//                        updatedProduct.getProductDiscount(),
+//                        updatedProduct.getProductCount()
+//                );
+        return "상품 등록 완료!";
     }
 
     @Override

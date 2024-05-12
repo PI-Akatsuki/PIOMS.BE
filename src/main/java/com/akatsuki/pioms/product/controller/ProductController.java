@@ -41,9 +41,8 @@ public class ProductController {
 
     @PostMapping("/create")
     @Operation(summary = "상품 등록")
-    public ResponseEntity<ResponseProduct> postProduct(@RequestBody RequestProduct request) {
-        ResponseProduct response = productService.postProduct(request);
-        return ResponseEntity.ok().body(response);
+    public String postProduct(@RequestBody RequestProduct request) {
+        return productService.postProduct(request);
     }
 
     @DeleteMapping("/delete/{productCode}")

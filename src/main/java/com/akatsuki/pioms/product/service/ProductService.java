@@ -18,7 +18,7 @@ public interface ProductService {
     List<Product> getAllProduct();
     Product getProduct(int productId);
     Optional<Product> findProductByCode(int productCode);
-    ResponseProduct postProduct(RequestProduct request);
+    String postProduct(RequestProduct request);
 
     String deleteProduct(int productCode);
     ResponseProduct updateProduct(int productCode, RequestProduct request);
