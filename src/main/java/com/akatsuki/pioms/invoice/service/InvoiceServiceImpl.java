@@ -117,6 +117,9 @@ public class InvoiceServiceImpl implements InvoiceService {
         }
         return false;
     }
+    public InvoiceEntity getInvoiceByOrderCode(int orderCode){
+        return invoiceRepository.findByOrderOrderCode(orderCode);
+    }
 
     @Override
     public InvoiceEntity saveInvoice(InvoiceEntity invoiceEntity) {

@@ -123,6 +123,26 @@ class InvoiceServiceTest {
     }
 
     @Test
+    void getInvoiceByOrderCode(){
+        InvoiceEntity invoiceEntity =
+                new InvoiceEntity(1,DELIVERY_STATUS.배송완료,null,1,order);
+        when(invoiceRepository.findByOrderOrderCode(order.getOrderCode())).thenReturn(
+                invoiceEntity
+        );
+        InvoiceEntity invoiceCmp = invoiceService.getInvoiceByOrderCode(order.getOrderCode());
+        assertEquals(1,invoiceCmp.getOrder().getOrderCode());
+    }
+
+    @Test
     void checkInvoiceStatus() {
+        InvoiceEntity invoiceEntity =
+                new InvoiceEntity(1,DELIVERY_STATUS.배송완료,null,1,order);
+        when(invoiceRepository.findByOrderOrderCode(order.getOrderCode())).thenReturn(
+                invoiceEntity
+        );
+        InvoiceEntity invoiceCmp = invoiceService.getInvoiceByOrderCode(order.getOrderCode());
+        assertEquals(DELIVERY_STATUS.배송완료, invoiceCmp.getDeliveryStatus());
+        assertNotEquals(DELIVERY_STATUS.배송전, invoiceService.getInvoiceByOrderCode(1).getDeliveryStatus());
+        assertNotEquals(DELIVERY_STATUS.배송중, invoiceService.getInvoiceByOrderCode(1).getDeliveryStatus());
     }
 }

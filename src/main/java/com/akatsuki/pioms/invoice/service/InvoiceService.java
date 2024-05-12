@@ -19,4 +19,5 @@ public interface InvoiceService {
     InvoiceEntity saveInvoice(InvoiceEntity invoiceEntity);
 
     void deleteInvoice(InvoiceEntity invoiceEntity);
+    InvoiceEntity getInvoiceByOrderCode(int orderCode);
 }
