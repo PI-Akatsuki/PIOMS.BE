@@ -5,7 +5,10 @@ import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import com.akatsuki.pioms.exchange.aggregate.EXCHANGE_PRODUCT_STATUS;
 import com.akatsuki.pioms.exchange.aggregate.ExchangeProductEntity;
 import com.akatsuki.pioms.exchange.service.ExchangeService;
+
 import com.akatsuki.pioms.order.aggregate.Order;
+import com.akatsuki.pioms.log.etc.LogStatus;
+import com.akatsuki.pioms.log.service.LogService;
 import com.akatsuki.pioms.product.aggregate.ResponseProducts;
 
 import com.akatsuki.pioms.product.repository.ProductRepository;
@@ -29,11 +32,13 @@ public class ProductServiceImpl implements ProductService{
 
     private final ProductRepository productRepository;
     private final ExchangeService exchangeService;
+    LogService logService;
 
     @Autowired
-    public ProductServiceImpl(ProductRepository productRepository, ExchangeService exchangeService) {
+    public ProductServiceImpl(ProductRepository productRepository, ExchangeService exchangeService,LogService logService) {
         this.productRepository = productRepository;
         this.exchangeService = exchangeService;
+        this.logService = logService;
     }
   
     @Override
@@ -77,6 +82,7 @@ public class ProductServiceImpl implements ProductService{
         product.setProductCount(request.getProductCount());
 
         Product updatedProduct = productRepository.save(product);
+        logService.saveLog("root", LogStatus.등록, updatedProduct.getProductName(), "Product");
 
         ResponseProduct responseValue =
                 new ResponseProduct(
@@ -101,7 +107,11 @@ public class ProductServiceImpl implements ProductService{
     @Override
     @Transactional
     public Product deleteProduct(int productCode) {
+        Product product = productRepository.findById(productCode)
+                .orElseThrow(() -> new EntityNotFoundException("Product not found with code: " + productCode));
+        String productName = product.getProductName();
         productRepository.deleteById(productCode);
+        logService.saveLog("root", LogStatus.삭제, productName, "Product");
         return null;
     }
 
@@ -132,6 +142,7 @@ public class ProductServiceImpl implements ProductService{
         product.setProductCount(request.getProductCount());
         Product savedProduct = productRepository.save(product);
         Product updatedProduct = productRepository.save(product);
+        logService.saveLog("root", LogStatus.수정, updatedProduct.getProductName(), "Product");
 
         ResponseProduct responseValue =
                 new ResponseProduct(

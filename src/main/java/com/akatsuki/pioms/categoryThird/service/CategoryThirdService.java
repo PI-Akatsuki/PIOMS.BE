@@ -17,6 +17,8 @@ public interface CategoryThirdService {
 
     ResponseCategoryThirdPost updateCategory(int categoryThirdCode, RequestCategoryThirdUpdate request);
 
+    String deleteCategoryThird(int categoryThirdCode);
+
 
 //    CategoryThird deleteCategory(int categoryThirdCode);
 }
