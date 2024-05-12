@@ -47,15 +47,14 @@ public class DeliveryDriverServiceImpl implements DeliveryDriverService {
             return ResponseEntity.status(403).body("배송기사 등록은 루트 관리자만 가능합니다.");
         }
 
-        // 동일한 ID 존재 여부 확인
-        Optional<DeliveryDriver> existingDriver = deliveryDriverRepository.findByDriverId(driver.getDriverId());
-        if (existingDriver.isPresent()) {
-            return ResponseEntity.badRequest().body("이미 존재하는 배송기사 ID입니다.");
-        }
-
         // 필수 필드 확인
         if (driver.getDriverName() == null || driver.getDriverId() == null || driver.getDriverPwd() == null || driver.getDriverPhone() == null) {
             return ResponseEntity.badRequest().body("필수 항목(deliveryManName, deliveryManId, deliveryManPwd, deliveryManPhone)을 모두 입력해야 합니다.");
+        }
+
+        // 중복 ID 확인
+        if (deliveryDriverRepository.findByDriverId(driver.getDriverId()).isPresent()) {
+            return ResponseEntity.badRequest().body("이미 존재하는 ID입니다.");
         }
 
         // 날짜 포맷터
@@ -68,5 +67,38 @@ public class DeliveryDriverServiceImpl implements DeliveryDriverService {
 
         deliveryDriverRepository.save(driver);
         return ResponseEntity.ok("신규 배송기사 등록이 완료되었습니다.");
+    }
+
+    @Transactional
+    @Override
+    public ResponseEntity<String> updateDriver(int driverId, DeliveryDriver updatedDriver, Integer requestorAdminCode, Integer requestorDriverCode) {
+        boolean isAdmin = requestorAdminCode != null && adminRepository.findById(requestorAdminCode).isPresent();
+        boolean isDriver = requestorDriverCode != null && requestorDriverCode == driverId;
+
+        if (!isAdmin && !isDriver) {
+            return ResponseEntity.status(403).body("수정 권한이 없습니다.");
+        }
+
+        Optional<DeliveryDriver> existingDriver = deliveryDriverRepository.findById(driverId);
+        if (existingDriver.isPresent()) {
+            DeliveryDriver driver = existingDriver.get();
+
+            if (isAdmin || isDriver) {
+                driver.setDriverName(updatedDriver.getDriverName());
+                driver.setDriverPwd(updatedDriver.getDriverPwd());
+                driver.setDriverPhone(updatedDriver.getDriverPhone());
+
+                // 수정일 업데이트
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                driver.setDriverUpdateDate(LocalDateTime.now().format(formatter));
+
+                deliveryDriverRepository.save(driver);
+                return ResponseEntity.ok("배송기사 정보가 성공적으로 업데이트되었습니다.");
+            } else {
+                return ResponseEntity.status(403).body("수정 권한이 없습니다.");
+            }
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

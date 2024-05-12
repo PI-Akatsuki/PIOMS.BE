@@ -5,10 +5,7 @@ import com.akatsuki.pioms.driver.service.DeliveryDriverService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
@@ -29,6 +26,17 @@ public class DriverOnlyDriverInfoController {
         Optional<DeliveryDriver> driver = deliveryDriverService.findDriverById(driverId);
         return driver.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @Operation(summary = "배송기사 정보 수정", description = "기존 배송기사의 정보를 수정합니다.")
+    @PutMapping("/update/{driverId}")
+    public ResponseEntity<String> updateDriver(
+            @PathVariable int driverId,
+            @RequestBody DeliveryDriver updatedDriver,
+            @RequestParam(required = false) Integer requestorAdminCode,
+            @RequestParam(required = false) Integer requestorDriverCode
+    ) {
+        return deliveryDriverService.updateDriver(driverId, updatedDriver, requestorAdminCode, requestorDriverCode);
     }
 
 }

@@ -16,4 +16,7 @@ public interface DeliveryDriverService {
 
     // 배송기사 등록
     ResponseEntity<String> saveDriver(DeliveryDriver driver, int requestorAdminCode);
+
+    // 배송기사 정보 수정
+    ResponseEntity<String> updateDriver(int driverId, DeliveryDriver updatedDriver, Integer requestorAdminCode, Integer requestorDriverCode);
 }

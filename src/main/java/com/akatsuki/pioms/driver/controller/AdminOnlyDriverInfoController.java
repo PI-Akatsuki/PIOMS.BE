@@ -31,19 +31,30 @@ public class AdminOnlyDriverInfoController {
     }
 
     @Operation(summary = "배송기사 상세 조회", description = "배송기사 상세 정보를 조회합니다.")
-    @GetMapping("/detail/{driverId}")
+    @GetMapping("/list/detail/{driverId}")
     public ResponseEntity<DeliveryDriver> getDriverById(@PathVariable int driverId) {
         Optional<DeliveryDriver> driver = deliveryDriverService.findDriverById(driverId);
         return driver.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @Operation(summary = "배송기사 등록", description = "배송기사를 등록합니다. (루트 관리자만 가능)")
+    @Operation(summary = "배송기사 등록", description = "신규 배송기사를 등록합니다.")
     @PostMapping("/register")
     public ResponseEntity<String> registerDriver(
             @RequestBody DeliveryDriver driver,
             @RequestParam int requestorAdminCode
     ) {
         return deliveryDriverService.saveDriver(driver, requestorAdminCode);
+    }
+
+    @Operation(summary = "배송기사 정보 수정", description = "기존 배송기사의 정보를 수정합니다.")
+    @PutMapping("/update/{driverId}")
+    public ResponseEntity<String> updateDriver(
+            @PathVariable int driverId,
+            @RequestBody DeliveryDriver updatedDriver,
+            @RequestParam(required = false) Integer requestorAdminCode,
+            @RequestParam(required = false) Integer requestorDriverCode
+    ) {
+        return deliveryDriverService.updateDriver(driverId, updatedDriver, requestorAdminCode, requestorDriverCode);
     }
 }
