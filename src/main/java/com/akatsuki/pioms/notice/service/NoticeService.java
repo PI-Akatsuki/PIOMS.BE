@@ -11,7 +11,7 @@ import java.util.List;
  *    2. 관리자가 공지사항 등록(admin/notice/register)*/
 public interface NoticeService {
 
-    // 관리자가 작성한 공지사항 조회(admin/notice/list)
+    // 관리자가 작성한 공지사항 조회(admin/notice/view)
     List<Notice> getAllNoticeList();
 
     // 관리자가 공지사항 등록(admin/notice/register)

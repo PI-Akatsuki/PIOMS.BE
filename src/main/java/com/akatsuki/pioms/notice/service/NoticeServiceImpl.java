@@ -27,7 +27,7 @@ public class NoticeServiceImpl implements NoticeService {
         this.adminRepository = adminRepository;
     }
 
-    // 공지사항 전체 조회
+    // 관리자 공지사항 전체 조회
 
     // 필요한 값만 가져오는데 null뜬다.
 //    @Override
