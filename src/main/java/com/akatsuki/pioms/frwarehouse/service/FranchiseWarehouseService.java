@@ -1,6 +1,6 @@
 package com.akatsuki.pioms.frwarehouse.service;
-import com.akatsuki.pioms.exchange.entity.ExchangeEntity;
-import com.akatsuki.pioms.exchange.entity.RequestExchange;
+import com.akatsuki.pioms.exchange.aggregate.ExchangeEntity;
+import com.akatsuki.pioms.exchange.aggregate.RequestExchange;
 import com.akatsuki.pioms.frwarehouse.aggregate.FranchiseWarehouse;
 import com.akatsuki.pioms.frwarehouse.aggregate.RequestFranchiseWarehouseUpdate;
 import com.akatsuki.pioms.frwarehouse.aggregate.ResponseFranchiseWarehouseUpdate;

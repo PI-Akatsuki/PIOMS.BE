@@ -49,7 +49,7 @@ class InvoiceServiceTest {
                 ).collect(Collectors.toList())
                 )));
         franchise = new Franchise(1,"frnachiseName", "franchiseAddress","frnahicseCall",null,null,null,
-                DELIVERY_DATE.월_목,null,null,0);
+                "",DELIVERY_DATE.월_목,null,null);
 
         order= new Order(1,LocalDateTime.now(),0,ORDER_CONDITION.승인완료,null,false,franchise,null,null);
     }
