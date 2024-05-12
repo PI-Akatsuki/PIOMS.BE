@@ -110,11 +110,16 @@ public class ProductServiceImpl implements ProductService{
         if(product == null) {
             return "해당 상품이 없습니다.";
         }
-
         String productName = product.getProductName();
-        productRepository.delete(product);
         logService.saveLog("root", LogStatus.삭제, productName, "Product");
-        return null;
+
+        if (!product.isProductExposureStatus()) {
+            product.setProductExposureStatus(true);
+            productRepository.save(product);
+            return "Product exposure status updated successfully.";
+        } else {
+            return "Product exposure status is already true.";
+        }
     }
 
     @Override
