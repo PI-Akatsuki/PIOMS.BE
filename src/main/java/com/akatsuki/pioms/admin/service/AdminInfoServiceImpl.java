@@ -2,6 +2,8 @@ package com.akatsuki.pioms.admin.service;
 
 import com.akatsuki.pioms.admin.aggregate.Admin;
 import com.akatsuki.pioms.admin.repository.AdminRepository;
+import com.akatsuki.pioms.log.etc.LogStatus;
+import com.akatsuki.pioms.log.service.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -16,10 +18,12 @@ import java.util.UUID;
 @Service
 public class AdminInfoServiceImpl implements AdminInfoService {
     private final AdminRepository adminRepository;
+    private final LogService logService;
 
     @Autowired
-    public AdminInfoServiceImpl(AdminRepository adminRepository) {
+    public AdminInfoServiceImpl(AdminRepository adminRepository,LogService logService) {
         this.adminRepository = adminRepository;
+        this.logService = logService;
     }
 
     // 전체 조회
@@ -69,6 +73,7 @@ public class AdminInfoServiceImpl implements AdminInfoService {
         admin.setAdminStatus(true);
 
         adminRepository.save(admin);
+        logService.saveLog("root", LogStatus.등록, admin.getAdminName(), "Admin");
         return ResponseEntity.ok("신규 관리자 등록이 완료되었습니다.");
     }
 
@@ -84,6 +89,20 @@ public class AdminInfoServiceImpl implements AdminInfoService {
                 return ResponseEntity.badRequest().body("관리자는 최대 6개의 가맹점만 등록할 수 있습니다.");
             }
 
+            StringBuilder changes = new StringBuilder();
+            if (!admin.getAdminName().equals(updatedAdmin.getAdminName())) {
+                changes.append("Name: " + updatedAdmin.getAdminName() + "; ");
+            }
+            if (!admin.getAdminPwd().equals(updatedAdmin.getAdminPwd())) {
+                changes.append("Pwd: Changed; ");
+            }
+            if (!admin.getAdminEmail().equals(updatedAdmin.getAdminEmail())) {
+                changes.append("Email: " + updatedAdmin.getAdminEmail() + "; ");
+            }
+            if (!admin.getAdminPhone().equals(updatedAdmin.getAdminPhone())) {
+                changes.append("Phone: " + updatedAdmin.getAdminPhone() + "; ");
+            }
+
             // 정보 수정
             admin.setAdminName(updatedAdmin.getAdminName());
             admin.setAdminPwd(updatedAdmin.getAdminPwd());
@@ -94,6 +113,11 @@ public class AdminInfoServiceImpl implements AdminInfoService {
             admin.setUpdateDate(LocalDateTime.now().format(formatter));
 
             adminRepository.save(admin);
+            if (changes.length() > 0) {
+                logService.saveLog("root", LogStatus.수정, changes.toString(), "Admin");
+            } else {
+                logService.saveLog("root", LogStatus.수정, "No changes", "Admin");
+            }
             return ResponseEntity.ok("관리자 정보 수정이 완료되었습니다.");
         } else {
             return ResponseEntity.notFound().build();
@@ -133,6 +157,7 @@ public class AdminInfoServiceImpl implements AdminInfoService {
             admin.setAdminStatus(false);
             admin.setDeleteDate(formattedDateTime);
             adminRepository.save(admin);
+            logService.saveLog("root", LogStatus.삭제, admin.getAdminName(), "Admin");
             return ResponseEntity.ok("관리자 비활성화(삭제)가 완료됨.");
         } else {
             return ResponseEntity.notFound().build();
