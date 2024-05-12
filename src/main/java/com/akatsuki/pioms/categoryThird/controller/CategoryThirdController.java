@@ -50,6 +50,12 @@ public class CategoryThirdController {
         return ResponseEntity.ok().body(response);
     }
 
+    @DeleteMapping("/delete/{categoryThirdCode}")
+    @Operation(summary = "카테고리(소) 카테고리 삭제", description = "포함되어 있는 상품이 0개인 카테고리(소) 카테고리 삭제 기능")
+    public String deleteCategoryThird(@PathVariable int categoryThirdCode) {
+        return categoryThirdService.deleteCategoryThird(categoryThirdCode);
+    }
+
 
 //    @DeleteMapping("/delete/{categoryThirdCode}")
 //    @Operation(summary = "카테고리(소) 카테고리 삭제", description = "포함되어 있는 상품이 0개인 카테고리(소) 카테고리 삭제 기능")
