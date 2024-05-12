@@ -1,6 +1,6 @@
 package com.akatsuki.pioms.order.service;
 
-import com.akatsuki.pioms.order.vo.*;
+import com.akatsuki.pioms.order.aggregate.*;
 
 public interface OrderService {
 
@@ -36,7 +36,7 @@ public interface OrderService {
     // 가맹점이 발주서를 상세 조회합니다.
     // 정상적으로 이루어진 경우: 가맹점 코드와 주문의 가맹점 코드가 일치하는 경우
     // 비정상적으로 이루어진 경우: 가맹점 코드와 주문의 가맹점 코드가 일치하지 않는 경우
-    OrderVO getOrder(int franchiseCode,int orderCode);
+    OrderVO getOrder(int franchiseCode, int orderCode);
 
     // 관리자가 발주서를 상세 조회합니다.
     // 정상적으로 이루어진 경우: 관리자 코드와 주문의 관리자 코드가 일치하는 경우

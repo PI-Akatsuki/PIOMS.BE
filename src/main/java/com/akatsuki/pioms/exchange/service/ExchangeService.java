@@ -1,10 +1,9 @@
 package com.akatsuki.pioms.exchange.service;
 
-import com.akatsuki.pioms.exchange.entity.EXCHANGE_PRODUCT_STATUS;
-import com.akatsuki.pioms.exchange.entity.ExchangeEntity;
-import com.akatsuki.pioms.exchange.entity.ExchangeProductEntity;
-import com.akatsuki.pioms.exchange.entity.RequestExchange;
-import com.akatsuki.pioms.exchange.vo.ResponseExchange;
+import com.akatsuki.pioms.exchange.aggregate.EXCHANGE_PRODUCT_STATUS;
+import com.akatsuki.pioms.exchange.aggregate.ExchangeProductEntity;
+import com.akatsuki.pioms.exchange.aggregate.RequestExchange;
+import com.akatsuki.pioms.exchange.aggregate.ResponseExchange;
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 
 import java.util.List;

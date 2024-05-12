@@ -1,8 +1,7 @@
 package com.akatsuki.pioms.exchange.dto;
 
-import com.akatsuki.pioms.exchange.entity.EXCHANGE_PRODUCT_STATUS;
-import com.akatsuki.pioms.exchange.entity.EXCHANGE_STATUS;
-import com.akatsuki.pioms.exchange.entity.ExchangeEntity;
+import com.akatsuki.pioms.exchange.aggregate.EXCHANGE_STATUS;
+import com.akatsuki.pioms.exchange.aggregate.ExchangeEntity;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;

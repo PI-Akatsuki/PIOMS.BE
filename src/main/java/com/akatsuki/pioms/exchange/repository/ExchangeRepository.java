@@ -1,7 +1,7 @@
 package com.akatsuki.pioms.exchange.repository;
 
-import com.akatsuki.pioms.exchange.entity.EXCHANGE_STATUS;
-import com.akatsuki.pioms.exchange.entity.ExchangeEntity;
+import com.akatsuki.pioms.exchange.aggregate.EXCHANGE_STATUS;
+import com.akatsuki.pioms.exchange.aggregate.ExchangeEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

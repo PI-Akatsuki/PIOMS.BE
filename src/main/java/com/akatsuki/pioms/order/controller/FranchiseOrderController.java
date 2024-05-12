@@ -1,7 +1,7 @@
 package com.akatsuki.pioms.order.controller;
 
+import com.akatsuki.pioms.order.aggregate.*;
 import com.akatsuki.pioms.order.service.OrderService;
-import com.akatsuki.pioms.order.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
