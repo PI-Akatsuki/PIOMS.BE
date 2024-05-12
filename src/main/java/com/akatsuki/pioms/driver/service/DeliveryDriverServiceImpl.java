@@ -72,6 +72,7 @@ public class DeliveryDriverServiceImpl implements DeliveryDriverService {
     @Transactional
     @Override
     public ResponseEntity<String> updateDriver(int driverId, DeliveryDriver updatedDriver, Integer requestorAdminCode, Integer requestorDriverCode) {
+        // 관리자 권한 확인
         boolean isAdmin = requestorAdminCode != null && adminRepository.findById(requestorAdminCode).isPresent();
         boolean isDriver = requestorDriverCode != null && requestorDriverCode == driverId;
 
@@ -97,6 +98,35 @@ public class DeliveryDriverServiceImpl implements DeliveryDriverService {
             } else {
                 return ResponseEntity.status(403).body("수정 권한이 없습니다.");
             }
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @Transactional
+    @Override
+    public ResponseEntity<String> deleteDriver(int driverId, int requestorAdminCode) {
+        // 관리자 권한 확인
+        Optional<Admin> requestorAdmin = adminRepository.findById(requestorAdminCode);
+        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
+            return ResponseEntity.status(403).body("배송기사 삭제는 루트 관리자만 가능합니다.");
+        }
+
+        Optional<DeliveryDriver> existingDriver = deliveryDriverRepository.findById(driverId);
+        if (existingDriver.isPresent()) {
+            DeliveryDriver driver = existingDriver.get();
+
+            // 이미 비활성화된 경우 처리
+            if (driver.getDriverDeleteDate() != null) {
+                return ResponseEntity.badRequest().body("이미 비활성화된 배송기사입니다.");
+            }
+
+            // DeleteDate 남기기
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            driver.setDriverDeleteDate(LocalDateTime.now().format(formatter));
+
+            deliveryDriverRepository.save(driver);
+            return ResponseEntity.ok("배송기사가 비활성화되었습니다.");
         } else {
             return ResponseEntity.notFound().build();
         }

@@ -57,4 +57,13 @@ public class AdminOnlyDriverInfoController {
     ) {
         return deliveryDriverService.updateDriver(driverId, updatedDriver, requestorAdminCode, requestorDriverCode);
     }
+
+    @Operation(summary = "배송기사 삭제", description = "기존 배송기사를 비활성화합니다.")
+    @DeleteMapping("/delete/{driverId}")
+    public ResponseEntity<String> deleteDriver(
+            @PathVariable int driverId,
+            @RequestParam int requestorAdminCode
+    ) {
+        return deliveryDriverService.deleteDriver(driverId, requestorAdminCode);
+    }
 }
