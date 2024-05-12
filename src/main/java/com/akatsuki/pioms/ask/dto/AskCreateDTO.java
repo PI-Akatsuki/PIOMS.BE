@@ -1,6 +1,5 @@
 package com.akatsuki.pioms.ask.dto;
 
-
 import lombok.*;
 
 @AllArgsConstructor
