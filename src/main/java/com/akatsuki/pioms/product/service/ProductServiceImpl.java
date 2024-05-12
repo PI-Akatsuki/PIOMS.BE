@@ -105,11 +105,14 @@ public class ProductServiceImpl implements ProductService{
 
     @Override
     @Transactional
-    public Product deleteProduct(int productCode) {
-        Product product = productRepository.findById(productCode)
-                .orElseThrow(() -> new EntityNotFoundException("Product not found with code: " + productCode));
+    public String deleteProduct(int productCode) {
+        Product product = productRepository.findByProductCode(productCode);
+        if(product == null) {
+            return "해당 상품이 없습니다.";
+        }
+
         String productName = product.getProductName();
-        productRepository.deleteById(productCode);
+        productRepository.delete(product);
         logService.saveLog("root", LogStatus.삭제, productName, "Product");
         return null;
     }

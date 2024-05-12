@@ -20,7 +20,7 @@ public interface ProductService {
     Optional<Product> findProductByCode(int productCode);
     ResponseProduct postProduct(RequestProduct request);
 
-    Product deleteProduct(int productCode);
+    String deleteProduct(int productCode);
     ResponseProduct updateProduct(int productCode, RequestProduct request);
     void exportProducts(Order order);
     void exportExchangeProducts(int exchange);
