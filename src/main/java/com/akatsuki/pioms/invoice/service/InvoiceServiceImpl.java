@@ -2,12 +2,12 @@ package com.akatsuki.pioms.invoice.service;
 
 import com.akatsuki.pioms.event.OrderEvent;
 import com.akatsuki.pioms.franchise.aggregate.DELIVERY_DATE;
-import com.akatsuki.pioms.invoice.entity.InvoiceEntity;
+import com.akatsuki.pioms.invoice.aggregate.InvoiceEntity;
 import com.akatsuki.pioms.invoice.etc.DELIVERY_STATUS;
 import com.akatsuki.pioms.invoice.repository.InvoiceRepository;
-import com.akatsuki.pioms.invoice.vo.ResponseInvoice;
-import com.akatsuki.pioms.invoice.vo.ResponseInvoiceList;
-import com.akatsuki.pioms.order.entity.Order;
+import com.akatsuki.pioms.invoice.aggregate.ResponseInvoice;
+import com.akatsuki.pioms.invoice.aggregate.ResponseInvoiceList;
+import com.akatsuki.pioms.order.aggregate.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -26,16 +26,19 @@ public class InvoiceServiceImpl implements InvoiceService {
         this.invoiceRepository = invoiceRepository;
     }
 
-    public void postInvoice(Order order){
+    @Override
+    public InvoiceEntity postInvoice(Order order){
         InvoiceEntity invoice = new InvoiceEntity();
+        if(order!=null) {
         invoice.setOrder(order);
         invoice.setDeliveryStatus(DELIVERY_STATUS.배송전);
         invoice.setInvoiceRegionCode(1);
-        DELIVERY_DATE deliveryDate = order.getFranchise().getFranchiseDeliveryDate();
-        invoice.setInvoiceDate(setDeliveryTime(order.getOrderDate(),deliveryDate));
-        System.out.println("invoice = " + invoice);
-        invoiceRepository.save(invoice);
-        System.out.println("invoice fin");
+            DELIVERY_DATE deliveryDate = order.getFranchise().getFranchiseDeliveryDate();
+            invoice.setInvoiceDate(setDeliveryTime(order.getOrderDate(), deliveryDate));
+        }
+
+        return saveInvoice(invoice);
+
     }
 
     public LocalDateTime setDeliveryTime(LocalDateTime orderTime, DELIVERY_DATE deliveryDate){
@@ -113,6 +116,19 @@ public class InvoiceServiceImpl implements InvoiceService {
             return true;
         }
         return false;
+    }
+    public InvoiceEntity getInvoiceByOrderCode(int orderCode){
+        return invoiceRepository.findByOrderOrderCode(orderCode);
+    }
+
+    @Override
+    public InvoiceEntity saveInvoice(InvoiceEntity invoiceEntity) {
+        return invoiceRepository.save(invoiceEntity);
+    }
+
+    @Override
+    public void deleteInvoice(InvoiceEntity invoiceEntity) {
+        invoiceRepository.delete(invoiceEntity);
     }
 
 }

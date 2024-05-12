@@ -1,9 +1,8 @@
 package com.akatsuki.pioms.order.controller;
 
 import com.akatsuki.pioms.order.service.OrderService;
-import com.akatsuki.pioms.order.vo.OrderListVO;
-import com.akatsuki.pioms.order.vo.OrderVO;
-import com.akatsuki.pioms.order.vo.RequestOrderVO;
+import com.akatsuki.pioms.order.aggregate.OrderListVO;
+import com.akatsuki.pioms.order.aggregate.OrderVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;

@@ -1,4 +1,4 @@
-package com.akatsuki.pioms.exchange.entity;
+package com.akatsuki.pioms.exchange.aggregate;
 
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;

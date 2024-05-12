@@ -1,7 +1,7 @@
-package com.akatsuki.pioms.exchange.vo;
+package com.akatsuki.pioms.exchange.aggregate;
 
-import com.akatsuki.pioms.exchange.entity.EXCHANGE_PRODUCT_STATUS;
-import com.akatsuki.pioms.exchange.entity.ExchangeProductEntity;
+import com.akatsuki.pioms.exchange.aggregate.EXCHANGE_PRODUCT_STATUS;
+import com.akatsuki.pioms.exchange.aggregate.ExchangeProductEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,17 +1,13 @@
-package com.akatsuki.pioms.exchange.vo;
+package com.akatsuki.pioms.exchange.aggregate;
 
 
-import com.akatsuki.pioms.exchange.entity.EXCHANGE_STATUS;
-import com.akatsuki.pioms.exchange.entity.ExchangeEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Getter
 @NoArgsConstructor

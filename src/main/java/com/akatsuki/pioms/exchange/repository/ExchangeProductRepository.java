@@ -1,13 +1,11 @@
 package com.akatsuki.pioms.exchange.repository;
 
-import com.akatsuki.pioms.exchange.entity.EXCHANGE_PRODUCT_STATUS;
-import com.akatsuki.pioms.exchange.entity.EXCHANGE_STATUS;
-import com.akatsuki.pioms.exchange.entity.ExchangeEntity;
-import com.akatsuki.pioms.exchange.entity.ExchangeProductEntity;
+import com.akatsuki.pioms.exchange.aggregate.EXCHANGE_PRODUCT_STATUS;
+import com.akatsuki.pioms.exchange.aggregate.EXCHANGE_STATUS;
+import com.akatsuki.pioms.exchange.aggregate.ExchangeProductEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ExchangeProductRepository extends JpaRepository<ExchangeProductEntity, Integer> {
 

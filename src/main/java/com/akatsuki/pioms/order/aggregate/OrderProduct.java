@@ -1,5 +1,6 @@
-package com.akatsuki.pioms.order.entity;
+package com.akatsuki.pioms.order.aggregate;
 
+import com.akatsuki.pioms.order.aggregate.Order;
 import com.akatsuki.pioms.product.aggregate.Product;
 import jakarta.persistence.*;
 import lombok.*;

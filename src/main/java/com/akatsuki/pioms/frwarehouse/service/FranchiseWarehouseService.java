@@ -8,6 +8,7 @@ import com.akatsuki.pioms.frwarehouse.aggregate.ResponseFranchiseWarehouseUpdate
 import java.util.List;
 import java.util.Optional;
 
+
 public interface FranchiseWarehouseService {
     void saveProduct(int productCocde, int changeVal, int franchiseCode);
 

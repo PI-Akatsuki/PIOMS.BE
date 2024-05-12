@@ -1,8 +1,8 @@
-package com.akatsuki.pioms.order.vo;
+package com.akatsuki.pioms.order.aggregate;
 
 
 import com.akatsuki.pioms.franchise.aggregate.DELIVERY_DATE;
-import com.akatsuki.pioms.order.entity.Order;
+import com.akatsuki.pioms.order.aggregate.Order;
 import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

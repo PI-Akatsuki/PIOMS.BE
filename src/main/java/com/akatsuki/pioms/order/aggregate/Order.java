@@ -1,6 +1,6 @@
-package com.akatsuki.pioms.order.entity;
+package com.akatsuki.pioms.order.aggregate;
 
-import com.akatsuki.pioms.exchange.entity.ExchangeEntity;
+import com.akatsuki.pioms.exchange.aggregate.ExchangeEntity;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
 import jakarta.persistence.*;
@@ -49,4 +49,10 @@ public class Order {
     @OneToMany(mappedBy = "order")
     private List<OrderProduct> OrderProductList;
 
+    public Order(ORDER_CONDITION orderCondition, boolean orderStatus, Franchise franchise) {
+        this.orderDate = LocalDateTime.now();
+        this.orderCondition = orderCondition;
+        this.orderStatus = orderStatus;
+        this.franchise = franchise;
+    }
 }

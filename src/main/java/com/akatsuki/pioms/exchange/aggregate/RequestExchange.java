@@ -1,4 +1,5 @@
-package com.akatsuki.pioms.order.vo;
+package com.akatsuki.pioms.exchange.aggregate;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -6,16 +7,12 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.util.List;
-import java.util.Map;
-
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class RequestOrderVO {
-//    private List<>
-    private Map<Integer,Integer> products;
-    private int franchiseCode;
-
+public class RequestExchange {
+    private EXCHANGE_STATUS exchangeStatus;
+    List<ExchangeProductVO> products;
 }

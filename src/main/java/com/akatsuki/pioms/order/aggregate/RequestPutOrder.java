@@ -1,4 +1,4 @@
-package com.akatsuki.pioms.order.vo;
+package com.akatsuki.pioms.order.aggregate;
 
 import lombok.Getter;
 

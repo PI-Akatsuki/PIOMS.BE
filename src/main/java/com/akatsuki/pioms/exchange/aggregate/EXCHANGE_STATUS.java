@@ -1,4 +1,4 @@
-package com.akatsuki.pioms.exchange.entity;
+package com.akatsuki.pioms.exchange.aggregate;
 
 public enum EXCHANGE_STATUS {
     반송신청,
