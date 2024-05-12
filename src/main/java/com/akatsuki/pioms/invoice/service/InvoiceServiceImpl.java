@@ -26,16 +26,19 @@ public class InvoiceServiceImpl implements InvoiceService {
         this.invoiceRepository = invoiceRepository;
     }
 
-    public void postInvoice(Order order){
+    @Override
+    public InvoiceEntity postInvoice(Order order){
         InvoiceEntity invoice = new InvoiceEntity();
+        if(order!=null) {
         invoice.setOrder(order);
         invoice.setDeliveryStatus(DELIVERY_STATUS.배송전);
         invoice.setInvoiceRegionCode(1);
-        DELIVERY_DATE deliveryDate = order.getFranchise().getFranchiseDeliveryDate();
-        invoice.setInvoiceDate(setDeliveryTime(order.getOrderDate(),deliveryDate));
-        System.out.println("invoice = " + invoice);
-        invoiceRepository.save(invoice);
-        System.out.println("invoice fin");
+            DELIVERY_DATE deliveryDate = order.getFranchise().getFranchiseDeliveryDate();
+            invoice.setInvoiceDate(setDeliveryTime(order.getOrderDate(), deliveryDate));
+        }
+
+        return saveInvoice(invoice);
+
     }
 
     public LocalDateTime setDeliveryTime(LocalDateTime orderTime, DELIVERY_DATE deliveryDate){
@@ -113,6 +116,11 @@ public class InvoiceServiceImpl implements InvoiceService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public InvoiceEntity saveInvoice(InvoiceEntity invoiceEntity) {
+        return invoiceRepository.save(invoiceEntity);
     }
 
 }
