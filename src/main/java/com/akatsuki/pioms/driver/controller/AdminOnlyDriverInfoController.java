@@ -6,10 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -34,11 +31,19 @@ public class AdminOnlyDriverInfoController {
     }
 
     @Operation(summary = "배송기사 상세 조회", description = "배송기사 상세 정보를 조회합니다.")
-    @GetMapping("list/detail/{driverId}")
+    @GetMapping("/detail/{driverId}")
     public ResponseEntity<DeliveryDriver> getDriverById(@PathVariable int driverId) {
         Optional<DeliveryDriver> driver = deliveryDriverService.findDriverById(driverId);
         return driver.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @Operation(summary = "배송기사 등록", description = "배송기사를 등록합니다. (루트 관리자만 가능)")
+    @PostMapping("/register")
+    public ResponseEntity<String> registerDriver(
+            @RequestBody DeliveryDriver driver,
+            @RequestParam int requestorAdminCode
+    ) {
+        return deliveryDriverService.saveDriver(driver, requestorAdminCode);
+    }
 }

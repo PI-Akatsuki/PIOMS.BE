@@ -1,36 +1,72 @@
 package com.akatsuki.pioms.driver.service;
 
+import com.akatsuki.pioms.admin.aggregate.Admin;
 import com.akatsuki.pioms.driver.aggregate.DeliveryDriver;
 import com.akatsuki.pioms.driver.repository.DeliveryDriverRepository;
+import com.akatsuki.pioms.admin.repository.AdminRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
 @Service
-public class DeliveryDriverServiceImpl implements DeliveryDriverService{
+public class DeliveryDriverServiceImpl implements DeliveryDriverService {
 
     private final DeliveryDriverRepository deliveryDriverRepository;
+    private final AdminRepository adminRepository;
 
     @Autowired
-    public DeliveryDriverServiceImpl(DeliveryDriverRepository deliveryDriverRepository) {
+    public DeliveryDriverServiceImpl(DeliveryDriverRepository deliveryDriverRepository, AdminRepository adminRepository) {
         this.deliveryDriverRepository = deliveryDriverRepository;
+        this.adminRepository = adminRepository;
     }
 
-
-    // 전체 조회
+    @Transactional(readOnly = true)
     @Override
     public List<DeliveryDriver> findDriverList() {
         return deliveryDriverRepository.findAll();
     }
 
-    // 상세 조회
     @Transactional(readOnly = true)
     @Override
     public Optional<DeliveryDriver> findDriverById(int driverId) {
         return deliveryDriverRepository.findById(driverId);
     }
 
+    @Override
+    @Transactional
+    public ResponseEntity<String> saveDriver(DeliveryDriver driver, int requestorAdminCode) {
+        // 루트 관리자 확인
+        Optional<Admin> requestorAdmin = adminRepository.findById(requestorAdminCode);
+        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
+            return ResponseEntity.status(403).body("배송기사 등록은 루트 관리자만 가능합니다.");
+        }
+
+        // 동일한 ID 존재 여부 확인
+        Optional<DeliveryDriver> existingDriver = deliveryDriverRepository.findByDriverId(driver.getDriverId());
+        if (existingDriver.isPresent()) {
+            return ResponseEntity.badRequest().body("이미 존재하는 배송기사 ID입니다.");
+        }
+
+        // 필수 필드 확인
+        if (driver.getDriverName() == null || driver.getDriverId() == null || driver.getDriverPwd() == null || driver.getDriverPhone() == null) {
+            return ResponseEntity.badRequest().body("필수 항목(deliveryManName, deliveryManId, deliveryManPwd, deliveryManPhone)을 모두 입력해야 합니다.");
+        }
+
+        // 날짜 포맷터
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String now = LocalDateTime.now().format(formatter);
+
+        // 등록일 및 수정일 설정
+        driver.setDriverEnrollDate(now);
+        driver.setDriverUpdateDate(now);
+
+        deliveryDriverRepository.save(driver);
+        return ResponseEntity.ok("신규 배송기사 등록이 완료되었습니다.");
+    }
 }
