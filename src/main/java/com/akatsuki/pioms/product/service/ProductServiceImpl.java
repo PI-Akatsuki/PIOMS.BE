@@ -124,7 +124,7 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public ResponseProduct updateProduct(int productCode, RequestProduct request/*, int requesterAdminCode*/) {
+    public ResponseProduct updateProduct(int productCode, RequestProduct request) {
 //        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
 //        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
 //            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");

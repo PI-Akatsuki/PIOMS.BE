@@ -7,6 +7,7 @@ import com.akatsuki.pioms.log.etc.LogStatus;
 import com.akatsuki.pioms.log.service.LogService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,7 +41,7 @@ public class CategorySecondServiceImpl implements CategorySecondService{
 
     @Override
     @Transactional
-    public ResponseCategorySecondPost postCategorySecond(RequestCategorySecondPost request/*, int requesterAdminCode*/) {
+    public ResponseEntity<String> postCategorySecond(RequestCategorySecondPost request/*, int requesterAdminCode*/) {
 //        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
 //        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
 //            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
@@ -51,7 +52,7 @@ public class CategorySecondServiceImpl implements CategorySecondService{
 
         CategoryFirst categoryFirst = new CategoryFirst();
         categoryFirst.setCategoryFirstCode(request.getCategoryFirstCode());
-        categorySecond.setCategoryFirstCode(categoryFirst);
+        categorySecond.setCategoryFirstCode(request.getCategoryFirstCode());
 
         categorySecond.setCategorySecondName(request.getCategorySecondName());
         categorySecond.setCategorySecondEnrollDate(formattedDateTime);
@@ -60,7 +61,7 @@ public class CategorySecondServiceImpl implements CategorySecondService{
 
         ResponseCategorySecondPost responseValue = new ResponseCategorySecondPost(savedCategorySecond.getCategorySecondCode(), savedCategorySecond.getCategorySecondName(), savedCategorySecond.getCategorySecondEnrollDate());
         logService.saveLog("root", LogStatus.등록,savedCategorySecond.getCategorySecondName(),"CategorySecond");
-        return responseValue;
+        return ResponseEntity.ok("카테고리(중) 생성 완료!");
     }
 
     @Override

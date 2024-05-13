@@ -36,9 +36,9 @@ public class CategorySecondController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<ResponseCategorySecondPost> postCategorySecond(@RequestBody RequestCategorySecondPost request/*, int requesterAdminCode*/) {
-        ResponseCategorySecondPost response = categorySecondService.postCategorySecond(request/*, int requesterAdminCode*/);
-        return ResponseEntity.ok().body(response);
+    public ResponseEntity<String> postCategorySecond(@RequestBody RequestCategorySecondPost request/*, int requesterAdminCode*/) {
+        return categorySecondService.postCategorySecond(request/*, int requesterAdminCode*/);
+
     }
 
     @PostMapping("/update/{categorySecondCode}")

@@ -42,9 +42,9 @@ public class CategoryFirstController {
     }
 
     @PostMapping("/post")
-    public ResponseEntity<ResponseCategoryFirstPost> postCategoryFirst(@RequestBody RequestCategoryFirstPost request/*, int requesterAdminCode*/) {
-        ResponseCategoryFirstPost response = categoryFirstService.postCategoryFirst(request/*, int requesterAdminCode*/);
-        return ResponseEntity.ok().body(response);
+    public ResponseEntity<String> postCategoryFirst(@RequestBody RequestCategoryFirstPost request/*, int requesterAdminCode*/) {
+        return categoryFirstService.postCategoryFirst(request/*, int requesterAdminCode*/);
+
     }
 
     @PostMapping("/update/{categoryFirstCode}")

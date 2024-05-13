@@ -74,7 +74,7 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
             return ResponseEntity.badRequest().body("해당 카테고리(중)이 존재하지 않습니다. 다시 확인해주세요.");
         }
 
-        categoryThird.setCategorySecondCode(categorySecond);
+        categoryThird.setCategorySecondCode(request.getCategorySecondCode());
 
         categoryThird.setCategoryThirdName(request.getCategoryThirdName());
         categoryThird.setCategoryThirdEnrollDate(formattedDateTime);
