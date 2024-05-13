@@ -30,15 +30,13 @@ public class franchiseWarehouseController {
 
     @GetMapping("/{franchiseWarehouseCode}")
     @Operation(summary = "franchiseWarehouseCode로 franchiseWarehouse 조회")
-    public ResponseEntity<Optional<FranchiseWarehouse>> getWarehouseByWarehouseCode(@PathVariable int franchiseWarehouseCode) {
-        Optional<FranchiseWarehouse> franchiseWarehouse = franchiseWarehouseService.getWarehouseByWarehouseCode(franchiseWarehouseCode);
-        return ResponseEntity.ok().body(franchiseWarehouse);
+    public ResponseEntity<FranchiseWarehouse> getWarehouseByWarehouseCode(@PathVariable int franchiseWarehouseCode) {
+        return ResponseEntity.ok().body(franchiseWarehouseService.getWarehouseByWarehouseCode(franchiseWarehouseCode));
     }
 
     @PostMapping("/update/{franchiseWarehouseCode}")
     @Operation(summary = "사라졌을 상품을 위한 재고 수정 기능")
-    public ResponseEntity<ResponseFranchiseWarehouseUpdate> updateWarehouseCount(@PathVariable int franchiseWarehouseCode, @RequestBody RequestFranchiseWarehouseUpdate request) {
-        ResponseFranchiseWarehouseUpdate response = franchiseWarehouseService.updateWarehouseCount(franchiseWarehouseCode,request);
-        return ResponseEntity.ok().body(response);
+    public ResponseEntity<String> updateWarehouseCount(@PathVariable int franchiseWarehouseCode, @RequestBody RequestFranchiseWarehouseUpdate request/*, int requesterAdminCode*/) {
+        return franchiseWarehouseService.updateWarehouseCount(franchiseWarehouseCode,request/*, int requesterAdminCode*/);
     }
 }

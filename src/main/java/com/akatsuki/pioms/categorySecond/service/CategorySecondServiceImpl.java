@@ -7,6 +7,7 @@ import com.akatsuki.pioms.log.etc.LogStatus;
 import com.akatsuki.pioms.log.service.LogService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,25 +35,24 @@ public class CategorySecondServiceImpl implements CategorySecondService{
     }
 
     @Override
-    public List<CategorySecond> getAllCategorySecondofFirst() {
-        return categorySecondRepository.findAll();
-    }
-
-    @Override
-    public Optional<CategorySecond> findCategorySecondByCode(int categorySecondCode) {
-        return categorySecondRepository.findById(categorySecondCode);
+    public CategorySecond findCategorySecondByCode(int categorySecondCode) {
+        return categorySecondRepository.findById(categorySecondCode).orElseThrow(null);
     }
 
     @Override
     @Transactional
-    public ResponseCategorySecondPost postCategorySecond(RequestCategorySecondPost request) {
+    public ResponseEntity<String> postCategorySecond(RequestCategorySecondPost request/*, int requesterAdminCode*/) {
+//        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
+//        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
+//            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
+//        }
         CategorySecond categorySecond = new CategorySecond();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formattedDateTime = LocalDateTime.now().format(formatter);
 
         CategoryFirst categoryFirst = new CategoryFirst();
         categoryFirst.setCategoryFirstCode(request.getCategoryFirstCode());
-        categorySecond.setCategoryFirstCode(categoryFirst);
+        categorySecond.setCategoryFirstCode(request.getCategoryFirstCode());
 
         categorySecond.setCategorySecondName(request.getCategorySecondName());
         categorySecond.setCategorySecondEnrollDate(formattedDateTime);
@@ -61,12 +61,16 @@ public class CategorySecondServiceImpl implements CategorySecondService{
 
         ResponseCategorySecondPost responseValue = new ResponseCategorySecondPost(savedCategorySecond.getCategorySecondCode(), savedCategorySecond.getCategorySecondName(), savedCategorySecond.getCategorySecondEnrollDate());
         logService.saveLog("root", LogStatus.등록,savedCategorySecond.getCategorySecondName(),"CategorySecond");
-        return responseValue;
+        return ResponseEntity.ok("카테고리(중) 생성 완료!");
     }
 
     @Override
     @Transactional
-    public ResponseCategorySecondUpdate updateCategorySecond(int categorySecondCode, RequestCategorySecondUpdate request) {
+    public ResponseCategorySecondUpdate updateCategorySecond(int categorySecondCode, RequestCategorySecondUpdate request/*, int requesterAdminCode*/) {
+//        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
+//        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
+//            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
+//        }
         CategorySecond categorySecond = categorySecondRepository.findById(categorySecondCode)
                 .orElseThrow(() -> new EntityNotFoundException("CategorySecond not found"));
 

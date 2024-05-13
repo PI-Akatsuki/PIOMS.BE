@@ -1,6 +1,7 @@
 package com.akatsuki.pioms.categorySecond.service;
 
 import com.akatsuki.pioms.categorySecond.aggregate.*;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.Optional;
@@ -8,11 +9,9 @@ import java.util.Optional;
 public interface CategorySecondService {
     List<CategorySecond> getAllCategorySecond();
 
-    List<CategorySecond> getAllCategorySecondofFirst();
+    CategorySecond findCategorySecondByCode(int categorySecondCode);
 
-    Optional<CategorySecond> findCategorySecondByCode(int categorySecondCode);
+    ResponseEntity<String> postCategorySecond(RequestCategorySecondPost request/*, int requesterAdminCode*/);
 
-    ResponseCategorySecondPost postCategorySecond(RequestCategorySecondPost request);
-
-    ResponseCategorySecondUpdate updateCategorySecond(int categorySecondCode, RequestCategorySecondUpdate request);
+    ResponseCategorySecondUpdate updateCategorySecond(int categorySecondCode, RequestCategorySecondUpdate request/*, int requesterAdminCode*/);
 }
