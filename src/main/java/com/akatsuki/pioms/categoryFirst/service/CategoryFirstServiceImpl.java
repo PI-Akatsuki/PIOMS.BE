@@ -10,6 +10,7 @@ import com.akatsuki.pioms.log.etc.LogStatus;
 import com.akatsuki.pioms.log.service.LogService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CategoryFirstServiceImpl implements CategoryFirstService {
@@ -36,8 +36,8 @@ public class CategoryFirstServiceImpl implements CategoryFirstService {
     }
 
     @Override
-    public Optional<CategoryFirst> findCategoryFirstByCode(int categoryFirstCode) {
-        return categoryFirstRepository.findById(categoryFirstCode);
+    public CategoryFirst findCategoryFirstByCode(int categoryFirstCode) {
+        return categoryFirstRepository.findById(categoryFirstCode).orElseThrow(null);
     }
 
     @Override

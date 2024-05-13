@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface CategoryThirdService {
     List<CategoryThird> getAllCategoryThird();
 
-    Optional<CategoryThird> findCategoryThirdByCode(int categoryThirdCode);
+    CategoryThird findCategoryThirdByCode(int categoryThirdCode);
 
     ResponseEntity<String> postCategory(RequestCategoryThirdPost request/*, int requesterAdminCode*/);
 

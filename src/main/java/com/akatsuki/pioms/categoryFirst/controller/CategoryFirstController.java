@@ -36,9 +36,8 @@ public class CategoryFirstController {
 
     @GetMapping("/{categoryFirstCode}")
     @Operation(summary = "카테고리(대) code로 카테고리(대) 하나 조회", description = "카테고리(대)코드로 카테고리(대) 하나 조회")
-    public ResponseEntity<Optional<CategoryFirst>> getCategoryFirstByCode(@PathVariable int categoryFirstCode) {
-        Optional<CategoryFirst> categoryFirst = categoryFirstService.findCategoryFirstByCode(categoryFirstCode);
-        return ResponseEntity.ok().body(categoryFirst);
+    public ResponseEntity<CategoryFirst> getCategoryFirstByCode(@PathVariable int categoryFirstCode) {
+        return ResponseEntity.ok().body(categoryFirstService.findCategoryFirstByCode(categoryFirstCode));
     }
 
     @PostMapping("/post")

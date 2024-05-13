@@ -13,7 +13,7 @@ import java.util.Optional;
 public interface CategoryFirstService {
     List<CategoryFirst> getAllCategoryFirst();
 
-    Optional<CategoryFirst> findCategoryFirstByCode(int categoryFirstCode);
+    CategoryFirst findCategoryFirstByCode(int categoryFirstCode);
 
     ResponseCategoryFirstUpdate updateCategoryFirst(int categoryFirstCode, RequestCategoryFirstUpdate request/*, int requesterAdminCode*/);
 

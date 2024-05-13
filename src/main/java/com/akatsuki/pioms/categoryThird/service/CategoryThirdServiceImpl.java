@@ -50,8 +50,8 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
 
     /* 카테고리(소) 코드로 카테고리(소) 조회 */
     @Override
-    public Optional<CategoryThird> findCategoryThirdByCode(int categoryThirdCode) {
-        return categoryThirdRepository.findById(categoryThirdCode);
+    public CategoryThird findCategoryThirdByCode(int categoryThirdCode) {
+        return categoryThirdRepository.findById(categoryThirdCode).orElseThrow(null);
     }
 
     /* 카테고리(소) 신규 등록 */

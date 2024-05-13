@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface CategorySecondService {
     List<CategorySecond> getAllCategorySecond();
 
-    Optional<CategorySecond> findCategorySecondByCode(int categorySecondCode);
+    CategorySecond findCategorySecondByCode(int categorySecondCode);
 
     ResponseEntity<String> postCategorySecond(RequestCategorySecondPost request/*, int requesterAdminCode*/);
 

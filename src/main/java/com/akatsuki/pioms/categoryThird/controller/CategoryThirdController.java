@@ -34,9 +34,8 @@ public class CategoryThirdController {
 
     @GetMapping("/{categoryThirdCode}")
     @Operation(summary = "카테고리(소) code로 카테고리(소) 하나 조회", description = "카테고리(소)코드로 카테고리(소) 하나 조회")
-    public  ResponseEntity<Optional<CategoryThird>> getCategoryThirdByCode(@PathVariable int categoryThirdCode) {
-        Optional<CategoryThird> categoryThird = categoryThirdService.findCategoryThirdByCode(categoryThirdCode);
-        return ResponseEntity.ok().body(categoryThird);
+    public  ResponseEntity<CategoryThird> getCategoryThirdByCode(@PathVariable int categoryThirdCode) {
+        return ResponseEntity.ok().body(categoryThirdService.findCategoryThirdByCode(categoryThirdCode));
     }
     @PostMapping("/create")
     public ResponseEntity<String> postCategoryThird(@RequestBody RequestCategoryThirdPost request/*, int requesterAdminCode*/) {
