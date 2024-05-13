@@ -3,10 +3,7 @@ package com.akatsuki.pioms.frowner.aggregate;
 
 
 import com.akatsuki.pioms.frowner.dto.FranchiseOwnerDTO;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import java.time.LocalDateTime;

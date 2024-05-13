@@ -20,7 +20,7 @@ public interface ProductService {
     Product findProductByCode(int productCode);
     String postProduct(RequestProduct request/*, int requesterAdminCode*/);
 
-    Product deleteProduct(int productCode);
+    String deleteProduct(int productCode);
     ResponseProduct updateProduct(int productCode, RequestProduct request);
     void exportProducts(OrderDTO order);
     void exportExchangeProducts(int exchange);
