@@ -1,7 +1,7 @@
 package com.akatsuki.pioms.specs.service;
 
 import com.akatsuki.pioms.event.OrderEvent;
-import com.akatsuki.pioms.order.entity.Order;
+import com.akatsuki.pioms.order.aggregate.Order;
 import com.akatsuki.pioms.specs.aggregate.ResponseSpecs;
 import com.akatsuki.pioms.specs.aggregate.SpecsEntity;
 import com.akatsuki.pioms.specs.repository.SpecsRepository;
@@ -15,7 +15,7 @@ import java.util.List;
 
 @Service
 public class SpecsServiceImpl implements SpecsService{
-    private SpecsRepository specsRepository;
+    private final SpecsRepository specsRepository;
 
     @Autowired
     public SpecsServiceImpl(SpecsRepository specsRepository) {

@@ -3,12 +3,13 @@ package com.akatsuki.pioms.product.service;
 
 import com.akatsuki.pioms.categoryThird.repository.CategoryThirdRepository;
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
-import com.akatsuki.pioms.exchange.entity.EXCHANGE_PRODUCT_STATUS;
-import com.akatsuki.pioms.exchange.entity.ExchangeProductEntity;
+import com.akatsuki.pioms.exchange.aggregate.EXCHANGE_PRODUCT_STATUS;
+import com.akatsuki.pioms.exchange.aggregate.ExchangeProductEntity;
 import com.akatsuki.pioms.exchange.service.ExchangeService;
+
+import com.akatsuki.pioms.order.aggregate.Order;
 import com.akatsuki.pioms.log.etc.LogStatus;
 import com.akatsuki.pioms.log.service.LogService;
-import com.akatsuki.pioms.order.entity.Order;
 import com.akatsuki.pioms.product.aggregate.ResponseProducts;
 
 import com.akatsuki.pioms.product.repository.ProductRepository;
@@ -197,6 +198,7 @@ public class ProductServiceImpl implements ProductService{
 
     @Override
     public boolean checkExchangeProduct(Order order, ExchangeDTO exchange) {
+        //
 
         for (int i = 0; i < exchange.getExchangeProducts().size(); i++) {
             if (exchange.getExchangeProducts().get(i).getExchangeProductStatus() != EXCHANGE_PRODUCT_STATUS.폐기 ){
@@ -227,7 +229,7 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public void editUncorrectCount(Product product, int cnt) {
+    public void editIncorrectCount(Product product, int cnt) {
         // 가맹에서 검수 시 수량 불일치인 경우 처리하기 위한 로직
         product.setProductCount(product.getProductCount()+cnt);
         productRepository.save(product);
