@@ -34,9 +34,8 @@ public class ProductController {
 
     @GetMapping("/{productCode}")
     @Operation(summary = "상품코드로 상품 조회", description = "상품 코드로 상품 하나 단순 조회")
-    public ResponseEntity<Optional<Product>> getProductByCode(@PathVariable int productCode) {
-        Optional<Product> product = productService.findProductByCode(productCode);
-        return ResponseEntity.ok().body(product);
+    public ResponseEntity<Product> getProductByCode(@PathVariable int productCode) {
+        return ResponseEntity.ok().body(productService.findProductByCode(productCode));
     }
 
     @PostMapping("/create")
