@@ -1,6 +1,5 @@
 package com.akatsuki.pioms.order.aggregate;
 
-import com.akatsuki.pioms.order.dto.OrderDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,12 +15,13 @@ public class OrderListVO {
 
     List<OrderVO> orderList;
 
-    public OrderListVO(List<OrderDTO> franchisesOrderList) {
+    public OrderListVO(List<Order> franchisesOrderList) {
         orderList = new ArrayList<>();
         franchisesOrderList.forEach(
-                orderDTO -> {
-                    orderList.add(new OrderVO(orderDTO));
+                order -> {
+                    orderList.add(new OrderVO(order));
                 }
         );
     }
+
 }

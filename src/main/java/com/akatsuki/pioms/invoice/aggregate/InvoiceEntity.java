@@ -42,6 +42,6 @@ public class InvoiceEntity {
         this.deliveryStatus = invoiceDTO.getDeliveryStatus();
         this.invoiceDate = invoiceDTO.getInvoiceDate();
         this.invoiceRegionCode = invoiceDTO.getInvoiceRegionCode();
-        this.order = new Order(invoiceDTO.getOrder());
+        this.order = invoiceDTO.getOrder();
     }
 }

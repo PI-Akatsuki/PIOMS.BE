@@ -1,6 +1,6 @@
 package com.akatsuki.pioms.order.controller;
 
-import com.akatsuki.pioms.order.dto.OrderDTO;
+import com.akatsuki.pioms.order.aggregate.Order;
 import com.akatsuki.pioms.order.service.OrderFacade;
 import com.akatsuki.pioms.order.service.OrderService;
 import com.akatsuki.pioms.order.aggregate.OrderListVO;
@@ -64,8 +64,8 @@ public class AdminOrderController {
 
     @PutMapping("/{adminCode}/order/{orderCode}/accept")
     @Operation(summary = "승인 대기 중인 발주를 승인합니다.")
-    public ResponseEntity<OrderDTO> acceptOrder(@PathVariable int adminCode,@PathVariable int orderCode){
-        OrderDTO returnValue = orderFacade.acceptOrder(adminCode, orderCode);
+    public ResponseEntity<Order> acceptOrder(@PathVariable int adminCode, @PathVariable int orderCode){
+        Order returnValue = orderFacade.acceptOrder(adminCode, orderCode);
         return ResponseEntity.ok(returnValue);
     }
     @PutMapping("/{adminCode}/order/{orderId}/deny")

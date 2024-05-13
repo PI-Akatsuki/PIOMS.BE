@@ -3,7 +3,6 @@ package com.akatsuki.pioms.order.aggregate;
 
 import com.akatsuki.pioms.franchise.aggregate.DELIVERY_DATE;
 import com.akatsuki.pioms.order.aggregate.Order;
-import com.akatsuki.pioms.order.dto.OrderDTO;
 import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -33,7 +32,7 @@ public class OrderVO {
     private int adminCode;
     private String adminName;
 
-    public OrderVO(OrderDTO order) {
+    public OrderVO(Order order) {
         this.orderCode= order.getOrderCode();
         this.orderDate = order.getOrderDate();
         this.orderTotalPrice = order.getOrderTotalPrice();

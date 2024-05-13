@@ -7,7 +7,7 @@ import com.akatsuki.pioms.invoice.dto.InvoiceDTO;
 import com.akatsuki.pioms.invoice.etc.DELIVERY_STATUS;
 import com.akatsuki.pioms.invoice.repository.InvoiceRepository;
 import com.akatsuki.pioms.order.aggregate.Order;
-import com.akatsuki.pioms.order.dto.OrderDTO;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -27,7 +27,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public InvoiceDTO postInvoice(OrderDTO orderDTO){
+    public InvoiceDTO postInvoice(Order orderDTO){
         InvoiceEntity invoice = new InvoiceEntity();
         if(orderDTO!=null) {
             Order order = new Order();

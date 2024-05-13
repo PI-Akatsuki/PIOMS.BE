@@ -8,7 +8,6 @@ import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import com.akatsuki.pioms.franchise.service.FranchiseService;
 import com.akatsuki.pioms.invoice.service.InvoiceService;
 import com.akatsuki.pioms.order.aggregate.Order;
-import com.akatsuki.pioms.order.dto.OrderDTO;
 import com.akatsuki.pioms.product.aggregate.Product;
 import com.akatsuki.pioms.product.service.ProductService;
 import com.akatsuki.pioms.specs.service.SpecsService;
@@ -41,21 +40,21 @@ public class OrderFacade {
         this.publisher = publisher;
     }
 
-    public List<OrderDTO> getOrderListByAdminCode(int adminCode){
-        List<OrderDTO> orders =  orderService.getOrderListByAdminCode(adminCode);
+    public List<Order> getOrderListByAdminCode(int adminCode){
+        List<Order> orders =  orderService.getOrderListByAdminCode(adminCode);
         return orders;
     }
 
-    public List<OrderDTO> getAdminUncheckesOrders(int adminCode){
-        List<OrderDTO> orders = orderService.getAdminUncheckesOrders(adminCode);
+    public List<Order> getAdminUncheckesOrders(int adminCode){
+        List<Order> orders = orderService.getAdminUncheckesOrders(adminCode);
         return orders;
     }
-    public OrderDTO getAdminOrder(int adminCode, int orderCode){
+    public Order getAdminOrder(int adminCode, int orderCode){
         return orderService.getAdminOrder(adminCode,orderCode);
     }
 
-    public OrderDTO acceptOrder(int adminCode, int orderCode){
-        OrderDTO order = orderService.getAdminOrder(adminCode,orderCode);
+    public Order acceptOrder(int adminCode, int orderCode){
+        Order order = orderService.getAdminOrder(adminCode,orderCode);
         ExchangeDTO exchange =  exchangeService.findExchangeToSend(order.getFranchise().getFranchiseCode());
 
         if(!orderService.checkProductCnt(order)) {
@@ -66,7 +65,7 @@ public class OrderFacade {
             exchange = null;
         }
 
-        OrderDTO orderDTO = orderService.acceptOrder(adminCode,orderCode, exchange);
+        Order orderDTO = orderService.acceptOrder(adminCode,orderCode, exchange);
 
         productService.exportProducts(order);
         if (exchange!=null)

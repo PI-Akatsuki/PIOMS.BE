@@ -11,7 +11,6 @@ import com.akatsuki.pioms.exchange.service.ExchangeService;
 import com.akatsuki.pioms.order.aggregate.Order;
 import com.akatsuki.pioms.log.etc.LogStatus;
 import com.akatsuki.pioms.log.service.LogService;
-import com.akatsuki.pioms.order.dto.OrderDTO;
 import com.akatsuki.pioms.product.aggregate.ResponseProducts;
 
 import com.akatsuki.pioms.product.dto.ProductDTO;
@@ -182,7 +181,7 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public void exportProducts(OrderDTO order) {
+    public void exportProducts(Order order) {
         // 발주 상품에 대해 재고 수정
         order.getOrderProductList().forEach(requestProduct->{
 //            productMinusCnt(requestProduct.getRequestProductCount(), requestProduct.getProduct());
@@ -204,7 +203,7 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public boolean checkExchangeProduct(OrderDTO order, ExchangeDTO exchange) {
+    public boolean checkExchangeProduct(Order order, ExchangeDTO exchange) {
         //
 
         for (int i = 0; i < exchange.getExchangeProducts().size(); i++) {

@@ -8,7 +8,6 @@ import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import com.akatsuki.pioms.frwarehouse.service.FranchiseWarehouseService;
 import com.akatsuki.pioms.invoice.service.InvoiceService;
 import com.akatsuki.pioms.order.aggregate.*;
-import com.akatsuki.pioms.order.dto.OrderDTO;
 import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
 import com.akatsuki.pioms.order.repository.OrderProductRepository;
 import com.akatsuki.pioms.order.repository.OrderRepository;
@@ -50,17 +49,17 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     @Transactional(readOnly = true)
-    public List<OrderDTO> getOrderListByAdminCode(int adminCode){
+    public List<Order> getOrderListByAdminCode(int adminCode){
         // 인가 필요 없음
         List<Order> orderList = orderRepository.findAllByFranchiseAdminAdminCode(adminCode);
 
         if (orderList == null)
             return null;
 
-        List<OrderDTO> orderDTOList = new ArrayList<>();
+        List<Order> orderDTOList = new ArrayList<>();
 
         orderList.forEach(order-> {
-            orderDTOList.add(new OrderDTO(order));
+            orderDTOList.add((order));
         });
 
         return orderDTOList;
@@ -68,21 +67,21 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     @Transactional(readOnly = true)
-    public List<OrderDTO> getAdminUncheckesOrders(int adminCode){
+    public List<Order> getAdminUncheckesOrders(int adminCode){
         // 인가 필요 없음
         List<Order> orderList = orderRepository.findAllByFranchiseAdminAdminCodeAndOrderCondition(adminCode, ORDER_CONDITION.승인대기);
         if (orderList == null)
             return null;
-        List<OrderDTO> orderVOList = new ArrayList<>();
+        List<Order> orderVOList = new ArrayList<>();
         orderList.forEach(order-> {
-            orderVOList.add(new OrderDTO(order));
+            orderVOList.add((order));
         });
         return orderVOList;
     }
 
     @Override
     @Transactional(readOnly = false)
-    public OrderDTO acceptOrder(int adminCode,int orderId, ExchangeDTO exchange) {
+    public Order acceptOrder(int adminCode,int orderId, ExchangeDTO exchange) {
         Order order = orderRepository.findById(orderId).orElseThrow();
 
 //        if(order.getFranchise().getAdmin().getAdminCode() != adminCode)
@@ -102,11 +101,11 @@ public class OrderServiceImpl implements OrderService{
             System.out.println("exception occuered: check accept order service...");
         }
 
-        return new OrderDTO(order);
+        return (order);
     }
 
     @Override
-    public boolean checkProductCnt(OrderDTO order) {
+    public boolean checkProductCnt(Order order) {
         // 해당 상품의 수량이 본사 재고를 초과하는지 검사
         for (int i = 0; i < order.getOrderProductList().size(); i++) {
             if(order.getOrderProductList().get(i).getRequestProductCount() > order.getOrderProductList().get(i).getProduct().getProductCount())
@@ -148,7 +147,7 @@ public class OrderServiceImpl implements OrderService{
         requestOrder.getProducts().forEach((productId, count)->{
             Order order1 = orderRepository.findById(orderId).orElseThrow();
 //            Product product = productService.getProduct(productId);
-//            orderProductRepository.save(new OrderProduct(count,0, order1, product));
+//            orderProductRepository.save(Product(count,0, order1, product));
         });
         return true;
     }
@@ -162,18 +161,18 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     @Transactional(readOnly = true)
-    public List<OrderDTO> getOrderList(int franchiseCode){
+    public List<Order> getOrderList(int franchiseCode){
         List<Order> orderList= orderRepository.findByFranchiseFranchiseCode(franchiseCode);
-        List<OrderDTO> orderDTOList = new ArrayList<>();
+        List<Order> orderDTOList = new ArrayList<>();
         orderList.forEach(order-> {
-            orderDTOList.add(new OrderDTO(order));
+            orderDTOList.add((order));
         });
         return orderDTOList;
     }
 
     @Override
     @Transactional(readOnly = true)
-    public OrderDTO getOrder(int franchiseCode,int orderCode){
+    public Order getOrder(int franchiseCode,int orderCode){
         Order order = orderRepository.findById(orderCode).orElseThrow();
         if(franchiseCode!= order.getFranchise().getFranchiseCode()){
             System.out.println("가맹점 코드, 주문의 가맹점 코드 불일치!");
@@ -181,17 +180,17 @@ public class OrderServiceImpl implements OrderService{
         }
         System.out.println("order = " + order);
         System.out.println(order.getOrderProductList());
-        return new OrderDTO(order);
+        return (order);
     }
 
     @Override
-    public OrderDTO getAdminOrder(int adminCode, int orderCode) {
+    public Order getAdminOrder(int adminCode, int orderCode) {
         Order order = orderRepository.findById(orderCode).orElseThrow(IllegalArgumentException::new);
 
         if(order==null || adminCode != order.getFranchise().getAdmin().getAdminCode()){
             return null;
         }
-        return new OrderDTO(order);
+        return (order);
     }
 
     @Override
@@ -205,7 +204,7 @@ public class OrderServiceImpl implements OrderService{
 
         requestOrder.getProducts().forEach((productId, count)->{
 //            Product product = productService.getProduct(productId);
-//            orderProductRepository.save(new OrderProduct(count,0, deletedorder, product));
+//            orderProductRepository.save(Product(count,0, deletedorder, product));
         });
         System.out.println(deletedorder.getOrderProductList());
         orderRepository.save(deletedorder);

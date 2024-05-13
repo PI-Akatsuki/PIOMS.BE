@@ -2,14 +2,13 @@ package com.akatsuki.pioms.order.service;
 
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import com.akatsuki.pioms.order.aggregate.*;
-import com.akatsuki.pioms.order.dto.OrderDTO;
 
 import java.util.List;
 
 public interface OrderService {
 
     // 관리자가 관리하고 있는 모든 가맹점에 대한 발주들을 반환합니다.
-    List<OrderDTO> getOrderListByAdminCode(int adminId);
+    List<Order> getOrderListByAdminCode(int adminId);
 
     // 가맹점에서 새로운 발주를 생성합니다.
     // 생성을 정상적으로 한 경우 true를 반환합니다.
@@ -17,7 +16,7 @@ public interface OrderService {
     boolean postFranchiseOrder(int franchiseCode, RequestOrderVO order);
 
     // 관리자가 승인하지 않은 발주들을 반환합니다.
-    List<OrderDTO> getAdminUncheckesOrders(int adminId);
+    List<Order> getAdminUncheckesOrders(int adminId);
 
     // 관리자가 승인대기 중인 발주를 승낙하여 결과를 String으로 반환힙니다.
     // 정상적으로 이루어진 경우: 관리자 코드와 주문코드의 관리자 코드가 일치. OrderCondition이 승인대기인 경우
@@ -27,7 +26,7 @@ public interface OrderService {
     // 2. 명세서 생성
     // 3. 송장 생성
     // 4. 가맹점의 반품신청 리스트 중 상태의 반품신청 추가
-    OrderDTO acceptOrder(int adminCOde,int orderId, ExchangeDTO exchange);
+    Order acceptOrder(int adminCOde,int orderId, ExchangeDTO exchange);
 
     // 관리자가 승인대기 중인 발주를 거절하여 결과를 String으로 반환합니다.
     // 정상적으로 이루어진 경우: 관리자 코드와 주문코드의 관리자 코드가 일치. OrderCondition이 승인대기인 경우
@@ -35,17 +34,17 @@ public interface OrderService {
     String denyOrder(int adminCode,int orderId,String denyMessage);
 
     // 가맹점이 가맹점의 모든 발주 리스트를 반환합니다.
-    List<OrderDTO> getOrderList(int franchiseCode);
+    List<Order> getOrderList(int franchiseCode);
 
     // 가맹점이 발주서를 상세 조회합니다.
     // 정상적으로 이루어진 경우: 가맹점 코드와 주문의 가맹점 코드가 일치하는 경우
     // 비정상적으로 이루어진 경우: 가맹점 코드와 주문의 가맹점 코드가 일치하지 않는 경우
-    OrderDTO getOrder(int franchiseCode, int orderCode);
+    Order getOrder(int franchiseCode, int orderCode);
 
     // 관리자가 발주서를 상세 조회합니다.
     // 정상적으로 이루어진 경우: 관리자 코드와 주문의 관리자 코드가 일치하는 경우
     // 비정상적으로 이루어진 경우: 관리자 코드와 주문의 관리자 코드가 일치하지 않는 경우
-    OrderDTO getAdminOrder(int adminCode, int orderCode);
+    Order getAdminOrder(int adminCode, int orderCode);
 
     // 가맹점이 발주서를 수정합니다.
     // 발주서 생성 결과를 boolean으로 반환합니다.
@@ -74,5 +73,5 @@ public interface OrderService {
         // 2-2. 많이 온  경우, 본사의 재고 -
     boolean putFranchiseOrderCheck(int franchiseCode, RequestPutOrderCheck requestPutOrder);
 
-    boolean checkProductCnt(OrderDTO order);
+    boolean checkProductCnt(Order order);
 }
