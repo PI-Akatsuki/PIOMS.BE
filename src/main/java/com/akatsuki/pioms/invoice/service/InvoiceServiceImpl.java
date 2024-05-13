@@ -78,7 +78,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Async
     public void getOrder(OrderEvent orderEvent){
         System.out.println("Invoice event listen");
-        postInvoice(new OrderDTO(orderEvent.getOrder()));
+        postInvoice(orderEvent.getOrder());
         System.out.println("Invoice event End");
     }
 

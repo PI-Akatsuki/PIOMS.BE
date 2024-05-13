@@ -2,6 +2,7 @@ package com.akatsuki.pioms.specs.service;
 
 import com.akatsuki.pioms.event.OrderEvent;
 import com.akatsuki.pioms.order.aggregate.Order;
+import com.akatsuki.pioms.order.dto.OrderDTO;
 import com.akatsuki.pioms.specs.aggregate.SpecsEntity;
 import com.akatsuki.pioms.specs.dto.SpecsDTO;
 import com.akatsuki.pioms.specs.repository.SpecsRepository;
@@ -22,8 +23,8 @@ public class SpecsServiceImpl implements SpecsService{
         this.specsRepository = specsRepository;
     }
 
-    public void postSpecs(Order orderEntity){
-        specsRepository.save(new SpecsEntity(orderEntity));
+    public void postSpecs(OrderDTO orderEntity){
+        specsRepository.save(new SpecsEntity(new Order(orderEntity)));
         System.out.println("orderEntity = " + orderEntity);
     }
 

@@ -9,8 +9,10 @@ import com.akatsuki.pioms.exchange.service.ExchangeService;
 import com.akatsuki.pioms.order.aggregate.Order;
 import com.akatsuki.pioms.log.etc.LogStatus;
 import com.akatsuki.pioms.log.service.LogService;
+import com.akatsuki.pioms.order.dto.OrderDTO;
 import com.akatsuki.pioms.product.aggregate.ResponseProducts;
 
+import com.akatsuki.pioms.product.dto.ProductDTO;
 import com.akatsuki.pioms.product.repository.ProductRepository;
 import com.akatsuki.pioms.categoryThird.aggregate.CategoryThird;
 import com.akatsuki.pioms.product.aggregate.Product;
@@ -166,11 +168,10 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-
-    public void exportProducts(Order order) {
+    public void exportProducts(OrderDTO order) {
         // 발주 상품에 대해 재고 수정
         order.getOrderProductList().forEach(requestProduct->{
-            productMinusCnt(requestProduct.getRequestProductCount(), requestProduct.getProduct());
+//            productMinusCnt(requestProduct.getRequestProductCount(), requestProduct.getProduct());
         });
     }
 
@@ -178,6 +179,7 @@ public class ProductServiceImpl implements ProductService{
     public void exportExchangeProducts(int exchangeCode) {
         // 교환 상품에 대해서만 처리해야한다.
         List<ExchangeProduct> exchangeProductList = exchangeService.getExchangeProductsWithStatus(exchangeCode, EXCHANGE_PRODUCT_STATUS.교환);
+
         if (exchangeProductList == null) {
             System.out.println("Exchange Products not found!!");
             return;
@@ -188,7 +190,7 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public boolean checkExchangeProduct(Order order, ExchangeDTO exchange) {
+    public boolean checkExchangeProduct(OrderDTO order, ExchangeDTO exchange) {
         //
 
         for (int i = 0; i < exchange.getExchangeProducts().size(); i++) {
@@ -199,7 +201,7 @@ public class ProductServiceImpl implements ProductService{
                 }
             }
         }
-        exportExchangeProducts(exchange.getExchangeCode());
+
         return true;
     }
 

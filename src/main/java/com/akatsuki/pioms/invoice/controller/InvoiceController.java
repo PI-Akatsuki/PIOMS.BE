@@ -27,7 +27,6 @@ public class InvoiceController {
     public ResponseEntity<ResponseInvoiceList> getInvoiceList(){
         List<InvoiceDTO> invoiceList = invoiceService.getAllInvoiceList();
         ResponseInvoiceList responseInvoiceList = new ResponseInvoiceList(invoiceList);
-
         return ResponseEntity.ok(responseInvoiceList);
     }
 
