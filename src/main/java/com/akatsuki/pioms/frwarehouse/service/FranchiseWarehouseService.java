@@ -4,6 +4,7 @@ import com.akatsuki.pioms.exchange.entity.RequestExchange;
 import com.akatsuki.pioms.frwarehouse.aggregate.FranchiseWarehouse;
 import com.akatsuki.pioms.frwarehouse.aggregate.RequestFranchiseWarehouseUpdate;
 import com.akatsuki.pioms.frwarehouse.aggregate.ResponseFranchiseWarehouseUpdate;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,7 +18,7 @@ public interface FranchiseWarehouseService {
 
     List<FranchiseWarehouse> getAllWarehouse();
 
-    Optional<FranchiseWarehouse> getWarehouseByWarehouseCode(int franchiseWarehouseCode);
+    FranchiseWarehouse getWarehouseByWarehouseCode(int franchiseWarehouseCode);
 
-    ResponseFranchiseWarehouseUpdate updateWarehouseCount(int franchiseWarehouseCode, RequestFranchiseWarehouseUpdate request/*, int requesterAdminCode*/);
+    ResponseEntity<String> updateWarehouseCount(int franchiseWarehouseCode, RequestFranchiseWarehouseUpdate request/*, int requesterAdminCode*/);
 }

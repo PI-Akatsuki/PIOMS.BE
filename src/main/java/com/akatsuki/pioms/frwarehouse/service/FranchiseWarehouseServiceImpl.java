@@ -9,6 +9,7 @@ import com.akatsuki.pioms.frwarehouse.aggregate.ResponseFranchiseWarehouseUpdate
 import com.akatsuki.pioms.frwarehouse.repository.FranchiseWarehouseRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -81,12 +82,12 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
     }
 
     @Override
-    public Optional<FranchiseWarehouse> getWarehouseByWarehouseCode(int franchiseWarehouseCode) {
-        return franchiseWarehouseRepository.findById(franchiseWarehouseCode);
+    public FranchiseWarehouse getWarehouseByWarehouseCode(int franchiseWarehouseCode) {
+        return franchiseWarehouseRepository.findById(franchiseWarehouseCode).orElseThrow(null);
     }
 
     @Override
-    public ResponseFranchiseWarehouseUpdate updateWarehouseCount(int franchiseWarehouseCode, RequestFranchiseWarehouseUpdate request/*, int requesterAdminCode*/) {
+    public ResponseEntity<String> updateWarehouseCount(int franchiseWarehouseCode, RequestFranchiseWarehouseUpdate request/*, int requesterAdminCode*/) {
         FranchiseWarehouse franchiseWarehouse = franchiseWarehouseRepository.findById(franchiseWarehouseCode)
                 .orElseThrow(() -> new EntityNotFoundException("FranchiseWarehouse not found"));
 
@@ -94,16 +95,8 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
         franchiseWarehouse.setFranchiseWarehouseEnable(request.getFranchiseWarehouseEnable());
         franchiseWarehouse.setFranchiseWarehouseCount(request.getFranchiseWarehouseCount());
 
-        FranchiseWarehouse updatedWarehouseCount = franchiseWarehouseRepository.save(franchiseWarehouse);
-
-        ResponseFranchiseWarehouseUpdate responseValue =
-                new ResponseFranchiseWarehouseUpdate(
-                        updatedWarehouseCount.getFranchiseWarehouseCode(),
-                        updatedWarehouseCount.getFranchiseWarehouseTotal(),
-                        updatedWarehouseCount.getFranchiseWarehouseEnable(),
-                        updatedWarehouseCount.getFranchiseWarehouseCount()
-                );
-        return responseValue;
+        franchiseWarehouseRepository.save(franchiseWarehouse);
+        return ResponseEntity.ok("재고 수정 완료!");
 
     }
 
