@@ -3,7 +3,6 @@ package com.akatsuki.pioms.specs.service;
 import com.akatsuki.pioms.event.OrderEvent;
 import com.akatsuki.pioms.order.aggregate.Order;
 import com.akatsuki.pioms.specs.aggregate.SpecsEntity;
-import com.akatsuki.pioms.specs.dto.SpecsDTO;
 import com.akatsuki.pioms.specs.repository.SpecsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
@@ -36,28 +35,28 @@ public class SpecsServiceImpl implements SpecsService{
     }
 
     @Override
-    public List<SpecsDTO> getSpecsList(){
+    public List<SpecsEntity> getSpecsList(){
         List<SpecsEntity> specsList = specsRepository.findAll();
-        List<SpecsDTO> responseSpecs = new ArrayList<>();
+        List<SpecsEntity> responseSpecs = new ArrayList<>();
         specsList.forEach(specs -> {
-            responseSpecs.add(new SpecsDTO(specs));
+            responseSpecs.add(specs);
         });
         System.out.println(responseSpecs.size());
         return responseSpecs;
     }
 
     @Override
-    public SpecsDTO getSpecs(int specsCode){
+    public SpecsEntity getSpecs(int specsCode){
         SpecsEntity specsEntity = specsRepository.findById(specsCode).orElseThrow(IllegalArgumentException::new);
-        return new SpecsDTO(specsEntity);
+        return specsEntity;
     }
 
     @Override
-    public List<SpecsDTO> getFranchiseSpecsList(int franchiseCode) {
+    public List<SpecsEntity> getFranchiseSpecsList(int franchiseCode) {
         List<SpecsEntity> specsEntities = specsRepository.findAllByFranchiseFranchiseCode(franchiseCode);
-        List<SpecsDTO> responseSpecs = new ArrayList<>();
+        List<SpecsEntity> responseSpecs = new ArrayList<>();
         specsEntities.forEach(specs -> {
-             responseSpecs.add(new SpecsDTO(specs));
+             responseSpecs.add(specs);
         });
         return responseSpecs;
     }

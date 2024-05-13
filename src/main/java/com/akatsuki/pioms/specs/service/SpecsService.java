@@ -2,16 +2,16 @@ package com.akatsuki.pioms.specs.service;
 
 
 import com.akatsuki.pioms.specs.aggregate.ResponseSpecs;
-import com.akatsuki.pioms.specs.dto.SpecsDTO;
+import com.akatsuki.pioms.specs.aggregate.SpecsEntity;
 
 import java.util.List;
 
 public interface SpecsService {
 
-    List<SpecsDTO> getSpecsList();
+    List<SpecsEntity> getSpecsList();
 
-    SpecsDTO getSpecs(int specsCode);
+    SpecsEntity getSpecs(int specsCode);
 
-    List<SpecsDTO> getFranchiseSpecsList(int franchiseCode);
+    List<SpecsEntity> getFranchiseSpecsList(int franchiseCode);
 
 }
