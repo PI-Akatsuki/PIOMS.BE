@@ -1,5 +1,6 @@
 package com.akatsuki.pioms.frowner.service;
 
+import com.akatsuki.pioms.frowner.aggregate.FranchiseOwner;
 import com.akatsuki.pioms.frowner.dto.FranchiseOwnerDTO;
 import org.springframework.http.ResponseEntity;
 
@@ -12,4 +13,8 @@ public interface FranchiseOwnerService {
 
     // 상세 조회
     ResponseEntity<FranchiseOwnerDTO> findFranchiseOwnerById(int franchiseOwnerCode);
+
+    // 오너 등록
+    ResponseEntity<String> registerFranchiseOwner(FranchiseOwner franchiseOwner, int requestorAdminCode);
+
 }

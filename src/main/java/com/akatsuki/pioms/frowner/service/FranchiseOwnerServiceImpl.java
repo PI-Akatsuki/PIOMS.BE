@@ -1,5 +1,7 @@
 package com.akatsuki.pioms.frowner.service;
 
+import com.akatsuki.pioms.admin.aggregate.Admin;
+import com.akatsuki.pioms.admin.repository.AdminRepository;
 import com.akatsuki.pioms.frowner.aggregate.FranchiseOwner;
 import com.akatsuki.pioms.frowner.dto.FranchiseOwnerDTO;
 import com.akatsuki.pioms.frowner.repository.FranchiseOwnerRepository;
@@ -9,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,11 +20,15 @@ import java.util.stream.Collectors;
 public class FranchiseOwnerServiceImpl implements FranchiseOwnerService {
 
     private final FranchiseOwnerRepository franchiseOwnerRepository;
+    private final AdminRepository adminRepository;
 
     @Autowired
-    public FranchiseOwnerServiceImpl(FranchiseOwnerRepository franchiseOwnerRepository) {
+    public FranchiseOwnerServiceImpl(FranchiseOwnerRepository franchiseOwnerRepository, AdminRepository adminRepository) {
         this.franchiseOwnerRepository = franchiseOwnerRepository;
+        this.adminRepository = adminRepository;
     }
+
+
 
     // 전체 조회
     @Transactional(readOnly = true)
@@ -44,6 +52,44 @@ public class FranchiseOwnerServiceImpl implements FranchiseOwnerService {
             return ResponseEntity.notFound().build();
         }
     }
+
+
+    // 오너 등록
+    @Override
+    @Transactional
+    public ResponseEntity<String> registerFranchiseOwner(FranchiseOwner franchiseOwner, int requestorAdminCode) {
+        try {
+            Admin requestorAdmin = adminRepository.findById(requestorAdminCode).orElse(null);
+            if (requestorAdmin == null || requestorAdmin.getAdminCode() != 1) {
+                return ResponseEntity.status(403).body("프랜차이즈 오너 등록은 루트 관리자만 가능합니다.");
+            }
+
+            if (franchiseOwner.getFranchiseOwnerId() == null || franchiseOwner.getFranchiseOwnerName() == null ||
+                    franchiseOwner.getFranchiseOwnerPwd() == null || franchiseOwner.getFranchiseOwnerEmail() == null ||
+                    franchiseOwner.getFranchiseOwnerPhone() == null) {
+                return ResponseEntity.badRequest().body("필수 항목을 모두 입력해야 합니다.");
+            }
+
+            // ID 중복 확인
+            if (franchiseOwnerRepository.existsByFranchiseOwnerId(franchiseOwner.getFranchiseOwnerId())) {
+                return ResponseEntity.status(409).body("이미 존재하는 아이디입니다.");
+            }
+
+            // 날짜 포맷터
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            String now = LocalDateTime.now().format(formatter);
+
+            // 등록일 및 수정일 설정
+            franchiseOwner.setFranchiseOwnerEnrollDate(now);
+            franchiseOwner.setFranchiseOwnerUpdateDate(now);
+
+            franchiseOwnerRepository.save(franchiseOwner);
+            return ResponseEntity.ok("신규 프랜차이즈 오너 등록이 완료되었습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("프랜차이즈 오너 등록 중 오류가 발생했습니다.");
+        }
+    }
+
 
     private FranchiseOwnerDTO convertEntityToDTO(FranchiseOwner franchiseOwner) {
         Franchise franchise = franchiseOwner.getFranchise();

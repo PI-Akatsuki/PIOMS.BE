@@ -1,14 +1,12 @@
 package com.akatsuki.pioms.frowner.controller;
 
+import com.akatsuki.pioms.frowner.aggregate.FranchiseOwner;
 import com.akatsuki.pioms.frowner.dto.FranchiseOwnerDTO;
 import com.akatsuki.pioms.frowner.service.FranchiseOwnerService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -40,5 +38,13 @@ public class AdminOnlyFrOwnerController {
         return franchiseOwnerService.findFranchiseOwnerById(franchiseOwnerCode);
     }
 
+    @Operation(summary = "프랜차이즈 점주 등록", description = "신규 프랜차이즈 점주를 등록합니다.")
+    @PostMapping("/register")
+    public ResponseEntity<String> registerFranchiseOwner(
+            @RequestBody FranchiseOwner franchiseOwner,
+            @RequestParam int requestorAdminCode
+    ) {
+        return franchiseOwnerService.registerFranchiseOwner(franchiseOwner, requestorAdminCode);
+    }
 
 }
