@@ -2,6 +2,7 @@ package com.akatsuki.pioms.franchise.aggregate;
 
 import com.akatsuki.pioms.admin.aggregate.Admin;
 
+import com.akatsuki.pioms.franchise.dto.FranchiseDTO;
 import com.akatsuki.pioms.frowner.aggregate.FranchiseOwner;
 import jakarta.persistence.*;
 import lombok.*;
@@ -51,4 +52,19 @@ public class Franchise {
     @ManyToOne
     @JoinColumn(name = "admin_code", referencedColumnName = "admin_code")
     private Admin admin;
+
+    public Franchise(FranchiseDTO franchise) {
+
+        this.franchiseCode = franchise.getFranchiseCode();
+        this.franchiseName = franchise.getFranchiseName();
+        this.franchiseAddress = franchise.getFranchiseAddress();
+        this.franchiseCall = franchise.getFranchiseCall();
+        this.franchiseEnrollDate = franchise.getFranchiseEnrollDate();
+        this.franchiseUpdateDate = franchise.getFranchiseUpdateDate();
+        this.franchiseDeleteDate = franchise.getFranchiseDeleteDate();
+        this.franchiseBusinessNum = franchise.getFranchiseBusinessNum();
+        this.franchiseDeliveryDate = franchise.getFranchiseDeliveryDate();
+        this.franchiseOwner = new FranchiseOwner(franchise.getFranchiseOwner());
+        this.admin = new Admin(franchise.getAdmin());
+    }
 }

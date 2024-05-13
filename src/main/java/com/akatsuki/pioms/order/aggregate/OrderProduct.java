@@ -1,6 +1,7 @@
 package com.akatsuki.pioms.order.aggregate;
 
 import com.akatsuki.pioms.order.aggregate.Order;
+import com.akatsuki.pioms.order.dto.OrderProductDTO;
 import com.akatsuki.pioms.product.aggregate.Product;
 import jakarta.persistence.*;
 import lombok.*;
@@ -21,6 +22,7 @@ public class OrderProduct {
     private int requestProductCount;
     @Column(name = "request_product_get_count")
     private int requestProductGetCount;
+
     @JoinColumn(name = "request_code")
     @ManyToOne(cascade = CascadeType.PERSIST)
     private Order order;
@@ -34,5 +36,13 @@ public class OrderProduct {
         this.requestProductGetCount = findCount;
         this.order = order;
         this.product = product;
+    }
+
+    public OrderProduct(OrderProductDTO orderProductDTO) {
+        this.requestProductCode= orderProductDTO.getRequestProductCode();
+        this.requestProductCount= orderProductDTO.getRequestProductCount();
+        this.requestProductGetCount= orderProductDTO.getRequestProductGetCount();
+        this.order= new Order(orderProductDTO.getOrder());
+        this.product= new Product(orderProductDTO.getProduct());
     }
 }

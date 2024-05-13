@@ -1,6 +1,7 @@
 package com.akatsuki.pioms.frowner.aggregate;
 
 
+import com.akatsuki.pioms.frowner.dto.FranchiseOwnerDTO;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -46,4 +47,15 @@ public class FranchiseOwner {
     @Column(name = "franchise_owner_delete_date")
     private LocalDateTime franchiseOwnerDeleteDate;
 
+    public FranchiseOwner(FranchiseOwnerDTO franchiseOwner) {
+        this.franchiseOwnerCode= franchiseOwner.getFranchiseOwnerCode();
+        this.franchiseOwnerName= franchiseOwner.getFranchiseOwnerName();
+        this.franchiseOwnerId= franchiseOwner.getFranchiseOwnerId();
+        this.franchiseOwnerPwd= franchiseOwner.getFranchiseOwnerPwd();
+        this.franchiseOwnerEmail= franchiseOwner.getFranchiseOwnerEmail();
+        this.franchiseOwnerPhone= franchiseOwner.getFranchiseOwnerPhone();
+        this.franchiseOwnerEnrollDate= franchiseOwner.getFranchiseOwnerEnrollDate();
+        this.franchiseOwnerUpdateDate= franchiseOwner.getFranchiseOwnerUpdateDate();
+        this.franchiseOwnerDeleteDate= franchiseOwner.getFranchiseOwnerDeleteDate();
+    }
 }

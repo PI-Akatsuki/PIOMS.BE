@@ -1,6 +1,7 @@
 package com.akatsuki.pioms.invoice.aggregate;
 
 
+import com.akatsuki.pioms.invoice.dto.InvoiceDTO;
 import com.akatsuki.pioms.invoice.etc.DELIVERY_STATUS;
 import com.akatsuki.pioms.order.aggregate.Order;
 import jakarta.persistence.*;
@@ -36,4 +37,11 @@ public class InvoiceEntity {
     @OneToOne
     private Order order;
 
+    public InvoiceEntity(InvoiceDTO invoiceDTO) {
+        this.invoiceCode = invoiceDTO.getInvoiceCode();
+        this.deliveryStatus = invoiceDTO.getDeliveryStatus();
+        this.invoiceDate = invoiceDTO.getInvoiceDate();
+        this.invoiceRegionCode = invoiceDTO.getInvoiceRegionCode();
+        this.order = new Order(invoiceDTO.getOrder());
+    }
 }
