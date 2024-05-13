@@ -43,7 +43,7 @@ public class AdminOrderController {
     @GetMapping("/{adminCode}/orders")
     @Operation(summary = "관리자가 관리하고 있는 모든 가맹점들의 발주 리스트를 조회합니다.")
     public ResponseEntity<OrderListVO> getFranchisesOrderList(@PathVariable int adminCode){
-        OrderListVO orderListVO = orderService.getFranchisesOrderList(adminCode);
+        OrderListVO orderListVO = new OrderListVO(orderService.getFranchisesOrderList(adminCode));
         return ResponseEntity.ok().body(orderListVO);
     }
     /**
@@ -52,7 +52,7 @@ public class AdminOrderController {
     @GetMapping("/{adminCode}/unchecked-orders")
     @Operation(summary = "관리자가 관리하는 모든 가맹점들 중 승인 하지 않은 발주 리스틀 조회합니다.")
     public ResponseEntity<OrderListVO> getFranchisesUncheckedOrderList(@PathVariable int adminCode){
-        OrderListVO orderListVO = orderService.getFranchisesUncheckedOrderList(adminCode);
+        OrderListVO orderListVO = new OrderListVO(orderService.getFranchisesUncheckedOrderList(adminCode));
         return ResponseEntity.ok().body(orderListVO);
     }
 
@@ -72,7 +72,7 @@ public class AdminOrderController {
     @GetMapping("/{adminCode}/order/{orderCode}")
     @Operation(summary = "발주를 상세 조회합니다.")
     public ResponseEntity<OrderVO> getOrder(@PathVariable int adminCode, @PathVariable int orderCode){
-        OrderVO order = orderService.getAdminOrder(adminCode,orderCode);
+        OrderVO order = new OrderVO(orderService.getAdminOrder(adminCode,orderCode));
         if(order == null){
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(null);
         }

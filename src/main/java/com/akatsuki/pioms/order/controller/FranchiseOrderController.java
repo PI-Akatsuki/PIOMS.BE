@@ -45,15 +45,14 @@ public class FranchiseOrderController {
 
     @GetMapping("/{franchiseCode}/orders")
     public ResponseEntity<OrderListVO> getFranchiseOrderList(@PathVariable int franchiseCode){
-        return ResponseEntity.ok(orderService.getOrderList(franchiseCode));
+        return ResponseEntity.ok(new OrderListVO(orderService.getOrderList(franchiseCode)));
     }
 
     @GetMapping("/{franchiseCode}/order/{orderCode}")
     public ResponseEntity<OrderVO> getOrder(@PathVariable int franchiseCode, @PathVariable int orderCode){
-        OrderVO orderVO = orderService.getOrder(franchiseCode,orderCode);
+        OrderVO orderVO = new OrderVO(orderService.getOrder(franchiseCode,orderCode));
         if(orderVO==null)
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
-
         return ResponseEntity.ok(orderVO);
     }
 }

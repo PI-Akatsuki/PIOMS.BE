@@ -2,20 +2,20 @@ package com.akatsuki.pioms.exchange.repository;
 
 import com.akatsuki.pioms.exchange.aggregate.EXCHANGE_PRODUCT_STATUS;
 import com.akatsuki.pioms.exchange.aggregate.EXCHANGE_STATUS;
-import com.akatsuki.pioms.exchange.aggregate.ExchangeProductEntity;
+import com.akatsuki.pioms.exchange.aggregate.ExchangeProduct;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface ExchangeProductRepository extends JpaRepository<ExchangeProductEntity, Integer> {
+public interface ExchangeProductRepository extends JpaRepository<ExchangeProduct, Integer> {
 
     void deleteAllByExchangeFranchiseFranchiseCodeAndExchangeExchangeStatus(int franchiseCode, EXCHANGE_STATUS exchangeStatus);
 
-    List<ExchangeProductEntity> findAllByExchangeExchangeCode(int exchangeCode);
+    List<ExchangeProduct> findAllByExchangeExchangeCode(int exchangeCode);
 
-    List<ExchangeProductEntity> findAllByExchangeExchangeCodeAndExchangeProductStatus(int exchangeCode, EXCHANGE_PRODUCT_STATUS exchangeProductStatus);
+    List<ExchangeProduct> findAllByExchangeExchangeCodeAndExchangeProductStatus(int exchangeCode, EXCHANGE_PRODUCT_STATUS exchangeProductStatus);
 
-    List<ExchangeProductEntity> findByProductProductCodeAndExchangeExchangeCode(int exchangeProductCode, int exchangeCode);
+    List<ExchangeProduct> findByProductProductCodeAndExchangeExchangeCode(int exchangeProductCode, int exchangeCode);
 
-    List<ExchangeProductEntity> findByExchangeExchangeCode(int exchangeCode);
+    List<ExchangeProduct> findByExchangeExchangeCode(int exchangeCode);
 }

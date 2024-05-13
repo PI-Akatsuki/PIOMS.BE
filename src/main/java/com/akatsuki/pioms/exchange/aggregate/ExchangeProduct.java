@@ -14,7 +14,7 @@ import lombok.*;
 @Entity
 @Table(name = "exchange_product")
 @ToString
-public class ExchangeProductEntity {
+public class ExchangeProduct {
     @Id
     @Column(name = "exchange_product_code")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,9 +34,9 @@ public class ExchangeProductEntity {
     private Product product;
     @JoinColumn(name = "exchange_code")
     @ManyToOne
-    private ExchangeEntity exchange;
+    private Exchange exchange;
 
-    public ExchangeProductEntity(ExchangeProductVO product) {
+    public ExchangeProduct(ExchangeProductVO product) {
         this.exchangeProductStatus = product.getExchangeProductStatus();
         this.exchangeProductCount = product.getExchangeProductCount();
         this.exchangeProductDiscount = 0;

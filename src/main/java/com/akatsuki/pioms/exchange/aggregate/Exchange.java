@@ -15,7 +15,7 @@ import java.util.List;
 @ToString
 @Entity
 @Table(name = "exchange")
-public class ExchangeEntity {
+public class Exchange {
     @Id
     @Column(name = "exchange_code")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,10 +34,10 @@ public class ExchangeEntity {
 
     @OneToMany(mappedBy = "exchange")
     @ToString.Exclude
-    List<ExchangeProductEntity> products;
+    List<ExchangeProduct> products;
 
 
-    public ExchangeEntity(ExchangeDTO exchange) {
+    public Exchange(ExchangeDTO exchange) {
         this.exchangeCode = exchange.getExchangeCode();
         this.exchangeDate = exchange.getExchangeDate();
         this.exchangeStatus = exchange.getExchangeStatus();

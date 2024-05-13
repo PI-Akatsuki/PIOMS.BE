@@ -1,6 +1,7 @@
 package com.akatsuki.pioms.invoice.controller;
 
 
+import com.akatsuki.pioms.invoice.dto.InvoiceDTO;
 import com.akatsuki.pioms.invoice.etc.DELIVERY_STATUS;
 import com.akatsuki.pioms.invoice.service.InvoiceService;
 import com.akatsuki.pioms.invoice.aggregate.ResponseInvoice;
@@ -9,11 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/invoice")
 public class InvoiceController {
 
-    private InvoiceService invoiceService;
+    private final InvoiceService invoiceService;
 
     @Autowired
     public InvoiceController(InvoiceService invoiceService) {
@@ -22,19 +25,21 @@ public class InvoiceController {
 
     @GetMapping("/list")
     public ResponseEntity<ResponseInvoiceList> getInvoiceList(){
-        ResponseInvoiceList responseInvoiceList = invoiceService.getAllInvoiceList();
+        List<InvoiceDTO> invoiceList = invoiceService.getAllInvoiceList();
+        ResponseInvoiceList responseInvoiceList = new ResponseInvoiceList(invoiceList);
+
         return ResponseEntity.ok(responseInvoiceList);
     }
 
     @GetMapping("/{invoiceCode}")
     public ResponseEntity<ResponseInvoice> getInvoice(@PathVariable int invoiceCode){
-        return ResponseEntity.ok(invoiceService.getInvoice(invoiceCode));
+        return ResponseEntity.ok(new ResponseInvoice(invoiceService.getInvoice(invoiceCode)));
     }
 
     @PutMapping("/{invoiceCode}/{invoiceStatus}")
     public ResponseEntity<ResponseInvoice> putInvoice(@PathVariable int invoiceCode, @PathVariable DELIVERY_STATUS invoiceStatus){
-        ResponseInvoice invoice = invoiceService.putInvoice(invoiceCode, invoiceStatus);
-        return ResponseEntity.ok(invoice);
+        InvoiceDTO invoice = invoiceService.putInvoice(invoiceCode, invoiceStatus);
+        return ResponseEntity.ok(new ResponseInvoice(invoice));
     }
 
 

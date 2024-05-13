@@ -1,8 +1,8 @@
 package com.akatsuki.pioms.frwarehouse.service;
 
 
-import com.akatsuki.pioms.exchange.aggregate.ExchangeEntity;
-import com.akatsuki.pioms.exchange.aggregate.ExchangeProductEntity;
+import com.akatsuki.pioms.exchange.aggregate.Exchange;
+import com.akatsuki.pioms.exchange.aggregate.ExchangeProduct;
 import com.akatsuki.pioms.exchange.aggregate.RequestExchange;
 import com.akatsuki.pioms.exchange.aggregate.ExchangeProductVO;
 import com.akatsuki.pioms.frwarehouse.aggregate.FranchiseWarehouse;
@@ -47,9 +47,9 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
 
     @Override
     @Transactional
-    public void saveExchangeProduct(ExchangeEntity exchange, int franchiseCode) {
+    public void saveExchangeProduct(Exchange exchange, int franchiseCode) {
         if (exchange==null) return;
-        List<ExchangeProductEntity> products = exchange.getProducts();
+        List<ExchangeProduct> products = exchange.getProducts();
         products.forEach(product -> {
             int productCode = product.getProduct().getProductCode();
             int cnt = product.getExchangeProductNormalCount();

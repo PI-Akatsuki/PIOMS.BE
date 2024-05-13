@@ -1,5 +1,6 @@
 package com.akatsuki.pioms.specs.aggregate;
 
+import com.akatsuki.pioms.specs.dto.SpecsDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,7 +22,7 @@ public class ResponseSpecs {
     private int orderCode;
     private Map<String, Integer> products;
 
-    public ResponseSpecs(SpecsEntity specs) {
+    public ResponseSpecs(SpecsDTO specs) {
         this.specsCode = specs.getSpecsCode();
         this.specsDate = specs.getSpecsDate();
         this.franchiseCode = specs.getFranchise().getFranchiseCode();
@@ -32,4 +33,5 @@ public class ResponseSpecs {
             products.put(product.getProduct().getProductName(),product.getRequestProductCount());
         });
     }
+
 }

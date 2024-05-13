@@ -1,10 +1,11 @@
 package com.akatsuki.pioms.product.service;
 
 
+
+import com.akatsuki.pioms.exchange.aggregate.ExchangeProduct;
 import com.akatsuki.pioms.categoryThird.repository.CategoryThirdRepository;
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import com.akatsuki.pioms.exchange.aggregate.EXCHANGE_PRODUCT_STATUS;
-import com.akatsuki.pioms.exchange.aggregate.ExchangeProductEntity;
 import com.akatsuki.pioms.exchange.service.ExchangeService;
 
 import com.akatsuki.pioms.order.aggregate.Order;
@@ -190,7 +191,7 @@ public class ProductServiceImpl implements ProductService{
     @Override
     public void exportExchangeProducts(int exchangeCode) {
         // 교환 상품에 대해서만 처리해야한다.
-        List<ExchangeProductEntity> exchangeProductList = exchangeService.getExchangeProductsWithStatus(exchangeCode, EXCHANGE_PRODUCT_STATUS.교환);
+        List<ExchangeProduct> exchangeProductList = exchangeService.getExchangeProductsWithStatus(exchangeCode, EXCHANGE_PRODUCT_STATUS.교환);
         if (exchangeProductList == null) {
             System.out.println("Exchange Products not found!!");
             return;

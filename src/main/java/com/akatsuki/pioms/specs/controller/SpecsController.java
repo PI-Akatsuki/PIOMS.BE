@@ -2,11 +2,13 @@ package com.akatsuki.pioms.specs.controller;
 
 
 import com.akatsuki.pioms.specs.aggregate.ResponseSpecs;
+import com.akatsuki.pioms.specs.dto.SpecsDTO;
 import com.akatsuki.pioms.specs.service.SpecsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -28,14 +30,28 @@ public class SpecsController {
 
     @GetMapping("/admin/specs")
     public ResponseEntity<List<ResponseSpecs>> getSpecsList(){
-        return ResponseEntity.ok(specsService.getSpecsList());
+        List<SpecsDTO> specsDTOS = specsService.getSpecsList();
+        List<ResponseSpecs> responseSpecs = new ArrayList<>();
+        specsDTOS.forEach( specsDTO -> {
+            responseSpecs.add(new ResponseSpecs(specsDTO));
+        });
+        return ResponseEntity.ok(responseSpecs);
     }
     @GetMapping("/admin/specs/{specsCode}")
     public ResponseEntity<ResponseSpecs> getSpecs(@PathVariable int specsCode){
-        return ResponseEntity.ok(specsService.getSpecs(specsCode));
+        SpecsDTO specsDTO = specsService.getSpecs(specsCode);
+        return ResponseEntity.ok(new ResponseSpecs(specsDTO));
     }
 
     @GetMapping("/franchise/{franchiseCode}/specs")
-    public ResponseEntity<List<ResponseSpecs>> getFranchiseSpecsList(@PathVariable int franchiseCode){return ResponseEntity.ok(specsService.getFranchiseSpecsList(franchiseCode));}
+    public ResponseEntity<List<ResponseSpecs>> getFranchiseSpecsList(@PathVariable int franchiseCode){
+        List<SpecsDTO> specsDTOS = specsService.getFranchiseSpecsList(franchiseCode);
+        List<ResponseSpecs> responseSpecs = new ArrayList<>();
+        specsDTOS.forEach( specsDTO -> {
+            responseSpecs.add(new ResponseSpecs(specsDTO));
+        });
+
+        return ResponseEntity.ok(responseSpecs);
+    }
 
 }
