@@ -39,14 +39,13 @@ public class CategoryThirdController {
         return ResponseEntity.ok().body(categoryThird);
     }
     @PostMapping("/create")
-    public String postCategoryThird(@RequestBody RequestCategoryThirdPost request) {
-        return categoryThirdService.postCategory(request);
+    public ResponseEntity<String> postCategoryThird(@RequestBody RequestCategoryThirdPost request/*, int requesterAdminCode*/) {
+        return categoryThirdService.postCategory(request/*, requesterAdminCode*/);
     }
 
     @PostMapping("/update/{categoryThirdCode}")
-    public ResponseEntity<ResponseCategoryThirdPost> updateCategoryThird(@PathVariable int categoryThirdCode, @RequestBody RequestCategoryThirdUpdate request) {
-        ResponseCategoryThirdPost response = categoryThirdService.updateCategory(categoryThirdCode, request);
-        return ResponseEntity.ok().body(response);
+    public ResponseEntity<String> updateCategoryThird(@PathVariable int categoryThirdCode, @RequestBody RequestCategoryThirdUpdate request) {
+        return categoryThirdService.updateCategory(categoryThirdCode, request);
     }
 
     @DeleteMapping("/delete/{categoryThirdCode}")
