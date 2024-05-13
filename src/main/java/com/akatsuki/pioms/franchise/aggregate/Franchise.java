@@ -1,7 +1,6 @@
 package com.akatsuki.pioms.franchise.aggregate;
 
 import com.akatsuki.pioms.admin.aggregate.Admin;
-
 import com.akatsuki.pioms.frowner.aggregate.FranchiseOwner;
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,7 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
+@Builder
 public class Franchise {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
