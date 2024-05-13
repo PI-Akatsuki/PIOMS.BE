@@ -1,6 +1,7 @@
 package com.akatsuki.pioms.product.service;
 
 
+import com.akatsuki.pioms.categoryThird.repository.CategoryThirdRepository;
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import com.akatsuki.pioms.exchange.entity.EXCHANGE_PRODUCT_STATUS;
 import com.akatsuki.pioms.exchange.entity.ExchangeProductEntity;
@@ -30,12 +31,14 @@ import java.util.Optional;
 public class ProductServiceImpl implements ProductService{
 
     private final ProductRepository productRepository;
+    private final CategoryThirdRepository categoryThirdRepository;
     private final ExchangeService exchangeService;
     LogService logService;
 
     @Autowired
-    public ProductServiceImpl(ProductRepository productRepository, ExchangeService exchangeService,LogService logService) {
+    public ProductServiceImpl(ProductRepository productRepository, CategoryThirdRepository categoryThirdRepository, ExchangeService exchangeService, LogService logService) {
         this.productRepository = productRepository;
+        this.categoryThirdRepository = categoryThirdRepository;
         this.exchangeService = exchangeService;
         this.logService = logService;
     }
@@ -58,17 +61,25 @@ public class ProductServiceImpl implements ProductService{
     @Override
     @Transactional
     public String postProduct(RequestProduct request) {
+        // 상품 객체 생성
         Product product = new Product();
+
+        // 현재 날짜 및 시간 포맷 설정
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formattedDateTime = LocalDateTime.now().format(formatter);
 
-        CategoryThird categoryThird = new CategoryThird();
-        if(product.getCategoryThird() == null) {
-            return "해당 카테고리가 존재하지 않습니다.다시 확인해주세요.";
+        // request에서 받은 categoryThirdCode를 사용하여 CategoryThird 객체 검색
+        CategoryThird categoryThird = categoryThirdRepository.findByCategoryThirdCode(request.getCategoryThirdCode());
+
+        // 만약 해당 CategoryThird가 존재하지 않으면 메시지 반환
+        if(categoryThird == null) {
+            return "해당 카테고리가 존재하지 않습니다. 다시 확인해주세요.";
         }
-        categoryThird.setCategoryThirdCode(request.getCategoryThirdCode());
+
+        // CategoryThird 객체를 Product 객체에 설정
         product.setCategoryThird(categoryThird);
 
+        // 상품 정보 설정
         product.setProductName(request.getProductName());
         product.setProductPrice(request.getProductPrice());
         product.setProductContent(request.getProductContent());
@@ -83,8 +94,13 @@ public class ProductServiceImpl implements ProductService{
         product.setProductDiscount(request.getProductDisCount());
         product.setProductCount(request.getProductCount());
 
+        // 상품 저장
         Product updatedProduct = productRepository.save(product);
+
+        // 로그 저장
         logService.saveLog("root", LogStatus.등록, updatedProduct.getProductName(), "Product");
+
+        // 성공 메시지 반환
         return "상품 등록 완료!";
     }
 

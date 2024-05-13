@@ -54,35 +54,26 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
     @Transactional
     public String postCategory(RequestCategoryThirdPost request) {
 
-        // CategoryThird 객체 생성
         CategoryThird categoryThird = new CategoryThird();
 
-        // 현재 날짜 및 시간 포맷 설정
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formattedDateTime = LocalDateTime.now().format(formatter);
 
-        // request에서 받은 categorySecondCode를 사용하여 CategorySecond 객체 검색
         CategorySecond categorySecond = categorySecondRepository.findByCategorySecondCode(request.getCategorySecondCode());
 
-        // 만약 해당 CategorySecond가 존재하지 않으면 메시지 반환
         if(categorySecond == null) {
             return "해당 카테고리(중)이 존재하지 않습니다. 다시 확인해주세요.";
         }
 
-        // CategorySecond 객체를 CategoryThird 객체에 설정
         categoryThird.setCategorySecondCode(categorySecond);
 
-        // 요청으로부터 받은 정보를 CategoryThird 객체에 설정
         categoryThird.setCategoryThirdName(request.getCategoryThirdName());
         categoryThird.setCategoryThirdEnrollDate(formattedDateTime);
 
-        // CategoryThird 저장
         CategoryThird savedCategoryThird = categoryThirdRepository.save(categoryThird);
 
-        // 로그 저장
         logService.saveLog("root", LogStatus.등록, savedCategoryThird.getCategoryThirdName(), "CategoryThird");
 
-        // 성공 메시지 반환
         return "카테고리(소) 생성 완료!";
     }
 
