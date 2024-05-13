@@ -34,17 +34,17 @@ public class ExchangeController {
 
     @PostMapping("/{franchiseCode}")
     public ResponseEntity<ResponseExchange> postExchange(@PathVariable int franchiseCode, @RequestBody RequestExchange requestExchange){
-        ResponseExchange exchange=  exchangeService.postExchange(franchiseCode, requestExchange);
+        ExchangeDTO exchange=  exchangeService.postExchange(franchiseCode, requestExchange);
         if (exchange==null)
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
 
-        return ResponseEntity.ok(exchange);
+        return ResponseEntity.ok(new ResponseExchange(exchange));
     }
 
 
     @PutMapping("/{exchangeCode}")
     public ResponseEntity<ResponseExchange> putExchange(@PathVariable int exchangeCode,@RequestBody RequestExchange requestExchange){
-        return ResponseEntity.ok(exchangeService.putExchange(exchangeCode,requestExchange));
+        return ResponseEntity.ok(new ResponseExchange(exchangeService.putExchange(exchangeCode,requestExchange)));
     }
 
 }

@@ -18,11 +18,11 @@ public interface ExchangeService {
     List<ExchangeDTO> getExchangesByFranchiseCode(int franchiseCode);
 
     // 관리자가 관리하고 있는 모든 가맹점의 반품 리스트를 조회하기 위한 로직
-    List<ResponseExchange> getExchangesByAdminCode(int adminCode);
+    List<ExchangeDTO> getExchangesByAdminCode(int adminCode);
 
-    ResponseExchange putExchange(int exchangeCode, RequestExchange requestExchange);
+    ExchangeDTO putExchange(int exchangeCode, RequestExchange requestExchange);
 
-    ResponseExchange postExchange(int franchiseCode, RequestExchange requestExchange);
+    ExchangeDTO postExchange(int franchiseCode, RequestExchange requestExchange);
 
     List<ExchangeProduct> getExchangeProducts(int exchangeCode);
 

@@ -2,7 +2,6 @@ package com.akatsuki.pioms.exchange.service;
 
 import com.akatsuki.pioms.exchange.aggregate.*;
 import com.akatsuki.pioms.exchange.aggregate.ExchangeProductVO;
-import com.akatsuki.pioms.exchange.aggregate.ResponseExchange;
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import com.akatsuki.pioms.exchange.repository.ExchangeProductRepository;
 import com.akatsuki.pioms.exchange.repository.ExchangeRepository;
@@ -71,11 +70,11 @@ public class ExchangeServiceImpl implements ExchangeService{
     }
 
     @Override
-    public List<ResponseExchange> getExchangesByAdminCode(int adminCode) {
+    public List<ExchangeDTO> getExchangesByAdminCode(int adminCode) {
         List<Exchange> exchangeList = exchangeRepository.findAllByFranchiseAdminAdminCode(adminCode);
-        List<ResponseExchange> responseList = new ArrayList<>();
+        List<ExchangeDTO> responseList = new ArrayList<>();
         exchangeList.forEach(exchange -> {
-            responseList.add(new ResponseExchange(exchange));
+            responseList.add(new ExchangeDTO(exchange));
         });
         return responseList;
     }
@@ -83,7 +82,7 @@ public class ExchangeServiceImpl implements ExchangeService{
 
     @Override
     @Transactional
-    public ResponseExchange postExchange(int franchiseCode, RequestExchange requestExchange) {
+    public ExchangeDTO postExchange(int franchiseCode, RequestExchange requestExchange) {
         System.out.println("post Exchange 발생");
         if(!franchiseWarehouseService.checkEnableToAddExchange(requestExchange))
             return null;
@@ -107,7 +106,7 @@ public class ExchangeServiceImpl implements ExchangeService{
             exchangeProduct= exchangeProductRepository.save(exchangeProduct);
             exchange1.getProducts().add(exchangeProduct);
         });
-        return new ResponseExchange(exchange1);
+        return new ExchangeDTO(exchange1);
     }
 
     @Override
@@ -122,21 +121,24 @@ public class ExchangeServiceImpl implements ExchangeService{
 
     @Override
     @Transactional
-    public ResponseExchange putExchange(int exchangeCode, RequestExchange requestExchange) {
+    public ExchangeDTO putExchange(int exchangeCode, RequestExchange requestExchange) {
         // 관리자가 반품온 상품들 처리하기 위한 메서드
         Exchange exchangeEntity = exchangeRepository.findById(exchangeCode).orElseThrow(IllegalArgumentException::new);
         System.out.println("exchangeEntity = " + exchangeEntity);
         exchangeEntity.setExchangeStatus(requestExchange.getExchangeStatus());
         exchangeRepository.save(exchangeEntity);
         requestExchange.getProducts().forEach(this::updateExchangeProduct);
-        return new ResponseExchange(exchangeRepository.findById(exchangeCode).orElseThrow());
+        return new ExchangeDTO(exchangeRepository.findById(exchangeCode).orElseThrow());
     }
 
     private void updateExchangeProduct(ExchangeProductVO product) {
-        ExchangeProduct exchangeProductEntity = exchangeProductRepository.findById(product.getExchangeProductCode()).orElseThrow();
+        ExchangeProduct exchangeProductEntity =
+                exchangeProductRepository.findById(product.getExchangeProductCode()).orElseThrow();
+
         //해당 상품 처리
         exchangeProductEntity.setExchangeProductNormalCount(product.getExchangeProductNormalCount());
         exchangeProductEntity.setExchangeProductDiscount(product.getExchangeProductDiscount());
+
         //본사 창고 저장
         exchangeProductEntity.getProduct().setProductDiscount(
                 exchangeProductEntity.getProduct().getProductDiscount()+ product.getExchangeProductDiscount()

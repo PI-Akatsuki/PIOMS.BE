@@ -2,8 +2,8 @@ package com.akatsuki.pioms.specs.service;
 
 import com.akatsuki.pioms.event.OrderEvent;
 import com.akatsuki.pioms.order.aggregate.Order;
-import com.akatsuki.pioms.specs.aggregate.ResponseSpecs;
 import com.akatsuki.pioms.specs.aggregate.SpecsEntity;
+import com.akatsuki.pioms.specs.dto.SpecsDTO;
 import com.akatsuki.pioms.specs.repository.SpecsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
@@ -36,28 +36,28 @@ public class SpecsServiceImpl implements SpecsService{
     }
 
     @Override
-    public List<ResponseSpecs> getSpecsList(){
+    public List<SpecsDTO> getSpecsList(){
         List<SpecsEntity> specsList = specsRepository.findAll();
-        List<ResponseSpecs> responseSpecs = new ArrayList<>();
+        List<SpecsDTO> responseSpecs = new ArrayList<>();
         specsList.forEach(specs -> {
-            responseSpecs.add(new ResponseSpecs(specs));
+            responseSpecs.add(new SpecsDTO(specs));
         });
         System.out.println(responseSpecs.size());
         return responseSpecs;
     }
 
     @Override
-    public ResponseSpecs getSpecs(int specsCode){
+    public SpecsDTO getSpecs(int specsCode){
         SpecsEntity specsEntity = specsRepository.findById(specsCode).orElseThrow(IllegalArgumentException::new);
-        return new ResponseSpecs(specsEntity);
+        return new SpecsDTO(specsEntity);
     }
 
     @Override
-    public List<ResponseSpecs> getFranchiseSpecsList(int franchiseCode) {
+    public List<SpecsDTO> getFranchiseSpecsList(int franchiseCode) {
         List<SpecsEntity> specsEntities = specsRepository.findAllByFranchiseFranchiseCode(franchiseCode);
-        List<ResponseSpecs> responseSpecs = new ArrayList<>();
+        List<SpecsDTO> responseSpecs = new ArrayList<>();
         specsEntities.forEach(specs -> {
-             responseSpecs.add(new ResponseSpecs(specs));
+             responseSpecs.add(new SpecsDTO(specs));
         });
         return responseSpecs;
     }
