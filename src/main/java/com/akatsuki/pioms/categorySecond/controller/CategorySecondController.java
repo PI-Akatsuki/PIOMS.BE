@@ -30,20 +30,19 @@ public class CategorySecondController {
 
     @GetMapping("/{categorySecondCode}")
     @Operation(summary = "카테고리(중) code로 카테고리(중) 하나 조회", description = "카테고리(중)코드로 카테고리(중) 하나 조회")
-    public ResponseEntity<Optional<CategorySecond>> getCategorySecondByCode(@PathVariable int categorySecondCode) {
-        Optional<CategorySecond> categorySecond = categorySecondService.findCategorySecondByCode(categorySecondCode);
-        return ResponseEntity.ok().body(categorySecond);
+    public ResponseEntity<CategorySecond> getCategorySecondByCode(@PathVariable int categorySecondCode) {
+        return ResponseEntity.ok().body(categorySecondService.findCategorySecondByCode(categorySecondCode));
     }
 
     @PostMapping("/create")
-    public ResponseEntity<ResponseCategorySecondPost> postCategorySecond(@RequestBody RequestCategorySecondPost request) {
-        ResponseCategorySecondPost response = categorySecondService.postCategorySecond(request);
-        return ResponseEntity.ok().body(response);
+    public ResponseEntity<String> postCategorySecond(@RequestBody RequestCategorySecondPost request/*, int requesterAdminCode*/) {
+        return categorySecondService.postCategorySecond(request/*, int requesterAdminCode*/);
+
     }
 
     @PostMapping("/update/{categorySecondCode}")
-    public ResponseEntity<ResponseCategorySecondUpdate> updateCategorySecond(@PathVariable int categorySecondCode, @RequestBody RequestCategorySecondUpdate request) {
-        ResponseCategorySecondUpdate response = categorySecondService.updateCategorySecond(categorySecondCode, request);
+    public ResponseEntity<ResponseCategorySecondUpdate> updateCategorySecond(@PathVariable int categorySecondCode, @RequestBody RequestCategorySecondUpdate request/*, int requesterAdminCode*/) {
+        ResponseCategorySecondUpdate response = categorySecondService.updateCategorySecond(categorySecondCode, request/*, int requesterAdminCode*/);
         return ResponseEntity.ok().body(response);
     }
 

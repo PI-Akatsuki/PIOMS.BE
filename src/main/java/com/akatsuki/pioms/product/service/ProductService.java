@@ -17,8 +17,8 @@ import java.util.Optional;
 public interface ProductService {
     List<Product> getAllProduct();
     Product getProduct(int productId);
-    Optional<Product> findProductByCode(int productCode);
-    ResponseProduct postProduct(RequestProduct request);
+    Product findProductByCode(int productCode);
+    String postProduct(RequestProduct request/*, int requesterAdminCode*/);
 
     Product deleteProduct(int productCode);
     ResponseProduct updateProduct(int productCode, RequestProduct request);

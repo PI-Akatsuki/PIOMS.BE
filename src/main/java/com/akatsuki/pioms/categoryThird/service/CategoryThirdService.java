@@ -4,6 +4,7 @@ import com.akatsuki.pioms.categoryThird.aggregate.CategoryThird;
 import com.akatsuki.pioms.categoryThird.aggregate.RequestCategoryThirdPost;
 import com.akatsuki.pioms.categoryThird.aggregate.RequestCategoryThirdUpdate;
 import com.akatsuki.pioms.categoryThird.aggregate.ResponseCategoryThirdPost;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,14 +12,12 @@ import java.util.Optional;
 public interface CategoryThirdService {
     List<CategoryThird> getAllCategoryThird();
 
-    Optional<CategoryThird> findCategoryThirdByCode(int categoryThirdCode);
+    CategoryThird findCategoryThirdByCode(int categoryThirdCode);
 
-    ResponseCategoryThirdPost postCategory(RequestCategoryThirdPost request);
+    ResponseEntity<String> postCategory(RequestCategoryThirdPost request/*, int requesterAdminCode*/);
 
-    ResponseCategoryThirdPost updateCategory(int categoryThirdCode, RequestCategoryThirdUpdate request);
+    ResponseEntity<String> updateCategory(int categoryThirdCode, RequestCategoryThirdUpdate request/*, int requesterAdminCode*/);
 
-    String deleteCategoryThird(int categoryThirdCode);
+    String deleteCategoryThird(int categoryThirdCode/*, int requesterAdminCode*/);
 
-
-//    CategoryThird deleteCategory(int categoryThirdCode);
 }

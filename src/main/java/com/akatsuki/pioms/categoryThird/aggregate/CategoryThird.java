@@ -31,8 +31,7 @@ public class CategoryThird {
     @Column(name = "category_third_delete_date")
     private String categoryThirdDeleteDate;
 
-    @ManyToOne
-    @JoinColumn(name="category_second_code")
-    private CategorySecond categorySecondCode;
+    @Column(name = "category_second_code")
+    private int categorySecondCode;
 
 }

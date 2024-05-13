@@ -10,13 +10,14 @@ import com.akatsuki.pioms.log.etc.LogStatus;
 import com.akatsuki.pioms.log.service.LogService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CategoryFirstServiceImpl implements CategoryFirstService {
@@ -35,8 +36,8 @@ public class CategoryFirstServiceImpl implements CategoryFirstService {
     }
 
     @Override
-    public Optional<CategoryFirst> findCategoryFirstByCode(int categoryFirstCode) {
-        return categoryFirstRepository.findById(categoryFirstCode);
+    public CategoryFirst findCategoryFirstByCode(int categoryFirstCode) {
+        return categoryFirstRepository.findById(categoryFirstCode).orElseThrow(null);
     }
 
     @Override
@@ -60,7 +61,7 @@ public class CategoryFirstServiceImpl implements CategoryFirstService {
 
     @Override
     @Transactional
-    public ResponseCategoryFirstPost postCategoryFirst(RequestCategoryFirstPost request) {
+    public ResponseEntity<String> postCategoryFirst(RequestCategoryFirstPost request) {
         CategoryFirst categoryFirst = new CategoryFirst();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formattedDateTime = LocalDateTime.now().format(formatter);
@@ -73,6 +74,6 @@ public class CategoryFirstServiceImpl implements CategoryFirstService {
 
         ResponseCategoryFirstPost responseValue = new ResponseCategoryFirstPost(savedCategoryFirst.getCategoryFirstCode(),savedCategoryFirst.getCategoryFirstName(), savedCategoryFirst.getCategoryFirstEnrollDate());
         logService.saveLog("root", LogStatus.등록,savedCategoryFirst.getCategoryFirstName(),"CategoryFirst");
-        return responseValue;
+        return ResponseEntity.ok("카테고리(대) 생성 완료!");
     }
 }

@@ -1,7 +1,9 @@
 package com.akatsuki.pioms.product.service;
 
 
+
 import com.akatsuki.pioms.exchange.aggregate.ExchangeProduct;
+import com.akatsuki.pioms.categoryThird.repository.CategoryThirdRepository;
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import com.akatsuki.pioms.exchange.aggregate.EXCHANGE_PRODUCT_STATUS;
 import com.akatsuki.pioms.exchange.service.ExchangeService;
@@ -33,12 +35,14 @@ import java.util.Optional;
 public class ProductServiceImpl implements ProductService{
 
     private final ProductRepository productRepository;
+    private final CategoryThirdRepository categoryThirdRepository;
     private final ExchangeService exchangeService;
     LogService logService;
 
     @Autowired
-    public ProductServiceImpl(ProductRepository productRepository, ExchangeService exchangeService,LogService logService) {
+    public ProductServiceImpl(ProductRepository productRepository, CategoryThirdRepository categoryThirdRepository, ExchangeService exchangeService, LogService logService) {
         this.productRepository = productRepository;
+        this.categoryThirdRepository = categoryThirdRepository;
         this.exchangeService = exchangeService;
         this.logService = logService;
     }
@@ -54,19 +58,29 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public Optional<Product> findProductByCode(int productCode) {
-        return productRepository.findById(productCode);
+    public Product findProductByCode(int productCode) {
+        return productRepository.findById(productCode).orElseThrow(null);
     }
 
     @Override
     @Transactional
-    public ResponseProduct postProduct(RequestProduct request) {
+    public String postProduct(RequestProduct request/*, int requesterAdminCode*/) {
+//        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
+//        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
+//            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
+//        }
+
         Product product = new Product();
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formattedDateTime = LocalDateTime.now().format(formatter);
 
-        CategoryThird categoryThird = new CategoryThird();
-        categoryThird.setCategoryThirdCode(request.getCategoryThirdCode());
+        CategoryThird categoryThird = categoryThirdRepository.findByCategoryThirdCode(request.getCategoryThirdCode());
+
+        if(categoryThird == null) {
+            return "해당 카테고리가 존재하지 않습니다. 다시 확인해주세요.";
+        }
+
         product.setCategoryThird(categoryThird);
 
         product.setProductName(request.getProductName());
@@ -84,41 +98,41 @@ public class ProductServiceImpl implements ProductService{
         product.setProductCount(request.getProductCount());
 
         Product updatedProduct = productRepository.save(product);
+
         logService.saveLog("root", LogStatus.등록, updatedProduct.getProductName(), "Product");
 
-        ResponseProduct responseValue =
-                new ResponseProduct(
-                        updatedProduct.getProductCode(),
-                        updatedProduct.getProductName(),
-                        updatedProduct.getProductPrice(),
-                        updatedProduct.getProductEnrollDate(),
-                        updatedProduct.getProductContent(),
-                        updatedProduct.getProductColor(),
-                        updatedProduct.getProductSize(),
-                        updatedProduct.getProductGender(),
-                        updatedProduct.getProductTotalCount(),
-                        updatedProduct.getProductStatus(),
-                        updatedProduct.isProductExposureStatus(),
-                        updatedProduct.getProductNoticeCount(),
-                        updatedProduct.getProductDiscount(),
-                        updatedProduct.getProductCount()
-                );
-        return responseValue;
+        return "상품 등록 완료!";
     }
 
     @Override
     @Transactional
-    public Product deleteProduct(int productCode) {
-        Product product = productRepository.findById(productCode)
-                .orElseThrow(() -> new EntityNotFoundException("Product not found with code: " + productCode));
+    public String deleteProduct(int productCode/*, int requesterAdminCode*/) {
+//        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
+//        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
+//            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
+//        }
+        Product product = productRepository.findByProductCode(productCode);
+        if(product == null) {
+            return "해당 상품이 없습니다.";
+        }
         String productName = product.getProductName();
-        productRepository.deleteById(productCode);
         logService.saveLog("root", LogStatus.삭제, productName, "Product");
-        return null;
+
+        if (!product.isProductExposureStatus()) {
+            product.setProductExposureStatus(true);
+            productRepository.save(product);
+            return "Product exposure status updated successfully.";
+        } else {
+            return "Product exposure status is already true.";
+        }
     }
 
     @Override
     public ResponseProduct updateProduct(int productCode, RequestProduct request) {
+//        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
+//        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
+//            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
+//        }
         Product product = productRepository.findById(productCode)
                 .orElseThrow(() -> new EntityNotFoundException("Product not found"));
 
