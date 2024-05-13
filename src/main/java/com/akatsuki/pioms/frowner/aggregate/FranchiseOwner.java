@@ -1,24 +1,17 @@
 package com.akatsuki.pioms.frowner.aggregate;
 
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-
-import java.time.LocalDateTime;
-
+import com.akatsuki.pioms.franchise.aggregate.Franchise;
+import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
 @Table(name = "franchise_owner")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Setter
 @ToString
+@Builder
 public class FranchiseOwner {
     @Id
     @Column(name = "franchise_owner_code")
@@ -40,12 +33,14 @@ public class FranchiseOwner {
     private String franchiseOwnerPhone;
 
     @Column(name = "franchise_owner_enroll_date")
-    private LocalDateTime franchiseOwnerEnrollDate;
+    private String franchiseOwnerEnrollDate;
 
     @Column(name = "franchise_owner_update_date")
-    private LocalDateTime franchiseOwnerUpdateDate;
+    private String franchiseOwnerUpdateDate;
 
     @Column(name = "franchise_owner_delete_date")
-    private LocalDateTime franchiseOwnerDeleteDate;
+    private String franchiseOwnerDeleteDate;
 
+    @OneToOne(mappedBy = "franchiseOwner", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false)
+    private Franchise franchise;
 }
