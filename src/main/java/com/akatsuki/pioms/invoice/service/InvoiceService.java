@@ -8,13 +8,15 @@ import com.akatsuki.pioms.invoice.aggregate.ResponseInvoiceList;
 import com.akatsuki.pioms.order.aggregate.Order;
 import com.akatsuki.pioms.order.dto.OrderDTO;
 
+import java.util.List;
+
 public interface InvoiceService {
-    ResponseInvoiceList getAllInvoiceList();
+    List<InvoiceDTO> getAllInvoiceList();
     InvoiceDTO postInvoice(OrderDTO order);
 
-    ResponseInvoice putInvoice(int invoiceCode, DELIVERY_STATUS invoiceStatus);
+    InvoiceDTO putInvoice(int invoiceCode, DELIVERY_STATUS invoiceStatus);
 
-    ResponseInvoice getInvoice(int invoiceCode);
+    InvoiceDTO getInvoice(int invoiceCode);
 
     Boolean checkInvoiceStatus(int orderCode);
 

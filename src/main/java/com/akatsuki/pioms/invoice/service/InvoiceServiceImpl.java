@@ -6,8 +6,6 @@ import com.akatsuki.pioms.invoice.aggregate.InvoiceEntity;
 import com.akatsuki.pioms.invoice.dto.InvoiceDTO;
 import com.akatsuki.pioms.invoice.etc.DELIVERY_STATUS;
 import com.akatsuki.pioms.invoice.repository.InvoiceRepository;
-import com.akatsuki.pioms.invoice.aggregate.ResponseInvoice;
-import com.akatsuki.pioms.invoice.aggregate.ResponseInvoiceList;
 import com.akatsuki.pioms.order.aggregate.Order;
 import com.akatsuki.pioms.order.dto.OrderDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,30 +82,30 @@ public class InvoiceServiceImpl implements InvoiceService {
         System.out.println("Invoice event End");
     }
 
-    public ResponseInvoiceList getAllInvoiceList(){
+    public List<InvoiceDTO> getAllInvoiceList(){
         List<InvoiceEntity> invoiceList = invoiceRepository.findAll();
-        List<ResponseInvoice> responseInvoice = new ArrayList<>();
+        List<InvoiceDTO> responseInvoice = new ArrayList<>();
 
         invoiceList.forEach(invoiceEntity -> {
-            responseInvoice.add(new ResponseInvoice(invoiceEntity));
+            responseInvoice.add(new InvoiceDTO(invoiceEntity));
         });
-        return new ResponseInvoiceList(responseInvoice);
+        return responseInvoice;
     }
 
     @Override
-    public ResponseInvoice putInvoice(int invoiceCode, DELIVERY_STATUS invoiceStatus) {
+    public InvoiceDTO putInvoice(int invoiceCode, DELIVERY_STATUS invoiceStatus) {
         System.out.println("invoiceStatus = " + invoiceStatus);
         InvoiceEntity invoiceEntity = invoiceRepository.findById(invoiceCode).orElseThrow(IllegalArgumentException::new);
 
         invoiceEntity.setDeliveryStatus(invoiceStatus);
         invoiceRepository.save(invoiceEntity);
-        return new ResponseInvoice(invoiceEntity);
+        return new InvoiceDTO(invoiceEntity);
     }
 
     @Override
-    public ResponseInvoice getInvoice(int invoiceCode) {
+    public InvoiceDTO getInvoice(int invoiceCode) {
         InvoiceEntity invoice = invoiceRepository.findById(invoiceCode).orElseThrow(IllegalArgumentException::new);
-        return new ResponseInvoice(invoice);
+        return new InvoiceDTO(invoice);
     }
 
     public Boolean checkInvoiceStatus(int orderCode){

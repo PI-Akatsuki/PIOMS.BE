@@ -1,5 +1,6 @@
 package com.akatsuki.pioms.invoice.aggregate;
 
+import com.akatsuki.pioms.invoice.dto.InvoiceDTO;
 import com.akatsuki.pioms.invoice.etc.DELIVERY_STATUS;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,15 +23,15 @@ public class ResponseInvoice {
     private int orderCode;
     private List<OrderProductVO> orderProductVOList;
 
-    public ResponseInvoice(InvoiceEntity invoiceEntity) {
-        this.invoiceCode = invoiceEntity.getInvoiceCode();
-        this.deliveryStatus = invoiceEntity.getDeliveryStatus();
-        this.invoiceDate = invoiceEntity.getInvoiceDate();
-        this.invoiceRegionCode = invoiceEntity.getInvoiceRegionCode();
-        if(invoiceEntity.getOrder()!=null){
-            this.orderCode = invoiceEntity.getOrder().getOrderCode();
+    public ResponseInvoice(InvoiceDTO invoiceDTO) {
+        this.invoiceCode = invoiceDTO.getInvoiceCode();
+        this.deliveryStatus = invoiceDTO.getDeliveryStatus();
+        this.invoiceDate = invoiceDTO.getInvoiceDate();
+        this.invoiceRegionCode = invoiceDTO.getInvoiceRegionCode();
+        if(invoiceDTO.getOrder()!=null){
+            this.orderCode = invoiceDTO.getOrder().getOrderCode();
             this.orderProductVOList = new ArrayList<>();
-            invoiceEntity.getOrder().getOrderProductList()
+            invoiceDTO.getOrder().getOrderProductList()
                 .forEach(product-> this.orderProductVOList.add(new OrderProductVO(product.getProduct().getProductName(), product.getRequestProductCount())));
         }
     }

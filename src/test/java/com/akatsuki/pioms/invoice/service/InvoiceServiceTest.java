@@ -20,6 +20,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -67,10 +68,10 @@ class InvoiceServiceTest {
                 ).collect(Collectors.toList())
         );
         //when
-        ResponseInvoiceList responseInvoiceList = invoiceService.getAllInvoiceList();
+        List<InvoiceDTO> responseInvoiceList = invoiceService.getAllInvoiceList();
         System.out.println(responseInvoiceList);
         //then
-        assertEquals(2,responseInvoiceList.getInvoiceList().size());
+        assertEquals(2,responseInvoiceList.size());
     }
 
     @Test
@@ -106,7 +107,7 @@ class InvoiceServiceTest {
 
         //when
         DELIVERY_STATUS pastStatus = invoiceEntity.getDeliveryStatus();
-        ResponseInvoice responseInvoice = invoiceService.putInvoice(invoiceCode,DELIVERY_STATUS.배송완료);
+        InvoiceDTO responseInvoice = invoiceService.putInvoice(invoiceCode,DELIVERY_STATUS.배송완료);
         //then
         System.out.println("responseInvoice = " + responseInvoice);
         System.out.println("invoiceEntity = " + invoiceEntity);
@@ -123,7 +124,7 @@ class InvoiceServiceTest {
                         Optional.of(new InvoiceEntity(1, DELIVERY_STATUS.배송전, null, 1, null))
                 );
         //when
-        ResponseInvoice invoice =  invoiceService.getInvoice(invoiceCode);
+        InvoiceDTO invoice =  invoiceService.getInvoice(invoiceCode);
         //then
         assertEquals(invoiceCode, invoice.getInvoiceCode());
     }
