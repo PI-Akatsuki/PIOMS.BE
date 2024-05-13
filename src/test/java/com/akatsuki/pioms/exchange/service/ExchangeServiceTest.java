@@ -15,6 +15,14 @@ class ExchangeServiceTest {
     }
 
     @Test
+    void getExchangesByFranchiseCode() {
+    }
+
+    @Test
+    void getExchangesByAdminCode() {
+    }
+
+    @Test
     void putExchange() {
     }
 

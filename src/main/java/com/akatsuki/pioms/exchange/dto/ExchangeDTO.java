@@ -1,7 +1,7 @@
 package com.akatsuki.pioms.exchange.dto;
 
 import com.akatsuki.pioms.exchange.aggregate.EXCHANGE_STATUS;
-import com.akatsuki.pioms.exchange.aggregate.ExchangeEntity;
+import com.akatsuki.pioms.exchange.aggregate.Exchange;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -31,7 +31,7 @@ public class ExchangeDTO {
 
     private List<ExchangeProduct> exchangeProducts;
 
-    public ExchangeDTO(ExchangeEntity exchange) {
+    public ExchangeDTO(Exchange exchange) {
         this.exchangeCode = exchange.getExchangeCode();
         this.exchangeDate = exchange.getExchangeDate();
         this.exchangeStatus = exchange.getExchangeStatus();

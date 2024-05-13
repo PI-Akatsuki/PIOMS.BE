@@ -22,7 +22,7 @@ public class ResponseExchange {
 
     List<ExchangeProductVO> products;
 
-    public ResponseExchange(ExchangeEntity exchangeEntity) {
+    public ResponseExchange(Exchange exchangeEntity) {
         this.exchangeCode = exchangeEntity.getExchangeCode();
         this.exchangeDate = exchangeEntity.getExchangeDate();
         this.exchangeStatus = exchangeEntity.getExchangeStatus();

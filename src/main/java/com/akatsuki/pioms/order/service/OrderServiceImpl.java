@@ -2,7 +2,7 @@ package com.akatsuki.pioms.order.service;
 
 import com.akatsuki.pioms.event.OrderEvent;
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
-import com.akatsuki.pioms.exchange.aggregate.ExchangeEntity;
+import com.akatsuki.pioms.exchange.aggregate.Exchange;
 import com.akatsuki.pioms.exchange.service.ExchangeService;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import com.akatsuki.pioms.frwarehouse.service.FranchiseWarehouseService;
@@ -96,7 +96,7 @@ public class OrderServiceImpl implements OrderService{
             ExchangeDTO exchange =  exchangeService.findExchangeToSend(order.getFranchise().getFranchiseCode());
 
             if(exchange!=null&& productService.checkExchangeProduct(order,exchange)) {
-                order.setExchange(new ExchangeEntity(exchange));
+                order.setExchange(new Exchange(exchange));
             }else
                 System.out.println("반품할 상품 없음 또는 재고 부족");
 

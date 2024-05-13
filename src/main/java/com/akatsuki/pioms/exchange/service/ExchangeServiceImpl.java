@@ -32,8 +32,9 @@ public class ExchangeServiceImpl implements ExchangeService{
     @Override
     @Transactional
     public ExchangeDTO findExchangeToSend(int franchiseCode) {
+
         System.out.println("반품신청 찾기. franchisecode: " + franchiseCode);
-        ExchangeEntity exchange = null;
+        Exchange exchange = null;
         try {
             exchange = exchangeRepository.findByFranchiseFranchiseCodeAndExchangeStatus(franchiseCode, EXCHANGE_STATUS.반송신청);
             System.out.println("exchange = " + exchange);
@@ -51,7 +52,7 @@ public class ExchangeServiceImpl implements ExchangeService{
 
     @Override
     public List<ResponseExchange> getExchanges() {
-        List<ExchangeEntity> exchangeEntityList = exchangeRepository.findAll();
+        List<Exchange> exchangeEntityList = exchangeRepository.findAll();
         List<ResponseExchange> exchanges = new ArrayList<>();
         exchangeEntityList.forEach(exchangeEntity -> {
             exchanges.add(new ResponseExchange(exchangeEntity));
@@ -59,6 +60,25 @@ public class ExchangeServiceImpl implements ExchangeService{
         return exchanges;
     }
 
+    @Override
+    public List<ResponseExchange> getExchangesByFranchiseCode(int franchiseCode) {
+        List<Exchange> exchangeList =  exchangeRepository.findAllByFranchiseFranchiseCode(franchiseCode);
+        List<ResponseExchange> responseList = new ArrayList<>();
+        exchangeList.forEach(exchange -> {
+            responseList.add(new ResponseExchange(exchange));
+        });
+        return responseList;
+    }
+
+    @Override
+    public List<ResponseExchange> getExchangesByAdminCode(int adminCode) {
+        List<Exchange> exchangeList = exchangeRepository.findAllByFranchiseAdminAdminCode(adminCode);
+        List<ResponseExchange> responseList = new ArrayList<>();
+        exchangeList.forEach(exchange -> {
+            responseList.add(new ResponseExchange(exchange));
+        });
+        return responseList;
+    }
 
 
     @Override
@@ -68,14 +88,14 @@ public class ExchangeServiceImpl implements ExchangeService{
         if(!franchiseWarehouseService.checkEnableToAddExchange(requestExchange))
             return null;
         System.out.println("exchange 저장");
-        ExchangeEntity exchange = new ExchangeEntity();
+        Exchange exchange = new Exchange();
         exchange.setExchangeDate(LocalDateTime.now());
         exchange.setExchangeStatus(EXCHANGE_STATUS.반송신청);
         Franchise franchise = new Franchise();
         franchise.setFranchiseCode(franchiseCode);
         exchange.setFranchise(franchise);
 
-        ExchangeEntity exchange1 = exchangeRepository.save(exchange);
+        Exchange exchange1 = exchangeRepository.save(exchange);
         exchange1.setProducts(new ArrayList<>());
 
         requestExchange.getProducts().forEach(product->{
@@ -104,7 +124,7 @@ public class ExchangeServiceImpl implements ExchangeService{
     @Transactional
     public ResponseExchange putExchange(int exchangeCode, RequestExchange requestExchange) {
         // 관리자가 반품온 상품들 처리하기 위한 메서드
-        ExchangeEntity exchangeEntity = exchangeRepository.findById(exchangeCode).orElseThrow(IllegalArgumentException::new);
+        Exchange exchangeEntity = exchangeRepository.findById(exchangeCode).orElseThrow(IllegalArgumentException::new);
         System.out.println("exchangeEntity = " + exchangeEntity);
         exchangeEntity.setExchangeStatus(requestExchange.getExchangeStatus());
         exchangeRepository.save(exchangeEntity);

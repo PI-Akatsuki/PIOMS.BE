@@ -34,7 +34,7 @@ public class ExchangeProductEntity {
     private Product product;
     @JoinColumn(name = "exchange_code")
     @ManyToOne
-    private ExchangeEntity exchange;
+    private Exchange exchange;
 
     public ExchangeProductEntity(ExchangeProductVO product) {
         this.exchangeProductStatus = product.getExchangeProductStatus();

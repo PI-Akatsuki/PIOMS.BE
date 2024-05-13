@@ -1,6 +1,6 @@
 package com.akatsuki.pioms.order.aggregate;
 
-import com.akatsuki.pioms.exchange.aggregate.ExchangeEntity;
+import com.akatsuki.pioms.exchange.aggregate.Exchange;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
 import jakarta.persistence.*;
@@ -44,7 +44,7 @@ public class Order {
 
     @JoinColumn(name = "exchange_code")
     @OneToOne
-    private ExchangeEntity exchange;
+    private Exchange exchange;
 
     @OneToMany(mappedBy = "order")
     private List<OrderProduct> OrderProductList;
