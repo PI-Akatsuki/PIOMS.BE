@@ -1,6 +1,5 @@
 package com.akatsuki.pioms.invoice.aggregate;
 
-import com.akatsuki.pioms.invoice.dto.InvoiceDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,7 +18,7 @@ public class ResponseInvoiceList {
         this.invoiceList = new ArrayList<>();
     }
 
-    public ResponseInvoiceList(List<InvoiceDTO> invoiceList) {
+    public ResponseInvoiceList(List<InvoiceEntity> invoiceList) {
         this.invoiceList = new ArrayList<>();
         invoiceList.forEach( invoiceDTO -> {
             this.invoiceList.add(new ResponseInvoice(invoiceDTO));

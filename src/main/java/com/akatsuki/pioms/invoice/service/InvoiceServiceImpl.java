@@ -3,7 +3,6 @@ package com.akatsuki.pioms.invoice.service;
 import com.akatsuki.pioms.event.OrderEvent;
 import com.akatsuki.pioms.franchise.aggregate.DELIVERY_DATE;
 import com.akatsuki.pioms.invoice.aggregate.InvoiceEntity;
-import com.akatsuki.pioms.invoice.dto.InvoiceDTO;
 import com.akatsuki.pioms.invoice.etc.DELIVERY_STATUS;
 import com.akatsuki.pioms.invoice.repository.InvoiceRepository;
 import com.akatsuki.pioms.order.aggregate.Order;
@@ -27,7 +26,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public InvoiceDTO postInvoice(Order orderDTO){
+    public InvoiceEntity postInvoice(Order orderDTO){
         InvoiceEntity invoice = new InvoiceEntity();
         if(orderDTO!=null) {
             Order order = new Order();
@@ -39,7 +38,7 @@ public class InvoiceServiceImpl implements InvoiceService {
             invoice.setInvoiceDate(setDeliveryTime(orderDTO.getOrderDate(), deliveryDate));
         }
 
-        return saveInvoice( new InvoiceDTO( invoice));
+        return saveInvoice( new InvoiceEntity( invoice));
 
     }
 
@@ -82,30 +81,30 @@ public class InvoiceServiceImpl implements InvoiceService {
         System.out.println("Invoice event End");
     }
 
-    public List<InvoiceDTO> getAllInvoiceList(){
+    public List<InvoiceEntity> getAllInvoiceList(){
         List<InvoiceEntity> invoiceList = invoiceRepository.findAll();
-        List<InvoiceDTO> responseInvoice = new ArrayList<>();
+        List<InvoiceEntity> responseInvoice = new ArrayList<>();
 
         invoiceList.forEach(invoiceEntity -> {
-            responseInvoice.add(new InvoiceDTO(invoiceEntity));
+            responseInvoice.add(new InvoiceEntity(invoiceEntity));
         });
         return responseInvoice;
     }
 
     @Override
-    public InvoiceDTO putInvoice(int invoiceCode, DELIVERY_STATUS invoiceStatus) {
+    public InvoiceEntity putInvoice(int invoiceCode, DELIVERY_STATUS invoiceStatus) {
         System.out.println("invoiceStatus = " + invoiceStatus);
         InvoiceEntity invoiceEntity = invoiceRepository.findById(invoiceCode).orElseThrow(IllegalArgumentException::new);
 
         invoiceEntity.setDeliveryStatus(invoiceStatus);
         invoiceRepository.save(invoiceEntity);
-        return new InvoiceDTO(invoiceEntity);
+        return new InvoiceEntity(invoiceEntity);
     }
 
     @Override
-    public InvoiceDTO getInvoice(int invoiceCode) {
+    public InvoiceEntity getInvoice(int invoiceCode) {
         InvoiceEntity invoice = invoiceRepository.findById(invoiceCode).orElseThrow(IllegalArgumentException::new);
-        return new InvoiceDTO(invoice);
+        return new InvoiceEntity(invoice);
     }
 
     public Boolean checkInvoiceStatus(int orderCode){
@@ -116,18 +115,18 @@ public class InvoiceServiceImpl implements InvoiceService {
         }
         return false;
     }
-    public InvoiceDTO getInvoiceByOrderCode(int orderCode){
-        return new InvoiceDTO(invoiceRepository.findByOrderOrderCode(orderCode));
+    public InvoiceEntity getInvoiceByOrderCode(int orderCode){
+        return new InvoiceEntity(invoiceRepository.findByOrderOrderCode(orderCode));
     }
 
     @Override
-    public InvoiceDTO saveInvoice(InvoiceDTO invoiceDTO) {
+    public InvoiceEntity saveInvoice(InvoiceEntity invoiceDTO) {
         InvoiceEntity invoice = new InvoiceEntity(invoiceDTO);
-        return new InvoiceDTO(invoiceRepository.save(invoice));
+        return new InvoiceEntity(invoiceRepository.save(invoice));
     }
 
     @Override
-    public void deleteInvoice(InvoiceDTO invoiceDTO) {
+    public void deleteInvoice(InvoiceEntity invoiceDTO) {
         invoiceRepository.delete(new InvoiceEntity(invoiceDTO));
     }
 
