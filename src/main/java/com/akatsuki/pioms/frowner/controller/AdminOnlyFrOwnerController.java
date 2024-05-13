@@ -56,4 +56,13 @@ public class AdminOnlyFrOwnerController {
         return franchiseOwnerService.updateFranchiseOwner(franchiseOwnerCode, updatedFranchiseOwner, requestorAdminCode);
     }
 
+    @Operation(summary = "프랜차이즈 점주 삭제", description = "기존 프랜차이즈 점주를 삭제합니다.")
+    @DeleteMapping("/delete/{franchiseOwnerCode}")
+    public ResponseEntity<String> deleteFranchiseOwner(
+            @PathVariable int franchiseOwnerCode,
+            @RequestParam int requestorAdminCode
+    ) {
+        return franchiseOwnerService.deleteFranchiseOwner(franchiseOwnerCode, requestorAdminCode);
+    }
+
 }

@@ -129,6 +129,36 @@ public class FranchiseOwnerServiceImpl implements FranchiseOwnerService {
         }
     }
 
+    // 오너 삭제 (비활성화)
+    @Override
+    @Transactional
+    public ResponseEntity<String> deleteFranchiseOwner(int franchiseOwnerCode, int requestorAdminCode) {
+        try {
+            Admin requestorAdmin = adminRepository.findById(requestorAdminCode).orElse(null);
+            if (requestorAdmin == null || requestorAdmin.getAdminCode() != 1) {
+                return ResponseEntity.status(403).body("프랜차이즈 오너 삭제는 루트 관리자만 가능합니다.");
+            }
+
+            FranchiseOwner existingFranchiseOwner = franchiseOwnerRepository.findById(franchiseOwnerCode)
+                    .orElseThrow(() -> new RuntimeException("프랜차이즈 오너 코드를 찾을 수 없음: " + franchiseOwnerCode));
+
+            if (existingFranchiseOwner.getFranchiseOwnerDeleteDate() != null) {
+                return ResponseEntity.status(409).body("이미 삭제된 프랜차이즈 오너입니다.");
+            }
+
+            // 삭제일 설정
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            existingFranchiseOwner.setFranchiseOwnerDeleteDate(LocalDateTime.now().format(formatter));
+
+            franchiseOwnerRepository.save(existingFranchiseOwner);
+            return ResponseEntity.ok("프랜차이즈 오너가 성공적으로 삭제(비활성화)되었습니다.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("프랜차이즈 오너 삭제 중 오류가 발생했습니다.");
+        }
+    }
+
 
     // Entity -> DTO로 변환
     private FranchiseOwnerDTO convertEntityToDTO(FranchiseOwner franchiseOwner) {

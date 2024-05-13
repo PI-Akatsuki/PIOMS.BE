@@ -20,4 +20,7 @@ public interface FranchiseOwnerService {
     // 오너 수정
     ResponseEntity<String> updateFranchiseOwner(int franchiseOwnerCode, FranchiseOwnerDTO updatedFranchiseOwner, int requestorAdminCode);
 
+    // 오너 삭제
+    ResponseEntity<String> deleteFranchiseOwner(int franchiseOwnerCode, int requestorAdminCode);
+
 }
