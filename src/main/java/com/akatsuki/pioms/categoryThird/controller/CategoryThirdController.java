@@ -39,9 +39,8 @@ public class CategoryThirdController {
         return ResponseEntity.ok().body(categoryThird);
     }
     @PostMapping("/create")
-    public ResponseEntity<ResponseCategoryThirdPost> postCategoryThird(@RequestBody RequestCategoryThirdPost request) {
-        ResponseCategoryThirdPost response = categoryThirdService.postCategory(request);
-        return ResponseEntity.ok().body(response);
+    public String postCategoryThird(@RequestBody RequestCategoryThirdPost request) {
+        return categoryThirdService.postCategory(request);
     }
 
     @PostMapping("/update/{categoryThirdCode}")

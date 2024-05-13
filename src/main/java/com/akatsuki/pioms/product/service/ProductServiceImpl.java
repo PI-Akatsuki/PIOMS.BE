@@ -85,24 +85,6 @@ public class ProductServiceImpl implements ProductService{
 
         Product updatedProduct = productRepository.save(product);
         logService.saveLog("root", LogStatus.등록, updatedProduct.getProductName(), "Product");
-
-//        ResponseProduct responseValue =
-//                new ResponseProduct(
-//                        updatedProduct.getProductCode(),
-//                        updatedProduct.getProductName(),
-//                        updatedProduct.getProductPrice(),
-//                        updatedProduct.getProductEnrollDate(),
-//                        updatedProduct.getProductContent(),
-//                        updatedProduct.getProductColor(),
-//                        updatedProduct.getProductSize(),
-//                        updatedProduct.getProductGender(),
-//                        updatedProduct.getProductTotalCount(),
-//                        updatedProduct.getProductStatus(),
-//                        updatedProduct.isProductExposureStatus(),
-//                        updatedProduct.getProductNoticeCount(),
-//                        updatedProduct.getProductDiscount(),
-//                        updatedProduct.getProductCount()
-//                );
         return "상품 등록 완료!";
     }
 

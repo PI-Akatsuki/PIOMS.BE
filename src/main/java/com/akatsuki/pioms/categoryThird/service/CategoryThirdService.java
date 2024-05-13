@@ -13,7 +13,7 @@ public interface CategoryThirdService {
 
     Optional<CategoryThird> findCategoryThirdByCode(int categoryThirdCode);
 
-    ResponseCategoryThirdPost postCategory(RequestCategoryThirdPost request);
+    String postCategory(RequestCategoryThirdPost request);
 
     ResponseCategoryThirdPost updateCategory(int categoryThirdCode, RequestCategoryThirdUpdate request);
 
