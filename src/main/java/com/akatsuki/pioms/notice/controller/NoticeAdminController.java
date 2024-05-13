@@ -1,6 +1,7 @@
 package com.akatsuki.pioms.notice.controller;
 
 import com.akatsuki.pioms.notice.aggregate.Notice;
+import com.akatsuki.pioms.notice.aggregate.NoticeVO;
 import com.akatsuki.pioms.notice.service.NoticeService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.ResponseEntity;
@@ -22,8 +23,16 @@ public class NoticeAdminController {
     // 관리자 공지사항 전체 목록 조회
     @Operation(summary = "공지사항 전체 목록 조회", description = "공지사항 전체 목록 조회")
     @GetMapping("/notice/view")
-    public ResponseEntity<List<Notice>> getAllNoticeList() {
+    public ResponseEntity<List<NoticeVO>> getAllNoticeList() {
         return ResponseEntity.ok().body(noticeService.getAllNoticeList());
+    }
+
+    // 관리자 공지사항 상세 목록 조회
+    @Operation(summary = "공지사항 상세 목록 조회", description = "공지사항 상세 목록 조회")
+    @GetMapping("/notice/{noticeCode}")
+    public ResponseEntity<NoticeVO> getNoticeDetails(@PathVariable int noticeCode) {
+        NoticeVO noticeVO = noticeService.getNoticeDetails(noticeCode);
+        return ResponseEntity.ok(noticeVO);
     }
 
 

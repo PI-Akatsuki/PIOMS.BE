@@ -5,8 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import java.util.List;
-
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,7 +15,13 @@ public class NoticeVO {
     private String noticeEnrollDate;
     private String noticeContent;
     private String noticeUpdateDate;
+    private String adminName;
 
     public NoticeVO(Notice notice) {
+        this.noticeTitle = notice.getNoticeTitle();
+        this.noticeContent = notice.getNoticeContent();
+        this.noticeEnrollDate = notice.getNoticeEnrollDate();
+        this.noticeUpdateDate = notice.getNoticeUpdateDate();
+        this.adminName = notice.getAdmin().getAdminName();
     }
 }

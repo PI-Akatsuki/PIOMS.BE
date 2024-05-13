@@ -3,7 +3,9 @@ package com.akatsuki.pioms.notice.service;
 import com.akatsuki.pioms.admin.aggregate.Admin;
 import com.akatsuki.pioms.admin.repository.AdminRepository;
 import com.akatsuki.pioms.notice.aggregate.Notice;
+import com.akatsuki.pioms.notice.aggregate.NoticeVO;
 import com.akatsuki.pioms.notice.repository.NoticeRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -11,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,27 +31,31 @@ public class NoticeServiceImpl implements NoticeService {
     }
 
     // 관리자 공지사항 전체 조회
-
-    // 필요한 값만 가져오는데 null뜬다.
-//    @Override
-//    public List<NoticeVO> getAllNoticeList() {
-//        return noticeRepository.findAll().stream()
-//                .map(NoticeVO::new)
-//                .collect(Collectors.toList());
-//    }
-
-    // 필요한 값이랑 admin정보까지 다 가져온다.
-    @Transactional(readOnly = true)
     @Override
-    public List<Notice> getAllNoticeList() {
-        return noticeRepository.findAll();
+    public List<NoticeVO> getAllNoticeList() {
+        List<Notice> noticeList = noticeRepository.findAll();
+        List<NoticeVO> noticeVOS = new ArrayList<>();
+        noticeList.forEach(
+                notice -> {
+                    noticeVOS.add(new NoticeVO(notice));
+                }
+        );
+        return noticeVOS;
+    }
+
+    // 공자사항 상세 조회
+    @Override
+    public NoticeVO getNoticeDetails(int noticeCode) {
+        Notice notice = noticeRepository.findById(noticeCode)
+                .orElseThrow(() -> new EntityNotFoundException("입력하신 공지사항 목록을 찾을 수 없습니다."));
+        return new NoticeVO(notice);
     }
 
     // 공지사항 등록
     @Override
     @Transactional
     public ResponseEntity<String> saveNotice(Notice notice, int requestorAdminCode) {
-        // 루트 관리자 확인
+        // 루트 관리자 확인(상태 1이면 루트 관리자)
         Optional<Admin> reqeustorAdmin = adminRepository.findById(requestorAdminCode);
         if (reqeustorAdmin.isEmpty() || reqeustorAdmin.get().getAdminCode() !=1) {
             return ResponseEntity.status(403).body("공지사항 등록은 루트 관리자만 가능합니다.");
@@ -66,10 +73,8 @@ public class NoticeServiceImpl implements NoticeService {
         // 등록일 설정
         notice.setNoticeEnrollDate(now);
 
-        //수정일 설정
-        notice.setNoticeUpdateDate(now);
-
         noticeRepository.save(notice);
         return ResponseEntity.ok("공지사항 등록이 완료되었습니다.");
     }
+
 }
