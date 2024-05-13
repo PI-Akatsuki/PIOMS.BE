@@ -1,7 +1,7 @@
 package com.akatsuki.pioms.exchange.controller;
 
-import com.akatsuki.pioms.exchange.entity.RequestExchange;
-import com.akatsuki.pioms.exchange.vo.ResponseExchange;
+import com.akatsuki.pioms.exchange.aggregate.RequestExchange;
+import com.akatsuki.pioms.exchange.aggregate.ResponseExchange;
 import com.akatsuki.pioms.exchange.service.ExchangeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

@@ -2,7 +2,7 @@ package com.akatsuki.pioms.specs.aggregate;
 
 
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
-import com.akatsuki.pioms.order.entity.Order;
+import com.akatsuki.pioms.order.aggregate.Order;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;

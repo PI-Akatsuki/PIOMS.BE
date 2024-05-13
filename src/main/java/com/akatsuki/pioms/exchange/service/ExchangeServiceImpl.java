@@ -1,8 +1,8 @@
 package com.akatsuki.pioms.exchange.service;
 
-import com.akatsuki.pioms.exchange.entity.*;
-import com.akatsuki.pioms.exchange.vo.ExchangeProductVO;
-import com.akatsuki.pioms.exchange.vo.ResponseExchange;
+import com.akatsuki.pioms.exchange.aggregate.*;
+import com.akatsuki.pioms.exchange.aggregate.ExchangeProductVO;
+import com.akatsuki.pioms.exchange.aggregate.ResponseExchange;
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import com.akatsuki.pioms.exchange.repository.ExchangeProductRepository;
 import com.akatsuki.pioms.exchange.repository.ExchangeRepository;
@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class ExchangeServiceImpl implements ExchangeService{

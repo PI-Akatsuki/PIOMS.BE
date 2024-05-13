@@ -1,6 +1,6 @@
 package com.akatsuki.pioms.event;
 
-import com.akatsuki.pioms.order.entity.Order;
+import com.akatsuki.pioms.order.aggregate.Order;
 import lombok.Getter;
 
 @Getter
