@@ -1,6 +1,6 @@
 package com.akatsuki.pioms.frowner.controller;
 
-import com.akatsuki.pioms.frowner.aggregate.FranchiseOwnerVO;
+import com.akatsuki.pioms.frowner.dto.FranchiseOwnerDTO;
 import com.akatsuki.pioms.frowner.service.FranchiseOwnerService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,11 +23,9 @@ public class FrOwnerOnlyFrOwnerController {
     }
 
     // 상세 조회
-    @Operation(summary = "점주의 점포 조회", description = "점주가 담당하는 점포와 관리자를 조회합니다.")
-    @GetMapping("info/{ownerCode}")
-    public ResponseEntity<FranchiseOwnerVO> getOwnerWithFranchiseAndAdmin(@PathVariable int ownerCode) {
-        Optional<FranchiseOwnerVO> owner = franchiseOwnerService.findFranchiseOwnerById(ownerCode);
-        return owner.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    @Operation(summary = "프랜차이즈 점주 상세 조회", description = "프랜차이즈 점주 상세 조회")
+    @GetMapping("/info/{franchiseOwnerCode}")
+    public ResponseEntity<FranchiseOwnerDTO> getFranchiseOwnerById(@PathVariable int franchiseOwnerCode) {
+        return franchiseOwnerService.findFranchiseOwnerById(franchiseOwnerCode);
     }
 }
