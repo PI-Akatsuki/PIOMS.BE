@@ -56,7 +56,7 @@ public class Product {
     @Enumerated(EnumType.STRING)
     private PRODUCT_STATUS productStatus;
 
-    @Column(name = "product_exposure_status")
+    @Column(name = "product_exposure_status", columnDefinition = "boolean default false")
     private boolean productExposureStatus;
 
     @Column(name = "product_notice_count")
