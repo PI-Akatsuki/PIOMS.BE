@@ -91,6 +91,46 @@ public class FranchiseOwnerServiceImpl implements FranchiseOwnerService {
     }
 
 
+    // 오너 정보 수정
+    @Override
+    @Transactional
+    public ResponseEntity<String> updateFranchiseOwner(int franchiseOwnerCode, FranchiseOwnerDTO updatedFranchiseOwner, int requestorAdminCode) {
+        try {
+            Admin requestorAdmin = adminRepository.findById(requestorAdminCode).orElse(null);
+            if (requestorAdmin == null) {
+                return ResponseEntity.status(403).body("수정 권한이 없습니다.");
+            }
+
+            FranchiseOwner existingFranchiseOwner = franchiseOwnerRepository.findById(franchiseOwnerCode)
+                    .orElseThrow(() -> new RuntimeException("프랜차이즈 오너 코드를 찾을 수 없음: " + franchiseOwnerCode));
+
+            if (requestorAdmin.getAdminCode() == 1 ||
+                    (existingFranchiseOwner.getFranchise().getAdmin().getAdminCode() == requestorAdminCode) ||
+                    existingFranchiseOwner.getFranchiseOwnerCode() == requestorAdminCode) {
+
+                // 이름 수정 불가
+                existingFranchiseOwner.setFranchiseOwnerPwd(updatedFranchiseOwner.getFranchiseOwnerPwd());
+                existingFranchiseOwner.setFranchiseOwnerPhone(updatedFranchiseOwner.getFranchiseOwnerPhone());
+                existingFranchiseOwner.setFranchiseOwnerEmail(updatedFranchiseOwner.getFranchiseOwnerEmail());
+
+                // 수정일 업데이트
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                existingFranchiseOwner.setFranchiseOwnerUpdateDate(LocalDateTime.now().format(formatter));
+
+                franchiseOwnerRepository.save(existingFranchiseOwner);
+                return ResponseEntity.ok("프랜차이즈 오너 정보가 성공적으로 업데이트되었습니다.");
+            } else {
+                return ResponseEntity.status(403).body("수정 권한이 없습니다.");
+            }
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("프랜차이즈 오너 정보 수정 중 오류가 발생했습니다.");
+        }
+    }
+
+
+    // Entity -> DTO로 변환
     private FranchiseOwnerDTO convertEntityToDTO(FranchiseOwner franchiseOwner) {
         Franchise franchise = franchiseOwner.getFranchise();
         return FranchiseOwnerDTO.builder()

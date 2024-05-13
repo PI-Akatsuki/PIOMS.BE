@@ -1,11 +1,12 @@
 package com.akatsuki.pioms.frowner.dto;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class FranchiseOwnerDTO {
     private int franchiseOwnerCode;
     private String franchiseOwnerName;
@@ -16,6 +17,6 @@ public class FranchiseOwnerDTO {
     private String franchiseOwnerEnrollDate;
     private String franchiseOwnerUpdateDate;
     private String franchiseOwnerDeleteDate;
-    private String adminName;
     private String franchiseName;
+    private String adminName;
 }

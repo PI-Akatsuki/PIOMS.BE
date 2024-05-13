@@ -5,10 +5,7 @@ import com.akatsuki.pioms.frowner.service.FranchiseOwnerService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
@@ -28,4 +25,16 @@ public class FrOwnerOnlyFrOwnerController {
     public ResponseEntity<FranchiseOwnerDTO> getFranchiseOwnerById(@PathVariable int franchiseOwnerCode) {
         return franchiseOwnerService.findFranchiseOwnerById(franchiseOwnerCode);
     }
+
+    // 오너 정보 수정
+    @Operation(summary = "프랜차이즈 점주 정보 수정", description = "기존 프랜차이즈 점주의 정보를 수정합니다.")
+    @PutMapping("/update/{franchiseOwnerCode}")
+    public ResponseEntity<String> updateFranchiseOwner(
+            @PathVariable int franchiseOwnerCode,
+            @RequestBody FranchiseOwnerDTO updatedFranchiseOwner,
+            @RequestParam int requestorAdminCode
+    ) {
+        return franchiseOwnerService.updateFranchiseOwner(franchiseOwnerCode, updatedFranchiseOwner, requestorAdminCode);
+    }
+
 }

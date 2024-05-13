@@ -17,4 +17,7 @@ public interface FranchiseOwnerService {
     // 오너 등록
     ResponseEntity<String> registerFranchiseOwner(FranchiseOwner franchiseOwner, int requestorAdminCode);
 
+    // 오너 수정
+    ResponseEntity<String> updateFranchiseOwner(int franchiseOwnerCode, FranchiseOwnerDTO updatedFranchiseOwner, int requestorAdminCode);
+
 }

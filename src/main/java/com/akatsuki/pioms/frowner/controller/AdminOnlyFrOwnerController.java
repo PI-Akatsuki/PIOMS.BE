@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("admin/franchise/owner")
@@ -45,6 +44,16 @@ public class AdminOnlyFrOwnerController {
             @RequestParam int requestorAdminCode
     ) {
         return franchiseOwnerService.registerFranchiseOwner(franchiseOwner, requestorAdminCode);
+    }
+
+    @Operation(summary = "프랜차이즈 점주 정보 수정", description = "기존 프랜차이즈 점주의 정보를 수정합니다.")
+    @PutMapping("/update/{franchiseOwnerCode}")
+    public ResponseEntity<String> updateFranchiseOwner(
+            @PathVariable int franchiseOwnerCode,
+            @RequestBody FranchiseOwnerDTO updatedFranchiseOwner,
+            @RequestParam int requestorAdminCode
+    ) {
+        return franchiseOwnerService.updateFranchiseOwner(franchiseOwnerCode, updatedFranchiseOwner, requestorAdminCode);
     }
 
 }
