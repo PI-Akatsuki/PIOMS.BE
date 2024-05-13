@@ -45,7 +45,11 @@ public class CategorySecondServiceImpl implements CategorySecondService{
 
     @Override
     @Transactional
-    public ResponseCategorySecondPost postCategorySecond(RequestCategorySecondPost request) {
+    public ResponseCategorySecondPost postCategorySecond(RequestCategorySecondPost request/*, int requesterAdminCode*/) {
+//        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
+//        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
+//            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
+//        }
         CategorySecond categorySecond = new CategorySecond();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formattedDateTime = LocalDateTime.now().format(formatter);
@@ -66,7 +70,11 @@ public class CategorySecondServiceImpl implements CategorySecondService{
 
     @Override
     @Transactional
-    public ResponseCategorySecondUpdate updateCategorySecond(int categorySecondCode, RequestCategorySecondUpdate request) {
+    public ResponseCategorySecondUpdate updateCategorySecond(int categorySecondCode, RequestCategorySecondUpdate request/*, int requesterAdminCode*/) {
+//        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
+//        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
+//            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
+//        }
         CategorySecond categorySecond = categorySecondRepository.findById(categorySecondCode)
                 .orElseThrow(() -> new EntityNotFoundException("CategorySecond not found"));
 

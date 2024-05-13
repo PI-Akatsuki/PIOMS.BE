@@ -18,10 +18,10 @@ public interface ProductService {
     List<Product> getAllProduct();
     Product getProduct(int productId);
     Optional<Product> findProductByCode(int productCode);
-    String postProduct(RequestProduct request);
+    String postProduct(RequestProduct request/*, int requesterAdminCode*/);
 
-    String deleteProduct(int productCode);
-    ResponseProduct updateProduct(int productCode, RequestProduct request);
+    String deleteProduct(int productCode/*, int requesterAdminCode*/);
+    ResponseProduct updateProduct(int productCode, RequestProduct request/*, int requesterAdminCode*/);
     void exportProducts(Order order);
     void exportExchangeProducts(int exchange);
     boolean checkExchangeProduct(Order order, ExchangeDTO exchange);

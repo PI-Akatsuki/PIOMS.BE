@@ -14,7 +14,7 @@ public interface CategoryFirstService {
 
     Optional<CategoryFirst> findCategoryFirstByCode(int categoryFirstCode);
 
-    ResponseCategoryFirstUpdate updateCategoryFirst(int categoryFirstCode, RequestCategoryFirstUpdate request);
+    ResponseCategoryFirstUpdate updateCategoryFirst(int categoryFirstCode, RequestCategoryFirstUpdate request/*, int requesterAdminCode*/);
 
-    ResponseCategoryFirstPost postCategoryFirst(RequestCategoryFirstPost request);
+    ResponseCategoryFirstPost postCategoryFirst(RequestCategoryFirstPost request/*, int requesterAdminCode*/);
 }

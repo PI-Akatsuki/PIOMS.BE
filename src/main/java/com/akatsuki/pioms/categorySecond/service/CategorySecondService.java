@@ -8,11 +8,9 @@ import java.util.Optional;
 public interface CategorySecondService {
     List<CategorySecond> getAllCategorySecond();
 
-    List<CategorySecond> getAllCategorySecondofFirst();
-
     Optional<CategorySecond> findCategorySecondByCode(int categorySecondCode);
 
-    ResponseCategorySecondPost postCategorySecond(RequestCategorySecondPost request);
+    ResponseCategorySecondPost postCategorySecond(RequestCategorySecondPost request/*, int requesterAdminCode*/);
 
-    ResponseCategorySecondUpdate updateCategorySecond(int categorySecondCode, RequestCategorySecondUpdate request);
+    ResponseCategorySecondUpdate updateCategorySecond(int categorySecondCode, RequestCategorySecondUpdate request/*, int requesterAdminCode*/);
 }
