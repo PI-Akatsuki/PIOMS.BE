@@ -34,7 +34,7 @@ public class Exchange {
 
     @OneToMany(mappedBy = "exchange")
     @ToString.Exclude
-    List<ExchangeProductEntity> products;
+    List<ExchangeProduct> products;
 
 
     public Exchange(ExchangeDTO exchange) {

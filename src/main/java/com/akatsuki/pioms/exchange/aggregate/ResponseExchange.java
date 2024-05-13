@@ -1,6 +1,7 @@
 package com.akatsuki.pioms.exchange.aggregate;
 
 
+import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,5 +35,18 @@ public class ResponseExchange {
             products.add(new ExchangeProductVO(product));
         });
 
+    }
+
+    public ResponseExchange(ExchangeDTO exchangeDTO) {
+        this.exchangeCode = exchangeDTO.getExchangeCode();
+        this.exchangeDate = exchangeDTO.getExchangeDate();
+        this.exchangeStatus = exchangeDTO.getExchangeStatus();
+
+        this.franchiseCode = exchangeDTO.getFranchise().getFranchiseCode();
+        this.franchiseName = exchangeDTO.getFranchise().getFranchiseName();
+        this.products = new ArrayList<>();
+        exchangeDTO.getExchangeProducts().forEach(product -> {
+            products.add(new ExchangeProductVO(product));
+        });
     }
 }

@@ -2,12 +2,14 @@ package com.akatsuki.pioms.exchange.controller;
 
 import com.akatsuki.pioms.exchange.aggregate.RequestExchange;
 import com.akatsuki.pioms.exchange.aggregate.ResponseExchange;
+import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import com.akatsuki.pioms.exchange.service.ExchangeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -22,7 +24,12 @@ public class ExchangeController {
 
     @GetMapping("/list")
     public ResponseEntity<List<ResponseExchange>> getExchanges(){
-        return ResponseEntity.ok(exchangeService.getExchanges());
+        List<ExchangeDTO> exchangeDTOS = exchangeService.getExchanges();
+        List<ResponseExchange> responseExchanges = new ArrayList<>();
+        exchangeDTOS.forEach(exchangeDTO -> {
+            responseExchanges.add(new ResponseExchange(exchangeDTO));
+        });
+        return ResponseEntity.ok(responseExchanges);
     }
 
     @PostMapping("/{franchiseCode}")

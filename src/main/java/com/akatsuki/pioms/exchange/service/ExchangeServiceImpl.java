@@ -51,21 +51,21 @@ public class ExchangeServiceImpl implements ExchangeService{
     }
 
     @Override
-    public List<ResponseExchange> getExchanges() {
+    public List<ExchangeDTO> getExchanges() {
         List<Exchange> exchangeEntityList = exchangeRepository.findAll();
-        List<ResponseExchange> exchanges = new ArrayList<>();
+        List<ExchangeDTO> exchanges = new ArrayList<>();
         exchangeEntityList.forEach(exchangeEntity -> {
-            exchanges.add(new ResponseExchange(exchangeEntity));
+            exchanges.add(new ExchangeDTO(exchangeEntity));
         });
         return exchanges;
     }
 
     @Override
-    public List<ResponseExchange> getExchangesByFranchiseCode(int franchiseCode) {
+    public List<ExchangeDTO> getExchangesByFranchiseCode(int franchiseCode) {
         List<Exchange> exchangeList =  exchangeRepository.findAllByFranchiseFranchiseCode(franchiseCode);
-        List<ResponseExchange> responseList = new ArrayList<>();
+        List<ExchangeDTO> responseList = new ArrayList<>();
         exchangeList.forEach(exchange -> {
-            responseList.add(new ResponseExchange(exchange));
+            responseList.add(new ExchangeDTO(exchange));
         });
         return responseList;
     }
@@ -99,7 +99,7 @@ public class ExchangeServiceImpl implements ExchangeService{
         exchange1.setProducts(new ArrayList<>());
 
         requestExchange.getProducts().forEach(product->{
-            ExchangeProductEntity exchangeProduct = new ExchangeProductEntity(product);
+            ExchangeProduct exchangeProduct = new ExchangeProduct(product);
             exchangeProduct.setExchange(exchange1);
             Product product1 = new Product();
             product1.setProductCode(product.getProductCode());
@@ -111,12 +111,12 @@ public class ExchangeServiceImpl implements ExchangeService{
     }
 
     @Override
-    public List<ExchangeProductEntity> getExchangeProducts(int exchangeCode) {
+    public List<ExchangeProduct> getExchangeProducts(int exchangeCode) {
         return exchangeProductRepository.findAllByExchangeExchangeCode(exchangeCode);
     }
 
     @Override
-    public List<ExchangeProductEntity> getExchangeProductsWithStatus(int exchangeCode, EXCHANGE_PRODUCT_STATUS exchangeProductStatus) {
+    public List<ExchangeProduct> getExchangeProductsWithStatus(int exchangeCode, EXCHANGE_PRODUCT_STATUS exchangeProductStatus) {
         return exchangeProductRepository.findAllByExchangeExchangeCodeAndExchangeProductStatus(exchangeCode,exchangeProductStatus);
     }
 
@@ -133,7 +133,7 @@ public class ExchangeServiceImpl implements ExchangeService{
     }
 
     private void updateExchangeProduct(ExchangeProductVO product) {
-        ExchangeProductEntity exchangeProductEntity = exchangeProductRepository.findById(product.getExchangeProductCode()).orElseThrow();
+        ExchangeProduct exchangeProductEntity = exchangeProductRepository.findById(product.getExchangeProductCode()).orElseThrow();
         //해당 상품 처리
         exchangeProductEntity.setExchangeProductNormalCount(product.getExchangeProductNormalCount());
         exchangeProductEntity.setExchangeProductDiscount(product.getExchangeProductDiscount());

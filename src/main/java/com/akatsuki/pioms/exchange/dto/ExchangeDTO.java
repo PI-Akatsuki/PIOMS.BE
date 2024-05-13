@@ -29,7 +29,7 @@ public class ExchangeDTO {
 
     private Franchise franchise;
 
-    private List<ExchangeProduct> exchangeProducts;
+    private List<ExchangeProductDTO> exchangeProducts;
 
     public ExchangeDTO(Exchange exchange) {
         this.exchangeCode = exchange.getExchangeCode();
@@ -38,7 +38,7 @@ public class ExchangeDTO {
         this.franchise = exchange.getFranchise();
         this.exchangeProducts = new ArrayList<>();
         exchange.getProducts().forEach(exchangeProductEntity -> {
-            exchangeProducts.add(new ExchangeProduct(exchangeProductEntity));
+            exchangeProducts.add(new ExchangeProductDTO(exchangeProductEntity));
         });
     }
 }

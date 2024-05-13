@@ -1,9 +1,6 @@
 package com.akatsuki.pioms.exchange.service;
 
-import com.akatsuki.pioms.exchange.aggregate.EXCHANGE_PRODUCT_STATUS;
-import com.akatsuki.pioms.exchange.aggregate.ExchangeProductEntity;
-import com.akatsuki.pioms.exchange.aggregate.RequestExchange;
-import com.akatsuki.pioms.exchange.aggregate.ResponseExchange;
+import com.akatsuki.pioms.exchange.aggregate.*;
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 
 import java.util.List;
@@ -15,10 +12,10 @@ public interface ExchangeService {
     ExchangeDTO findExchangeToSend(int franchiseCode);
 
     // 모든 반품 신청 리스트를 조회하기 위한 로직
-    List<ResponseExchange> getExchanges();
+    List<ExchangeDTO> getExchanges();
 
     // 한 가맹점의 모든 반품 조회하기 위한 로직
-    List<ResponseExchange> getExchangesByFranchiseCode(int franchiseCode);
+    List<ExchangeDTO> getExchangesByFranchiseCode(int franchiseCode);
 
     // 관리자가 관리하고 있는 모든 가맹점의 반품 리스트를 조회하기 위한 로직
     List<ResponseExchange> getExchangesByAdminCode(int adminCode);
@@ -27,7 +24,7 @@ public interface ExchangeService {
 
     ResponseExchange postExchange(int franchiseCode, RequestExchange requestExchange);
 
-    List<ExchangeProductEntity> getExchangeProducts(int exchangeCode);
+    List<ExchangeProduct> getExchangeProducts(int exchangeCode);
 
-    List<ExchangeProductEntity> getExchangeProductsWithStatus(int exchangeCode, EXCHANGE_PRODUCT_STATUS exchangeProductStatus);
+    List<ExchangeProduct> getExchangeProductsWithStatus(int exchangeCode, EXCHANGE_PRODUCT_STATUS exchangeProductStatus);
 }
