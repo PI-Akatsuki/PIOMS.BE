@@ -86,12 +86,9 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
     }
 
     @Override
-    public ResponseFranchiseWarehouseUpdate updateWarehouseCount(int franchiseWarehouseCode, RequestFranchiseWarehouseUpdate request) {
+    public ResponseFranchiseWarehouseUpdate updateWarehouseCount(int franchiseWarehouseCode, RequestFranchiseWarehouseUpdate request/*, int requesterAdminCode*/) {
         FranchiseWarehouse franchiseWarehouse = franchiseWarehouseRepository.findById(franchiseWarehouseCode)
                 .orElseThrow(() -> new EntityNotFoundException("FranchiseWarehouse not found"));
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        String formattedDateTime = LocalDateTime.now().format(formatter);
 
         franchiseWarehouse.setFranchiseWarehouseTotal(request.getFranchiseWarehouseTotal());
         franchiseWarehouse.setFranchiseWarehouseEnable(request.getFranchiseWarehouseEnable());

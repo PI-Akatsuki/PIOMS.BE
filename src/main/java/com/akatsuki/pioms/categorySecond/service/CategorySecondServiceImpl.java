@@ -34,11 +34,6 @@ public class CategorySecondServiceImpl implements CategorySecondService{
     }
 
     @Override
-    public List<CategorySecond> getAllCategorySecondofFirst() {
-        return categorySecondRepository.findAll();
-    }
-
-    @Override
     public Optional<CategorySecond> findCategorySecondByCode(int categorySecondCode) {
         return categorySecondRepository.findById(categorySecondCode);
     }

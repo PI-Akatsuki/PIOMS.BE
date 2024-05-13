@@ -37,8 +37,8 @@ public class franchiseWarehouseController {
 
     @PostMapping("/update/{franchiseWarehouseCode}")
     @Operation(summary = "사라졌을 상품을 위한 재고 수정 기능")
-    public ResponseEntity<ResponseFranchiseWarehouseUpdate> updateWarehouseCount(@PathVariable int franchiseWarehouseCode, @RequestBody RequestFranchiseWarehouseUpdate request) {
+    public ResponseEntity<ResponseFranchiseWarehouseUpdate> updateWarehouseCount(@PathVariable int franchiseWarehouseCode, @RequestBody RequestFranchiseWarehouseUpdate request/*, int requesterAdminCode*/) {
         ResponseFranchiseWarehouseUpdate response = franchiseWarehouseService.updateWarehouseCount(franchiseWarehouseCode,request);
-        return ResponseEntity.ok().body(response);
+        return ResponseEntity.ok().body(response/*, int requesterAdminCode*/);
     }
 }

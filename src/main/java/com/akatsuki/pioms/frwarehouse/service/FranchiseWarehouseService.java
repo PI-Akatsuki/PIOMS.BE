@@ -19,5 +19,5 @@ public interface FranchiseWarehouseService {
 
     Optional<FranchiseWarehouse> getWarehouseByWarehouseCode(int franchiseWarehouseCode);
 
-    ResponseFranchiseWarehouseUpdate updateWarehouseCount(int franchiseWarehouseCode, RequestFranchiseWarehouseUpdate request);
+    ResponseFranchiseWarehouseUpdate updateWarehouseCount(int franchiseWarehouseCode, RequestFranchiseWarehouseUpdate request/*, int requesterAdminCode*/);
 }
