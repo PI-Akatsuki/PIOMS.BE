@@ -31,5 +31,7 @@ public interface NoticeService {
     ResponseEntity<String> saveNotice(Notice notice, int requesterAdminCode);
 
     // root 관리자가 작성한 공지사항 수정
-    ResponseEntity<String> updateNotice(Notice notice, int modifierAdminCode, int noticeCode);
+    ResponseEntity<String> updateNotice(Notice updatedNotice, int noticeCode, int requesterAdminCode);
+
+
 }

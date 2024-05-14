@@ -7,6 +7,7 @@ import com.akatsuki.pioms.notice.aggregate.NoticeVO;
 import com.akatsuki.pioms.notice.repository.NoticeRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -92,12 +93,13 @@ public class NoticeServiceImpl implements NoticeService {
     // root 관리자가 작성한 공지사항 수정
     @Override
     @Transactional
-    public ResponseEntity<String> updateNotice(Notice updatedNotice, int noticeCode, int modifierAdminCode) {
+    public ResponseEntity<String> updateNotice(Notice updatedNotice, int noticeCode, int requesterAdminCode) {
         try {
-            Admin requesterAdmin = adminRepository.findById(modifierAdminCode)
-                    .orElseThrow(() -> new RuntimeException("root 관리자를 찾을 수 없습니다." + modifierAdminCode));
+            // 요청한 관리자가 존재하는지 확인
+            Admin requesterAdmin = adminRepository.findById(requesterAdminCode)
+                    .orElseThrow(() -> new RuntimeException("root 관리자를 찾을 수 없습니다." + requesterAdminCode));
 
-            // root 관리자가 아닐 경우 관리자 코드 확인
+            // root 관리자가 아닐 경우 수정 불가
             if (requesterAdmin == null || requesterAdmin.getAdminCode() != 1) {
                 return ResponseEntity.status(403).body("공지사항 수정은 root 관리자만 가능합니다.");
             }
@@ -107,23 +109,44 @@ public class NoticeServiceImpl implements NoticeService {
                 return ResponseEntity.badRequest().body("공지사항 수정 후 비어았는 곳이 없는지 확인해주세요.");
             }
 
+            // 수정하려는 공지사항이 존재하는지 확인
+            Notice existingNotice = noticeRepository.findById(noticeCode)
+                    .orElseThrow(() -> new RuntimeException("해당 코드의 공지사항을 찾을 수 없습니다!" + noticeCode));
+
             // 날짜 포맷터로 수정일 설정
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             String now = LocalDateTime.now().format(formatter);
 
-            // 수정일 설정
-            updatedNotice.setNoticeUpdateDate(now);
+            // 수정일 및 공지사항 내용 업데이트
+            existingNotice.setNoticeTitle(updatedNotice.getNoticeTitle());
+            existingNotice.setNoticeContent(updatedNotice.getNoticeContent());
+            existingNotice.setNoticeUpdateDate(now);
 
-            // updatedNotice 엔티티에 생성자 admin 주입
-            updatedNotice.setAdmin(requesterAdmin);
+            // Notice 엔티티에 생성자 admin 주입
+            existingNotice.setAdmin(requesterAdmin);
 
             // 공지사항 수정사항 저장
-            noticeRepository.save(updatedNotice);
+            noticeRepository.save(existingNotice);
             return ResponseEntity.ok("공지사항이 수정되었습니다.");
 
             // 기타 예외 처리
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(500).body("서버에 오류가 생겼습니다.");
         }
+
     }
+    // root 관리자가 공지사항 삭제
+//    @Override
+//    public ResponseEntity<String> deleteNotice(int noticeCode, int requesterAdminCode) {
+//        Admin requesterAdmin = adminRepository.findById(requesterAdminCode)
+//                .orElseThrow(() -> new RuntimeException("root 관리자를 찾을 수 없습니다." + requesterAdminCode));
+//
+//        // root 관리자가 아닐 경우 관리자 코드 확인
+//        if (requesterAdmin == null || requesterAdmin.getAdminCode() != 1) {
+//            return ResponseEntity.status(403).body("공지사항 삭제는 root 관리자만 가능합니다.");
+//        }
+
+
 }
