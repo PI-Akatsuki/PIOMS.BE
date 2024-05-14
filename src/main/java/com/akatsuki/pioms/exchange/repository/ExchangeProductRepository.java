@@ -18,4 +18,6 @@ public interface ExchangeProductRepository extends JpaRepository<ExchangeProduct
     List<ExchangeProduct> findByProductProductCodeAndExchangeExchangeCode(int exchangeProductCode, int exchangeCode);
 
     List<ExchangeProduct> findByExchangeExchangeCode(int exchangeCode);
+
+    void deleteByExchangeExchangeCode(int exchangeCode);
 }

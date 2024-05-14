@@ -2,6 +2,7 @@ package com.akatsuki.pioms.exchange.repository;
 
 import com.akatsuki.pioms.exchange.aggregate.EXCHANGE_STATUS;
 import com.akatsuki.pioms.exchange.aggregate.Exchange;
+import com.akatsuki.pioms.invoice.etc.DELIVERY_STATUS;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -20,4 +21,8 @@ public interface ExchangeRepository extends JpaRepository<Exchange, Integer> {
     List<Exchange> findAllByFranchiseFranchiseCode(int franchiseCode);
 
     List<Exchange> findAllByFranchiseAdminAdminCode(int adminCode);
+
+    List<Exchange> findAllByFranchiseFranchiseOwnerFranchiseOwnerCode(int franchiseOwnerCode);
+
+    boolean existsByFranchiseFranchiseCodeAndExchangeStatus(int franchiseCode, EXCHANGE_STATUS exchangeStatus);
 }

@@ -3,6 +3,7 @@ package com.akatsuki.pioms.exchange.dto;
 import com.akatsuki.pioms.exchange.aggregate.EXCHANGE_STATUS;
 import com.akatsuki.pioms.exchange.aggregate.Exchange;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
+import com.akatsuki.pioms.franchise.dto.FranchiseDTO;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
@@ -27,17 +28,16 @@ public class ExchangeDTO {
     @Enumerated(EnumType.ORDINAL)
     private EXCHANGE_STATUS exchangeStatus;
 
-    private int franchiseCode;
-
+    private FranchiseDTO franchise;
     private List<ExchangeProductDTO> exchangeProducts;
 
     public ExchangeDTO(Exchange exchange) {
-        System.out.println(exchange);
-        this.exchangeCode = exchange.getExchangeCode();
-        this.exchangeDate = exchange.getExchangeDate();
-        this.exchangeStatus = exchange.getExchangeStatus();
-        this.franchiseCode = exchange.getFranchise().getFranchiseCode();
-        if (exchange!=null) {
+        if (exchange !=null) {
+            System.out.println(exchange);
+            this.exchangeCode = exchange.getExchangeCode();
+            this.exchangeDate = exchange.getExchangeDate();
+            this.exchangeStatus = exchange.getExchangeStatus();
+            this.franchise = new FranchiseDTO(exchange.getFranchise());
             this.exchangeProducts = new ArrayList<>();
             exchange.getProducts().forEach(exchangeProductEntity -> {
                 exchangeProducts.add(new ExchangeProductDTO(exchangeProductEntity));

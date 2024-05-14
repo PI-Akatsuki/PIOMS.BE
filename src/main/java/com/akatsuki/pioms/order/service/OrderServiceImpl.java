@@ -110,6 +110,7 @@ public class OrderServiceImpl implements OrderService{
         return true;
     }
 
+
     @Override
     @Transactional
     public String denyOrder(int adminCode,int orderId, String denyMessage){
@@ -251,4 +252,14 @@ public class OrderServiceImpl implements OrderService{
 
         return true;
     }
+
+
+
+
+    @Override
+    public boolean findOrderByExchangeCode(int exchangeCode) {
+
+        return orderRepository.existsByExchangeExchangeCode(exchangeCode);
+    }
+
 }
