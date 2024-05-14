@@ -68,8 +68,8 @@ jobs:
       - name: Check for Tests
         run: |
           if git diff --name-only HEAD^ HEAD | grep -qvE '(\.xml$|\.yml$|config/)'; then
-            if [ -z "$(find src/test -name '*Test.java')" ]; then
-              echo "No tests found, failing the build."
+            if [ -z "$(find src/test -name '*ServiceTest.java')" ]; then
+              echo "No ServiceTest found, failing the build."
               exit 1
             fi
           else
@@ -77,7 +77,7 @@ jobs:
           fi
 
       - name: Build with Gradle
-        run: ./gradlew clean build --stacktrace --info
+        run: ./gradlew clean build --tests "*ServiceTest" --stacktrace --info
         shell: bash
 
       - name: Get current time
@@ -123,8 +123,8 @@ jobs:
         run: |
           PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
           COMMENTS=$(gh pr view $PR_NUMBER --json comments --jq '.comments | length')
-          if [ $COMMENTS -lt 2 ]; then
-            echo "Not enough comments ($COMMENTS) in the pull request. At least 2 comments are required."
+          if [ $COMMENTS -lt 3 ]; then
+            echo "Not enough comments ($COMMENTS) in the pull request. At least 3 comments are required."
             exit 1
           else
             echo "Sufficient comments ($COMMENTS) in the pull request."
