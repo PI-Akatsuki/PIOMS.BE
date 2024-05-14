@@ -133,6 +133,12 @@ public class OrderServiceImpl implements OrderService{
             System.out.println("가맹점 코드, 주문의 가맹점 코드 불일치! ");
             return false;
         }
+        // 이미 존재하는 발주 있는지 확인
+        if (orderRepository.existsByFranchiseFranchiseCodeAndOrderCondition(franchiseCode, ORDER_CONDITION.승인대기)
+                || orderRepository.existsByFranchiseFranchiseCodeAndOrderCondition(franchiseCode,ORDER_CONDITION.승인거부)){
+            System.out.println("이미 대기중인 발주가 존재합니다.");
+            return false;
+        }
         // 발주 생성
         Franchise franchise = new Franchise();
         franchise.setFranchiseCode(requestOrder.getFranchiseCode());
@@ -143,8 +149,7 @@ public class OrderServiceImpl implements OrderService{
         // 발주 상품 저장
         requestOrder.getProducts().forEach((productId, count)->{
             Order order1 = orderRepository.findById(orderId).orElseThrow();
-//            Product product = productService.getProduct(productId);
-//            orderProductRepository.save(Product(count,0, order1, product));
+            orderProductRepository.save(new OrderProduct(count,0, order1, productId));
         });
         return true;
     }
@@ -194,14 +199,21 @@ public class OrderServiceImpl implements OrderService{
     @Transactional
     public boolean putFranchiseOrder(int franchiseCode, RequestPutOrder requestOrder) {
         Order order = orderRepository.findById(requestOrder.getOrderCode()).orElseThrow(IllegalArgumentException::new);
-        if(order.getFranchise().getFranchiseCode() != franchiseCode || order.getOrderCondition() != ORDER_CONDITION.승인대기)
+        System.out.println("order = " + order);
+        if(order.getFranchise().getFranchiseCode() != franchiseCode) {
+            System.out.println("프랜차이즈 코드 불일치");
             return false;
+        }
+        if (order.getOrderCondition() == ORDER_CONDITION.승인완료) {
+            System.out.println("이미 처리된 발주");
+            return false;
+        }
         orderProductRepository.deleteAllByOrderOrderCode(order.getOrderCode());
-        Order deletedorder = orderRepository.findById(requestOrder.getOrderCode()).orElseThrow(IllegalArgumentException::new);
 
+        Order deletedorder = orderRepository.findById(requestOrder.getOrderCode()).orElseThrow(IllegalArgumentException::new);
+        deletedorder.setOrderCondition(ORDER_CONDITION.승인대기);
         requestOrder.getProducts().forEach((productId, count)->{
-//            Product product = productService.getProduct(productId);
-//            orderProductRepository.save(Product(count,0, deletedorder, product));
+            orderProductRepository.save(new OrderProduct(count,0, deletedorder, productId));
         });
         System.out.println(deletedorder.getOrderProductList());
         orderRepository.save(deletedorder);
