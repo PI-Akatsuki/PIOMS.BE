@@ -2,7 +2,6 @@ package com.akatsuki.pioms.notice.controller;
 
 import com.akatsuki.pioms.notice.aggregate.Notice;
 import com.akatsuki.pioms.notice.aggregate.NoticeVO;
-import com.akatsuki.pioms.notice.dto.NoticeDTO;
 import com.akatsuki.pioms.notice.service.NoticeService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.ResponseEntity;
@@ -36,15 +35,23 @@ public class NoticeAdminController {
         return ResponseEntity.ok(noticeVO);
     }
 
-
-    // 관리자가 공지사항 등록
+    // root 관리자가 공지사항 등록
     @Operation(summary = "공지사항 등록", description = "notice register")
     @PostMapping("/notice/register")
     public ResponseEntity<String> registerNotice (
             @RequestBody Notice notice,
-            @RequestParam int requestorAdminCode
+            @RequestParam int requesterAdminCode
     ) {
-        return noticeService.saveNotice(notice, requestorAdminCode);
+        return noticeService.saveNotice(notice, requesterAdminCode);
     }
 
+    // root 관리자가 공지사항 수정
+    @Operation(summary = "공지사항 수정", description = "notice modify")
+    @PostMapping("/notice/update/{noticeCode}")
+    public ResponseEntity<String> updateNotice(@PathVariable int noticeCode,
+            @RequestBody Notice updatedNotice,
+            @RequestParam int modifierAdminCode
+    ) {
+        return noticeService.updateNotice(updatedNotice, noticeCode, modifierAdminCode);
+    }
 }
