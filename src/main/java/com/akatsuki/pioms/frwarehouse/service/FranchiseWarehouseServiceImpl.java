@@ -68,7 +68,7 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
             ExchangeProductVO exchange =requestExchange.getProducts().get(i);
 
             FranchiseWarehouse franchiseWarehouse =
-                    franchiseWarehouseRepository.findByProductProductCode(exchange.getProductCode());
+                    franchiseWarehouseRepository.findByProductProductCodeAndFranchiseCode(exchange.getProductCode(), requestExchange.getFranchiseCode());
 
             if(franchiseWarehouse!=null && franchiseWarehouse.getFranchiseWarehouseEnable()< exchange.getExchangeProductCount()) {
                 System.out.println("error 신청 재고가 너무 많음!");

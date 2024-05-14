@@ -28,7 +28,8 @@ public class FranchiseDTO {
     private DELIVERY_DATE franchiseDeliveryDate;
     private FranchiseOwnerDTO franchiseOwner;
 
-    private AdminDTO admin;
+    private int adminCode;
+    private String adminName;
 
 
     public FranchiseDTO(Franchise franchise) {
@@ -42,6 +43,8 @@ public class FranchiseDTO {
         this.franchiseBusinessNum = franchise.getFranchiseBusinessNum();
         this.franchiseDeliveryDate = franchise.getFranchiseDeliveryDate();
         this.franchiseOwner = new FranchiseOwnerDTO(franchise.getFranchiseOwner());
-        this.admin = new AdminDTO(franchise.getAdmin());
+//        this.admin = new AdminDTO(franchise.getAdmin());
+        this.adminCode = franchise.getAdmin().getAdminCode();
+        this.adminName = franchise.getAdmin().getAdminName();
     }
 }

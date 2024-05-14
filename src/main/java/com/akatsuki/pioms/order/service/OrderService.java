@@ -75,4 +75,6 @@ public interface OrderService {
     boolean putFranchiseOrderCheck(int franchiseCode, RequestPutOrderCheck requestPutOrder);
 
     boolean checkProductCnt(OrderDTO order);
+
+    boolean findOrderByExchangeCode(int exchangeCode);
 }
