@@ -65,6 +65,17 @@ jobs:
           DB_USERNAME: ${{ secrets.DB_USERNAME }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
 
+      - name: Check for Tests
+        run: |
+          if git diff --name-only HEAD^ HEAD | grep -qvE '(\.xml$|\.yml$|config/)'; then
+            if [ -z "$(find src/test -name '*Test.java')" ]; then
+              echo "No tests found, failing the build."
+              exit 1
+            fi
+          else
+            echo "Only configuration files changed, skipping test check."
+          fi
+
       - name: Build with Gradle
         run: ./gradlew clean build --stacktrace --info
         shell: bash
