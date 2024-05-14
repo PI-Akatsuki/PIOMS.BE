@@ -171,7 +171,9 @@ public class ExchangeServiceImpl implements ExchangeService{
     @Override
     public List<ExchangeDTO> getFranchiseExchanges(int franchiseOwnerCode) {
         List<Exchange> exchangeList = exchangeRepository.findAllByFranchiseFranchiseOwnerFranchiseOwnerCode(franchiseOwnerCode);
-        return null;
+        List<ExchangeDTO> exchangeDTOList = new ArrayList<>();
+        exchangeList.forEach(exchange -> exchangeDTOList.add(new ExchangeDTO(exchange)));
+        return exchangeDTOList;
     }
 
     @Override

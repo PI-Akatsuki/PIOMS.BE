@@ -25,10 +25,13 @@ public class FranchiseExchangeController {
     @GetMapping("{franchiseOwnerCode}/exchanges")
     public ResponseEntity<List<ResponseExchange>> getMyExchanges(@PathVariable int franchiseOwnerCode){
         List<ExchangeDTO> exchangeDTOS = exchangeService.getFranchiseExchanges(franchiseOwnerCode);
+
         if (exchangeDTOS ==null){
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         }
+        System.out.println("exchangeDTOS.size() = " + exchangeDTOS.size());
         List<ResponseExchange> responseExchanges = new ArrayList<>();
+
         for (int i = 0; i < exchangeDTOS.size(); i++) {
             responseExchanges.add(new ResponseExchange(exchangeDTOS.get(i)));
         }
