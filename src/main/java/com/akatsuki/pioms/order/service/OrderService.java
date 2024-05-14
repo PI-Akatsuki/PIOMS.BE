@@ -2,6 +2,7 @@ package com.akatsuki.pioms.order.service;
 
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import com.akatsuki.pioms.order.aggregate.*;
+import com.akatsuki.pioms.order.dto.OrderDTO;
 
 import java.util.List;
 
@@ -34,17 +35,17 @@ public interface OrderService {
     String denyOrder(int adminCode,int orderId,String denyMessage);
 
     // 가맹점이 가맹점의 모든 발주 리스트를 반환합니다.
-    List<Order> getOrderList(int franchiseCode);
+    List<OrderDTO> getOrderList(int franchiseCode);
 
     // 가맹점이 발주서를 상세 조회합니다.
     // 정상적으로 이루어진 경우: 가맹점 코드와 주문의 가맹점 코드가 일치하는 경우
     // 비정상적으로 이루어진 경우: 가맹점 코드와 주문의 가맹점 코드가 일치하지 않는 경우
-    Order getOrder(int franchiseCode, int orderCode);
+    OrderDTO getOrder(int franchiseCode, int orderCode);
 
     // 관리자가 발주서를 상세 조회합니다.
     // 정상적으로 이루어진 경우: 관리자 코드와 주문의 관리자 코드가 일치하는 경우
     // 비정상적으로 이루어진 경우: 관리자 코드와 주문의 관리자 코드가 일치하지 않는 경우
-    Order getAdminOrder(int adminCode, int orderCode);
+    OrderDTO getAdminOrder(int adminCode, int orderCode);
 
     // 가맹점이 발주서를 수정합니다.
     // 발주서 생성 결과를 boolean으로 반환합니다.
@@ -73,5 +74,5 @@ public interface OrderService {
         // 2-2. 많이 온  경우, 본사의 재고 -
     boolean putFranchiseOrderCheck(int franchiseCode, RequestPutOrderCheck requestPutOrder);
 
-    boolean checkProductCnt(Order order);
+    boolean checkProductCnt(OrderDTO order);
 }

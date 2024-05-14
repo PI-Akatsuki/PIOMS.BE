@@ -11,6 +11,7 @@ import com.akatsuki.pioms.exchange.service.ExchangeService;
 import com.akatsuki.pioms.order.aggregate.Order;
 import com.akatsuki.pioms.log.etc.LogStatus;
 import com.akatsuki.pioms.log.service.LogService;
+import com.akatsuki.pioms.order.dto.OrderDTO;
 import com.akatsuki.pioms.product.aggregate.ResponseProducts;
 
 import com.akatsuki.pioms.product.dto.ProductDTO;
@@ -181,10 +182,10 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public void exportProducts(Order order) {
+    public void exportProducts(OrderDTO order) {
         // 발주 상품에 대해 재고 수정
         order.getOrderProductList().forEach(requestProduct->{
-//            productMinusCnt(requestProduct.getRequestProductCount(), requestProduct.getProduct());
+            productMinusCnt(requestProduct.getRequestProductCount(), requestProduct.getProductCode());
         });
     }
 
@@ -198,12 +199,12 @@ public class ProductServiceImpl implements ProductService{
             return;
         }
         exchangeProductList.forEach(requestProduct->{
-            productMinusCnt(requestProduct.getExchangeProductNormalCount(), requestProduct.getProduct());
+            productMinusCnt(requestProduct.getExchangeProductNormalCount(), requestProduct.getExchangeProductCode());
         });
     }
 
     @Override
-    public boolean checkExchangeProduct(Order order, ExchangeDTO exchange) {
+    public boolean checkExchangeProduct(OrderDTO order, ExchangeDTO exchange) {
         //
         if (exchange== null){
             return false;
@@ -221,8 +222,8 @@ public class ProductServiceImpl implements ProductService{
         return true;
     }
 
-    private void productMinusCnt(int requestProduct, Product requestProduct1) {
-        Product product = productRepository.findById(requestProduct1.getProductCode()).orElseThrow();
+    private void productMinusCnt(int requestProduct, int orderProductCode) {
+        Product product = productRepository.findById(orderProductCode).orElseThrow();
         product.setProductCount(product.getProductCount() - requestProduct);
         productRepository.save(product);
     }

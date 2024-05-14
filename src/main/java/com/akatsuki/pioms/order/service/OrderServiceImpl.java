@@ -8,6 +8,7 @@ import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import com.akatsuki.pioms.frwarehouse.service.FranchiseWarehouseService;
 import com.akatsuki.pioms.invoice.service.InvoiceService;
 import com.akatsuki.pioms.order.aggregate.*;
+import com.akatsuki.pioms.order.dto.OrderDTO;
 import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
 import com.akatsuki.pioms.order.repository.OrderProductRepository;
 import com.akatsuki.pioms.order.repository.OrderRepository;
@@ -60,13 +61,17 @@ public class OrderServiceImpl implements OrderService{
     public List<Order> getAdminUncheckesOrders(int adminCode){
         // 인가 필요 없음
         List<Order> orderList = orderRepository.findAllByFranchiseAdminAdminCodeAndOrderCondition(adminCode, ORDER_CONDITION.승인대기);
+        System.out.println("orderList = " + orderList);
         if (orderList == null)
             return null;
-        List<Order> orderVOList = new ArrayList<>();
+
+        List<Order> orderDTOList = new ArrayList<>();
+
         orderList.forEach(order-> {
-            orderVOList.add((order));
+            orderDTOList.add((order));
         });
-        return orderVOList;
+
+        return orderDTOList;
     }
 
     @Override
@@ -82,7 +87,9 @@ public class OrderServiceImpl implements OrderService{
         try {
             order.setOrderCondition(ORDER_CONDITION.승인완료);
             if (exchange!=null) {
-                order.setExchange(new Exchange(exchange));
+                Exchange exchange1 = new Exchange();
+                exchange1.setExchangeCode(exchange.getExchangeCode());
+                order.setExchange(exchange1);
             }
             order=orderRepository.save(order);
 
@@ -95,10 +102,10 @@ public class OrderServiceImpl implements OrderService{
     }
 
     @Override
-    public boolean checkProductCnt(Order order) {
+    public boolean checkProductCnt(OrderDTO order) {
         // 해당 상품의 수량이 본사 재고를 초과하는지 검사
         for (int i = 0; i < order.getOrderProductList().size(); i++) {
-            if(order.getOrderProductList().get(i).getRequestProductCount() > order.getOrderProductList().get(i).getProduct().getProductCount())
+            if(order.getOrderProductList().get(i).getRequestProductCount() > order.getOrderProductList().get(i).getRequestProductCount())
                 return false;
         }
         return true;
@@ -151,18 +158,18 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     @Transactional(readOnly = true)
-    public List<Order> getOrderList(int franchiseCode){
+    public List<OrderDTO> getOrderList(int franchiseCode){
         List<Order> orderList= orderRepository.findByFranchiseFranchiseCode(franchiseCode);
-        List<Order> orderDTOList = new ArrayList<>();
+        List<OrderDTO> orderDTOList = new ArrayList<>();
         orderList.forEach(order-> {
-            orderDTOList.add((order));
+            orderDTOList.add(new OrderDTO(order));
         });
         return orderDTOList;
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Order getOrder(int franchiseCode,int orderCode){
+    public OrderDTO getOrder(int franchiseCode,int orderCode){
         Order order = orderRepository.findById(orderCode).orElseThrow();
         if(franchiseCode!= order.getFranchise().getFranchiseCode()){
             System.out.println("가맹점 코드, 주문의 가맹점 코드 불일치!");
@@ -170,17 +177,17 @@ public class OrderServiceImpl implements OrderService{
         }
         System.out.println("order = " + order);
         System.out.println(order.getOrderProductList());
-        return (order);
+        return new OrderDTO(order);
     }
 
     @Override
-    public Order getAdminOrder(int adminCode, int orderCode) {
+    public OrderDTO getAdminOrder(int adminCode, int orderCode) {
         Order order = orderRepository.findById(orderCode).orElseThrow(IllegalArgumentException::new);
-
+        System.out.println("order = " + order);
         if(order==null || adminCode != order.getFranchise().getAdmin().getAdminCode()){
             return null;
         }
-        return (order);
+        return (new OrderDTO(order));
     }
 
     @Override

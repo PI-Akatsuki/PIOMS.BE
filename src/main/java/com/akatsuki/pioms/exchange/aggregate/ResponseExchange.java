@@ -42,8 +42,8 @@ public class ResponseExchange {
         this.exchangeDate = exchangeDTO.getExchangeDate();
         this.exchangeStatus = exchangeDTO.getExchangeStatus();
 
-        this.franchiseCode = exchangeDTO.getFranchise().getFranchiseCode();
-        this.franchiseName = exchangeDTO.getFranchise().getFranchiseName();
+        this.franchiseCode = exchangeDTO.getFranchiseCode();
+//        this.franchiseName = exchangeDTO.getFranchiseName();
         this.products = new ArrayList<>();
         exchangeDTO.getExchangeProducts().forEach(product -> {
             products.add(new ExchangeProductVO(product));

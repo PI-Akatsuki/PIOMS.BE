@@ -27,7 +27,7 @@ public class ExchangeDTO {
     @Enumerated(EnumType.ORDINAL)
     private EXCHANGE_STATUS exchangeStatus;
 
-    private Franchise franchise;
+    private int franchiseCode;
 
     private List<ExchangeProductDTO> exchangeProducts;
 
@@ -36,7 +36,7 @@ public class ExchangeDTO {
         this.exchangeCode = exchange.getExchangeCode();
         this.exchangeDate = exchange.getExchangeDate();
         this.exchangeStatus = exchange.getExchangeStatus();
-        this.franchise = exchange.getFranchise();
+        this.franchiseCode = exchange.getFranchise().getFranchiseCode();
         if (exchange!=null) {
             this.exchangeProducts = new ArrayList<>();
             exchange.getProducts().forEach(exchangeProductEntity -> {

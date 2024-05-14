@@ -51,17 +51,21 @@ public class OrderFacade {
         return orderDTOS;
     }
 
-    public List<Order> getAdminUncheckesOrders(int adminCode){
+    public List<OrderDTO> getAdminUncheckesOrders(int adminCode){
         List<Order> orders = orderService.getAdminUncheckesOrders(adminCode);
-        return orders;
+        List<OrderDTO> orderDTOs = new ArrayList<>();
+        for (int i = 0; i < orders.size(); i++) {
+            orderDTOs.add(new OrderDTO(orders.get(i)));
+        }
+        return orderDTOs;
     }
-    public Order getAdminOrder(int adminCode, int orderCode){
+    public OrderDTO getAdminOrder(int adminCode, int orderCode){
         return orderService.getAdminOrder(adminCode,orderCode);
     }
 
     public Order acceptOrder(int adminCode, int orderCode){
-        Order order = orderService.getAdminOrder(adminCode,orderCode);
-        ExchangeDTO exchange =  exchangeService.findExchangeToSend(order.getFranchise().getFranchiseCode());
+        OrderDTO order = orderService.getAdminOrder(adminCode,orderCode);
+        ExchangeDTO exchange =  exchangeService.findExchangeToSend(order.getFranchiseCode());
 
         if(!orderService.checkProductCnt(order)) {
             return null;
@@ -72,12 +76,10 @@ public class OrderFacade {
         }
 
         Order orderDTO = orderService.acceptOrder(adminCode,orderCode, exchange);
-
         productService.exportProducts(order);
         if (exchange!=null)
             productService.exportExchangeProducts(exchange.getExchangeCode());
-
-        publisher.publishEvent(new OrderEvent(order));
+//        publisher.publishEvent(new OrderEvent(order));
 
         return orderDTO;
     }

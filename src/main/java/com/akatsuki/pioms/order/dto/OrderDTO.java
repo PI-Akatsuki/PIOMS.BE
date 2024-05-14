@@ -1,6 +1,7 @@
 package com.akatsuki.pioms.order.dto;
 
 import com.akatsuki.pioms.exchange.aggregate.Exchange;
+import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import com.akatsuki.pioms.franchise.aggregate.DELIVERY_DATE;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import com.akatsuki.pioms.order.aggregate.Order;
@@ -12,6 +13,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -41,7 +43,7 @@ public class OrderDTO {
     private int AdminCode;
     private String AdminName;
 
-//    private ExchangeDTO exchange;
+    private ExchangeDTO exchange;
 
     private List<OrderProductDTO> orderProductList;
 
@@ -60,8 +62,12 @@ public class OrderDTO {
         this.franchiseOwnerName= order.getFranchise().getFranchiseOwner().getFranchiseOwnerName();
         this.AdminCode= order.getFranchise().getAdmin().getAdminCode();
         this.AdminName= order.getFranchise().getAdmin().getAdminName();
-//        if (exchange!=null)
-//            this.exchange= new ExchangeDTO(order.getExchange());
-//        this.orderProductList= order.;
+        if (exchange!=null)
+            this.exchange= new ExchangeDTO(order.getExchange());
+//        this.orderProductList= order.getOrderProductList();
+        orderProductList = new ArrayList<>();
+        for (int i = 0; i < order.getOrderProductList().size(); i++) {
+            orderProductList.add(new OrderProductDTO(order.getOrderProductList().get(i)));
+        }
     }
 }
