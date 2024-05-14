@@ -11,22 +11,23 @@ import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class OrderProductDTO {
     private int requestProductCode;
     private int requestProductCount;
     private int requestProductGetCount;
-    private OrderDTO order;
-    private ProductDTO product;
-
+    private int orderCode;
+    private int productCode;
     public OrderProductDTO(OrderProduct orderProduct) {
-        this.requestProductCode = orderProduct.getRequestProductCode();
-        this.requestProductCount = orderProduct.getRequestProductCount();
-        this.requestProductGetCount = orderProduct.getRequestProductGetCount();
-        this.order = new OrderDTO(orderProduct.getOrder());
-        this.product = new ProductDTO(orderProduct.getProduct());
+        this.requestProductCode= orderProduct.getRequestProductCode();
+        this.requestProductCount= orderProduct.getRequestProductCount();
+        this.requestProductGetCount= orderProduct.getRequestProductGetCount();
+        this.orderCode= orderProduct.getOrder().getOrderCode();
+        this.productCode= orderProduct.getProduct().getProductCode();
     }
 }

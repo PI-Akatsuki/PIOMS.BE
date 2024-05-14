@@ -27,18 +27,21 @@ public class ExchangeDTO {
     @Enumerated(EnumType.ORDINAL)
     private EXCHANGE_STATUS exchangeStatus;
 
-    private Franchise franchise;
+    private int franchiseCode;
 
     private List<ExchangeProductDTO> exchangeProducts;
 
     public ExchangeDTO(Exchange exchange) {
+        System.out.println(exchange);
         this.exchangeCode = exchange.getExchangeCode();
         this.exchangeDate = exchange.getExchangeDate();
         this.exchangeStatus = exchange.getExchangeStatus();
-        this.franchise = exchange.getFranchise();
-        this.exchangeProducts = new ArrayList<>();
-        exchange.getProducts().forEach(exchangeProductEntity -> {
-            exchangeProducts.add(new ExchangeProductDTO(exchangeProductEntity));
-        });
+        this.franchiseCode = exchange.getFranchise().getFranchiseCode();
+        if (exchange!=null) {
+            this.exchangeProducts = new ArrayList<>();
+            exchange.getProducts().forEach(exchangeProductEntity -> {
+                exchangeProducts.add(new ExchangeProductDTO(exchangeProductEntity));
+            });
+        }
     }
 }

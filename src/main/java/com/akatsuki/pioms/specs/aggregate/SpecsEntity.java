@@ -3,6 +3,7 @@ package com.akatsuki.pioms.specs.aggregate;
 
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import com.akatsuki.pioms.order.aggregate.Order;
+import com.akatsuki.pioms.order.dto.OrderDTO;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
@@ -34,13 +35,12 @@ public class SpecsEntity {
 
     public SpecsEntity(int orderId, int franchiseId) {
         this.specsDate = LocalDateTime.now();
-        this.order.setOrderCode(orderId);
-        this.franchise.setFranchiseCode(franchiseId);
+        Order order1 = new Order();
+        order1.setOrderCode(orderId);
+        this.order= order1;
+        Franchise franchise1 = new Franchise();
+        franchise1.setFranchiseCode(franchiseId);
+        this.franchise = franchise1;
     }
 
-    public SpecsEntity(Order orderEntity) {
-        this.specsDate = LocalDateTime.now();
-        this.order=orderEntity;
-        this.franchise = orderEntity.getFranchise();
-    }
 }

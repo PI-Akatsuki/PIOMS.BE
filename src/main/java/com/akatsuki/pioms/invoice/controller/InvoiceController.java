@@ -1,7 +1,7 @@
 package com.akatsuki.pioms.invoice.controller;
 
 
-import com.akatsuki.pioms.invoice.dto.InvoiceDTO;
+import com.akatsuki.pioms.invoice.aggregate.InvoiceEntity;
 import com.akatsuki.pioms.invoice.etc.DELIVERY_STATUS;
 import com.akatsuki.pioms.invoice.service.InvoiceService;
 import com.akatsuki.pioms.invoice.aggregate.ResponseInvoice;
@@ -25,9 +25,8 @@ public class InvoiceController {
 
     @GetMapping("/list")
     public ResponseEntity<ResponseInvoiceList> getInvoiceList(){
-        List<InvoiceDTO> invoiceList = invoiceService.getAllInvoiceList();
+        List<InvoiceEntity> invoiceList = invoiceService.getAllInvoiceList();
         ResponseInvoiceList responseInvoiceList = new ResponseInvoiceList(invoiceList);
-
         return ResponseEntity.ok(responseInvoiceList);
     }
 
@@ -38,7 +37,7 @@ public class InvoiceController {
 
     @PutMapping("/{invoiceCode}/{invoiceStatus}")
     public ResponseEntity<ResponseInvoice> putInvoice(@PathVariable int invoiceCode, @PathVariable DELIVERY_STATUS invoiceStatus){
-        InvoiceDTO invoice = invoiceService.putInvoice(invoiceCode, invoiceStatus);
+        InvoiceEntity invoice = invoiceService.putInvoice(invoiceCode, invoiceStatus);
         return ResponseEntity.ok(new ResponseInvoice(invoice));
     }
 

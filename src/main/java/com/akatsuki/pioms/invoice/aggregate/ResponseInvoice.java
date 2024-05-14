@@ -1,6 +1,5 @@
 package com.akatsuki.pioms.invoice.aggregate;
 
-import com.akatsuki.pioms.invoice.dto.InvoiceDTO;
 import com.akatsuki.pioms.invoice.etc.DELIVERY_STATUS;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,7 +22,7 @@ public class ResponseInvoice {
     private int orderCode;
     private List<OrderProductVO> orderProductVOList;
 
-    public ResponseInvoice(InvoiceDTO invoiceDTO) {
+    public ResponseInvoice(InvoiceEntity invoiceDTO) {
         this.invoiceCode = invoiceDTO.getInvoiceCode();
         this.deliveryStatus = invoiceDTO.getDeliveryStatus();
         this.invoiceDate = invoiceDTO.getInvoiceDate();
