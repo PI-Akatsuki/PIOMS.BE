@@ -85,8 +85,9 @@ class InvoiceServiceTest {
         when(invoiceRepository.save(invoiceEntity)).thenReturn(
           invoiceEntity
         );
+
         //when
-        InvoiceEntity invoice = invoiceService.saveInvoice(new InvoiceEntity(invoiceEntity));
+        InvoiceEntity invoice = invoiceService.saveInvoice(invoiceEntity);
         //then
         assertEquals(invoiceEntity.getInvoiceCode(), invoice.getInvoiceCode());
     }
@@ -137,7 +138,7 @@ class InvoiceServiceTest {
         InvoiceEntity invoiceEntity =
                 new InvoiceEntity(1,DELIVERY_STATUS.배송전,null,1,null);
         //when
-        invoiceService.deleteInvoice(new InvoiceEntity(invoiceEntity));
+        invoiceService.deleteInvoice(invoiceEntity);
         //then
         verify(invoiceRepository,times(1)).delete(invoiceEntity);
     }

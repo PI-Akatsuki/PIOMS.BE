@@ -119,14 +119,14 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public InvoiceEntity saveInvoice(InvoiceEntity invoiceDTO) {
-        InvoiceEntity invoice = new InvoiceEntity(invoiceDTO);
+    public InvoiceEntity saveInvoice(InvoiceEntity invoice) {
+
         return new InvoiceEntity(invoiceRepository.save(invoice));
     }
 
     @Override
     public void deleteInvoice(InvoiceEntity invoiceDTO) {
-        invoiceRepository.delete(new InvoiceEntity(invoiceDTO));
+        invoiceRepository.delete(invoiceDTO);
     }
 
 }

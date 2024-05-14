@@ -137,24 +137,24 @@ class ExchangeServiceTest {
 
     }
 
-    @Test
-    void getExchangesByAdminCode() {
-
-    }
-
-    @Test
-    void putExchange() {
-    }
-
-    @Test
-    void postExchange() {
-    }
-
-    @Test
-    void getExchangeProducts() {
-    }
-
-    @Test
-    void getExchangeProductsWithStatus() {
-    }
+//    @Test
+//    void getExchangesByAdminCode() {
+//
+//    }
+//
+//    @Test
+//    void putExchange() {
+//    }
+//
+//    @Test
+//    void postExchange() {
+//    }
+//
+//    @Test
+//    void getExchangeProducts() {
+//    }
+//
+//    @Test
+//    void getExchangeProductsWithStatus() {
+//    }
 }
