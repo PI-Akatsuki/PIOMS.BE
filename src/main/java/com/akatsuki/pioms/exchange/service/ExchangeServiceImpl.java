@@ -160,8 +160,10 @@ public class ExchangeServiceImpl implements ExchangeService{
             return null;
         return new ExchangeDTO(exchange);
     }
+
     @Override
     public ExchangeDTO getFranchiseExchange(int franchiseOwnerCode,int exchangeCode) {
+        //FIN
         Exchange exchange = exchangeRepository.findById(exchangeCode).orElse(null);
         if (exchange.getFranchise().getFranchiseOwner().getFranchiseOwnerCode() != franchiseOwnerCode)
             return null;
@@ -170,6 +172,7 @@ public class ExchangeServiceImpl implements ExchangeService{
 
     @Override
     public List<ExchangeDTO> getFranchiseExchanges(int franchiseOwnerCode) {
+        //FIN
         List<Exchange> exchangeList = exchangeRepository.findAllByFranchiseFranchiseOwnerFranchiseOwnerCode(franchiseOwnerCode);
         List<ExchangeDTO> exchangeDTOList = new ArrayList<>();
         exchangeList.forEach(exchange -> exchangeDTOList.add(new ExchangeDTO(exchange)));
@@ -179,7 +182,7 @@ public class ExchangeServiceImpl implements ExchangeService{
     @Override
     @Transactional
     public boolean deleteExchange(int franchiseOwnerCode, int exchangeCode) {
-
+        //FIN
         Exchange exchange = exchangeRepository.findById(exchangeCode).orElse(null);
 
         if (exchange==null || exchange.getFranchise().getFranchiseOwner().getFranchiseOwnerCode() != franchiseOwnerCode
@@ -195,17 +198,49 @@ public class ExchangeServiceImpl implements ExchangeService{
     @Transactional
     public ExchangeDTO putExchange(int adminCode,int exchangeCode, RequestExchange requestExchange) {
         // 관리자가 반품온 상품들 처리하기 위한 메서드
+        //FIN
         Exchange exchangeEntity = exchangeRepository.findById(exchangeCode).orElseThrow(IllegalArgumentException::new);
-        if (exchangeEntity.getFranchise().getAdmin().getAdminCode() != adminCode)
+        if (exchangeEntity.getFranchise().getAdmin().getAdminCode() != adminCode) {
+            System.out.println("1차 검증 실패: 관리자 접근 권한이 없습니다." );
             return null;
+        }
+        if (requestExchange.getProducts().size() != exchangeEntity.getProducts().size()) {
+            System.out.println("2차 검증 실패: 반송 상품 갯수 불일치" );
+            System.out.println("좌: "+ requestExchange.getProducts().size() + " 우: "+exchangeEntity.getProducts().size() );
+            return null;
+        }
+        if (!checkValidationExchangeProducts(requestExchange.getProducts())){
+            System.out.println("3차 검증 실패: 반송 상품 검수 갯수 불일치" );
+            return null;
+        }
         System.out.println("exchangeEntity = " + exchangeEntity);
+        requestExchange.getProducts().forEach(this::updateExchangeProduct);
         exchangeEntity.setExchangeStatus(requestExchange.getExchangeStatus());
         exchangeRepository.save(exchangeEntity);
-        requestExchange.getProducts().forEach(this::updateExchangeProduct);
         return new ExchangeDTO(exchangeRepository.findById(exchangeCode).orElseThrow());
     }
 
+    private boolean checkValidationExchangeProducts(List<ExchangeProductVO> products) {
+        for (int i = 0; i < products.size(); i++) {
+            ExchangeProductVO product = products.get(i);
+            int productCode = product.getExchangeProductCode();
+            ExchangeProduct exchangeProduct = exchangeProductRepository.findById(productCode).orElseThrow();
+            if (exchangeProduct.getExchangeProductCount() != product.getExchangeProductCount()) {
+                System.out.println(productCode + " 번 반송상품 코드 문제 발생! ExchangeProductCount 불일치!");
+                return false;
+            }
+            if (product.getExchangeProductNormalCount() + product.getExchangeProductDiscount() != exchangeProduct.getExchangeProductCount()) {
+                System.out.println(productCode + " 번 반송상품 코드 문제 발생! 반품 검수 합 불일치!");
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+
     private void updateExchangeProduct(ExchangeProductVO product) {
+        //FIN
         ExchangeProduct exchangeProductEntity =
                 exchangeProductRepository.findById(product.getExchangeProductCode()).orElseThrow();
 
@@ -220,6 +255,7 @@ public class ExchangeServiceImpl implements ExchangeService{
         exchangeProductEntity.getProduct().setProductCount(
                 exchangeProductEntity.getProduct().getProductCount()+ product.getExchangeProductNormalCount()
         );
+        exchangeProductRepository.save(exchangeProductEntity);
     }
 
 

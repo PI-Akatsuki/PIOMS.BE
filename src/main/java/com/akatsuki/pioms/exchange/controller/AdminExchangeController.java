@@ -23,7 +23,7 @@ public class AdminExchangeController {
     }
 
     @GetMapping("/{adminCode}/exchanges")
-    public ResponseEntity<List<ResponseExchange>> getExchanges(int adminCode){
+    public ResponseEntity<List<ResponseExchange>> getExchanges(@PathVariable int adminCode){
         List<ExchangeDTO> exchangeDTOS = exchangeService.getExchanges(adminCode);
         List<ResponseExchange> responseExchanges = new ArrayList<>();
         exchangeDTOS.forEach(exchangeDTO -> {
