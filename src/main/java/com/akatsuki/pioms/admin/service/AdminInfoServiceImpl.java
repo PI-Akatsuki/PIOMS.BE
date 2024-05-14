@@ -6,6 +6,7 @@ import com.akatsuki.pioms.log.etc.LogStatus;
 import com.akatsuki.pioms.log.service.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,10 +21,13 @@ public class AdminInfoServiceImpl implements AdminInfoService {
     private final AdminRepository adminRepository;
     private final LogService logService;
 
+    private final PasswordEncoder passwordEncoder;
+
     @Autowired
-    public AdminInfoServiceImpl(AdminRepository adminRepository,LogService logService) {
+    public AdminInfoServiceImpl(AdminRepository adminRepository, LogService logService, PasswordEncoder passwordEncoder) {
         this.adminRepository = adminRepository;
         this.logService = logService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     // 전체 조회
@@ -33,11 +37,18 @@ public class AdminInfoServiceImpl implements AdminInfoService {
         return adminRepository.findAll();
     }
 
+
+
     // 상세 조회
     @Transactional(readOnly = true)
     @Override
-    public Optional<Admin> findAdminById(int adminCode) {
-        return adminRepository.findById(adminCode);
+    public ResponseEntity<Admin> findAdminById(int adminCode) {
+        Admin admin = adminRepository.findById(adminCode).orElse(null);
+        if (admin != null) {
+            return ResponseEntity.ok(admin);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
 
