@@ -25,10 +25,6 @@ public class SpecsEntity {
     @Column(name = "specs_date")
     private LocalDateTime specsDate;
 
-    @JoinColumn(name = "franchise_code")
-    @ManyToOne
-    private Franchise franchise;
-
     @JoinColumn(name = "request_code")
     @OneToOne
     private Order order;
@@ -40,7 +36,6 @@ public class SpecsEntity {
         this.order= order1;
         Franchise franchise1 = new Franchise();
         franchise1.setFranchiseCode(franchiseId);
-        this.franchise = franchise1;
     }
 
 }

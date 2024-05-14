@@ -29,21 +29,6 @@ public class SpecsController {
         this.specsService = specsService;
     }
 
-    @GetMapping("/admin/specs")
-    public ResponseEntity<List<ResponseSpecs>> getSpecsList(){
-        List<SpecsDTO> specsDTOS = specsService.getSpecsList();
-        List<ResponseSpecs> responseSpecs = new ArrayList<>();
-        specsDTOS.forEach( specsDTO -> {
-            responseSpecs.add(new ResponseSpecs(specsDTO));
-        });
-        return ResponseEntity.ok(responseSpecs);
-    }
-    @GetMapping("/admin/specs/{specsCode}")
-    public ResponseEntity<ResponseSpecs> getSpecs(@PathVariable int specsCode){
-        SpecsDTO specsDTO = specsService.getSpecs(specsCode);
-        return ResponseEntity.ok(new ResponseSpecs(specsDTO));
-    }
-
     @GetMapping("/franchise/{franchiseCode}/specs")
     public ResponseEntity<List<ResponseSpecs>> getFranchiseSpecsList(@PathVariable int franchiseCode){
         List<SpecsDTO> specsDTOS = specsService.getFranchiseSpecsList(franchiseCode);

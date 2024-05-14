@@ -1,14 +1,10 @@
 package com.akatsuki.pioms.specs.service;
 
 import com.akatsuki.pioms.franchise.aggregate.DELIVERY_DATE;
-import com.akatsuki.pioms.order.aggregate.Order;
-import com.akatsuki.pioms.order.dto.OrderDTO;
 import com.akatsuki.pioms.specs.aggregate.SpecsEntity;
 import com.akatsuki.pioms.specs.dto.SpecsDTO;
 import com.akatsuki.pioms.specs.repository.SpecsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -58,7 +54,7 @@ public class SpecsServiceImpl implements SpecsService{
 
     @Override
     public List<SpecsDTO> getFranchiseSpecsList(int franchiseCode) {
-        List<SpecsEntity> specsEntities = specsRepository.findAllByFranchiseFranchiseCode(franchiseCode);
+        List<SpecsEntity> specsEntities = specsRepository.findAllByOrderFranchiseFranchiseCode(franchiseCode);
         List<SpecsDTO> responseSpecs = new ArrayList<>();
         specsEntities.forEach(specs -> {
              responseSpecs.add(new SpecsDTO(specs));
