@@ -3,10 +3,7 @@ package com.akatsuki.pioms.frowner.aggregate;
 
 
 import com.akatsuki.pioms.frowner.dto.FranchiseOwnerDTO;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import java.time.LocalDateTime;
@@ -19,8 +16,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
 @Builder
+@ToString
 public class FranchiseOwner {
     @Id
     @Column(name = "franchise_owner_code")
@@ -49,21 +46,9 @@ public class FranchiseOwner {
 
     @Column(name = "franchise_owner_delete_date")
     private String franchiseOwnerDeleteDate;
-    @OneToOne(mappedBy = "franchiseOwner", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false)
+    @OneToOne(mappedBy = "franchiseOwner")
+    @ToString.Exclude
     private Franchise franchise;
-
-  
-    public FranchiseOwner(FranchiseOwnerDTO franchiseOwner) {
-        this.franchiseOwnerCode= franchiseOwner.getFranchiseOwnerCode();
-        this.franchiseOwnerName= franchiseOwner.getFranchiseOwnerName();
-        this.franchiseOwnerId= franchiseOwner.getFranchiseOwnerId();
-        this.franchiseOwnerPwd= franchiseOwner.getFranchiseOwnerPwd();
-        this.franchiseOwnerEmail= franchiseOwner.getFranchiseOwnerEmail();
-        this.franchiseOwnerPhone= franchiseOwner.getFranchiseOwnerPhone();
-        this.franchiseOwnerEnrollDate= franchiseOwner.getFranchiseOwnerEnrollDate();
-        this.franchiseOwnerUpdateDate= franchiseOwner.getFranchiseOwnerUpdateDate();
-        this.franchiseOwnerDeleteDate= franchiseOwner.getFranchiseOwnerDeleteDate();
-    }
 
 
 

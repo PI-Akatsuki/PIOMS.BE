@@ -40,12 +40,12 @@ public class OrderVO {
         this.orderCondition = order.getOrderCondition();
         this.orderReason = order.getOrderReason();
         this.orderStatus = order.isOrderStatus();
-        this.franchiseCode = order.getFranchise().getFranchiseCode();
-        this.franchiseName = order.getFranchise().getFranchiseName();
-        this.franchiseOwnerCode = order.getFranchise().getFranchiseOwner().getFranchiseOwnerCode();
-        this.franchiseOwnerName = order.getFranchise().getFranchiseOwner().getFranchiseOwnerName();
-        this.franchiseDeliveryDate = order.getFranchise().getFranchiseDeliveryDate();
-        this.adminCode = order.getFranchise().getAdmin().getAdminCode();
-        this.adminName = order.getFranchise().getAdmin().getAdminName();
+        this.franchiseCode = order.getFranchiseCode();
+        this.franchiseName = order.getFranchiseName();
+        this.franchiseOwnerCode = order.getFranchiseOwnerCode();
+        this.franchiseOwnerName = order.getFranchiseOwnerName();
+        this.franchiseDeliveryDate = order.getDeliveryDate();
+        this.adminCode = order.getAdminCode();
+        this.adminName = order.getAdminName();
     }
 }

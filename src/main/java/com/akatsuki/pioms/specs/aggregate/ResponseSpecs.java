@@ -25,13 +25,13 @@ public class ResponseSpecs {
     public ResponseSpecs(SpecsDTO specs) {
         this.specsCode = specs.getSpecsCode();
         this.specsDate = specs.getSpecsDate();
-        this.franchiseCode = specs.getFranchise().getFranchiseCode();
-        this.franchiseName = specs.getFranchise().getFranchiseName();
+        this.franchiseCode = specs.getOrder().getFranchiseCode();
+        this.franchiseName = specs.getOrder().getFranchiseName();
         this.orderCode = specs.getOrder().getOrderCode();
         products = new HashMap<>();
         specs.getOrder().getOrderProductList().forEach(product->{
-            products.put(product.getProduct().getProductName(),product.getRequestProductCount());
+            products.put( product.getProductName(),product.getRequestProductCount());
         });
-    }
 
+    }
 }

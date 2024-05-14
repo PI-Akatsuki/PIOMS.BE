@@ -55,21 +55,5 @@ public class Admin {
     @OneToMany(mappedBy = "admin")
     private List<Franchise> franchise;
 
-    public Admin(AdminDTO admin) {
-        this.adminCode= admin.getAdminCode();
-        this.adminName= admin.getAdminName();
-        this.adminId= admin.getAdminId();
-        this.adminPwd= admin.getAdminPwd();
-        this.enrollDate= admin.getEnrollDate();
-        this.updateDate= admin.getUpdateDate();
-        this.deleteDate= admin.getDeleteDate();
-        this.adminEmail= admin.getAdminEmail();
-        this.adminPhone= admin.getAdminPhone();
-        this.accessNumber= admin.getAccessNumber();
-        this.adminStatus= admin.isAdminStatus();
-        this.franchise= new ArrayList<>();
-        for (int i = 0; i < admin.getFranchiseList().size(); i++) {
-            franchise.add(new Franchise(admin.getFranchiseList().get(i) ) );
-        }
-    }
+
 }

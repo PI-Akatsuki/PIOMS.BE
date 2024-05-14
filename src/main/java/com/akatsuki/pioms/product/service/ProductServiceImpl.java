@@ -11,8 +11,10 @@ import com.akatsuki.pioms.exchange.service.ExchangeService;
 import com.akatsuki.pioms.order.aggregate.Order;
 import com.akatsuki.pioms.log.etc.LogStatus;
 import com.akatsuki.pioms.log.service.LogService;
+import com.akatsuki.pioms.order.dto.OrderDTO;
 import com.akatsuki.pioms.product.aggregate.ResponseProducts;
 
+import com.akatsuki.pioms.product.dto.ProductDTO;
 import com.akatsuki.pioms.product.repository.ProductRepository;
 import com.akatsuki.pioms.categoryThird.aggregate.CategoryThird;
 import com.akatsuki.pioms.product.aggregate.Product;
@@ -180,11 +182,10 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-
-    public void exportProducts(Order order) {
+    public void exportProducts(OrderDTO order) {
         // 발주 상품에 대해 재고 수정
         order.getOrderProductList().forEach(requestProduct->{
-            productMinusCnt(requestProduct.getRequestProductCount(), requestProduct.getProduct());
+            productMinusCnt(requestProduct.getRequestProductCount(), requestProduct.getProductCode());
         });
     }
 
@@ -192,18 +193,22 @@ public class ProductServiceImpl implements ProductService{
     public void exportExchangeProducts(int exchangeCode) {
         // 교환 상품에 대해서만 처리해야한다.
         List<ExchangeProduct> exchangeProductList = exchangeService.getExchangeProductsWithStatus(exchangeCode, EXCHANGE_PRODUCT_STATUS.교환);
+
         if (exchangeProductList == null) {
             System.out.println("Exchange Products not found!!");
             return;
         }
         exchangeProductList.forEach(requestProduct->{
-            productMinusCnt(requestProduct.getExchangeProductNormalCount(), requestProduct.getProduct());
+            productMinusCnt(requestProduct.getExchangeProductNormalCount(), requestProduct.getExchangeProductCode());
         });
     }
 
     @Override
-    public boolean checkExchangeProduct(Order order, ExchangeDTO exchange) {
+    public boolean checkExchangeProduct(OrderDTO order, ExchangeDTO exchange) {
         //
+        if (exchange== null){
+            return false;
+        }
 
         for (int i = 0; i < exchange.getExchangeProducts().size(); i++) {
             if (exchange.getExchangeProducts().get(i).getExchangeProductStatus() != EXCHANGE_PRODUCT_STATUS.폐기 ){
@@ -213,12 +218,12 @@ public class ProductServiceImpl implements ProductService{
                 }
             }
         }
-        exportExchangeProducts(exchange.getExchangeCode());
+
         return true;
     }
 
-    private void productMinusCnt(int requestProduct, Product requestProduct1) {
-        Product product = productRepository.findById(requestProduct1.getProductCode()).orElseThrow();
+    private void productMinusCnt(int requestProduct, int orderProductCode) {
+        Product product = productRepository.findById(orderProductCode).orElseThrow();
         product.setProductCount(product.getProductCount() - requestProduct);
         productRepository.save(product);
     }

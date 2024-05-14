@@ -12,7 +12,7 @@ public interface AdminInfoService {
     List<Admin> findAdminList();
 
     // 상세 조회
-    Optional<Admin> findAdminById(int adminCode);
+    ResponseEntity<Admin> findAdminById(int adminCode);
 
     // 관리자 등록
     ResponseEntity<String> saveAdmin(Admin admin, int requestorAdminCode);
@@ -22,5 +22,8 @@ public interface AdminInfoService {
 
     // 비활성화(삭제)
     ResponseEntity<String> deleteAdmin(int adminCode, int requestorAdminCode);
+
+    // 관리자 로그인
+    ResponseEntity<Admin> login(String adminId, String password, String accessNumber);
 
 }

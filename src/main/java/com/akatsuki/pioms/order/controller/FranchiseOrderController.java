@@ -1,6 +1,7 @@
 package com.akatsuki.pioms.order.controller;
 
 import com.akatsuki.pioms.order.aggregate.*;
+import com.akatsuki.pioms.order.service.OrderFacade;
 import com.akatsuki.pioms.order.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,10 +13,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/franchise")
 public class FranchiseOrderController {
     OrderService orderService;
+    OrderFacade orderFacade;
 
     @Autowired
-    public FranchiseOrderController(OrderService orderService) {
+    public FranchiseOrderController(OrderService orderService,OrderFacade orderFacade) {
         this.orderService = orderService;
+        this.orderFacade = orderFacade;
     }
 
     /**
@@ -23,7 +26,7 @@ public class FranchiseOrderController {
      * */
     @PostMapping("/{franchiseCode}")
     public ResponseEntity<String> postFranchiseOrder(@PathVariable int franchiseCode, @RequestBody RequestOrderVO orders){
-        boolean result = orderService.postFranchiseOrder(franchiseCode,orders);
+        boolean result = orderFacade.postFranchiseOrder(franchiseCode,orders);
         if(!result)
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         return ResponseEntity.ok().body("Post finished");

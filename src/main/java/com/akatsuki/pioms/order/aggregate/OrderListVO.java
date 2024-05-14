@@ -18,10 +18,13 @@ public class OrderListVO {
 
     public OrderListVO(List<OrderDTO> franchisesOrderList) {
         orderList = new ArrayList<>();
+
         franchisesOrderList.forEach(
-                orderDTO -> {
-                    orderList.add(new OrderVO(orderDTO));
+                order -> {
+                    orderList.add(new OrderVO(order));
                 }
         );
+
     }
+
 }

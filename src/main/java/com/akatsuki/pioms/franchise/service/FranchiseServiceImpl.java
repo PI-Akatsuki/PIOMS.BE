@@ -2,6 +2,7 @@ package com.akatsuki.pioms.franchise.service;
 
 import com.akatsuki.pioms.admin.aggregate.Admin;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
+import com.akatsuki.pioms.franchise.dto.FranchiseDTO;
 import com.akatsuki.pioms.franchise.repository.FranchiseRepository;
 import com.akatsuki.pioms.admin.repository.AdminRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -137,5 +138,11 @@ public class FranchiseServiceImpl implements FranchiseService {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @Override
+    public FranchiseDTO findFranchiseByFranchiseOwnerCode(int franchiseOwnerCode) {
+        Franchise franchise = franchiseRepository.findByFranchiseOwnerFranchiseOwnerCode(franchiseOwnerCode);
+        return new FranchiseDTO(franchise);
     }
 }

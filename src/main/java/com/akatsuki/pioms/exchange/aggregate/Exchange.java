@@ -37,11 +37,4 @@ public class Exchange {
     List<ExchangeProduct> products;
 
 
-    public Exchange(ExchangeDTO exchange) {
-        this.exchangeCode = exchange.getExchangeCode();
-        this.exchangeDate = exchange.getExchangeDate();
-        this.exchangeStatus = exchange.getExchangeStatus();
-        this.franchise = exchange.getFranchise();
-    }
-
 }
