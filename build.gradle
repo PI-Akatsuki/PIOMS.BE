@@ -43,7 +43,7 @@ dependencies {
     // Devtools
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
-    // Mysql Driver
+    // MariaDB Driver
     runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
 
     // Swagger
