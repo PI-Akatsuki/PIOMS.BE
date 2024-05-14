@@ -77,7 +77,7 @@ jobs:
           fi
 
       - name: Build with Gradle
-        run: ./gradlew clean build --stacktrace --info
+        run: ./gradlew clean build
         shell: bash
 
       - name: Run Service Tests
