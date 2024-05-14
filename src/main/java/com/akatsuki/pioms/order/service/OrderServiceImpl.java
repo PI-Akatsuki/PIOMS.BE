@@ -33,26 +33,16 @@ public class OrderServiceImpl implements OrderService{
 //    FranchiseWarehouseService franchiseWarehouseService;
 
     @Autowired
-    public OrderServiceImpl(OrderRepository orderRepository, ApplicationEventPublisher publisher,
-                            ExchangeService exchangeService, OrderProductRepository orderProductRepository,
-                            ProductService productService, InvoiceService invoiceService,
-                            FranchiseWarehouseService franchiseWarehouseService) {
+    public OrderServiceImpl(OrderRepository orderRepository, OrderProductRepository orderProductRepository) {
         this.orderRepository = orderRepository;
-//        this.publisher = publisher;
-//        this.exchangeService = exchangeService;
         this.orderProductRepository = orderProductRepository;
-//        this.productService = productService;
-//        this.invoiceService = invoiceService;
-//        this.franchiseWarehouseService = franchiseWarehouseService;
     }
-
 
     @Override
     @Transactional(readOnly = true)
     public List<Order> getOrderListByAdminCode(int adminCode){
         // 인가 필요 없음
         List<Order> orderList = orderRepository.findAllByFranchiseAdminAdminCode(adminCode);
-
         if (orderList == null)
             return null;
 

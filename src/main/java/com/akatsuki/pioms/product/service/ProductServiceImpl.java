@@ -205,6 +205,9 @@ public class ProductServiceImpl implements ProductService{
     @Override
     public boolean checkExchangeProduct(Order order, ExchangeDTO exchange) {
         //
+        if (exchange== null){
+            return false;
+        }
 
         for (int i = 0; i < exchange.getExchangeProducts().size(); i++) {
             if (exchange.getExchangeProducts().get(i).getExchangeProductStatus() != EXCHANGE_PRODUCT_STATUS.폐기 ){

@@ -6,7 +6,6 @@ import com.akatsuki.pioms.invoice.aggregate.InvoiceEntity;
 import com.akatsuki.pioms.invoice.aggregate.OrderProductVO;
 import com.akatsuki.pioms.invoice.aggregate.ResponseInvoice;
 import com.akatsuki.pioms.invoice.aggregate.ResponseInvoiceList;
-import com.akatsuki.pioms.invoice.dto.InvoiceDTO;
 import com.akatsuki.pioms.invoice.etc.DELIVERY_STATUS;
 import com.akatsuki.pioms.invoice.repository.InvoiceRepository;
 import com.akatsuki.pioms.order.aggregate.Order;
@@ -68,7 +67,7 @@ class InvoiceServiceTest {
                 ).collect(Collectors.toList())
         );
         //when
-        List<InvoiceDTO> responseInvoiceList = invoiceService.getAllInvoiceList();
+        List<InvoiceEntity> responseInvoiceList = invoiceService.getAllInvoiceList();
         System.out.println(responseInvoiceList);
         //then
         assertEquals(2,responseInvoiceList.size());
@@ -84,7 +83,7 @@ class InvoiceServiceTest {
           invoiceEntity
         );
         //when
-        InvoiceDTO invoice = invoiceService.saveInvoice(new InvoiceDTO(invoiceEntity));
+        InvoiceEntity invoice = invoiceService.saveInvoice(new InvoiceEntity(invoiceEntity));
         //then
         assertEquals(invoiceEntity.getInvoiceCode(), invoice.getInvoiceCode());
     }
@@ -107,7 +106,7 @@ class InvoiceServiceTest {
 
         //when
         DELIVERY_STATUS pastStatus = invoiceEntity.getDeliveryStatus();
-        InvoiceDTO responseInvoice = invoiceService.putInvoice(invoiceCode,DELIVERY_STATUS.배송완료);
+        InvoiceEntity responseInvoice = invoiceService.putInvoice(invoiceCode,DELIVERY_STATUS.배송완료);
         //then
         System.out.println("responseInvoice = " + responseInvoice);
         System.out.println("invoiceEntity = " + invoiceEntity);
@@ -124,7 +123,7 @@ class InvoiceServiceTest {
                         Optional.of(new InvoiceEntity(1, DELIVERY_STATUS.배송전, null, 1, null))
                 );
         //when
-        InvoiceDTO invoice =  invoiceService.getInvoice(invoiceCode);
+        InvoiceEntity invoice =  invoiceService.getInvoice(invoiceCode);
         //then
         assertEquals(invoiceCode, invoice.getInvoiceCode());
     }
@@ -135,7 +134,7 @@ class InvoiceServiceTest {
         InvoiceEntity invoiceEntity =
                 new InvoiceEntity(1,DELIVERY_STATUS.배송전,null,1,null);
         //when
-        invoiceService.deleteInvoice(new InvoiceDTO(invoiceEntity));
+        invoiceService.deleteInvoice(new InvoiceEntity(invoiceEntity));
         //then
         verify(invoiceRepository,times(1)).delete(invoiceEntity);
     }
@@ -149,7 +148,7 @@ class InvoiceServiceTest {
                 invoiceEntity
         );
         //when
-        InvoiceDTO invoiceCmp = invoiceService.getInvoiceByOrderCode(order.getOrderCode());
+        InvoiceEntity invoiceCmp = invoiceService.getInvoiceByOrderCode(order.getOrderCode());
         //then
         assertEquals(1,invoiceCmp.getOrder().getOrderCode());
     }
@@ -163,7 +162,7 @@ class InvoiceServiceTest {
                 invoiceEntity
         );
         //when
-        InvoiceDTO invoiceCmp = invoiceService.getInvoiceByOrderCode(order.getOrderCode());
+        InvoiceEntity invoiceCmp = invoiceService.getInvoiceByOrderCode(order.getOrderCode());
         //then
         assertEquals(DELIVERY_STATUS.배송완료, invoiceCmp.getDeliveryStatus());
         assertNotEquals(DELIVERY_STATUS.배송전, invoiceService.getInvoiceByOrderCode(1).getDeliveryStatus());

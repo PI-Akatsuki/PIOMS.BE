@@ -1,6 +1,7 @@
 package com.akatsuki.pioms.order.controller;
 
 import com.akatsuki.pioms.order.aggregate.Order;
+import com.akatsuki.pioms.order.dto.OrderDTO;
 import com.akatsuki.pioms.order.service.OrderFacade;
 import com.akatsuki.pioms.order.service.OrderService;
 import com.akatsuki.pioms.order.aggregate.OrderListVO;
@@ -11,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * <h1>발주 API</h1>
@@ -46,9 +49,9 @@ public class AdminOrderController {
 
     @GetMapping("/{adminCode}/orders")
     @Operation(summary = "관리자가 관리하고 있는 모든 가맹점들의 발주 리스트를 조회합니다.")
-    public ResponseEntity<OrderListVO> getFranchisesOrderList(@PathVariable int adminCode){
+    public ResponseEntity<List<OrderDTO>> getFranchisesOrderList(@PathVariable int adminCode){
 
-        OrderListVO orderListVO = new OrderListVO(orderFacade.getOrderListByAdminCode(adminCode));
+        List<OrderDTO> orderListVO = orderFacade.getOrderListByAdminCode(adminCode);
 
         return ResponseEntity.ok().body(orderListVO);
     }

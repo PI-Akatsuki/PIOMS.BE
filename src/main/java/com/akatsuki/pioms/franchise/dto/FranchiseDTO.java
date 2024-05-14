@@ -27,6 +27,7 @@ public class FranchiseDTO {
     private String franchiseBusinessNum;
     private DELIVERY_DATE franchiseDeliveryDate;
     private FranchiseOwnerDTO franchiseOwner;
+
     private AdminDTO admin;
 
 

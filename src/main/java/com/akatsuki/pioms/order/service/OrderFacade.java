@@ -8,6 +8,7 @@ import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import com.akatsuki.pioms.franchise.service.FranchiseService;
 import com.akatsuki.pioms.invoice.service.InvoiceService;
 import com.akatsuki.pioms.order.aggregate.Order;
+import com.akatsuki.pioms.order.dto.OrderDTO;
 import com.akatsuki.pioms.product.aggregate.Product;
 import com.akatsuki.pioms.product.service.ProductService;
 import com.akatsuki.pioms.specs.service.SpecsService;
@@ -16,6 +17,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -40,9 +42,13 @@ public class OrderFacade {
         this.publisher = publisher;
     }
 
-    public List<Order> getOrderListByAdminCode(int adminCode){
+    public List<OrderDTO> getOrderListByAdminCode(int adminCode){
         List<Order> orders =  orderService.getOrderListByAdminCode(adminCode);
-        return orders;
+        List<OrderDTO> orderDTOS = new ArrayList<>();
+        orders.forEach(order -> {
+            orderDTOS.add(new OrderDTO(order));
+        });
+        return orderDTOS;
     }
 
     public List<Order> getAdminUncheckesOrders(int adminCode){
