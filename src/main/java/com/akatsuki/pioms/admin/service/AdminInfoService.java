@@ -12,7 +12,7 @@ public interface AdminInfoService {
     List<Admin> findAdminList();
 
     // 상세 조회
-    Optional<Admin> findAdminById(int adminCode);
+    ResponseEntity<Admin> findAdminById(int adminCode);
 
     // 관리자 등록
     ResponseEntity<String> saveAdmin(Admin admin, int requestorAdminCode);
