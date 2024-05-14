@@ -1,6 +1,7 @@
 package com.akatsuki.pioms.admin.controller;
 
 import com.akatsuki.pioms.admin.aggregate.Admin;
+import com.akatsuki.pioms.admin.aggregate.AdminLoginRequest;
 import com.akatsuki.pioms.admin.service.AdminInfoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -71,4 +72,8 @@ public class AdminInfoController {
         return adminService.deleteAdmin(adminCode, requestorAdminCode);
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<Admin> login(@RequestBody AdminLoginRequest adminLoginRequest) {
+        return adminService.login(adminLoginRequest.getAdminId(), adminLoginRequest.getPassword(), adminLoginRequest.getAccessNumber());
+    }
 }
