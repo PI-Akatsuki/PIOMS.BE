@@ -198,9 +198,12 @@ public class ProductServiceImpl implements ProductService{
             System.out.println("Exchange Products not found!!");
             return;
         }
-        exchangeProductList.forEach(requestProduct->{
-            productMinusCnt(requestProduct.getExchangeProductNormalCount(), requestProduct.getExchangeProductCode());
-        });
+        System.out.println("exchangeProductList = " + exchangeProductList);
+        for (int i = 0; i < exchangeProductList.size(); i++) {
+            System.out.println("i = " + i);
+            productMinusCnt(exchangeProductList.get(i).getExchangeProductNormalCount(), exchangeProductList.get(i).getProduct().getProductCode());
+        }
+
     }
 
     @Override
@@ -224,6 +227,7 @@ public class ProductServiceImpl implements ProductService{
 
     private void productMinusCnt(int requestProduct, int orderProductCode) {
         Product product = productRepository.findById(orderProductCode).orElseThrow();
+        System.out.println("product = " + product);
         product.setProductCount(product.getProductCount() - requestProduct);
         productRepository.save(product);
     }

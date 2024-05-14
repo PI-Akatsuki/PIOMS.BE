@@ -63,10 +63,9 @@ public class OrderFacade {
         return orderService.getAdminOrder(adminCode,orderCode);
     }
 
-    public Order acceptOrder(int adminCode, int orderCode){
+    public OrderDTO acceptOrder(int adminCode, int orderCode){
         OrderDTO order = orderService.getAdminOrder(adminCode,orderCode);
         ExchangeDTO exchange =  exchangeService.findExchangeToSend(order.getFranchiseCode());
-
         if(!orderService.checkProductCnt(order)) {
             return null;
         }
@@ -75,14 +74,23 @@ public class OrderFacade {
             exchange = null;
         }
 
+        if(exchange!=null){
+            order = orderService.addExchangeToOrder(exchange, order.getOrderCode());
+        }
+
         Order orderEntity = orderService.acceptOrder(adminCode,orderCode, exchange);
+
+        System.out.println("orderEntity = " + orderEntity);
         productService.exportProducts(order);
+        System.out.println("orderEntity = " + orderEntity);
+
         if (exchange!=null)
             productService.exportExchangeProducts(exchange.getExchangeCode());
-//        publisher.publishEvent(new OrderEvent(order));
         specsService.afterAcceptOrder(orderCode, order.getFranchiseCode(), order.getDeliveryDate());
+        System.out.println();
         invoiceService.afterAcceptOrder(orderCode,order.getFranchiseCode(),order.getDeliveryDate(), order.getOrderDate());
-        return orderEntity;
+        System.out.println("End orderEntity = " + orderEntity);
+        return new OrderDTO(orderEntity);
     }
 
     public String denyOrder(int adminCode,int orderId, String denyMessage){
