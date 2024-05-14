@@ -27,6 +27,8 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 class ExchangeServiceTest {
 
+    // test용 주석
+
 //    @Autowired
 //    ExchangeService exchangeService;
 //
