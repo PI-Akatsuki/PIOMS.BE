@@ -1,6 +1,5 @@
 package com.akatsuki.pioms.invoice.service;
 
-import com.akatsuki.pioms.event.OrderEvent;
 import com.akatsuki.pioms.franchise.aggregate.DELIVERY_DATE;
 import com.akatsuki.pioms.invoice.aggregate.InvoiceEntity;
 import com.akatsuki.pioms.invoice.etc.DELIVERY_STATUS;
@@ -26,17 +25,18 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public InvoiceEntity postInvoice(Order orderDTO){
+    public InvoiceEntity postInvoice(int orderCode, int franchiseCode, DELIVERY_DATE franchiseDeliveryDate, LocalDateTime orderDateTime){
         InvoiceEntity invoice = new InvoiceEntity();
-        if(orderDTO!=null) {
-            Order order = new Order();
-            order.setOrderCode(orderDTO.getOrderCode());
-            invoice.setOrder(order);
-            invoice.setDeliveryStatus(DELIVERY_STATUS.배송전);
-            invoice.setInvoiceRegionCode(1);
-            DELIVERY_DATE deliveryDate = orderDTO.getFranchise().getFranchiseDeliveryDate();
-            invoice.setInvoiceDate(setDeliveryTime(orderDTO.getOrderDate(), deliveryDate));
-        }
+        Order order = new Order();
+        order.setOrderCode(orderCode);
+        invoice.setOrder(order);
+
+        invoice.setDeliveryStatus(DELIVERY_STATUS.배송전);
+        invoice.setInvoiceRegionCode(1);
+
+        DELIVERY_DATE deliveryDate = franchiseDeliveryDate;
+        invoice.setInvoiceDate(setDeliveryTime(orderDateTime, deliveryDate));
+
 
         return saveInvoice( new InvoiceEntity( invoice));
 
@@ -73,11 +73,10 @@ public class InvoiceServiceImpl implements InvoiceService {
         return orderTime;
     }
 
-    @EventListener
-    @Async
-    public void getOrder(OrderEvent orderEvent){
+    @Override
+    public void afterAcceptOrder(int orderCode, int franchiseCode, DELIVERY_DATE deliveryDate, LocalDateTime orderDateTime){
         System.out.println("Invoice event listen");
-        postInvoice(orderEvent.getOrder());
+        postInvoice(orderCode,franchiseCode, deliveryDate, orderDateTime);
         System.out.println("Invoice event End");
     }
 

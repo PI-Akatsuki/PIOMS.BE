@@ -1,6 +1,7 @@
 package com.akatsuki.pioms.specs.service;
 
 
+import com.akatsuki.pioms.franchise.aggregate.DELIVERY_DATE;
 import com.akatsuki.pioms.specs.aggregate.ResponseSpecs;
 import com.akatsuki.pioms.specs.aggregate.SpecsEntity;
 
@@ -13,5 +14,6 @@ public interface SpecsService {
     SpecsEntity getSpecs(int specsCode);
 
     List<SpecsEntity> getFranchiseSpecsList(int franchiseCode);
+    void afterAcceptOrder(int orderCode, int franchiseCode, DELIVERY_DATE deliveryDate);
 
 }

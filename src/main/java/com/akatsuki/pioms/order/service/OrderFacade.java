@@ -1,6 +1,5 @@
 package com.akatsuki.pioms.order.service;
 
-import com.akatsuki.pioms.event.OrderEvent;
 import com.akatsuki.pioms.exchange.aggregate.Exchange;
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import com.akatsuki.pioms.exchange.service.ExchangeService;
@@ -8,6 +7,7 @@ import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import com.akatsuki.pioms.franchise.service.FranchiseService;
 import com.akatsuki.pioms.invoice.service.InvoiceService;
 import com.akatsuki.pioms.order.aggregate.Order;
+import com.akatsuki.pioms.order.aggregate.RequestOrderVO;
 import com.akatsuki.pioms.order.dto.OrderDTO;
 import com.akatsuki.pioms.product.aggregate.Product;
 import com.akatsuki.pioms.product.service.ProductService;
@@ -75,13 +75,14 @@ public class OrderFacade {
             exchange = null;
         }
 
-        Order orderDTO = orderService.acceptOrder(adminCode,orderCode, exchange);
+        Order orderEntity = orderService.acceptOrder(adminCode,orderCode, exchange);
         productService.exportProducts(order);
         if (exchange!=null)
             productService.exportExchangeProducts(exchange.getExchangeCode());
 //        publisher.publishEvent(new OrderEvent(order));
-
-        return orderDTO;
+        specsService.afterAcceptOrder(orderCode, order.getFranchiseCode(), order.getDeliveryDate());
+        invoiceService.afterAcceptOrder(orderCode,order.getFranchiseCode(),order.getDeliveryDate(), order.getOrderDate());
+        return orderEntity;
     }
 
     public String denyOrder(int adminCode,int orderId, String denyMessage){
@@ -89,4 +90,8 @@ public class OrderFacade {
         return returnValue;
     }
 
+    public boolean postFranchiseOrder(int franchiseCode, RequestOrderVO orders) {
+
+        return orderService.postFranchiseOrder(franchiseCode,orders);
+    }
 }

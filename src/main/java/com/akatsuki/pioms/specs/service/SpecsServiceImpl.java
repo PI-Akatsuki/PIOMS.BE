@@ -1,7 +1,8 @@
 package com.akatsuki.pioms.specs.service;
 
-import com.akatsuki.pioms.event.OrderEvent;
+import com.akatsuki.pioms.franchise.aggregate.DELIVERY_DATE;
 import com.akatsuki.pioms.order.aggregate.Order;
+import com.akatsuki.pioms.order.dto.OrderDTO;
 import com.akatsuki.pioms.specs.aggregate.SpecsEntity;
 import com.akatsuki.pioms.specs.repository.SpecsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,16 +22,17 @@ public class SpecsServiceImpl implements SpecsService{
         this.specsRepository = specsRepository;
     }
 
-    public void postSpecs(Order orderEntity){
-        specsRepository.save(new SpecsEntity(orderEntity));
-        System.out.println("orderEntity = " + orderEntity);
+    public void postSpecs(int orderCode, int franchiseCode, DELIVERY_DATE deliveryDate){
+
+        specsRepository.save(new SpecsEntity(orderCode, franchiseCode));
+        System.out.println("orderDTO = " + orderCode);
     }
 
-    @EventListener
-    @Async
-    public void getOrder(OrderEvent orderEvent){
+    // order 승인 후
+    @Override
+    public void afterAcceptOrder(int orderCode, int franchiseCode, DELIVERY_DATE deliveryDate){
         System.out.println("명세서 생성 event 발생");
-        postSpecs(orderEvent.getOrder());
+        postSpecs(orderCode, franchiseCode, deliveryDate);
         System.out.println("명세서 생성 event 완료");
     }
 
@@ -38,6 +40,7 @@ public class SpecsServiceImpl implements SpecsService{
     public List<SpecsEntity> getSpecsList(){
         List<SpecsEntity> specsList = specsRepository.findAll();
         List<SpecsEntity> responseSpecs = new ArrayList<>();
+
         specsList.forEach(specs -> {
             responseSpecs.add(specs);
         });
