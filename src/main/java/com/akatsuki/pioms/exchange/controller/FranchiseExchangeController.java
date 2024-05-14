@@ -57,8 +57,8 @@ public class FranchiseExchangeController {
     public ResponseEntity<String> deleteExchange(@PathVariable int franchiseOwnerCode, @PathVariable int exchangeCode){
         boolean isDelete = exchangeService.deleteExchange(franchiseOwnerCode,exchangeCode);
         if (!isDelete)
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
-        return ResponseEntity.status(HttpStatus.OK).build();
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("삭제 -실패-");
+        return ResponseEntity.status(HttpStatus.OK).body("삭제 -완-");
     }
 
 }
