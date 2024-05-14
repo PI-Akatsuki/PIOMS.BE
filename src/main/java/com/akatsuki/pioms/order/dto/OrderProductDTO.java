@@ -23,11 +23,13 @@ public class OrderProductDTO {
     private int requestProductGetCount;
     private int orderCode;
     private int productCode;
+    private String productName;
     public OrderProductDTO(OrderProduct orderProduct) {
         this.requestProductCode= orderProduct.getRequestProductCode();
         this.requestProductCount= orderProduct.getRequestProductCount();
         this.requestProductGetCount= orderProduct.getRequestProductGetCount();
         this.orderCode= orderProduct.getOrder().getOrderCode();
         this.productCode= orderProduct.getProduct().getProductCode();
+        this.productName = orderProduct.getProduct().getProductName();
     }
 }
