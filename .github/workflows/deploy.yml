@@ -51,7 +51,7 @@ jobs:
               generate-ddl: false
             datasource:
               driver-class-name: org.mariadb.jdbc.Driver
-              url: \${URL}
+              url: \${DB_URL}
               username: \${DB_USERNAME}
               password: \${DB_PASSWORD}
           EOL
@@ -61,7 +61,7 @@ jobs:
           envsubst < src/main/resources/application.yml.template > src/main/resources/application.yml
           cat src/main/resources/application.yml
         env:
-          URL: ${{ secrets.DB_URL }}
+          DB_URL: ${{ secrets.DB_URL }}
           DB_USERNAME: ${{ secrets.DB_USERNAME }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
 
