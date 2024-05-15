@@ -41,8 +41,8 @@ public class CategoryFirstController {
     }
 
     @PostMapping("/post")
-    public ResponseEntity<String> postCategoryFirst(@RequestBody RequestCategoryFirstPost request/*, int requesterAdminCode*/) {
-        return categoryFirstService.postCategoryFirst(request/*, int requesterAdminCode*/);
+    public ResponseEntity<String> postCategoryFirst(@RequestBody RequestCategoryFirstPost request, int requesterAdminCode) {
+        return categoryFirstService.postCategoryFirst(request, requesterAdminCode);
 
     }
 
