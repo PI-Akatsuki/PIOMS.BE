@@ -6,15 +6,14 @@ import com.akatsuki.pioms.exchange.aggregate.ExchangeProduct;
 import com.akatsuki.pioms.categoryThird.repository.CategoryThirdRepository;
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import com.akatsuki.pioms.exchange.aggregate.EXCHANGE_PRODUCT_STATUS;
+import com.akatsuki.pioms.exchange.dto.ExchangeProductDTO;
 import com.akatsuki.pioms.exchange.service.ExchangeService;
 
-import com.akatsuki.pioms.order.aggregate.Order;
 import com.akatsuki.pioms.log.etc.LogStatus;
 import com.akatsuki.pioms.log.service.LogService;
 import com.akatsuki.pioms.order.dto.OrderDTO;
 import com.akatsuki.pioms.product.aggregate.ResponseProducts;
 
-import com.akatsuki.pioms.product.dto.ProductDTO;
 import com.akatsuki.pioms.product.repository.ProductRepository;
 import com.akatsuki.pioms.categoryThird.aggregate.CategoryThird;
 import com.akatsuki.pioms.product.aggregate.Product;
@@ -29,7 +28,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ProductServiceImpl implements ProductService{
@@ -192,15 +190,17 @@ public class ProductServiceImpl implements ProductService{
     @Override
     public void exportExchangeProducts(int exchangeCode) {
         // 교환 상품에 대해서만 처리해야한다.
-        List<ExchangeProduct> exchangeProductList = exchangeService.getExchangeProductsWithStatus(exchangeCode, EXCHANGE_PRODUCT_STATUS.교환);
+        List<ExchangeProductDTO> exchangeProductList = exchangeService.getExchangeProductsWithStatus(exchangeCode, EXCHANGE_PRODUCT_STATUS.교환);
 
         if (exchangeProductList == null) {
             System.out.println("Exchange Products not found!!");
             return;
         }
-        exchangeProductList.forEach(requestProduct->{
-            productMinusCnt(requestProduct.getExchangeProductNormalCount(), requestProduct.getExchangeProductCode());
-        });
+        System.out.println("exchangeProductList = " + exchangeProductList);
+        for (int i = 0; i < exchangeProductList.size(); i++) {
+            productMinusCnt(exchangeProductList.get(i).getExchangeProductNormalCount(), exchangeProductList.get(i).getProductCode());
+        }
+
     }
 
     @Override
@@ -213,7 +213,7 @@ public class ProductServiceImpl implements ProductService{
         for (int i = 0; i < exchange.getExchangeProducts().size(); i++) {
             if (exchange.getExchangeProducts().get(i).getExchangeProductStatus() != EXCHANGE_PRODUCT_STATUS.폐기 ){
                 Product product = productRepository.findById(exchange.getExchangeProducts().get(i).getProductCode()).orElseThrow();
-                if (product.getProductCount()< exchange.getExchangeProducts().get(i).getProductRemainCnt()){
+                if (product.getProductCount()< exchange.getExchangeProducts().get(i).getProductCount()){
                     return false;
                 }
             }
@@ -224,6 +224,7 @@ public class ProductServiceImpl implements ProductService{
 
     private void productMinusCnt(int requestProduct, int orderProductCode) {
         Product product = productRepository.findById(orderProductCode).orElseThrow();
+        System.out.println("product = " + product);
         product.setProductCount(product.getProductCount() - requestProduct);
         productRepository.save(product);
     }

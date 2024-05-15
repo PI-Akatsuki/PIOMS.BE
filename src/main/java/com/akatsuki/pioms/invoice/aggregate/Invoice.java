@@ -1,7 +1,7 @@
 package com.akatsuki.pioms.invoice.aggregate;
 
 
-import com.akatsuki.pioms.invoice.etc.DELIVERY_STATUS;
+import com.akatsuki.pioms.driver.aggregate.DeliveryRegion;
 import com.akatsuki.pioms.order.aggregate.Order;
 import jakarta.persistence.*;
 import lombok.*;
@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @ToString
 @Table(name = "invoice")
 @Entity
-public class InvoiceEntity {
+public class Invoice {
 
     @Id
     @Column(name = "invoice_code")
@@ -29,18 +29,14 @@ public class InvoiceEntity {
     @Column(name = "delivery_date")
     private LocalDateTime invoiceDate;
 
-    @Column(name = "delivery_region_code")
-    private int invoiceRegionCode;
+    @JoinColumn(name = "delivery_region_code")
+    @ManyToOne
+    @ToString.Exclude
+    private DeliveryRegion deliveryRegion;
 
     @JoinColumn(name = "request_code")
     @OneToOne
+    @ToString.Exclude
     private Order order;
 
-    public InvoiceEntity(InvoiceEntity invoiceDTO) {
-        this.invoiceCode = invoiceDTO.getInvoiceCode();
-        this.deliveryStatus = invoiceDTO.getDeliveryStatus();
-        this.invoiceDate = invoiceDTO.getInvoiceDate();
-        this.invoiceRegionCode = invoiceDTO.getInvoiceRegionCode();
-        this.order = invoiceDTO.getOrder();
-    }
 }

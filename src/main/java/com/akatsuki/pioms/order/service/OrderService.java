@@ -77,4 +77,6 @@ public interface OrderService {
     boolean checkProductCnt(OrderDTO order);
 
     boolean findOrderByExchangeCode(int exchangeCode);
+
+    OrderDTO addExchangeToOrder(ExchangeDTO exchange, int orderCode);
 }

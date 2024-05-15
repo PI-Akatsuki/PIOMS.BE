@@ -13,6 +13,7 @@ import lombok.*;
 @Setter
 @Entity
 @Table(name = "exchange_product")
+@ToString
 public class ExchangeProduct {
     @Id
     @Column(name = "exchange_product_code")
@@ -33,6 +34,7 @@ public class ExchangeProduct {
     private Product product;
     @JoinColumn(name = "exchange_code")
     @ManyToOne
+    @ToString.Exclude
     private Exchange exchange;
 
     public ExchangeProduct(ExchangeProductVO product) {

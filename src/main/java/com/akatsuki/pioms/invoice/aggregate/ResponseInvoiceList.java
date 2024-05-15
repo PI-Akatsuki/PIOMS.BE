@@ -1,5 +1,6 @@
 package com.akatsuki.pioms.invoice.aggregate;
 
+import com.akatsuki.pioms.invoice.dto.InvoiceDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,12 +14,7 @@ import java.util.List;
 @ToString
 public class ResponseInvoiceList {
     List<ResponseInvoice> invoiceList;
-
-    public ResponseInvoiceList() {
-        this.invoiceList = new ArrayList<>();
-    }
-
-    public ResponseInvoiceList(List<InvoiceEntity> invoiceList) {
+    public ResponseInvoiceList(List<InvoiceDTO> invoiceList) {
         this.invoiceList = new ArrayList<>();
         invoiceList.forEach( invoiceDTO -> {
             this.invoiceList.add(new ResponseInvoice(invoiceDTO));

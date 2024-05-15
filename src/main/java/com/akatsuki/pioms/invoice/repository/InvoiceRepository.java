@@ -1,9 +1,9 @@
 package com.akatsuki.pioms.invoice.repository;
 
-import com.akatsuki.pioms.invoice.aggregate.InvoiceEntity;
+import com.akatsuki.pioms.invoice.aggregate.Invoice;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface InvoiceRepository extends JpaRepository<InvoiceEntity,Integer> {
+public interface InvoiceRepository extends JpaRepository<Invoice,Integer> {
 
-    InvoiceEntity findByOrderOrderCode(int orderCode);
+    Invoice findByOrderOrderCode(int orderCode);
 }

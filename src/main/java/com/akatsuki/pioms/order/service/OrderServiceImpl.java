@@ -76,13 +76,12 @@ public class OrderServiceImpl implements OrderService{
     @Override
     @Transactional(readOnly = false)
     public Order acceptOrder(int adminCode,int orderId, ExchangeDTO exchange) {
+        System.out.println("acceptOrder");
         Order order = orderRepository.findById(orderId).orElseThrow();
 
-//        if(order.getFranchise().getAdmin().getAdminCode() != adminCode)
-//            return "You dont\'t have permission to manage this franchise";
         if (!checkOrderCondition(order))
             return null;
-
+        System.out.println("order = " + order);
         try {
             order.setOrderCondition(ORDER_CONDITION.승인완료);
             if (exchange!=null) {
@@ -90,14 +89,16 @@ public class OrderServiceImpl implements OrderService{
                 exchange1.setExchangeCode(exchange.getExchangeCode());
                 order.setExchange(exchange1);
             }
+            System.out.println("order.getExchange() = " + order.getExchange());
             order=orderRepository.save(order);
-
 
         }catch (Exception e){
             System.out.println("exception occuered: check accept order service...");
         }
 
-        return (order);
+        System.out.println("acceptOrder End");
+
+        return order;
     }
 
     @Override
@@ -109,7 +110,6 @@ public class OrderServiceImpl implements OrderService{
         }
         return true;
     }
-
 
     @Override
     @Transactional
@@ -157,7 +157,9 @@ public class OrderServiceImpl implements OrderService{
     private static boolean checkOrderCondition(Order order) {
         if (order == null)
             return false;
-        return order.getOrderCondition() == ORDER_CONDITION.승인대기;
+        if(order.getOrderCondition() == ORDER_CONDITION.승인대기)
+            return true;
+        return false;
     }
 
 
@@ -258,8 +260,17 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     public boolean findOrderByExchangeCode(int exchangeCode) {
-
         return orderRepository.existsByExchangeExchangeCode(exchangeCode);
+    }
+
+    @Override
+    public OrderDTO addExchangeToOrder(ExchangeDTO exchange, int orderCode) {
+        Order order = orderRepository.findById(orderCode).orElseThrow();
+        Exchange exchange1 = new Exchange();
+        exchange1.setExchangeCode(exchange.getExchangeCode());
+        order.setExchange(exchange1);
+        order = orderRepository.save(order);
+        return new OrderDTO(order);
     }
 
 }

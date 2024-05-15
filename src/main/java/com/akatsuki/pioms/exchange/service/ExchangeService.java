@@ -2,6 +2,7 @@ package com.akatsuki.pioms.exchange.service;
 
 import com.akatsuki.pioms.exchange.aggregate.*;
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
+import com.akatsuki.pioms.exchange.dto.ExchangeProductDTO;
 
 import java.util.List;
 
@@ -12,7 +13,7 @@ public interface ExchangeService {
     ExchangeDTO findExchangeToSend(int franchiseCode);
 
     // 모든 반품 신청 리스트를 조회하기 위한 로직
-    List<ExchangeDTO> getExchanges(int adminCode);
+    List<ExchangeDTO> getExchanges();
 
     // 한 가맹점의 모든 반품 조회하기 위한 로직
     List<ExchangeDTO> getExchangesByFranchiseCode(int franchiseCode);
@@ -20,19 +21,17 @@ public interface ExchangeService {
     // 관리자가 관리하고 있는 모든 가맹점의 반품 리스트를 조회하기 위한 로직
     List<ExchangeDTO> getExchangesByAdminCode(int adminCode);
 
-    ExchangeDTO putExchange(int franchiseOwnerCode,int exchangeCode, RequestExchange requestExchange);
+    ExchangeDTO putExchange(int adminCode,int exchangeCode, RequestExchange requestExchange);
 
     ExchangeDTO postExchange(int franchiseCode, RequestExchange requestExchange);
 
-    List<ExchangeProduct> getExchangeProducts(int exchangeCode);
-
-    List<ExchangeProduct> getExchangeProductsWithStatus(int exchangeCode, EXCHANGE_PRODUCT_STATUS exchangeProductStatus);
+    List<ExchangeProductDTO> getExchangeProductsWithStatus(int exchangeCode, EXCHANGE_PRODUCT_STATUS exchangeProductStatus);
 
     ExchangeDTO getAdminExchange(int adminCode,int exchangeCode);
 
     ExchangeDTO getFranchiseExchange(int franchiseCode, int exchangeCode);
 
-    List<ExchangeDTO> getFranchiseExchanges(int franchiseOwnerCode);
+    List<ExchangeDTO> getFrOwnerExchanges(int franchiseOwnerCode);
 
     boolean deleteExchange(int franchiseOwnerCode, int exchangeCode);
 }
