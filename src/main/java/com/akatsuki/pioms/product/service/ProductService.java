@@ -22,7 +22,7 @@ public interface ProductService {
     ResponseEntity<String> postProduct(RequestProduct request, int requesterAdminCode);
 
     ResponseEntity<String> deleteProduct(int productCode, int requesterAdminCode);
-    ResponseProduct updateProduct(int productCode, RequestProduct request);
+    ResponseEntity<String> updateProduct(int productCode, RequestProduct request, int requesterAdminCode);
     void exportProducts(OrderDTO order);
     void exportExchangeProducts(int exchange);
     boolean checkExchangeProduct(OrderDTO order, ExchangeDTO exchange);

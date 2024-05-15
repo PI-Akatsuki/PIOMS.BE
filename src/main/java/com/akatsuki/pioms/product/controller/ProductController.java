@@ -51,9 +51,8 @@ public class ProductController {
 
     @PostMapping("/update/{productCode}")
     @Operation(summary = "상품 정보 수정", description = "상품 수정 기능")
-    public ResponseEntity<ResponseProduct> updateProduct(@PathVariable int productCode, @RequestBody RequestProduct request/*, int requesterAdminCode*/) {
-        ResponseProduct response = productService.updateProduct(productCode, request/*, int requesterAdminCode*/);
-        return ResponseEntity.ok().body(response);
+    public ResponseEntity<String> updateProduct(@PathVariable int productCode, @RequestBody RequestProduct request, int requesterAdminCode) {
+        return productService.updateProduct(productCode, request, requesterAdminCode);
     }
 
     @GetMapping("/category/{categoryThirdCode}")

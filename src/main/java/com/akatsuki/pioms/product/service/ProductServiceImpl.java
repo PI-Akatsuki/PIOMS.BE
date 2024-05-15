@@ -129,13 +129,13 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public ResponseProduct updateProduct(int productCode, RequestProduct request) {
-//        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
-//        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
-//            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
-//        }
+    public ResponseEntity<String> updateProduct(int productCode, RequestProduct request, int requesterAdminCode) {
+        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
+        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
+            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
+        }
         Product product = productRepository.findById(productCode)
-                .orElseThrow(() -> new EntityNotFoundException("Product not found"));
+                .orElseThrow(() -> new EntityNotFoundException("해당 상품이 존재하지 않습니다."));
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formattedDateTime = LocalDateTime.now().format(formatter);
@@ -161,25 +161,7 @@ public class ProductServiceImpl implements ProductService{
         Product updatedProduct = productRepository.save(product);
         logService.saveLog("root", LogStatus.수정, updatedProduct.getProductName(), "Product");
 
-        ResponseProduct responseValue =
-                new ResponseProduct(
-                        savedProduct.getProductCode(),
-                        savedProduct.getProductName(),
-                        updatedProduct.getProductPrice(),
-                        updatedProduct.getProductEnrollDate(),
-                        updatedProduct.getProductUpdateDate(),
-                        updatedProduct.getProductContent(),
-                        updatedProduct.getProductColor(),
-                        updatedProduct.getProductSize(),
-                        updatedProduct.getProductGender(),
-                        updatedProduct.getProductTotalCount(),
-                        updatedProduct.getProductStatus(),
-                        updatedProduct.isProductExposureStatus(),
-                        updatedProduct.getProductNoticeCount(),
-                        updatedProduct.getProductDiscount(),
-                        updatedProduct.getProductCount()
-                );
-        return responseValue;
+        return ResponseEntity.ok("상품 수정 완료!");
     }
 
     @Override
