@@ -1,12 +1,13 @@
 package com.akatsuki.pioms.order.aggregate;
 
-import com.akatsuki.pioms.exchange.aggregate.ExchangeEntity;
+import com.akatsuki.pioms.exchange.aggregate.Exchange;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -44,10 +45,10 @@ public class Order {
 
     @JoinColumn(name = "exchange_code")
     @OneToOne
-    private ExchangeEntity exchange;
+    private Exchange exchange;
 
     @OneToMany(mappedBy = "order")
-    private List<OrderProduct> OrderProductList;
+    private List<OrderProduct> orderProductList;
 
     public Order(ORDER_CONDITION orderCondition, boolean orderStatus, Franchise franchise) {
         this.orderDate = LocalDateTime.now();
@@ -55,4 +56,6 @@ public class Order {
         this.orderStatus = orderStatus;
         this.franchise = franchise;
     }
+
+
 }

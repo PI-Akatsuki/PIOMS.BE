@@ -1,6 +1,8 @@
 package com.akatsuki.pioms.franchise.aggregate;
 
 import com.akatsuki.pioms.admin.aggregate.Admin;
+
+import com.akatsuki.pioms.franchise.dto.FranchiseDTO;
 import com.akatsuki.pioms.frowner.aggregate.FranchiseOwner;
 import jakarta.persistence.*;
 import lombok.*;
@@ -50,4 +52,6 @@ public class Franchise {
     @ManyToOne
     @JoinColumn(name = "admin_code", referencedColumnName = "admin_code")
     private Admin admin;
+
+
 }

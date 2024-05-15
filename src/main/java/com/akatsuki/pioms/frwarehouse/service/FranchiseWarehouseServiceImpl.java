@@ -1,8 +1,8 @@
 package com.akatsuki.pioms.frwarehouse.service;
 
 
-import com.akatsuki.pioms.exchange.aggregate.ExchangeEntity;
-import com.akatsuki.pioms.exchange.aggregate.ExchangeProductEntity;
+import com.akatsuki.pioms.exchange.aggregate.Exchange;
+import com.akatsuki.pioms.exchange.aggregate.ExchangeProduct;
 import com.akatsuki.pioms.exchange.aggregate.RequestExchange;
 import com.akatsuki.pioms.exchange.aggregate.ExchangeProductVO;
 import com.akatsuki.pioms.frwarehouse.aggregate.FranchiseWarehouse;
@@ -47,9 +47,9 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
 
     @Override
     @Transactional
-    public void saveExchangeProduct(ExchangeEntity exchange, int franchiseCode) {
+    public void saveExchangeProduct(Exchange exchange, int franchiseCode) {
         if (exchange==null) return;
-        List<ExchangeProductEntity> products = exchange.getProducts();
+        List<ExchangeProduct> products = exchange.getProducts();
         products.forEach(product -> {
             int productCode = product.getProduct().getProductCode();
             int cnt = product.getExchangeProductNormalCount();
@@ -68,10 +68,12 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
             ExchangeProductVO exchange =requestExchange.getProducts().get(i);
 
             FranchiseWarehouse franchiseWarehouse =
-                    franchiseWarehouseRepository.findByProductProductCode(exchange.getProductCode());
+                    franchiseWarehouseRepository.findByProductProductCodeAndFranchiseCode(exchange.getProductCode(), requestExchange.getFranchiseCode());
 
-            if(franchiseWarehouse!=null && franchiseWarehouse.getFranchiseWarehouseEnable()< exchange.getExchangeProductCount()) {
+            if(franchiseWarehouse==null || franchiseWarehouse.getFranchiseWarehouseEnable()< exchange.getExchangeProductCount()) {
                 System.out.println("error 신청 재고가 너무 많음!");
+                System.out.println("franchiseWarehouse.getFranchiseWarehouseEnable() = " + franchiseWarehouse.getFranchiseWarehouseEnable());
+                System.out.println("exchange = " + exchange.getExchangeProductCount());
                 return false;
             }
         }
@@ -113,7 +115,7 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
             ExchangeProductVO exchange = requestExchange.getProducts().get(i);
             System.out.println(exchange);
             FranchiseWarehouse franchiseWarehouse =
-                    franchiseWarehouseRepository.findByProductProductCode(exchange.getProductCode());
+                    franchiseWarehouseRepository.findByProductProductCodeAndFranchiseCode(exchange.getProductCode(),requestExchange.getFranchiseCode());
             System.out.println(franchiseWarehouse);
             if (franchiseWarehouse!=null) {
                 franchiseWarehouse.setFranchiseWarehouseEnable(franchiseWarehouse.getFranchiseWarehouseEnable() - exchange.getExchangeProductCount());

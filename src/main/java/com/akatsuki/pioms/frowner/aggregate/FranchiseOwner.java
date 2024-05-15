@@ -1,8 +1,14 @@
 package com.akatsuki.pioms.frowner.aggregate;
 
-import com.akatsuki.pioms.franchise.aggregate.Franchise;
+
+
+import com.akatsuki.pioms.frowner.dto.FranchiseOwnerDTO;
 import jakarta.persistence.*;
 import lombok.*;
+import com.akatsuki.pioms.franchise.aggregate.Franchise;
+import java.time.LocalDateTime;
+
+
 
 @Entity
 @Table(name = "franchise_owner")
@@ -10,8 +16,8 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
 @Builder
+@ToString
 public class FranchiseOwner {
     @Id
     @Column(name = "franchise_owner_code")
@@ -40,7 +46,10 @@ public class FranchiseOwner {
 
     @Column(name = "franchise_owner_delete_date")
     private String franchiseOwnerDeleteDate;
-
-    @OneToOne(mappedBy = "franchiseOwner", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false)
+    @OneToOne(mappedBy = "franchiseOwner")
+    @ToString.Exclude
     private Franchise franchise;
+
+
+
 }

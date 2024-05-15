@@ -18,7 +18,10 @@ public class ResponseInvoiceList {
         this.invoiceList = new ArrayList<>();
     }
 
-    public ResponseInvoiceList(List<ResponseInvoice> responseInvoice) {
-        this.invoiceList = responseInvoice;
+    public ResponseInvoiceList(List<InvoiceEntity> invoiceList) {
+        this.invoiceList = new ArrayList<>();
+        invoiceList.forEach( invoiceDTO -> {
+            this.invoiceList.add(new ResponseInvoice(invoiceDTO));
+        });
     }
 }
