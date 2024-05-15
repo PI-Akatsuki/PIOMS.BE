@@ -18,6 +18,13 @@ public class ExchangeProductVO {
     private int exchangeProductDiscount;
     private EXCHANGE_PRODUCT_STATUS exchangeProductStatus;
 
+
+    public ExchangeProductVO(int productCode, int exchangeProductCount, EXCHANGE_PRODUCT_STATUS exchangeProductStatus){
+        this.productCode = productCode;
+        this.exchangeProductCount = exchangeProductCount;
+        this.exchangeProductStatus = exchangeProductStatus;
+    }
+
     public ExchangeProductVO(ExchangeProduct product) {
         this.exchangeProductCode = product.getExchangeProductCode();
         this.productCode = product.getProduct().getProductCode();

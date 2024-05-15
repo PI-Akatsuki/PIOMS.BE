@@ -14,6 +14,7 @@ import com.akatsuki.pioms.frwarehouse.service.FranchiseWarehouseService;
 import com.akatsuki.pioms.order.aggregate.Order;
 import com.akatsuki.pioms.order.service.OrderService;
 import com.akatsuki.pioms.product.aggregate.Product;
+import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,11 +40,13 @@ public class ExchangeServiceImpl implements ExchangeService{
         this.franchiseService = franchiseService;
     }
 
+
     @Override
     @Transactional
     public ExchangeDTO findExchangeToSend(int franchiseCode) {
 
         System.out.println("반품신청 찾기. franchisecode: " + franchiseCode);
+
         Exchange exchange = null;
         try {
             exchange = exchangeRepository.findByFranchiseFranchiseCodeAndExchangeStatus(franchiseCode, EXCHANGE_STATUS.반송신청);
@@ -53,10 +56,13 @@ public class ExchangeServiceImpl implements ExchangeService{
             exchangeProductRepository.deleteAllByExchangeFranchiseFranchiseCodeAndExchangeExchangeStatus(franchiseCode,EXCHANGE_STATUS.반송신청);
             exchangeRepository.deleteAllByFranchiseFranchiseCodeAndExchangeStatus(franchiseCode,EXCHANGE_STATUS.반송신청);
         }
+
         if(exchange==null)
             return null;
+
         exchange.setExchangeStatus(EXCHANGE_STATUS.반송중);
         exchangeRepository.save(exchange);
+
         return new ExchangeDTO(exchange);
     }
 
