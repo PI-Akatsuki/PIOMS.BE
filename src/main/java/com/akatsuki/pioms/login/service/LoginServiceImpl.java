@@ -2,6 +2,7 @@ package com.akatsuki.pioms.login.service;
 
 import com.akatsuki.pioms.admin.aggregate.Admin;
 import com.akatsuki.pioms.admin.repository.AdminRepository;
+import com.akatsuki.pioms.driver.aggregate.DeliveryDriver;
 import com.akatsuki.pioms.driver.repository.DeliveryDriverRepository;
 import com.akatsuki.pioms.frowner.aggregate.FranchiseOwner;
 import com.akatsuki.pioms.frowner.repository.FranchiseOwnerRepository;
@@ -54,7 +55,6 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public ResponseEntity<FranchiseOwner> frOwnerLogin(String frOwnerId, String frOwnerPassword) {
-        logger.info("Attempting to find FranchiseOwner with ID: " + frOwnerId);
         Optional<FranchiseOwner> optionalFranchiseOwner = franchiseOwnerRepository.findByFranchiseOwnerId(frOwnerId);
 
         if (optionalFranchiseOwner.isPresent()) {
@@ -74,4 +74,24 @@ public class LoginServiceImpl implements LoginService {
         return ResponseEntity.status(401).build();
     }
 
+    @Override
+    public ResponseEntity<DeliveryDriver> driverLogin(String driverId, String driverPassword) {
+        Optional<DeliveryDriver> optionalDeliveryDriver = deliveryDriverRepository.findByDriverId(driverId);
+
+        if (optionalDeliveryDriver.isPresent()) {
+            DeliveryDriver deliveryDriver = optionalDeliveryDriver.get();
+            logger.info("배송기사: " + deliveryDriver.getDriverId());
+
+            if (passwordEncoder.matches(driverPassword, deliveryDriver.getDriverPwd())) {
+                logger.info("비밀번호 일치함");
+                return ResponseEntity.ok(deliveryDriver);
+            } else {
+                logger.warning("비밀번호가 일치하지 않음");
+            }
+        } else {
+            logger.warning("배송기사 찾을 수 없음: " + driverId);
+        }
+
+        return ResponseEntity.status(401).build();
+    }
 }

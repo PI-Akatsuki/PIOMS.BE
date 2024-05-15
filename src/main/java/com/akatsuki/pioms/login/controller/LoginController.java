@@ -1,8 +1,10 @@
 package com.akatsuki.pioms.login.controller;
 
 import com.akatsuki.pioms.admin.aggregate.Admin;
+import com.akatsuki.pioms.driver.aggregate.DeliveryDriver;
 import com.akatsuki.pioms.frowner.aggregate.FranchiseOwner;
 import com.akatsuki.pioms.login.aggregate.AdminLoginRequest;
+import com.akatsuki.pioms.login.aggregate.DeliveryDriverLoginRequest;
 import com.akatsuki.pioms.login.aggregate.FranchiseOwnerLoginRequest;
 import com.akatsuki.pioms.login.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,5 +35,10 @@ public class LoginController {
     @PostMapping("franchise/login")
     public ResponseEntity<FranchiseOwner> frOwnerLogin(@RequestBody FranchiseOwnerLoginRequest franchiseOwnerLoginRequest) {
         return loginService.frOwnerLogin(franchiseOwnerLoginRequest.getFrOwnerId(), franchiseOwnerLoginRequest.getFrOwnerPassword());
+    }
+
+    @PostMapping("driver/login")
+    public ResponseEntity<DeliveryDriver> driverLogin(@RequestBody DeliveryDriverLoginRequest deliveryDriverLoginRequest) {
+        return loginService.driverLogin(deliveryDriverLoginRequest.getDriverId(), deliveryDriverLoginRequest.getDriverPassword());
     }
 }
