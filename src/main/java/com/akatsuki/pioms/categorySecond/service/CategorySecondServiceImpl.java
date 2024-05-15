@@ -1,5 +1,7 @@
 package com.akatsuki.pioms.categorySecond.service;
 
+import com.akatsuki.pioms.admin.aggregate.Admin;
+import com.akatsuki.pioms.admin.repository.AdminRepository;
 import com.akatsuki.pioms.categoryFirst.aggregate.CategoryFirst;
 import com.akatsuki.pioms.categorySecond.aggregate.*;
 import com.akatsuki.pioms.categorySecond.repository.CategorySecondRepository;
@@ -20,12 +22,14 @@ import java.util.Optional;
 public class CategorySecondServiceImpl implements CategorySecondService{
 
     private final CategorySecondRepository categorySecondRepository;
+    private final AdminRepository adminRepository;
 
     LogService logService;
 
     @Autowired
-    public CategorySecondServiceImpl(CategorySecondRepository categorySecondRepository,LogService logService) {
+    public CategorySecondServiceImpl(CategorySecondRepository categorySecondRepository, AdminRepository adminRepository, LogService logService) {
         this.categorySecondRepository = categorySecondRepository;
+        this.adminRepository = adminRepository;
         this.logService = logService;
     }
 
@@ -41,11 +45,11 @@ public class CategorySecondServiceImpl implements CategorySecondService{
 
     @Override
     @Transactional
-    public ResponseEntity<String> postCategorySecond(RequestCategorySecondPost request/*, int requesterAdminCode*/) {
-//        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
-//        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
-//            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
-//        }
+    public ResponseEntity<String> postCategorySecond(RequestCategorySecondPost request, int requesterAdminCode) {
+        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
+        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
+            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
+        }
         CategorySecond categorySecond = new CategorySecond();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formattedDateTime = LocalDateTime.now().format(formatter);
