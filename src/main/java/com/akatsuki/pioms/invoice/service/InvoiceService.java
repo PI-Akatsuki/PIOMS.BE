@@ -2,6 +2,7 @@ package com.akatsuki.pioms.invoice.service;
 
 import com.akatsuki.pioms.franchise.aggregate.DELIVERY_DATE;
 import com.akatsuki.pioms.invoice.aggregate.InvoiceEntity;
+import com.akatsuki.pioms.invoice.dto.InvoiceDTO;
 import com.akatsuki.pioms.invoice.etc.DELIVERY_STATUS;
 import com.akatsuki.pioms.invoice.aggregate.ResponseInvoice;
 import com.akatsuki.pioms.invoice.aggregate.ResponseInvoiceList;
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface InvoiceService {
-    List<InvoiceEntity> getAllInvoiceList();
+    List<InvoiceDTO> getAllInvoiceList();
     InvoiceEntity postInvoice(int orderCode, int franchiseCode, DELIVERY_DATE franchiseDeliveryDate, LocalDateTime orderDateTime);
 
     InvoiceEntity putInvoice(int invoiceCode, DELIVERY_STATUS invoiceStatus);
