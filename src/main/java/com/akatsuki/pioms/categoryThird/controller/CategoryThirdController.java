@@ -49,8 +49,8 @@ public class CategoryThirdController {
 
     @DeleteMapping("/delete/{categoryThirdCode}")
     @Operation(summary = "카테고리(소) 카테고리 삭제", description = "포함되어 있는 상품이 0개인 카테고리(소) 카테고리 삭제 기능")
-    public String deleteCategoryThird(@PathVariable int categoryThirdCode/*, int requesterAdminCode*/) {
-        return categoryThirdService.deleteCategoryThird(categoryThirdCode/*, int requesterAdminCode*/);
+    public ResponseEntity<String> deleteCategoryThird(@PathVariable int categoryThirdCode, int requesterAdminCode) {
+        return categoryThirdService.deleteCategoryThird(categoryThirdCode, requesterAdminCode);
     }
 
 }
