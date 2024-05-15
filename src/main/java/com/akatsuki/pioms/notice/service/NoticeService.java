@@ -3,6 +3,7 @@ package com.akatsuki.pioms.notice.service;
 import com.akatsuki.pioms.notice.aggregate.Notice;
 import com.akatsuki.pioms.notice.aggregate.NoticeVO;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -27,6 +28,10 @@ public interface NoticeService {
     NoticeVO getNoticeDetails(int noticeCode);
 
     // 공지사항 등록
+    ResponseEntity<String> saveNotice(Notice notice, int requesterAdminCode);
 
-    ResponseEntity<String> saveNotice(Notice notice, int requestorAdminCode);
+    // root 관리자가 작성한 공지사항 수정
+    ResponseEntity<String> updateNotice(Notice updatedNotice, int noticeCode, int requesterAdminCode);
+
+
 }
