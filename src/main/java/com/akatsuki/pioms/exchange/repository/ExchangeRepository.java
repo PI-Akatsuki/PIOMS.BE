@@ -2,7 +2,6 @@ package com.akatsuki.pioms.exchange.repository;
 
 import com.akatsuki.pioms.exchange.aggregate.EXCHANGE_STATUS;
 import com.akatsuki.pioms.exchange.aggregate.Exchange;
-import com.akatsuki.pioms.invoice.etc.DELIVERY_STATUS;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

@@ -5,11 +5,11 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class OrderProductVO {
+public class ResponseInvoiceOrderProduct {
     private String productName;
     private int requestProductCount;
 
-    public OrderProductVO(String productName, int requestProductCount) {
+    public ResponseInvoiceOrderProduct(String productName, int requestProductCount) {
         this.productName = productName;
         this.requestProductCount = requestProductCount;
     }

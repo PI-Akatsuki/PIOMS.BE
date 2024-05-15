@@ -1,4 +1,4 @@
-package com.akatsuki.pioms.invoice.etc;
+package com.akatsuki.pioms.invoice.aggregate;
 
 public enum DELIVERY_STATUS {
     배송전,

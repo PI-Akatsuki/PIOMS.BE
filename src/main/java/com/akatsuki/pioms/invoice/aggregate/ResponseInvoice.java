@@ -1,7 +1,6 @@
 package com.akatsuki.pioms.invoice.aggregate;
 
 import com.akatsuki.pioms.invoice.dto.InvoiceDTO;
-import com.akatsuki.pioms.invoice.etc.DELIVERY_STATUS;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,7 +20,7 @@ public class ResponseInvoice {
     private LocalDateTime invoiceDate;
     private String delveryRegionName;
     private int orderCode;
-    private List<OrderProductVO> orderProductVOList;
+    private List<ResponseInvoiceOrderProduct> orderProductVOList;
 
     public ResponseInvoice(InvoiceDTO invoiceDTO) {
         this.invoiceCode = invoiceDTO.getInvoiceCode();
@@ -32,7 +31,7 @@ public class ResponseInvoice {
             this.orderCode = invoiceDTO.getOrder().getOrderCode();
             this.orderProductVOList = new ArrayList<>();
             invoiceDTO.getOrder().getOrderProductList()
-                .forEach(product-> this.orderProductVOList.add(new OrderProductVO(product.getProductName(), product.getRequestProductCount())));
+                .forEach(product-> this.orderProductVOList.add(new ResponseInvoiceOrderProduct(product.getProductName(), product.getRequestProductCount())));
         }
     }
 }
