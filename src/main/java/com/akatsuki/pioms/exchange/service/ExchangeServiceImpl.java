@@ -172,13 +172,13 @@ public class ExchangeServiceImpl implements ExchangeService{
     public ExchangeDTO getFranchiseExchange(int franchiseOwnerCode,int exchangeCode) {
         //FIN
         Exchange exchange = exchangeRepository.findById(exchangeCode).orElse(null);
-        if (exchange.getFranchise().getFranchiseOwner().getFranchiseOwnerCode() != franchiseOwnerCode)
+        if (exchange==null|| exchange.getFranchise().getFranchiseOwner().getFranchiseOwnerCode() != franchiseOwnerCode)
             return null;
         return new ExchangeDTO(exchange);
     }
 
     @Override
-    public List<ExchangeDTO> getFranchiseExchanges(int franchiseOwnerCode) {
+    public List<ExchangeDTO> getFrOwnerExchanges(int franchiseOwnerCode) {
         //FIN
         List<Exchange> exchangeList = exchangeRepository.findAllByFranchiseFranchiseOwnerFranchiseOwnerCode(franchiseOwnerCode);
         List<ExchangeDTO> exchangeDTOList = new ArrayList<>();

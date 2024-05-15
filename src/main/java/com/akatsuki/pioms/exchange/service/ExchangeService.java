@@ -31,7 +31,7 @@ public interface ExchangeService {
 
     ExchangeDTO getFranchiseExchange(int franchiseCode, int exchangeCode);
 
-    List<ExchangeDTO> getFranchiseExchanges(int franchiseOwnerCode);
+    List<ExchangeDTO> getFrOwnerExchanges(int franchiseOwnerCode);
 
     boolean deleteExchange(int franchiseOwnerCode, int exchangeCode);
 }

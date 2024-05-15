@@ -165,23 +165,42 @@ class ExchangeServiceTest {
     }
 
     @Test
-    void getFranchiseExchange() {
+    void getFranchiseExchange(){
         //given
+        int franchiseCode = 1;
+        ExchangeDTO exchangeDTO = exchangeService.postExchange(franchiseCode,exchange);
+        int exchangeCode = exchangeDTO.getExchangeCode();
         //when
+        ExchangeDTO exchangeDTO1 = exchangeService.getFranchiseExchange(franchiseCode,exchangeCode);
         //then
+        assertNotNull(exchangeDTO1);
+        assertEquals(exchangeDTO1.getExchangeCode(), exchangeCode);
+
     }
 
     @Test
-    void getFranchiseExchanges() {
+    void getFrOwnerExchanges() {
         //given
+        int franchiseOwnerCode= 1;
+        int franchisCode = 1;
+        List<Exchange> exchanges = exchangeRepository.findAllByFranchiseFranchiseOwnerFranchiseOwnerCode(franchiseOwnerCode);
         //when
+        List<ExchangeDTO> exchangeDTOS = exchangeService.getFrOwnerExchanges(franchiseOwnerCode);
         //then
+        assertEquals(exchanges.size(), exchangeDTOS.size());
     }
+
 
     @Test
     void deleteExchange() {
         //given
+        int franchiseOwnerCode= 1;
+        int franchiseCode = 1;
+        ExchangeDTO exchangeDTO = exchangeService.postExchange(franchiseCode,exchange);
         //when
+        exchangeService.deleteExchange(franchiseOwnerCode,exchangeDTO.getExchangeCode());
         //then
+        assertNull(exchangeService.getFranchiseExchange(franchiseCode,exchangeDTO.getExchangeCode()));
+
     }
 }

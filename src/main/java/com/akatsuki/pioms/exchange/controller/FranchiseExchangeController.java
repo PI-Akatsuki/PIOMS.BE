@@ -24,7 +24,7 @@ public class FranchiseExchangeController {
 
     @GetMapping("{franchiseOwnerCode}/exchanges")
     public ResponseEntity<List<ResponseExchange>> getMyExchanges(@PathVariable int franchiseOwnerCode){
-        List<ExchangeDTO> exchangeDTOS = exchangeService.getFranchiseExchanges(franchiseOwnerCode);
+        List<ExchangeDTO> exchangeDTOS = exchangeService.getFrOwnerExchanges(franchiseOwnerCode);
 
         if (exchangeDTOS ==null){
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
@@ -41,7 +41,6 @@ public class FranchiseExchangeController {
     @GetMapping("{franchiseOwnerCode}/exchange/{exchangeCode}")
     public ResponseEntity<ResponseExchange> getMyExchange(@PathVariable int franchiseOwnerCode, @PathVariable int exchangeCode){
         ExchangeDTO exchangeDTO = exchangeService.getFranchiseExchange(franchiseOwnerCode,exchangeCode);
-
         if (exchangeDTO == null)
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         return ResponseEntity.ok(new ResponseExchange(exchangeDTO));
