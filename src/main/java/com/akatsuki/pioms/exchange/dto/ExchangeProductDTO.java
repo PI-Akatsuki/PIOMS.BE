@@ -15,8 +15,8 @@ import lombok.ToString;
 public class ExchangeProductDTO {
     private int exchangeProductCode;
     private  int productCode;
-    private int requestCnt;
-    private int productRemainCnt;
+    private int exchangeProductCount;
+    private int productCount;
     private int exchangeProductNormalCount;
     private int exchangeProductDiscount;
     public EXCHANGE_PRODUCT_STATUS exchangeProductStatus;
@@ -24,8 +24,8 @@ public class ExchangeProductDTO {
     public ExchangeProductDTO(ExchangeProduct exchangeProductEntity) {
         this.exchangeProductCode = exchangeProductEntity.getExchangeProductCode();
         this.productCode = exchangeProductEntity.getProduct().getProductCode();
-        this.requestCnt = exchangeProductEntity.getExchangeProductCount();
-        this.productRemainCnt = exchangeProductEntity.getProduct().getProductCount();
+        this.exchangeProductCount = exchangeProductEntity.getExchangeProductCount();
+        this.productCount = exchangeProductEntity.getProduct().getProductCount();
         this.exchangeProductStatus = exchangeProductEntity.getExchangeProductStatus();
         this.exchangeProductNormalCount = exchangeProductEntity.getExchangeProductNormalCount();
         this.exchangeProductDiscount = exchangeProductEntity.getExchangeProductDiscount();

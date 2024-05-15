@@ -4,6 +4,7 @@ import com.akatsuki.pioms.admin.aggregate.Admin;
 import com.akatsuki.pioms.exchange.aggregate.*;
 import com.akatsuki.pioms.exchange.aggregate.ExchangeProductVO;
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
+import com.akatsuki.pioms.exchange.dto.ExchangeProductDTO;
 import com.akatsuki.pioms.exchange.repository.ExchangeProductRepository;
 import com.akatsuki.pioms.exchange.repository.ExchangeRepository;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
@@ -150,13 +151,13 @@ public class ExchangeServiceImpl implements ExchangeService{
     }
 
     @Override
-    public List<ExchangeProduct> getExchangeProducts(int exchangeCode) {
-        return exchangeProductRepository.findAllByExchangeExchangeCode(exchangeCode);
-    }
-
-    @Override
-    public List<ExchangeProduct> getExchangeProductsWithStatus(int exchangeCode, EXCHANGE_PRODUCT_STATUS exchangeProductStatus) {
-        return exchangeProductRepository.findAllByExchangeExchangeCodeAndExchangeProductStatus(exchangeCode,exchangeProductStatus);
+    public List<ExchangeProductDTO> getExchangeProductsWithStatus(int exchangeCode, EXCHANGE_PRODUCT_STATUS exchangeProductStatus) {
+        List<ExchangeProduct> exchangeProducts =exchangeProductRepository.findAllByExchangeExchangeCodeAndExchangeProductStatus(exchangeCode,exchangeProductStatus);
+        List<ExchangeProductDTO> exchangeProductDTOS = new ArrayList<>();
+        for (ExchangeProduct exchangeProduct : exchangeProducts) {
+            exchangeProductDTOS.add(new ExchangeProductDTO(exchangeProduct));
+        }
+        return exchangeProductDTOS;
     }
 
     @Override
