@@ -70,11 +70,11 @@ public class CategorySecondServiceImpl implements CategorySecondService{
 
     @Override
     @Transactional
-    public ResponseCategorySecondUpdate updateCategorySecond(int categorySecondCode, RequestCategorySecondUpdate request/*, int requesterAdminCode*/) {
-//        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
-//        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
-//            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
-//        }
+    public ResponseEntity<String> updateCategorySecond(int categorySecondCode, RequestCategorySecondUpdate request, int requesterAdminCode) {
+        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
+        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
+            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
+        }
         CategorySecond categorySecond = categorySecondRepository.findById(categorySecondCode)
                 .orElseThrow(() -> new EntityNotFoundException("CategorySecond not found"));
 
@@ -86,8 +86,7 @@ public class CategorySecondServiceImpl implements CategorySecondService{
         categorySecond.setCategorySecondName(request.getCategorySecondName());
         categorySecond.setCategorySecondUpdateDate(formattedDateTime);
 
-        ResponseCategorySecondUpdate responseValue = new ResponseCategorySecondUpdate(updatedCategorySecond.getCategorySecondCode(), updatedCategorySecond.getCategorySecondName(), updatedCategorySecond.getCategorySecondUpdateDate());
         logService.saveLog("root", LogStatus.수정,updatedCategorySecond.getCategorySecondName(),"CategorySecond");
-        return responseValue;
+        return ResponseEntity.ok("카테고리(중) 수정 완료!");
     }
 }
