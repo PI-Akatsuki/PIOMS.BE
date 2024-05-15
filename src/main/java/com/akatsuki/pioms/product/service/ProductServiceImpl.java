@@ -1,7 +1,5 @@
 package com.akatsuki.pioms.product.service;
 
-
-
 import com.akatsuki.pioms.admin.aggregate.Admin;
 import com.akatsuki.pioms.admin.repository.AdminRepository;
 import com.akatsuki.pioms.exchange.aggregate.ExchangeProduct;
@@ -19,7 +17,6 @@ import com.akatsuki.pioms.product.repository.ProductRepository;
 import com.akatsuki.pioms.categoryThird.aggregate.CategoryThird;
 import com.akatsuki.pioms.product.aggregate.Product;
 import com.akatsuki.pioms.product.aggregate.RequestProduct;
-import com.akatsuki.pioms.product.aggregate.ResponseProduct;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -51,15 +48,18 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
+    @Transactional
     public List<Product> getAllProduct() {
         return productRepository.findAll();
     }
 
     @Override
+    @Transactional
     public Product findProductByCode(int productCode) {
         return productRepository.findById(productCode).orElseThrow(null);
     }
 
+    @Override
     @Transactional
     public ResponseEntity<String> postProduct(RequestProduct request, int requesterAdminCode) {
         Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
@@ -101,6 +101,7 @@ public class ProductServiceImpl implements ProductService{
         return ResponseEntity.ok("상품 등록 완료!");
     }
 
+    @Override
     @Transactional
     public ResponseEntity<String> deleteProduct(int productCode, int requesterAdminCode) {
         Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
@@ -124,6 +125,7 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
+    @Transactional
     public ResponseEntity<String> updateProduct(int productCode, RequestProduct request, int requesterAdminCode) {
         Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
         if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
@@ -206,7 +208,8 @@ public class ProductServiceImpl implements ProductService{
         productRepository.save(product);
     }
 
-
+    @Override
+    @Transactional
     public List<ResponseProducts> getCategoryProductList(int categoryThirdCode) {
         List<Product> products = productRepository.findAllByCategoryThirdCategoryThirdCode(categoryThirdCode);
         List<ResponseProducts> responseProducts = new ArrayList<>();
