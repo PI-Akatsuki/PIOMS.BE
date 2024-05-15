@@ -86,16 +86,19 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
     }
 
     @Override
+    @Transactional
     public List<FranchiseWarehouse> getAllWarehouse() {
         return franchiseWarehouseRepository.findAll();
     }
 
     @Override
+    @Transactional
     public FranchiseWarehouse getWarehouseByWarehouseCode(int franchiseWarehouseCode) {
         return franchiseWarehouseRepository.findById(franchiseWarehouseCode).orElseThrow(null);
     }
 
     @Override
+    @Transactional
     public ResponseEntity<String> updateWarehouseCount(int franchiseWarehouseCode, RequestFranchiseWarehouseUpdate request, int requesterAdminCode) {
         Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
         if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
