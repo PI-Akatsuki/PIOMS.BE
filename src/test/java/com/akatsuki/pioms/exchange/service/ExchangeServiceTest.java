@@ -2,6 +2,7 @@ package com.akatsuki.pioms.exchange.service;
 
 import com.akatsuki.pioms.exchange.aggregate.*;
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
+import com.akatsuki.pioms.exchange.dto.ExchangeProductDTO;
 import com.akatsuki.pioms.exchange.repository.ExchangeProductRepository;
 import com.akatsuki.pioms.exchange.repository.ExchangeRepository;
 import org.junit.jupiter.api.BeforeAll;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -92,40 +94,74 @@ class ExchangeServiceTest {
         //then
         assertEquals(exchanges.size(),exchangeDTOS.size());
     }
-
     @Test
     void putExchange() {
         //given
+        int adminCode=1;
+        int franchiseCode=1;
+        ExchangeDTO exchangeDTO = exchangeService.postExchange(franchiseCode,exchange);
+        List<ExchangeProductVO> exchangeProductVOS1 = new ArrayList<>();
+
+        for (ExchangeProductDTO exchangeProduct : exchangeDTO.getExchangeProducts()) {
+            exchangeProductVOS1.add(new ExchangeProductVO(
+                    exchangeProduct.getExchangeProductCode()
+                    , exchangeProduct.getExchangeProductCount()
+                    , exchangeProduct.getExchangeProductCount()-1
+                    , 1));
+        }
+        RequestExchange request = new RequestExchange(1,EXCHANGE_STATUS.반송신청,exchangeProductVOS1);
+
         //when
+        ExchangeDTO exchangeDTO1 = exchangeService.putExchange(adminCode,exchangeDTO.getExchangeCode(),request);
+
         //then
+        assertNotEquals(exchangeDTO1,exchangeDTO);
+        for (ExchangeProductDTO exchangeProduct : exchangeDTO1.getExchangeProducts()) {
+            assertEquals(
+                    exchangeProduct.getExchangeProductNormalCount()+ exchangeProduct.getExchangeProductDiscount()
+                    , exchangeProduct.getExchangeProductCount() );
+        }
+
     }
 
     @Test
     void postExchange() {
         //given
+        int adminCode=1;
+        int franchiseCode=1;
         //when
+        ExchangeDTO exchangeDTO = exchangeService.postExchange(franchiseCode,exchange);
         //then
-    }
-
-    @Test
-    void getExchangeProducts() {
-        //given
-        //when
-        //then
+        assertEquals(exchange.getExchangeStatus(), exchangeDTO.getExchangeStatus());
+        assertEquals(exchange.getFranchiseCode(), exchangeDTO.getFranchise().getFranchiseCode());
+        assertEquals(exchange.getProducts().size(),exchangeDTO.getExchangeProducts().size());
     }
 
     @Test
     void getExchangeProductsWithStatus() {
         //given
+        int adminCode=1;
+        int franchiseCode=1;
+        ExchangeDTO exchangeDTO = exchangeService.postExchange(franchiseCode,exchange);
         //when
+        List<ExchangeProductDTO> exchangeDTOS1 = exchangeService.getExchangeProductsWithStatus(exchangeDTO.getExchangeCode(),EXCHANGE_PRODUCT_STATUS.교환);
+        List<ExchangeProductDTO> exchangeDTOS2 = exchangeService.getExchangeProductsWithStatus(exchangeDTO.getExchangeCode(),EXCHANGE_PRODUCT_STATUS.폐기);
         //then
+        assertEquals(exchangeDTOS1.size(),2);
+        assertEquals(exchangeDTOS2.size(),2);
     }
 
     @Test
     void getAdminExchange() {
         //given
+        int adminCode=1;
+        int franchiseCode=1;
+        ExchangeDTO exchangeDTO = exchangeService.postExchange(franchiseCode,exchange);
+
         //when
+        ExchangeDTO exchangeDTO1 = exchangeService.getAdminExchange(adminCode,exchangeDTO.getExchangeCode());
         //then
+        assertEquals(exchangeDTO1.getExchangeCode(),exchangeDTO.getExchangeCode());
     }
 
     @Test
