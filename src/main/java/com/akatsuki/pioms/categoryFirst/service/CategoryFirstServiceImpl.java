@@ -35,11 +35,13 @@ public class CategoryFirstServiceImpl implements CategoryFirstService {
     }
 
     @Override
+    @Transactional
     public List<CategoryFirst> getAllCategoryFirst() {
         return categoryFirstRepository.findAll();
     }
 
     @Override
+    @Transactional
     public CategoryFirst findCategoryFirstByCode(int categoryFirstCode) {
         return categoryFirstRepository.findById(categoryFirstCode).orElseThrow(null);
     }
