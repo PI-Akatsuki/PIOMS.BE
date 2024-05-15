@@ -12,7 +12,7 @@ public interface ExchangeService {
     ExchangeDTO findExchangeToSend(int franchiseCode);
 
     // 모든 반품 신청 리스트를 조회하기 위한 로직
-    List<ExchangeDTO> getExchanges(int adminCode);
+    List<ExchangeDTO> getExchanges();
 
     // 한 가맹점의 모든 반품 조회하기 위한 로직
     List<ExchangeDTO> getExchangesByFranchiseCode(int franchiseCode);

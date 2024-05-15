@@ -64,22 +64,33 @@ class ExchangeServiceTest {
     @Test
     void getExchanges() {
         //given
+        List<Exchange> exchanges = exchangeRepository.findAll();
         //when
+        List<ExchangeDTO> exchangeDTOS = exchangeService.getExchanges();
         //then
+        assertEquals(exchanges.size(), exchangeDTOS.size());
     }
 
     @Test
     void getExchangesByFranchiseCode() {
         //given
+        int franchiseCode = 1;
+        List<Exchange> exchanges = exchangeRepository.findAllByFranchiseFranchiseCode(franchiseCode);
         //when
+        List<ExchangeDTO> exchangeDTOS = exchangeService.getExchangesByFranchiseCode(franchiseCode);
         //then
+        assertEquals(exchanges.size(),exchangeDTOS.size());
     }
 
     @Test
     void getExchangesByAdminCode() {
         //given
+        int adminCode = 1;
+        List<Exchange> exchanges = exchangeRepository.findAllByFranchiseAdminAdminCode(adminCode);
         //when
+        List<ExchangeDTO> exchangeDTOS = exchangeService.getExchangesByAdminCode(adminCode);
         //then
+        assertEquals(exchanges.size(),exchangeDTOS.size());
     }
 
     @Test
