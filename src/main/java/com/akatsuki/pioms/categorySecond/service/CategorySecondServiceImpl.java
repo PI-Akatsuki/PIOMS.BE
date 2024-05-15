@@ -34,11 +34,13 @@ public class CategorySecondServiceImpl implements CategorySecondService{
     }
 
     @Override
+    @Transactional
     public List<CategorySecond> getAllCategorySecond() {
         return categorySecondRepository.findAll();
     }
 
     @Override
+    @Transactional
     public CategorySecond findCategorySecondByCode(int categorySecondCode) {
         return categorySecondRepository.findById(categorySecondCode).orElseThrow(null);
     }
