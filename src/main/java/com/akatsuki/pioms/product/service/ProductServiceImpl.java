@@ -49,12 +49,7 @@ public class ProductServiceImpl implements ProductService{
         this.adminRepository = adminRepository;
         this.logService = logService;
     }
-  
-    @Override
-    public Product getProduct(int productId){
-        return productRepository.findById(productId).orElseThrow();
-    }
-  
+
     @Override
     public List<Product> getAllProduct() {
         return productRepository.findAll();

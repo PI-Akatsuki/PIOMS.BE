@@ -17,7 +17,6 @@ import java.util.Optional;
 @Service
 public interface ProductService {
     List<Product> getAllProduct();
-    Product getProduct(int productId);
     Product findProductByCode(int productCode);
     ResponseEntity<String> postProduct(RequestProduct request, int requesterAdminCode);
 
