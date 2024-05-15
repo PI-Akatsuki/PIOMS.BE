@@ -106,16 +106,15 @@ public class ProductServiceImpl implements ProductService{
         return ResponseEntity.ok("상품 등록 완료!");
     }
 
-    @Override
     @Transactional
-    public String deleteProduct(int productCode/*, int requesterAdminCode*/) {
-//        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
-//        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
-//            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
-//        }
+    public ResponseEntity<String> deleteProduct(int productCode, int requesterAdminCode) {
+        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
+        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
+            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
+        }
         Product product = productRepository.findByProductCode(productCode);
         if(product == null) {
-            return "해당 상품이 없습니다.";
+            return ResponseEntity.badRequest().body("해당 상품이 없습니다.");
         }
         String productName = product.getProductName();
         logService.saveLog("root", LogStatus.삭제, productName, "Product");
@@ -123,9 +122,9 @@ public class ProductServiceImpl implements ProductService{
         if (!product.isProductExposureStatus()) {
             product.setProductExposureStatus(true);
             productRepository.save(product);
-            return "Product exposure status updated successfully.";
+            return ResponseEntity.ok("상품의 노출상태가 변경되었습니다.");
         } else {
-            return "Product exposure status is already true.";
+            return ResponseEntity.ok("해당 상품은 이미 비노출상태의 상품입니다.");
         }
     }
 

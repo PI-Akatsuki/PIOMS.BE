@@ -45,9 +45,8 @@ public class ProductController {
 
     @DeleteMapping("/delete/{productCode}")
     @Operation(summary = "상품 삭제", description = "상품 코드로 상품 삭제")
-    public String deleteProduct(@PathVariable int productCode/*, int requesterAdminCode*/) {
-
-        return productService.deleteProduct(productCode/*, int requesterAdminCode*/);
+    public ResponseEntity<String> deleteProduct(@PathVariable int productCode, int requesterAdminCode) {
+        return productService.deleteProduct(productCode, requesterAdminCode);
     }
 
     @PostMapping("/update/{productCode}")

@@ -21,7 +21,7 @@ public interface ProductService {
     Product findProductByCode(int productCode);
     ResponseEntity<String> postProduct(RequestProduct request, int requesterAdminCode);
 
-    String deleteProduct(int productCode);
+    ResponseEntity<String> deleteProduct(int productCode, int requesterAdminCode);
     ResponseProduct updateProduct(int productCode, RequestProduct request);
     void exportProducts(OrderDTO order);
     void exportExchangeProducts(int exchange);
