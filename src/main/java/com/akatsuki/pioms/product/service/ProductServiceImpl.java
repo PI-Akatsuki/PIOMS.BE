@@ -2,19 +2,19 @@ package com.akatsuki.pioms.product.service;
 
 
 
+import com.akatsuki.pioms.admin.aggregate.Admin;
+import com.akatsuki.pioms.admin.repository.AdminRepository;
 import com.akatsuki.pioms.exchange.aggregate.ExchangeProduct;
 import com.akatsuki.pioms.categoryThird.repository.CategoryThirdRepository;
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import com.akatsuki.pioms.exchange.aggregate.EXCHANGE_PRODUCT_STATUS;
 import com.akatsuki.pioms.exchange.service.ExchangeService;
 
-import com.akatsuki.pioms.order.aggregate.Order;
 import com.akatsuki.pioms.log.etc.LogStatus;
 import com.akatsuki.pioms.log.service.LogService;
 import com.akatsuki.pioms.order.dto.OrderDTO;
 import com.akatsuki.pioms.product.aggregate.ResponseProducts;
 
-import com.akatsuki.pioms.product.dto.ProductDTO;
 import com.akatsuki.pioms.product.repository.ProductRepository;
 import com.akatsuki.pioms.categoryThird.aggregate.CategoryThird;
 import com.akatsuki.pioms.product.aggregate.Product;
@@ -22,6 +22,7 @@ import com.akatsuki.pioms.product.aggregate.RequestProduct;
 import com.akatsuki.pioms.product.aggregate.ResponseProduct;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,13 +38,15 @@ public class ProductServiceImpl implements ProductService{
     private final ProductRepository productRepository;
     private final CategoryThirdRepository categoryThirdRepository;
     private final ExchangeService exchangeService;
+    private final AdminRepository adminRepository;
     LogService logService;
 
     @Autowired
-    public ProductServiceImpl(ProductRepository productRepository, CategoryThirdRepository categoryThirdRepository, ExchangeService exchangeService, LogService logService) {
+    public ProductServiceImpl(ProductRepository productRepository, CategoryThirdRepository categoryThirdRepository, ExchangeService exchangeService, AdminRepository adminRepository, LogService logService) {
         this.productRepository = productRepository;
         this.categoryThirdRepository = categoryThirdRepository;
         this.exchangeService = exchangeService;
+        this.adminRepository = adminRepository;
         this.logService = logService;
     }
   
@@ -62,13 +65,12 @@ public class ProductServiceImpl implements ProductService{
         return productRepository.findById(productCode).orElseThrow(null);
     }
 
-    @Override
     @Transactional
-    public String postProduct(RequestProduct request/*, int requesterAdminCode*/) {
-//        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
-//        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
-//            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
-//        }
+    public ResponseEntity<String> postProduct(RequestProduct request, int requesterAdminCode) {
+        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
+        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
+            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
+        }
 
         Product product = new Product();
 
@@ -78,7 +80,7 @@ public class ProductServiceImpl implements ProductService{
         CategoryThird categoryThird = categoryThirdRepository.findByCategoryThirdCode(request.getCategoryThirdCode());
 
         if(categoryThird == null) {
-            return "해당 카테고리가 존재하지 않습니다. 다시 확인해주세요.";
+            return ResponseEntity.badRequest().body("해당 카테고리가 존재하지 않습니다. 다시 확인해주세요.");
         }
 
         product.setCategoryThird(categoryThird);
@@ -101,7 +103,7 @@ public class ProductServiceImpl implements ProductService{
 
         logService.saveLog("root", LogStatus.등록, updatedProduct.getProductName(), "Product");
 
-        return "상품 등록 완료!";
+        return ResponseEntity.ok("상품 등록 완료!");
     }
 
     @Override

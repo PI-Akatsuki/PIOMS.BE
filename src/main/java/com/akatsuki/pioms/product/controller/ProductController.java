@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/product")
@@ -40,8 +39,8 @@ public class ProductController {
 
     @PostMapping("/create")
     @Operation(summary = "상품 등록")
-    public String postProduct(@RequestBody RequestProduct request/*, int requesterAdminCode*/) {
-        return productService.postProduct(request/*, int requesterAdminCode*/);
+    public ResponseEntity<String> postProduct(@RequestBody RequestProduct request, int requesterAdminCode) {
+        return productService.postProduct(request, requesterAdminCode);
     }
 
     @DeleteMapping("/delete/{productCode}")

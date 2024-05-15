@@ -8,6 +8,7 @@ import com.akatsuki.pioms.product.aggregate.Product;
 import com.akatsuki.pioms.product.aggregate.RequestProduct;
 import com.akatsuki.pioms.product.aggregate.ResponseProduct;
 import com.akatsuki.pioms.product.aggregate.ResponseProducts;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,7 +19,7 @@ public interface ProductService {
     List<Product> getAllProduct();
     Product getProduct(int productId);
     Product findProductByCode(int productCode);
-    String postProduct(RequestProduct request/*, int requesterAdminCode*/);
+    ResponseEntity<String> postProduct(RequestProduct request, int requesterAdminCode);
 
     String deleteProduct(int productCode);
     ResponseProduct updateProduct(int productCode, RequestProduct request);
