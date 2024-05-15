@@ -43,8 +43,8 @@ public class CategoryThirdController {
     }
 
     @PostMapping("/update/{categoryThirdCode}")
-    public ResponseEntity<String> updateCategoryThird(@PathVariable int categoryThirdCode, @RequestBody RequestCategoryThirdUpdate request/*, int requesterAdminCode*/) {
-        return categoryThirdService.updateCategory(categoryThirdCode, request/*, int requesterAdminCode*/);
+    public ResponseEntity<String> updateCategoryThird(@PathVariable int categoryThirdCode, @RequestBody RequestCategoryThirdUpdate request, int requesterAdminCode) {
+        return categoryThirdService.updateCategory(categoryThirdCode, request, requesterAdminCode);
     }
 
     @DeleteMapping("/delete/{categoryThirdCode}")
