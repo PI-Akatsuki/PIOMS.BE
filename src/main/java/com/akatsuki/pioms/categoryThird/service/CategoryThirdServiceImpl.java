@@ -44,12 +44,14 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
 
     /* 카테고리(소) 전체 조회 */
     @Override
+    @Transactional
     public List<CategoryThird> getAllCategoryThird() {
         return categoryThirdRepository.findAll();
     }
 
     /* 카테고리(소) 코드로 카테고리(소) 조회 */
     @Override
+    @Transactional
     public CategoryThird findCategoryThirdByCode(int categoryThirdCode) {
         return categoryThirdRepository.findById(categoryThirdCode).orElseThrow(null);
     }
