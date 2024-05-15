@@ -14,7 +14,7 @@ public interface CategoryThirdService {
 
     CategoryThird findCategoryThirdByCode(int categoryThirdCode);
 
-    ResponseEntity<String> postCategory(RequestCategoryThirdPost request/*, int requesterAdminCode*/);
+    ResponseEntity<String> postCategory(RequestCategoryThirdPost request, int requesterAdminCode);
 
     ResponseEntity<String> updateCategory(int categoryThirdCode, RequestCategoryThirdUpdate request, int requesterAdminCode);
 

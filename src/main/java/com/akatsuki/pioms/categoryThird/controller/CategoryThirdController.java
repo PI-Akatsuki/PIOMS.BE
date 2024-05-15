@@ -38,8 +38,8 @@ public class CategoryThirdController {
         return ResponseEntity.ok().body(categoryThirdService.findCategoryThirdByCode(categoryThirdCode));
     }
     @PostMapping("/create")
-    public ResponseEntity<String> postCategoryThird(@RequestBody RequestCategoryThirdPost request/*, int requesterAdminCode*/) {
-        return categoryThirdService.postCategory(request/*, requesterAdminCode*/);
+    public ResponseEntity<String> postCategoryThird(@RequestBody RequestCategoryThirdPost request, int requesterAdminCode) {
+        return categoryThirdService.postCategory(request, requesterAdminCode);
     }
 
     @PostMapping("/update/{categoryThirdCode}")
