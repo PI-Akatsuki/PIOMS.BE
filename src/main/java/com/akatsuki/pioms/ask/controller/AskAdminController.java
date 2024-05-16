@@ -1,8 +1,8 @@
-package com.akatsuki.pioms.ask;
+package com.akatsuki.pioms.ask.controller;
 
+import com.akatsuki.pioms.ask.dto.AskDTO;
+import com.akatsuki.pioms.ask.dto.AskListDTO;
 import com.akatsuki.pioms.ask.service.AskService;
-import com.akatsuki.pioms.ask.vo.AskListVO;
-import com.akatsuki.pioms.ask.vo.AskVO;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,35 +36,35 @@ public class AskAdminController {
     * 모든 문의사항 목록 조회
     * */
     @GetMapping("/ask/list")
-    public ResponseEntity<AskListVO> getAllAskList(){
-        AskListVO askListVO = askService.getAllAskList();
-        return ResponseEntity.ok().body(askListVO);
+    public ResponseEntity<AskListDTO> getAllAskList(){
+        AskListDTO askListDTO = askService.getAllAskList();
+        return ResponseEntity.ok().body(askListDTO);
     }
 
     /**
      * 답변대기 문의사항 목록 조회
      * */
     @GetMapping("/ask/waiting")
-    public ResponseEntity<AskListVO> getWaitingForReplyAsks() {
-        AskListVO askListVO = askService.getWaitingForReplyAsks();
-        return ResponseEntity.ok().body(askListVO);
+    public ResponseEntity<AskListDTO> getWaitingForReplyAsks() {
+        AskListDTO askListDTO = askService.getWaitingForReplyAsks();
+        return ResponseEntity.ok().body(askListDTO);
     }
     /**
      * 점주 별 작성한 문의사항 전체 조회
      * */
     @GetMapping("/ask/franchise/{franchiseOwnerId}")
-    public ResponseEntity<AskListVO> getAsksByFranchiseOwnerId(@PathVariable Integer franchiseOwnerId) {
-        AskListVO askListVO = askService.getAsksByFranchiseOwnerId(franchiseOwnerId);
-        return ResponseEntity.ok().body(askListVO);
+    public ResponseEntity<AskListDTO> getAsksByFranchiseOwnerId(@PathVariable Integer franchiseOwnerId) {
+        AskListDTO askListDTO = askService.getAsksByFranchiseOwnerId(franchiseOwnerId);
+        return ResponseEntity.ok().body(askListDTO);
     }
     /**
      * 문의사항 상세 조회
      * */
     @GetMapping("/ask/{askCode}")
-    public ResponseEntity<AskVO> getAskDetails(@PathVariable int askCode) {
+    public ResponseEntity<AskDTO> getAskDetails(@PathVariable int askCode) {
         try {
-            AskVO askVO = askService.getAskDetails(askCode);
-            return ResponseEntity.ok(askVO);
+            AskDTO askDTO = askService.getAskDetails(askCode);
+            return ResponseEntity.ok(askDTO);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
@@ -78,9 +78,9 @@ public class AskAdminController {
      * 답변작성후 상태 '답변완료'변경
      * */
     @PostMapping("/ask/answer/{askId}")
-    public ResponseEntity<AskVO> answerAsk(@PathVariable Integer askId, @RequestBody String answer) {
-        AskVO askVO = askService.answerAsk(askId, answer);
-        return ResponseEntity.ok(askVO);
+    public ResponseEntity<AskDTO> answerAsk(@PathVariable Integer askId, @RequestBody String answer) {
+        AskDTO askDTO = askService.answerAsk(askId, answer);
+        return ResponseEntity.ok(askDTO);
     }
 
 
