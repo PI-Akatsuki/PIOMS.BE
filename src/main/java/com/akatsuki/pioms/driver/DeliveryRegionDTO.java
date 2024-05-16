@@ -20,7 +20,6 @@ public class DeliveryRegionDTO {
     private int deliveryRegionCode;
 
     private FranchiseDTO franchise;
-
     private int driverCode;
     private String driverName;
 

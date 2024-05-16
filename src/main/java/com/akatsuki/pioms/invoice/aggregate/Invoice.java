@@ -29,10 +29,11 @@ public class Invoice {
     @Column(name = "delivery_date")
     private LocalDateTime invoiceDate;
 
-    @JoinColumn(name = "delivery_region_code")
-    @ManyToOne
-    @ToString.Exclude
-    private DeliveryRegion deliveryRegion;
+//    @JoinColumn(name = "delivery_region_code")
+//    @ManyToOne
+    @Column(name = "delivery_region_code")
+//    @ToString.Exclude
+    private int deliveryRegion;
 
     @JoinColumn(name = "request_code")
     @OneToOne
