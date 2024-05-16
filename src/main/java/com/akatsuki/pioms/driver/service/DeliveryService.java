@@ -1,6 +1,6 @@
 package com.akatsuki.pioms.driver.service;
 
-import com.akatsuki.pioms.driver.DeliveryRegionDTO;
+import com.akatsuki.pioms.driver.dto.DeliveryRegionDTO;
 
 public interface DeliveryService {
 
