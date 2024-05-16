@@ -2,10 +2,9 @@ package com.akatsuki.pioms.admin.service;
 
 import com.akatsuki.pioms.admin.aggregate.Admin;
 import com.akatsuki.pioms.admin.repository.AdminRepository;
-import com.akatsuki.pioms.log.service.LogService;
+import com.akatsuki.pioms.login.service.LoginService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -24,16 +23,16 @@ import static org.mockito.Mockito.*;
 public class AdminInfoServiceTest {
 
     @Autowired
-    private AdminInfoServiceImpl adminInfoService;
+    private LoginService loginService;
+
+    @Autowired
+    private AdminInfoService adminInfoService;
 
     @MockBean
     private AdminRepository adminRepository;
 
     @MockBean
     private PasswordEncoder passwordEncoder;
-
-    @MockBean
-    private LogService logService;
 
     private Admin admin;
 
@@ -60,7 +59,7 @@ public class AdminInfoServiceTest {
         when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);  // 패스워드 매칭 성공
 
         // When
-        ResponseEntity<Admin> response = adminInfoService.login("root", "root", "rootAccess");
+        ResponseEntity<Admin> response = loginService.adminLogin("root", "root", "rootAccess");
 
         // Then
         assertEquals(200, response.getStatusCodeValue());
@@ -73,7 +72,7 @@ public class AdminInfoServiceTest {
         when(adminRepository.findByAdminId(anyString())).thenReturn(Optional.empty());
 
         // When
-        ResponseEntity<Admin> response = adminInfoService.login("root", "wrongpassword", "rootAccess");
+        ResponseEntity<Admin> response = loginService.adminLogin("root", "wrongpassword", "rootAccess");
 
         // Then
         assertEquals(401, response.getStatusCodeValue());

@@ -124,14 +124,18 @@ jobs:
 
       - name: Check Pull Request Comments
         id: pr-comments
-        run: |
+        run: | 
           PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
-          COMMENTS=$(gh pr view $PR_NUMBER --json comments --jq '.comments | length')
-          if [ $COMMENTS -lt 3 ]; then
-            echo "Not enough comments ($COMMENTS) in the pull request. At least 3 comments are required."
+          COMMENTS=$(gh pr view $PR_NUMBER --json comments --jq '.comments')
+          
+          # Extract unique user logins from comments
+          UNIQUE_USERS=$(echo "$COMMENTS" | jq -r 'map(.author.login) | unique | length')
+          
+          if [ $UNIQUE_USERS -lt 2 ]; then
+            echo "Not enough unique users ($UNIQUE_USERS) in the pull request comments. At least 2 unique users are required."
             exit 1
           else
-            echo "Sufficient comments ($COMMENTS) in the pull request."
+            echo "Sufficient unique users ($UNIQUE_USERS) in the pull request comments."
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

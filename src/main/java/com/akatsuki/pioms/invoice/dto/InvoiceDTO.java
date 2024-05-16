@@ -1,6 +1,6 @@
 package com.akatsuki.pioms.invoice.dto;
 
-import com.akatsuki.pioms.driver.DeliveryRegionDTO;
+import com.akatsuki.pioms.driver.dto.DeliveryRegionDTO;
 import com.akatsuki.pioms.invoice.aggregate.Invoice;
 import com.akatsuki.pioms.invoice.aggregate.DELIVERY_STATUS;
 import com.akatsuki.pioms.order.dto.OrderDTO;
