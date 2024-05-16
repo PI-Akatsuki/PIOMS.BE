@@ -135,18 +135,36 @@ public class NoticeServiceImpl implements NoticeService {
         } catch (Exception e) {
             return ResponseEntity.status(500).body("서버에 오류가 생겼습니다.");
         }
-
     }
+
     // root 관리자가 공지사항 삭제
-//    @Override
-//    public ResponseEntity<String> deleteNotice(int noticeCode, int requesterAdminCode) {
-//        Admin requesterAdmin = adminRepository.findById(requesterAdminCode)
-//                .orElseThrow(() -> new RuntimeException("root 관리자를 찾을 수 없습니다." + requesterAdminCode));
-//
-//        // root 관리자가 아닐 경우 관리자 코드 확인
-//        if (requesterAdmin == null || requesterAdmin.getAdminCode() != 1) {
-//            return ResponseEntity.status(403).body("공지사항 삭제는 root 관리자만 가능합니다.");
-//        }
+    @Override
+    @Transactional
+    public ResponseEntity<String> deleteNotice(int noticeCode, int requesterAdminCode) {
+        try {
+            // 요청한 관리자가 존재하는지 확인
+            Admin requesterAdmin = adminRepository.findById(requesterAdminCode)
+                    .orElseThrow(() -> new RuntimeException("root 관리자를 찾을 수 없습니다." + requesterAdminCode));
 
+            // root 관리자가 아닐 경우 삭제 불가
+            if (requesterAdmin == null || requesterAdmin.getAdminCode() != 1) {
+                return ResponseEntity.status(403).body("공지사항 삭제는 root 관리자만 가능합니다.");
+            }
 
+            // 삭제하려는 공지사항이 존재하는지 확인
+            Notice existingNotice = noticeRepository.findById(noticeCode)
+                    .orElseThrow(() -> new RuntimeException("해당 코드의 공지사항을 찾을 수 없습니다!" + noticeCode));
+
+            // Notice 엔티티에 생성자 admin 주입
+            existingNotice.setAdmin(requesterAdmin);
+
+            // 공지사항 삭제
+            noticeRepository.delete(existingNotice);
+            return ResponseEntity.ok("공지사항이 삭제되었습니다.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("서버에 오류가 생겼습니다.");
+        }
+    }
 }
