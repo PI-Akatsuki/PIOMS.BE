@@ -1,4 +1,4 @@
-package com.akatsuki.pioms.admin.aggregate;
+package com.akatsuki.pioms.login.aggregate;
 
 import lombok.Getter;
 import lombok.Setter;

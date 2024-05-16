@@ -6,6 +6,7 @@ import com.akatsuki.pioms.driver.repository.DeliveryDriverRepository;
 import com.akatsuki.pioms.admin.repository.AdminRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,10 +21,13 @@ public class DeliveryDriverServiceImpl implements DeliveryDriverService {
     private final DeliveryDriverRepository deliveryDriverRepository;
     private final AdminRepository adminRepository;
 
+    private final PasswordEncoder passwordEncoder;
+
     @Autowired
-    public DeliveryDriverServiceImpl(DeliveryDriverRepository deliveryDriverRepository, AdminRepository adminRepository) {
+    public DeliveryDriverServiceImpl(DeliveryDriverRepository deliveryDriverRepository, AdminRepository adminRepository, PasswordEncoder passwordEncoder) {
         this.deliveryDriverRepository = deliveryDriverRepository;
         this.adminRepository = adminRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Transactional(readOnly = true)
@@ -51,6 +55,8 @@ public class DeliveryDriverServiceImpl implements DeliveryDriverService {
         if (driver.getDriverName() == null || driver.getDriverId() == null || driver.getDriverPwd() == null || driver.getDriverPhone() == null) {
             return ResponseEntity.badRequest().body("필수 항목(deliveryManName, deliveryManId, deliveryManPwd, deliveryManPhone)을 모두 입력해야 합니다.");
         }
+
+        driver.setDriverPwd(passwordEncoder.encode(driver.getDriverPwd()));
 
         // 중복 ID 확인
         if (deliveryDriverRepository.findByDriverId(driver.getDriverId()).isPresent()) {
@@ -86,7 +92,7 @@ public class DeliveryDriverServiceImpl implements DeliveryDriverService {
 
             if (isAdmin || isDriver) {
                 driver.setDriverName(updatedDriver.getDriverName());
-                driver.setDriverPwd(updatedDriver.getDriverPwd());
+                driver.setDriverPwd(passwordEncoder.encode(updatedDriver.getDriverPwd()));
                 driver.setDriverPhone(updatedDriver.getDriverPhone());
 
                 // 수정일 업데이트

@@ -1,4 +1,4 @@
-package com.akatsuki.pioms.driver;
+package com.akatsuki.pioms.driver.dto;
 
 import com.akatsuki.pioms.driver.aggregate.DeliveryDriver;
 import com.akatsuki.pioms.driver.aggregate.DeliveryRegion;
