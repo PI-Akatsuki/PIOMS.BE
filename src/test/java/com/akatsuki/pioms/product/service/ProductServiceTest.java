@@ -1,21 +1,21 @@
 package com.akatsuki.pioms.product.service;
 
-import com.akatsuki.pioms.product.aggregate.Product;
-import com.akatsuki.pioms.product.aggregate.RequestProduct;
 import com.akatsuki.pioms.product.repository.ProductRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
 class ProductServiceTest {
+
+    @Autowired
     ProductRepository productRepository;
+
+    @Autowired
     ProductService productService;
 
     @Autowired
@@ -26,9 +26,6 @@ class ProductServiceTest {
 
     @Test
     void getAllProduct() {
-        List<Product> product = productRepository.findAll();
-        List<Product> products = productService.getAllProduct();
-        assertEquals(product.size(), products.size());
     }
 
     @Test

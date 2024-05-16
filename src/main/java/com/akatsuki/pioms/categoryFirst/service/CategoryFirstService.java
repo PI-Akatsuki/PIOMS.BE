@@ -5,13 +5,14 @@ import com.akatsuki.pioms.categoryFirst.aggregate.RequestCategoryFirstPost;
 import com.akatsuki.pioms.categoryFirst.aggregate.RequestCategoryFirstUpdate;
 import com.akatsuki.pioms.categoryFirst.aggregate.ResponseCategoryFirstPost;
 import com.akatsuki.pioms.categoryFirst.aggregate.ResponseCategoryFirstUpdate;
+import com.akatsuki.pioms.categoryFirst.dto.CategoryFirstDTO;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface CategoryFirstService {
-    List<CategoryFirst> getAllCategoryFirst();
+    List<CategoryFirstDTO> getAllCategoryFirst();
 
     CategoryFirst findCategoryFirstByCode(int categoryFirstCode);
 

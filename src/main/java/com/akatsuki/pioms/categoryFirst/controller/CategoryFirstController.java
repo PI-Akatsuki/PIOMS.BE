@@ -2,6 +2,7 @@ package com.akatsuki.pioms.categoryFirst.controller;
 
 
 import com.akatsuki.pioms.categoryFirst.aggregate.CategoryFirst;
+import com.akatsuki.pioms.categoryFirst.dto.CategoryFirstDTO;
 import com.akatsuki.pioms.categoryFirst.service.CategoryFirstService;
 import com.akatsuki.pioms.categoryFirst.aggregate.RequestCategoryFirstPost;
 import com.akatsuki.pioms.categoryFirst.aggregate.RequestCategoryFirstUpdate;
@@ -30,7 +31,7 @@ public class CategoryFirstController {
 
     @GetMapping("")
     @Operation(summary = "카테고리(대) 전체 조회", description = "단순 카테고리(대) 조회 기능")
-    public ResponseEntity<List<CategoryFirst>> getAllCategoryFirst() {
+    public ResponseEntity<List<CategoryFirstDTO>> getAllCategoryFirst() {
         return ResponseEntity.ok().body(categoryFirstService.getAllCategoryFirst());
     }
 

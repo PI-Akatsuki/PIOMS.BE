@@ -3,6 +3,7 @@ package com.akatsuki.pioms.categoryFirst.service;
 import com.akatsuki.pioms.admin.aggregate.Admin;
 import com.akatsuki.pioms.admin.repository.AdminRepository;
 import com.akatsuki.pioms.categoryFirst.aggregate.CategoryFirst;
+import com.akatsuki.pioms.categoryFirst.dto.CategoryFirstDTO;
 import com.akatsuki.pioms.categoryFirst.repository.CategoryFirstRepository;
 import com.akatsuki.pioms.categoryFirst.aggregate.RequestCategoryFirstPost;
 import com.akatsuki.pioms.categoryFirst.aggregate.RequestCategoryFirstUpdate;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,8 +38,15 @@ public class CategoryFirstServiceImpl implements CategoryFirstService {
 
     @Override
     @Transactional
-    public List<CategoryFirst> getAllCategoryFirst() {
-        return categoryFirstRepository.findAll();
+    public List<CategoryFirstDTO> getAllCategoryFirst() {
+        List<CategoryFirst> categoryFirstList = categoryFirstRepository.findAll();
+        List<CategoryFirstDTO> responseCategory = new ArrayList<>();
+
+        categoryFirstList.forEach(categoryFirst -> {
+            responseCategory.add(new CategoryFirstDTO(categoryFirst));
+        });
+        return responseCategory;
+//        return categoryFirstRepository.findAll();
     }
 
     @Override
