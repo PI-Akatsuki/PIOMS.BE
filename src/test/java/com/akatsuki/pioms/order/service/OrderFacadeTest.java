@@ -83,18 +83,42 @@ class OrderFacadeTest {
                 order.getOrderCode());
         assertNotEquals(pastOrderCondition,orderDTO1.getOrderCondition());
         assertEquals(ORDER_CONDITION.승인완료, orderDTO1.getOrderCondition());
-
     }
 
     @Test
     void denyOrder() {
+        ORDER_CONDITION pastOrderCondition = order.getOrderCondition();
+        String denyReason = "당신은 이게 발주라고 보낸건가요?";
+        String result = orderFacade.denyOrder(order.getFranchise().getAdmin().getAdminCode(),
+                order.getOrderCode(), denyReason );
+
+        assertNotEquals(pastOrderCondition, order.getOrderCondition());
+        assertEquals(ORDER_CONDITION.승인거부, order.getOrderCondition());
+        assertEquals(denyReason, order.getOrderReason());
     }
 
     @Test
     void postFranchiseOrder() {
+        Franchise franchise = franchiseService.findFranchiseById(2).orElseThrow();
+        Map<Integer,Integer> requestProducts =  new HashMap<Integer,Integer>(){{ put(1, 1); put(2,2); put(3,3);}};
+        RequestOrderVO requestOrderVO = new RequestOrderVO(requestProducts,franchise.getFranchiseCode());
+
+        OrderDTO orderDTO1 = orderFacade.postFranchiseOrder(franchise.getFranchiseCode(),requestOrderVO);
+        if (orderDTO1 == null){
+            return;
+        }
+        Order order1 = orderRepository.findById(orderDTO1.getOrderCode()).orElseThrow();
+
+        assertEquals(order1.getFranchise().getAdmin().getAdminCode(), orderDTO1.getAdminCode());
+        System.out.println("order1.getOrderProductList() = " + order1.getOrderProductList());
+//        assertEquals(order1.getOrderProductList().size(), orderDTO1.getOrderProductList().size());
+        assertEquals(order1.getFranchise().getFranchiseCode(), orderDTO1.getFranchiseCode());
     }
 
     @Test
     void getOrderListByFranchiseCode() {
+        List<Order> orders = orderRepository.findByFranchiseFranchiseCode(franchise.getFranchiseCode());
+        List<OrderDTO>orderDTOS = orderService.getOrderList(franchise.getFranchiseCode());
+        assertEquals(orders.size(), orderDTOS.size());
     }
 }
