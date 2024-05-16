@@ -10,13 +10,18 @@ import com.akatsuki.pioms.log.etc.LogStatus;
 import com.akatsuki.pioms.log.service.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+
 import java.util.Objects;
+
+import java.util.Optional;
+
 import java.util.stream.Collectors;
 
 @Service
@@ -25,15 +30,15 @@ public class FranchiseOwnerServiceImpl implements FranchiseOwnerService {
     private final FranchiseOwnerRepository franchiseOwnerRepository;
     private final AdminRepository adminRepository;
     private final LogService logService;
-
+    private final PasswordEncoder passwordEncoder;
+  
     @Autowired
-    public FranchiseOwnerServiceImpl(FranchiseOwnerRepository franchiseOwnerRepository, AdminRepository adminRepository, LogService logService) {
+    public FranchiseOwnerServiceImpl(FranchiseOwnerRepository franchiseOwnerRepository, AdminRepository adminRepository, LogService logService, , PasswordEncoder passwordEncoder) {
         this.franchiseOwnerRepository = franchiseOwnerRepository;
         this.adminRepository = adminRepository;
         this.logService = logService;
+        this.passwordEncoder = passwordEncoder;
     }
-
-
 
     // 전체 조회
     @Transactional(readOnly = true)
@@ -58,7 +63,6 @@ public class FranchiseOwnerServiceImpl implements FranchiseOwnerService {
         }
     }
 
-
     // 오너 등록
     @Override
     @Transactional
@@ -80,6 +84,9 @@ public class FranchiseOwnerServiceImpl implements FranchiseOwnerService {
                 return ResponseEntity.status(409).body("이미 존재하는 아이디입니다.");
             }
 
+            // 비밀번호 암호화
+            franchiseOwner.setFranchiseOwnerPwd(passwordEncoder.encode(franchiseOwner.getFranchiseOwnerPwd()));
+
             // 날짜 포맷터
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             String now = LocalDateTime.now().format(formatter);
@@ -95,7 +102,6 @@ public class FranchiseOwnerServiceImpl implements FranchiseOwnerService {
             return ResponseEntity.status(500).body("프랜차이즈 오너 등록 중 오류가 발생했습니다.");
         }
     }
-
 
     // 오너 정보 수정
     @Override
@@ -115,8 +121,6 @@ public class FranchiseOwnerServiceImpl implements FranchiseOwnerService {
                     existingFranchiseOwner.getFranchiseOwnerCode() == requestorAdminCode) {
 
                 StringBuilder changes = new StringBuilder();
-
-                // 이름 수정 불가
                 if (!Objects.equals(existingFranchiseOwner.getFranchiseOwnerPwd(), updatedFranchiseOwner.getFranchiseOwnerPwd())) {
                     changes.append(String.format("pwd 변경 '%s'에서 '%s(으)로; ", existingFranchiseOwner.getFranchiseOwnerPwd(), updatedFranchiseOwner.getFranchiseOwnerPwd()));
                     existingFranchiseOwner.setFranchiseOwnerPwd(updatedFranchiseOwner.getFranchiseOwnerPwd());
@@ -129,6 +133,10 @@ public class FranchiseOwnerServiceImpl implements FranchiseOwnerService {
                     changes.append(String.format("Email 변경 '%s'에서  '%s'(으)로; ", existingFranchiseOwner.getFranchiseOwnerEmail(), updatedFranchiseOwner.getFranchiseOwnerEmail()));
                     existingFranchiseOwner.setFranchiseOwnerEmail(updatedFranchiseOwner.getFranchiseOwnerEmail());
                 }
+                // 이름 수정 불가
+                existingFranchiseOwner.setFranchiseOwnerPwd(passwordEncoder.encode(updatedFranchiseOwner.getFranchiseOwnerPwd()));
+                existingFranchiseOwner.setFranchiseOwnerPhone(updatedFranchiseOwner.getFranchiseOwnerPhone());
+                existingFranchiseOwner.setFranchiseOwnerEmail(updatedFranchiseOwner.getFranchiseOwnerEmail());
 
                 // 수정일 업데이트
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -179,7 +187,6 @@ public class FranchiseOwnerServiceImpl implements FranchiseOwnerService {
             return ResponseEntity.status(500).body("프랜차이즈 오너 삭제 중 오류가 발생했습니다.");
         }
     }
-
 
     // Entity -> DTO로 변환
     private FranchiseOwnerDTO convertEntityToDTO(FranchiseOwner franchiseOwner) {
