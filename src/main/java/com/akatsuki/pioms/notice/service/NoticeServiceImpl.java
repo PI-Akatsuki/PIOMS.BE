@@ -155,14 +155,21 @@ public class NoticeServiceImpl implements NoticeService {
             Notice existingNotice = noticeRepository.findById(noticeCode)
                     .orElseThrow(() -> new RuntimeException("해당 코드의 공지사항을 찾을 수 없습니다!" + noticeCode));
 
+            // 날짜 포맷터로 삭제일 설정
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            String now = LocalDateTime.now().format(formatter);
+
+            // 삭제일 및 공지사항 내용 업데이트
+            existingNotice.setNoticeTitle(deleteNotice.getNoticeTitle());
+            existingNotice.setNoticeContent(deleteNotice.getNoticeContent());
+            existingNotice.setNoticeUpdateDate(now);
+
+            // Notice 엔티티에 생성자 admin 주입
+            existingNotice.setAdmin(requesterAdmin);
+
             // 공지사항 삭제
             noticeRepository.delete(existingNotice);
             return ResponseEntity.ok("공지사항이 삭제되었습니다.");
-
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("서버에 오류가 생겼습니다.");
         }
     }
 }

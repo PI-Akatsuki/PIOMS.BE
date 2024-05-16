@@ -57,9 +57,10 @@ public class NoticeAdminController {
     }
 
     // root 관리자가 공지사항 삭제
-    @Operation(summary = "공지사항 삭제", description = "공지사항 코드로 root 관리자가 공지사항 삭제")
-    @DeleteMapping("/notice/delete/{noticeCode}")
-    public ResponseEntity<String> deleteNotice(@PathVariable int noticeCode, int requesterAdminCode) {
-        return noticeService.deleteNotice(noticeCode, requesterAdminCode);
-    }
+//    @Operation(summary = "공지사항 삭제", description = "공지사항 코드로 root 관리자가 공지사항 삭제")
+//    @DeleteMapping("/notice/delete/{noticeCode}")
+//    public ResponseEntity<String> deleteNotice(@PathVariable int noticeCode){
+//        Notice notice = noticeService.deleteNotice(noticeCode);
+//        return ResponseEntity.ok().body(notice);
+//    }
 }
