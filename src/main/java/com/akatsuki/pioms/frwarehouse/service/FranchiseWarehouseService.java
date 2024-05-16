@@ -21,5 +21,5 @@ public interface FranchiseWarehouseService {
 
     FranchiseWarehouse getWarehouseByWarehouseCode(int franchiseWarehouseCode);
 
-    ResponseEntity<String> updateWarehouseCount(int franchiseWarehouseCode, RequestFranchiseWarehouseUpdate request/*, int requesterAdminCode*/);
+    ResponseEntity<String> updateWarehouseCount(int franchiseWarehouseCode, RequestFranchiseWarehouseUpdate request, int requesterAdminCode);
 }
