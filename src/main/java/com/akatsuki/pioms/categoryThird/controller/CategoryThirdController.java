@@ -34,33 +34,23 @@ public class CategoryThirdController {
 
     @GetMapping("/{categoryThirdCode}")
     @Operation(summary = "카테고리(소) code로 카테고리(소) 하나 조회", description = "카테고리(소)코드로 카테고리(소) 하나 조회")
-    public  ResponseEntity<Optional<CategoryThird>> getCategoryThirdByCode(@PathVariable int categoryThirdCode) {
-        Optional<CategoryThird> categoryThird = categoryThirdService.findCategoryThirdByCode(categoryThirdCode);
-        return ResponseEntity.ok().body(categoryThird);
+    public  ResponseEntity<CategoryThird> getCategoryThirdByCode(@PathVariable int categoryThirdCode) {
+        return ResponseEntity.ok().body(categoryThirdService.findCategoryThirdByCode(categoryThirdCode));
     }
     @PostMapping("/create")
-    public ResponseEntity<ResponseCategoryThirdPost> postCategoryThird(@RequestBody RequestCategoryThirdPost request) {
-        ResponseCategoryThirdPost response = categoryThirdService.postCategory(request);
-        return ResponseEntity.ok().body(response);
+    public ResponseEntity<String> postCategoryThird(@RequestBody RequestCategoryThirdPost request, int requesterAdminCode) {
+        return categoryThirdService.postCategory(request, requesterAdminCode);
     }
 
     @PostMapping("/update/{categoryThirdCode}")
-    public ResponseEntity<ResponseCategoryThirdPost> updateCategoryThird(@PathVariable int categoryThirdCode, @RequestBody RequestCategoryThirdUpdate request) {
-        ResponseCategoryThirdPost response = categoryThirdService.updateCategory(categoryThirdCode, request);
-        return ResponseEntity.ok().body(response);
+    public ResponseEntity<String> updateCategoryThird(@PathVariable int categoryThirdCode, @RequestBody RequestCategoryThirdUpdate request, int requesterAdminCode) {
+        return categoryThirdService.updateCategory(categoryThirdCode, request, requesterAdminCode);
     }
 
     @DeleteMapping("/delete/{categoryThirdCode}")
     @Operation(summary = "카테고리(소) 카테고리 삭제", description = "포함되어 있는 상품이 0개인 카테고리(소) 카테고리 삭제 기능")
-    public String deleteCategoryThird(@PathVariable int categoryThirdCode) {
-        return categoryThirdService.deleteCategoryThird(categoryThirdCode);
+    public ResponseEntity<String> deleteCategoryThird(@PathVariable int categoryThirdCode, int requesterAdminCode) {
+        return categoryThirdService.deleteCategoryThird(categoryThirdCode, requesterAdminCode);
     }
 
-
-//    @DeleteMapping("/delete/{categoryThirdCode}")
-//    @Operation(summary = "카테고리(소) 카테고리 삭제", description = "포함되어 있는 상품이 0개인 카테고리(소) 카테고리 삭제 기능")
-//    public ResponseEntity<CategoryThird> deleteCategory(@PathVariable int categoryThirdCode) {
-//        CategoryThird categoryThird = categoryThirdService.deleteCategory(categoryThirdCode);
-//        return ResponseEntity.ok(categoryThird);
-//    }
 }

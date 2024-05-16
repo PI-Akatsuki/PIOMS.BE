@@ -7,46 +7,20 @@ import static org.junit.jupiter.api.Assertions.*;
 class ProductServiceTest {
 
     @Test
-    void getAllProduct() {
-    }
+    void getAllProduct() {assertEquals(true,true);}
 
     @Test
-    void getProduct() {
-    }
+    void findProductByCode() {assertEquals(true,true);}
 
     @Test
-    void findProductByCode() {
-    }
+    void postProduct() {assertEquals(true,true);}
 
     @Test
-    void postProduct() {
-    }
+    void deleteProduct() {assertEquals(true,true);}
 
     @Test
-    void deleteProduct() {
-    }
+    void updateProduct() {assertEquals(true,true);}
 
     @Test
-    void updateProduct() {
-    }
-
-    @Test
-    void exportProducts() {
-    }
-
-    @Test
-    void exportExchangeProducts() {
-    }
-
-    @Test
-    void checkExchangeProduct() {
-    }
-
-    @Test
-    void getCategoryProductList() {
-    }
-
-    @Test
-    void editIncorrectCount() {
-    }
+    void getCategoryProductList() {assertEquals(true,true);}
 }

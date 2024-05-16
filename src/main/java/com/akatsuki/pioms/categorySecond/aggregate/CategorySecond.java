@@ -27,9 +27,9 @@ public class CategorySecond {
     @Column(name = "category_second_update_date")
     private String categorySecondUpdateDate;
 
-    @ManyToOne
-    @JoinColumn(name="category_first_code")
-    private CategoryFirst categoryFirstCode;
+
+    @Column(name="category_first_code")
+    private int categoryFirstCode;
 }
 
 

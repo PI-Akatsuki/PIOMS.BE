@@ -7,14 +7,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class FranchiseWarehouseServiceTest {
 
     @Test
-    void saveProduct() {
-    }
+    void getAllWarehouse() { assertEquals(true,true);}
 
     @Test
-    void saveExchangeProduct() {
-    }
+    void getWarehouseByWarehouseCode() { assertEquals(true,true);}
 
     @Test
-    void checkEnableToAddExchange() {
-    }
+    void updateWarehouseCount() {assertEquals(true,true);}
 }

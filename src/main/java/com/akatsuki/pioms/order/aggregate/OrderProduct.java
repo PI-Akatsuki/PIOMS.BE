@@ -21,18 +21,23 @@ public class OrderProduct {
     private int requestProductCount;
     @Column(name = "request_product_get_count")
     private int requestProductGetCount;
+
     @JoinColumn(name = "request_code")
     @ManyToOne(cascade = CascadeType.PERSIST)
     private Order order;
 
     @JoinColumn(name = "product_code")
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne
     private Product product;
 
-    public OrderProduct(Integer count, int findCount, Order order, Product product) {
+    public OrderProduct(Integer count, int findCount, Order order, int productCode) {
         this.requestProductCount = count;
         this.requestProductGetCount = findCount;
         this.order = order;
+        Product product= new Product();
+        product.setProductCode(productCode);
         this.product = product;
     }
+
+
 }
