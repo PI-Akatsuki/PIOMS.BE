@@ -5,6 +5,7 @@ import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import com.akatsuki.pioms.exchange.service.ExchangeService;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import com.akatsuki.pioms.franchise.service.FranchiseService;
+import com.akatsuki.pioms.frowner.aggregate.FranchiseOwner;
 import com.akatsuki.pioms.invoice.service.InvoiceService;
 import com.akatsuki.pioms.order.aggregate.Order;
 import com.akatsuki.pioms.order.aggregate.RequestOrderVO;
@@ -63,10 +64,9 @@ public class OrderFacade {
         return orderService.getAdminOrder(adminCode,orderCode);
     }
 
-    public Order acceptOrder(int adminCode, int orderCode){
+    public OrderDTO acceptOrder(int adminCode, int orderCode){
         OrderDTO order = orderService.getAdminOrder(adminCode,orderCode);
         ExchangeDTO exchange =  exchangeService.findExchangeToSend(order.getFranchiseCode());
-
         if(!orderService.checkProductCnt(order)) {
             return null;
         }
@@ -75,14 +75,26 @@ public class OrderFacade {
             exchange = null;
         }
 
+        if(exchange!=null){
+            order = orderService.addExchangeToOrder(exchange, order.getOrderCode());
+        }
+
         Order orderEntity = orderService.acceptOrder(adminCode,orderCode, exchange);
+
+
+        System.out.println("orderEntity = " + orderEntity);
         productService.exportProducts(order);
+        System.out.println("orderEntity = " + orderEntity);
+
         if (exchange!=null)
             productService.exportExchangeProducts(exchange.getExchangeCode());
-//        publisher.publishEvent(new OrderEvent(order));
         specsService.afterAcceptOrder(orderCode, order.getFranchiseCode(), order.getDeliveryDate());
-        invoiceService.afterAcceptOrder(orderCode,order.getFranchiseCode(),order.getDeliveryDate(), order.getOrderDate());
-        return orderEntity;
+        System.out.println();
+        invoiceService.afterAcceptOrder(order);
+
+        System.out.println("End orderEntity = " + orderEntity);
+
+        return new OrderDTO(orderEntity);
     }
 
     public String denyOrder(int adminCode,int orderId, String denyMessage){
@@ -90,8 +102,12 @@ public class OrderFacade {
         return returnValue;
     }
 
-    public boolean postFranchiseOrder(int franchiseCode, RequestOrderVO orders) {
+    public OrderDTO postFranchiseOrder(int franchiseCode, RequestOrderVO orders) {
+        Franchise franchise = franchiseService.findFranchiseById(franchiseCode).orElseThrow();
+        return orderService.postFranchiseOrder(franchise,orders);
+    }
 
-        return orderService.postFranchiseOrder(franchiseCode,orders);
+    public List<OrderDTO> getOrderListByFranchiseCode(int franchiseCode) {
+        return orderService.getOrderList(franchiseCode);
     }
 }

@@ -4,6 +4,7 @@ import com.akatsuki.pioms.admin.aggregate.Admin;
 import com.akatsuki.pioms.exchange.aggregate.*;
 import com.akatsuki.pioms.exchange.aggregate.ExchangeProductVO;
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
+import com.akatsuki.pioms.exchange.dto.ExchangeProductDTO;
 import com.akatsuki.pioms.exchange.repository.ExchangeProductRepository;
 import com.akatsuki.pioms.exchange.repository.ExchangeRepository;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
@@ -14,6 +15,7 @@ import com.akatsuki.pioms.frwarehouse.service.FranchiseWarehouseService;
 import com.akatsuki.pioms.order.aggregate.Order;
 import com.akatsuki.pioms.order.service.OrderService;
 import com.akatsuki.pioms.product.aggregate.Product;
+import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,11 +41,13 @@ public class ExchangeServiceImpl implements ExchangeService{
         this.franchiseService = franchiseService;
     }
 
+
     @Override
     @Transactional
     public ExchangeDTO findExchangeToSend(int franchiseCode) {
 
         System.out.println("반품신청 찾기. franchisecode: " + franchiseCode);
+
         Exchange exchange = null;
         try {
             exchange = exchangeRepository.findByFranchiseFranchiseCodeAndExchangeStatus(franchiseCode, EXCHANGE_STATUS.반송신청);
@@ -53,16 +57,19 @@ public class ExchangeServiceImpl implements ExchangeService{
             exchangeProductRepository.deleteAllByExchangeFranchiseFranchiseCodeAndExchangeExchangeStatus(franchiseCode,EXCHANGE_STATUS.반송신청);
             exchangeRepository.deleteAllByFranchiseFranchiseCodeAndExchangeStatus(franchiseCode,EXCHANGE_STATUS.반송신청);
         }
+
         if(exchange==null)
             return null;
+
         exchange.setExchangeStatus(EXCHANGE_STATUS.반송중);
         exchangeRepository.save(exchange);
+
         return new ExchangeDTO(exchange);
     }
 
     @Override
-    public List<ExchangeDTO> getExchanges(int adminCode) {
-        List<Exchange> exchangeEntityList = exchangeRepository.findAllByFranchiseAdminAdminCode(adminCode);
+    public List<ExchangeDTO> getExchanges() {
+        List<Exchange> exchangeEntityList = exchangeRepository.findAll();
         List<ExchangeDTO> exchanges = new ArrayList<>();
         exchangeEntityList.forEach(exchangeEntity -> {
             exchanges.add(new ExchangeDTO(exchangeEntity));
@@ -144,13 +151,13 @@ public class ExchangeServiceImpl implements ExchangeService{
     }
 
     @Override
-    public List<ExchangeProduct> getExchangeProducts(int exchangeCode) {
-        return exchangeProductRepository.findAllByExchangeExchangeCode(exchangeCode);
-    }
-
-    @Override
-    public List<ExchangeProduct> getExchangeProductsWithStatus(int exchangeCode, EXCHANGE_PRODUCT_STATUS exchangeProductStatus) {
-        return exchangeProductRepository.findAllByExchangeExchangeCodeAndExchangeProductStatus(exchangeCode,exchangeProductStatus);
+    public List<ExchangeProductDTO> getExchangeProductsWithStatus(int exchangeCode, EXCHANGE_PRODUCT_STATUS exchangeProductStatus) {
+        List<ExchangeProduct> exchangeProducts =exchangeProductRepository.findAllByExchangeExchangeCodeAndExchangeProductStatus(exchangeCode,exchangeProductStatus);
+        List<ExchangeProductDTO> exchangeProductDTOS = new ArrayList<>();
+        for (ExchangeProduct exchangeProduct : exchangeProducts) {
+            exchangeProductDTOS.add(new ExchangeProductDTO(exchangeProduct));
+        }
+        return exchangeProductDTOS;
     }
 
     @Override
@@ -165,13 +172,13 @@ public class ExchangeServiceImpl implements ExchangeService{
     public ExchangeDTO getFranchiseExchange(int franchiseOwnerCode,int exchangeCode) {
         //FIN
         Exchange exchange = exchangeRepository.findById(exchangeCode).orElse(null);
-        if (exchange.getFranchise().getFranchiseOwner().getFranchiseOwnerCode() != franchiseOwnerCode)
+        if (exchange==null|| exchange.getFranchise().getFranchiseOwner().getFranchiseOwnerCode() != franchiseOwnerCode)
             return null;
         return new ExchangeDTO(exchange);
     }
 
     @Override
-    public List<ExchangeDTO> getFranchiseExchanges(int franchiseOwnerCode) {
+    public List<ExchangeDTO> getFrOwnerExchanges(int franchiseOwnerCode) {
         //FIN
         List<Exchange> exchangeList = exchangeRepository.findAllByFranchiseFranchiseOwnerFranchiseOwnerCode(franchiseOwnerCode);
         List<ExchangeDTO> exchangeDTOList = new ArrayList<>();

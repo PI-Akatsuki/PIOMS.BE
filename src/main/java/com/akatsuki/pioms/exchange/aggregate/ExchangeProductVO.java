@@ -18,6 +18,22 @@ public class ExchangeProductVO {
     private int exchangeProductDiscount;
     private EXCHANGE_PRODUCT_STATUS exchangeProductStatus;
 
+
+
+
+    public ExchangeProductVO(int exchangeProductCode, int exchangeProductCount, int exchangeProductNormalCount, int exchangeProductDiscount) {
+        this.exchangeProductCode = exchangeProductCode;
+        this.exchangeProductCount = exchangeProductCount;
+        this.exchangeProductNormalCount = exchangeProductNormalCount;
+        this.exchangeProductDiscount = exchangeProductDiscount;
+    }
+
+    public ExchangeProductVO(int productCode, int exchangeProductCount, EXCHANGE_PRODUCT_STATUS exchangeProductStatus){
+        this.productCode = productCode;
+        this.exchangeProductCount = exchangeProductCount;
+        this.exchangeProductStatus = exchangeProductStatus;
+    }
+
     public ExchangeProductVO(ExchangeProduct product) {
         this.exchangeProductCode = product.getExchangeProductCode();
         this.productCode = product.getProduct().getProductCode();
@@ -31,7 +47,7 @@ public class ExchangeProductVO {
     public ExchangeProductVO(ExchangeProductDTO product) {
         this.exchangeProductCode = product.getExchangeProductCode();
         this.productCode = product.getProductCode();
-        this.exchangeProductCount = product.getRequestCnt();
+        this.exchangeProductCount = product.getExchangeProductCount();
         this.exchangeProductNormalCount = product.getExchangeProductNormalCount();
         this.exchangeProductDiscount = product.getExchangeProductDiscount();
         this.exchangeProductStatus = product.getExchangeProductStatus();

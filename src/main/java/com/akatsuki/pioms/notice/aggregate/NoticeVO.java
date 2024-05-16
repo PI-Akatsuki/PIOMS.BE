@@ -13,8 +13,8 @@ public class NoticeVO {
 
     private int noticeCode;
     private String noticeTitle;
-    private String noticeEnrollDate;
     private String noticeContent;
+    private String noticeEnrollDate;
     private String noticeUpdateDate;
     private String adminName;
 

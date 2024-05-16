@@ -67,9 +67,9 @@ public class AdminOrderController {
 
     @PutMapping("/{adminCode}/order/{orderCode}/accept")
     @Operation(summary = "승인 대기 중인 발주를 승인합니다.")
-    public ResponseEntity<Order> acceptOrder(@PathVariable int adminCode, @PathVariable int orderCode){
-        Order returnValue = orderFacade.acceptOrder(adminCode, orderCode);
-        return ResponseEntity.ok(returnValue);
+    public ResponseEntity<OrderVO> acceptOrder(@PathVariable int adminCode, @PathVariable int orderCode){
+        OrderDTO returnValue = orderFacade.acceptOrder(adminCode, orderCode);
+        return ResponseEntity.ok(new OrderVO(returnValue));
     }
     @PutMapping("/{adminCode}/order/{orderId}/deny")
     @Operation(summary = "승인 대기 중인 발주를 거절합니다.")
