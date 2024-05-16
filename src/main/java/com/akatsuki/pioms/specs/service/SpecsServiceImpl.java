@@ -80,13 +80,6 @@ public class SpecsServiceImpl implements SpecsService{
     }
 
     @Override
-    public SpecsDTO getSpecs(int specsCode){
-        SpecsEntity specsEntity = specsRepository.findById(specsCode).orElseThrow(IllegalArgumentException::new);
-        SpecsDTO specsDTO = new SpecsDTO(specsEntity);
-        return specsDTO;
-    }
-
-    @Override
     public List<SpecsDTO> getFranchiseSpecsList(int franchiseCode) {
         List<SpecsEntity> specsEntities = specsRepository.findAllByOrderFranchiseFranchiseCode(franchiseCode);
         List<SpecsDTO> responseSpecs = new ArrayList<>();
