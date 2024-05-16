@@ -33,7 +33,7 @@ public class FranchiseOwnerServiceImpl implements FranchiseOwnerService {
     private final PasswordEncoder passwordEncoder;
   
     @Autowired
-    public FranchiseOwnerServiceImpl(FranchiseOwnerRepository franchiseOwnerRepository, AdminRepository adminRepository, LogService logService, , PasswordEncoder passwordEncoder) {
+    public FranchiseOwnerServiceImpl(FranchiseOwnerRepository franchiseOwnerRepository, AdminRepository adminRepository, LogService logService, PasswordEncoder passwordEncoder) {
         this.franchiseOwnerRepository = franchiseOwnerRepository;
         this.adminRepository = adminRepository;
         this.logService = logService;
