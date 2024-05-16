@@ -6,6 +6,8 @@ import com.akatsuki.pioms.frowner.aggregate.FranchiseOwner;
 import com.akatsuki.pioms.frowner.dto.FranchiseOwnerDTO;
 import com.akatsuki.pioms.frowner.repository.FranchiseOwnerRepository;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
+import com.akatsuki.pioms.log.etc.LogStatus;
+import com.akatsuki.pioms.log.service.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,7 +17,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+
+import java.util.Objects;
+
 import java.util.Optional;
+
 import java.util.stream.Collectors;
 
 @Service
@@ -23,12 +29,14 @@ public class FranchiseOwnerServiceImpl implements FranchiseOwnerService {
 
     private final FranchiseOwnerRepository franchiseOwnerRepository;
     private final AdminRepository adminRepository;
+    private final LogService logService;
     private final PasswordEncoder passwordEncoder;
-
+  
     @Autowired
-    public FranchiseOwnerServiceImpl(FranchiseOwnerRepository franchiseOwnerRepository, AdminRepository adminRepository, PasswordEncoder passwordEncoder) {
+    public FranchiseOwnerServiceImpl(FranchiseOwnerRepository franchiseOwnerRepository, AdminRepository adminRepository, LogService logService, , PasswordEncoder passwordEncoder) {
         this.franchiseOwnerRepository = franchiseOwnerRepository;
         this.adminRepository = adminRepository;
+        this.logService = logService;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -88,6 +96,7 @@ public class FranchiseOwnerServiceImpl implements FranchiseOwnerService {
             franchiseOwner.setFranchiseOwnerUpdateDate(now);
 
             franchiseOwnerRepository.save(franchiseOwner);
+            logService.saveLog("root", LogStatus.등록, franchiseOwner.getFranchiseOwnerName(), "FranchiseOwner");
             return ResponseEntity.ok("신규 프랜차이즈 오너 등록이 완료되었습니다.");
         } catch (Exception e) {
             return ResponseEntity.status(500).body("프랜차이즈 오너 등록 중 오류가 발생했습니다.");
@@ -111,6 +120,19 @@ public class FranchiseOwnerServiceImpl implements FranchiseOwnerService {
                     (existingFranchiseOwner.getFranchise().getAdmin().getAdminCode() == requestorAdminCode) ||
                     existingFranchiseOwner.getFranchiseOwnerCode() == requestorAdminCode) {
 
+                StringBuilder changes = new StringBuilder();
+                if (!Objects.equals(existingFranchiseOwner.getFranchiseOwnerPwd(), updatedFranchiseOwner.getFranchiseOwnerPwd())) {
+                    changes.append(String.format("pwd 변경 '%s'에서 '%s(으)로; ", existingFranchiseOwner.getFranchiseOwnerPwd(), updatedFranchiseOwner.getFranchiseOwnerPwd()));
+                    existingFranchiseOwner.setFranchiseOwnerPwd(updatedFranchiseOwner.getFranchiseOwnerPwd());
+                }
+                if (!Objects.equals(existingFranchiseOwner.getFranchiseOwnerPhone(), updatedFranchiseOwner.getFranchiseOwnerPhone())) {
+                    changes.append(String.format("phone 변경 '%s'에서 '%s'(으)로; ", existingFranchiseOwner.getFranchiseOwnerPhone(), updatedFranchiseOwner.getFranchiseOwnerPhone()));
+                    existingFranchiseOwner.setFranchiseOwnerPhone(updatedFranchiseOwner.getFranchiseOwnerPhone());
+                }
+                if (!Objects.equals(existingFranchiseOwner.getFranchiseOwnerEmail(), updatedFranchiseOwner.getFranchiseOwnerEmail())) {
+                    changes.append(String.format("Email 변경 '%s'에서  '%s'(으)로; ", existingFranchiseOwner.getFranchiseOwnerEmail(), updatedFranchiseOwner.getFranchiseOwnerEmail()));
+                    existingFranchiseOwner.setFranchiseOwnerEmail(updatedFranchiseOwner.getFranchiseOwnerEmail());
+                }
                 // 이름 수정 불가
                 existingFranchiseOwner.setFranchiseOwnerPwd(passwordEncoder.encode(updatedFranchiseOwner.getFranchiseOwnerPwd()));
                 existingFranchiseOwner.setFranchiseOwnerPhone(updatedFranchiseOwner.getFranchiseOwnerPhone());
@@ -121,6 +143,9 @@ public class FranchiseOwnerServiceImpl implements FranchiseOwnerService {
                 existingFranchiseOwner.setFranchiseOwnerUpdateDate(LocalDateTime.now().format(formatter));
 
                 franchiseOwnerRepository.save(existingFranchiseOwner);
+                if (changes.length() > 0) {
+                    logService.saveLog("root", LogStatus.수정, changes.toString(), "FranchiseOwner");
+                }
                 return ResponseEntity.ok("프랜차이즈 오너 정보가 성공적으로 업데이트되었습니다.");
             } else {
                 return ResponseEntity.status(403).body("수정 권한이 없습니다.");
@@ -154,6 +179,7 @@ public class FranchiseOwnerServiceImpl implements FranchiseOwnerService {
             existingFranchiseOwner.setFranchiseOwnerDeleteDate(LocalDateTime.now().format(formatter));
 
             franchiseOwnerRepository.save(existingFranchiseOwner);
+            logService.saveLog("root", LogStatus.삭제, existingFranchiseOwner.getFranchiseOwnerName(), "FranchiseOwner");
             return ResponseEntity.ok("프랜차이즈 오너가 성공적으로 삭제(비활성화)되었습니다.");
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
