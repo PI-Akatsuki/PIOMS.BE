@@ -87,28 +87,9 @@ class InvoiceServiceTest {
 
 
         // Put
-
         //when
         Invoice invoiceForPut = invoicesCmp.get(invoicesCmp.size()-1);
         invoiceService.putInvoice(invoiceForPut.getInvoiceCode(), DELIVERY_STATUS.배송완료);
         assertEquals(DELIVERY_STATUS.배송완료, invoiceForPut.getDeliveryStatus());
     }
-
-
-    @Test
-    void getInvoice() {
-
-    }
-
-
-
-    @Test
-    void deleteInvoice() {
-    }
-
-    @Test
-    void getInvoiceByOrderCode() {
-    }
-
-
 }
