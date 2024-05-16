@@ -14,6 +14,7 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
+@ToString
 public class Franchise {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,6 +52,7 @@ public class Franchise {
 
     @ManyToOne
     @JoinColumn(name = "admin_code", referencedColumnName = "admin_code")
+    @ToString.Exclude
     private Admin admin;
 
 
