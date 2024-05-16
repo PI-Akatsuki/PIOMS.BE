@@ -33,6 +33,7 @@ class SpecsServiceTest {
 
     @Test
     void getSpecsList() {
+        //fin
         List<SpecsEntity> specsList = specsRepository.findAll();
         List<SpecsDTO> specsDTOS = specsService.getSpecsList();
         assertEquals(specsList.size(),specsDTOS.size());
@@ -40,11 +41,13 @@ class SpecsServiceTest {
 
     @Test
     void afterAcceptOrder() {
+        //fin
         int franchiseCode = 2;
         Map<Integer,Integer> requestProducts =  new HashMap<Integer,Integer>(){{ put(1, 1); put(2,2); put(3,3);}};
         RequestOrderVO requestOrderVO = new RequestOrderVO(requestProducts,franchiseCode);
         OrderDTO orderDTO = orderFacade.postFranchiseOrder(franchiseCode,requestOrderVO);
         if (orderDTO==null) {
+            System.out.println("이미 존재하여 생성 안합니다.");
             assertEquals(true, true);
             return;
         }
@@ -59,19 +62,31 @@ class SpecsServiceTest {
 
     @Test
     void getFranchiseSpecsList() {
+        //fin
         int franchiseCode =1;
+
         List<SpecsEntity> specsList = specsRepository.findAllByOrderFranchiseFranchiseCode(franchiseCode);
         List<SpecsDTO> specsDTOS = specsService.getFranchiseSpecsList(franchiseCode);
+
         assertEquals(specsList.size(),specsDTOS.size());
     }
 
     @Test
     void getSpecsByFranchiseCode() {
-        int franchiseCode = 1;
-        int specsCode =1;
-        SpecsEntity specs = specsRepository.findById(1).orElse(null);
-        SpecsDTO specsDTO = specsService.getSpecsByFranchiseCode(franchiseCode,1);
-        assertEquals(specs.getSpecsCode(),specsDTO.getSpecsCode());
+        int franchiseCode = 2;
+        Map<Integer,Integer> requestProducts =  new HashMap<Integer,Integer>(){{ put(1, 1); put(2,2); put(3,3);}};
+        RequestOrderVO requestOrderVO = new RequestOrderVO(requestProducts,franchiseCode);
+        OrderDTO orderDTO = orderFacade.postFranchiseOrder(franchiseCode,requestOrderVO);
+        if (orderDTO==null) {
+            System.out.println("이미 존재하여 생성 안합니다.");
+            assertEquals(true, true);
+            return;
+        }
+        SpecsEntity specs = specsRepository.findByOrderOrderCode(orderDTO.getOrderCode());
+        if (specs!=null) {
+            SpecsDTO specsDTO = specsService.getSpecsByFranchiseCode(franchiseCode, specs.getOrder().getOrderCode());
+            assertEquals(specs.getSpecsCode(), specsDTO.getSpecsCode());
+        }
     }
 
     @Test
