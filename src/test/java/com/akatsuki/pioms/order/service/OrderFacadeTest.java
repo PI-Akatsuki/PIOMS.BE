@@ -70,7 +70,10 @@ class OrderFacadeTest {
 
     @Test
     void getAdminOrder() {
-        
+        Order order1 = orderRepository.findById(order.getOrderCode()).orElseThrow();
+        OrderDTO orderDTO1 = orderFacade.getAdminOrder(order.getFranchise().getAdmin().getAdminCode(), order.getOrderCode());
+        assertEquals(order1.getOrderCode(), orderDTO1.getOrderCode());
+
     }
 
     @Test
