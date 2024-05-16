@@ -86,20 +86,17 @@ class SpecsServiceTest {
         if (specs!=null) {
             SpecsDTO specsDTO = specsService.getSpecsByFranchiseCode(franchiseCode, specs.getOrder().getOrderCode());
             assertEquals(specs.getSpecsCode(), specsDTO.getSpecsCode());
+
+            specsDTO = specsService.getSpecsByAdminCode(orderDTO.getAdminCode(),specs.getOrder().getOrderCode());
+            assertEquals(specs.getSpecsCode(),specsDTO.getSpecsCode());
         }
     }
 
     @Test
     void getSpecsListByAdminCode() {
-        List<SpecsEntity> specsList = specsRepository.findAll();
-        List<SpecsDTO> specsDTOS = specsService.getSpecsList();
-        assertEquals(specsList.size(),specsDTOS.size());
-    }
-
-    @Test
-    void getSpecsByAdminCode() {
-        List<SpecsEntity> specsList = specsRepository.findAll();
-        List<SpecsDTO> specsDTOS = specsService.getSpecsList();
-        assertEquals(specsList.size(),specsDTOS.size());
+        int adminCode = 1;
+        List<SpecsEntity> specsList = specsRepository.findAllByOrderFranchiseAdminAdminCode(adminCode);
+        List<SpecsDTO> specsDTOS = specsService.getSpecsListByAdminCode(adminCode);
+        assertEquals(specsList.size(), specsDTOS.size());
     }
 }
