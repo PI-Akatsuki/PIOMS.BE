@@ -17,4 +17,9 @@ public interface SpecsService {
     List<SpecsDTO> getFranchiseSpecsList(int franchiseCode);
     void afterAcceptOrder(int orderCode, int franchiseCode, DELIVERY_DATE deliveryDate);
 
+    SpecsDTO getSpecsByFranchiseCode(int franchiseCode, int specsId);
+
+    List<SpecsDTO> getSpecsListByAdminCode(int adminCode);
+
+    SpecsDTO getSpecsByAdminCode(int adminCode, int specsCode);
 }

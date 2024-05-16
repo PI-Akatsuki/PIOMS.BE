@@ -8,6 +8,8 @@ import java.util.List;
 public interface SpecsRepository extends JpaRepository<SpecsEntity,Integer> {
     List<SpecsEntity> findAllByOrderFranchiseFranchiseCode(int franchiseCode);
 
+    List<SpecsEntity> findAllByOrderFranchiseAdminAdminCode(int adminCode);
+
 //    List<SpecsEntity> findAllAndOrderBySpecsDateDesc();
 
 }

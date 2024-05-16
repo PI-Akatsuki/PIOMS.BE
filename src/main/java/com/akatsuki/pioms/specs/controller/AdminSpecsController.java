@@ -22,9 +22,9 @@ public class AdminSpecsController {
         this.specsService = specsService;
     }
 
-    @GetMapping("/specs")
-    public ResponseEntity<List<ResponseSpecs>> getSpecsList(){
-        List<SpecsDTO> specsDTOS = specsService.getSpecsList();
+    @GetMapping("/{adminCode}/specs")
+    public ResponseEntity<List<ResponseSpecs>> getSpecsList(@PathVariable int adminCode){
+        List<SpecsDTO> specsDTOS = specsService.getSpecsListByAdminCode(adminCode);
         List<ResponseSpecs> responseSpecs = new ArrayList<>();
         specsDTOS.forEach( specsDTO -> {
             responseSpecs.add(new ResponseSpecs(specsDTO));
@@ -32,9 +32,9 @@ public class AdminSpecsController {
         return ResponseEntity.ok(responseSpecs);
     }
 
-    @GetMapping("/specs/{specsCode}")
-    public ResponseEntity<ResponseSpecs> getSpecs(@PathVariable int specsCode){
-        SpecsDTO specsDTO = specsService.getSpecs(specsCode);
+    @GetMapping("/{adminCode}/specs/{specsCode}")
+    public ResponseEntity<ResponseSpecs> getSpecs(@PathVariable int adminCode,@PathVariable int specsCode){
+        SpecsDTO specsDTO = specsService.getSpecsByAdminCode(adminCode,specsCode);
         return ResponseEntity.ok(new ResponseSpecs(specsDTO));
     }
 }
