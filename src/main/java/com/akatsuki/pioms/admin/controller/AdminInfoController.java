@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("admin")
@@ -35,10 +34,9 @@ public class AdminInfoController {
     @Operation(summary = "본사 관리자 상세조회", description = "본사 관리자를 조회합니다.")
     @GetMapping("/list/detail/{adminCode}")
     public ResponseEntity<Admin> getAdminById(@PathVariable int adminCode) {
-        Optional<Admin> admin = adminService.findAdminById(adminCode);
-        return admin.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        return adminService.findAdminById(adminCode);
     }
+
 
     // 관리자 등록
     @Operation(summary = "본사 관리자 등록", description = "본사 관리자를 등록합니다.")

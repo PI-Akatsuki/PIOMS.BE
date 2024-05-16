@@ -1,6 +1,7 @@
 package com.akatsuki.pioms.product.aggregate;
 
 import com.akatsuki.pioms.categoryThird.aggregate.CategoryThird;
+import com.akatsuki.pioms.product.dto.ProductDTO;
 import com.akatsuki.pioms.product.etc.PRODUCT_COLOR;
 import com.akatsuki.pioms.product.etc.PRODUCT_GENDER;
 import com.akatsuki.pioms.product.etc.PRODUCT_STATUS;
@@ -56,7 +57,7 @@ public class Product {
     @Enumerated(EnumType.STRING)
     private PRODUCT_STATUS productStatus;
 
-    @Column(name = "product_exposure_status")
+    @Column(name = "product_exposure_status", columnDefinition = "boolean default false")
     private boolean productExposureStatus;
 
     @Column(name = "product_notice_count")
@@ -71,4 +72,23 @@ public class Product {
     @ManyToOne
     @JoinColumn(name="category_third_code")
     private CategoryThird categoryThird;
+
+    public Product(ProductDTO product) {
+        this.productCode= product.getProductCode();
+        this.productName= product.getProductName();
+        this.productPrice= product.getProductPrice();
+        this.productEnrollDate= product.getProductEnrollDate();
+        this.productUpdateDate= product.getProductUpdateDate();
+        this.productContent= product.getProductContent();
+        this.productColor= product.getProductColor();
+        this.productSize= product.getProductSize();
+        this.productGender= product.getProductGender();
+        this.productTotalCount= product.getProductTotalCount();
+        this.productStatus= product.getProductStatus();
+        this.productExposureStatus= product.isProductExposureStatus();
+        this.productNoticeCount= product.getProductNoticeCount();
+        this.productDiscount= product.getProductDiscount();
+        this.productCount= product.getProductCount();
+        this.categoryThird= product.getCategoryThird();
+    }
 }

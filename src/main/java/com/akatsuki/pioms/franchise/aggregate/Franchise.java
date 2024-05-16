@@ -2,6 +2,7 @@ package com.akatsuki.pioms.franchise.aggregate;
 
 import com.akatsuki.pioms.admin.aggregate.Admin;
 
+import com.akatsuki.pioms.franchise.dto.FranchiseDTO;
 import com.akatsuki.pioms.frowner.aggregate.FranchiseOwner;
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,6 +13,7 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
 @ToString
 public class Franchise {
     @Id
@@ -50,5 +52,8 @@ public class Franchise {
 
     @ManyToOne
     @JoinColumn(name = "admin_code", referencedColumnName = "admin_code")
+    @ToString.Exclude
     private Admin admin;
+
+
 }

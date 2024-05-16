@@ -1,7 +1,7 @@
 package com.akatsuki.pioms.order.repository;
 
 
-import com.akatsuki.pioms.order.entity.Order;
+import com.akatsuki.pioms.order.aggregate.Order;
 import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -19,4 +19,8 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
 
     // 가맹점의 모든 발주들을 조회합니다.
     List<Order> findByFranchiseFranchiseCode(int franchiseCode);
+
+    boolean existsByFranchiseFranchiseCodeAndOrderCondition(int franchiseCode, ORDER_CONDITION orderCondition);
+
+    boolean existsByExchangeExchangeCode(int exchangeCode);
 }
