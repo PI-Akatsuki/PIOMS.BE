@@ -13,5 +13,5 @@ public interface CategoryFirstService {
 
     ResponseEntity<String> updateCategoryFirst(int categoryFirstCode, RequestCategoryFirst request, int requesterAdminCode);
 
-    ResponseEntity<String> postCategoryFirst(RequestCategoryFirst request, int requesterAdminCode);
+    ResponseEntity<String> postCategoryFirst(RequestCategoryFirst request/*, int requesterAdminCode*/);
 }

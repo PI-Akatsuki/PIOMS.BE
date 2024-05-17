@@ -12,6 +12,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,11 +29,21 @@ class CategoryFirstServiceTest {
     @Autowired
     private CategoryFirstRepository categoryFirstRepository;
 
+    private CategoryFirst categoryFirst;
+    private Admin admin;
+
     static RequestCategoryFirst request;
+
 
     @BeforeEach
     void init() {
-        request = new RequestCategoryFirst("테스트");
+        categoryFirst = new CategoryFirst();
+        categoryFirst.setCategoryFirstCode(10);
+        categoryFirst.setCategoryFirstName("test");
+        categoryFirst.setCategoryFirstEnrollDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        categoryFirst.setCategoryFirstUpdateDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+
+        categoryFirstRepository.save(categoryFirst);
     }
 
     @Test
@@ -40,7 +53,7 @@ class CategoryFirstServiceTest {
         List<CategoryFirstDTO> categoryFirstDTOS = categoryFirstService.getAllCategoryFirst();
 
         assertEquals(categoryFirstList.size(), categoryFirstDTOS.size());
-
+        System.out.println();
     }
 
     @Test
@@ -50,6 +63,20 @@ class CategoryFirstServiceTest {
         List<CategoryFirst> categoryFirstList = categoryFirstRepository.findByCategoryFirstCode(categoryFirstCode);
         List<CategoryFirstDTO> categoryFirstDTOS = categoryFirstService.findCategoryFirstByCode(categoryFirstCode);
         assertEquals(categoryFirstList.size(), categoryFirstDTOS.size());
+    }
+
+    @Test
+    @DisplayName("카테고리(대) 신규 등록")
+    void postCategoryFirst() {
+        CategoryFirstDTO newCategoryDTO = CategoryFirstDTO.builder()
+                .categoryFirstName("newCategory")
+                .build();
+        ResponseEntity<String> response = categoryFirstService.postCategoryFirst(request);
+
+        assertEquals("등록 완료",response.getBody());
+
+        List<CategoryFirstDTO> categoryFirstList = categoryFirstService.findCategoryFirstByCode(categoryFirst.getCategoryFirstCode());
+        System.out.println("categoryFirstList = " + categoryFirstList);
     }
 
 }

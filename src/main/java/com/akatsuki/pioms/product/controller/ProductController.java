@@ -1,6 +1,7 @@
 package com.akatsuki.pioms.product.controller;
 
 import com.akatsuki.pioms.product.aggregate.Product;
+import com.akatsuki.pioms.product.dto.ProductDTO;
 import com.akatsuki.pioms.product.service.ProductService;
 import com.akatsuki.pioms.product.aggregate.RequestProduct;
 import com.akatsuki.pioms.product.aggregate.ResponseProduct;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -26,20 +28,25 @@ public class ProductController {
 
     @GetMapping("")
     @Operation(summary = "상품 전체 조회", description = "상품 전체 단순 조회 기능")
-    public ResponseEntity<List<Product>> getAllProduct() {
+    public ResponseEntity<List<ProductDTO>> getAllProduct() {
         return ResponseEntity.ok().body(productService.getAllProduct());
     }
 
     @GetMapping("/{productCode}")
     @Operation(summary = "상품코드로 상품 조회", description = "상품 코드로 상품 하나 단순 조회")
-    public ResponseEntity<Product> getProductByCode(@PathVariable int productCode) {
-        return ResponseEntity.ok().body(productService.findProductByCode(productCode));
+    public ResponseEntity<List<ResponseProduct>> getProductByCode(@PathVariable int productCode) {
+        List<ProductDTO> productDTOS = productService.findProductByCode(productCode);
+        List<ResponseProduct> responseProduct = new ArrayList<>();
+        productDTOS.forEach(productDTO -> {
+            responseProduct.add(new ResponseProduct(productDTO));
+        });
+        return ResponseEntity.ok(responseProduct);
     }
 
     @PostMapping("/create")
     @Operation(summary = "상품 등록")
-    public ResponseEntity<String> postProduct(@RequestBody RequestProduct request, int requesterAdminCode) {
-        return productService.postProduct(request, requesterAdminCode);
+    public ResponseEntity<String> postProduct(@RequestBody RequestProduct request/*, int requesterAdminCode*/) {
+        return productService.postProduct(request/*, requesterAdminCode*/);
     }
 
     @DeleteMapping("/delete/{productCode}")

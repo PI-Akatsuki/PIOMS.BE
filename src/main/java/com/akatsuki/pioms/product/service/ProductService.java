@@ -5,15 +5,16 @@ import com.akatsuki.pioms.order.dto.OrderDTO;
 import com.akatsuki.pioms.product.aggregate.Product;
 import com.akatsuki.pioms.product.aggregate.RequestProduct;
 import com.akatsuki.pioms.product.aggregate.ResponseProduct;
+import com.akatsuki.pioms.product.dto.ProductDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
 public interface ProductService {
-    List<Product> getAllProduct();
-    Product findProductByCode(int productCode);
-    ResponseEntity<String> postProduct(RequestProduct request, int requesterAdminCode);
+    List<ProductDTO> getAllProduct();
+    List<ProductDTO> findProductByCode(int productCode);
+    ResponseEntity<String> postProduct(RequestProduct request/*, int requesterAdminCode*/);
     ResponseEntity<String> deleteProduct(int productCode, int requesterAdminCode);
     ResponseEntity<String> updateProduct(int productCode, RequestProduct request, int requesterAdminCode);
     void exportProducts(OrderDTO order);

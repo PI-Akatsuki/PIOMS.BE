@@ -2,12 +2,14 @@ package com.akatsuki.pioms.categoryThird.dto;
 
 import com.akatsuki.pioms.categoryThird.aggregate.CategoryThird;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class CategoryThirdDTO {
     private int categoryThirdCode;
     private String categoryThirdName;
