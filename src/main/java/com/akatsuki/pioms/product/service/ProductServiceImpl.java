@@ -2,7 +2,6 @@ package com.akatsuki.pioms.product.service;
 
 import com.akatsuki.pioms.admin.aggregate.Admin;
 import com.akatsuki.pioms.admin.repository.AdminRepository;
-import com.akatsuki.pioms.exchange.aggregate.ExchangeProduct;
 import com.akatsuki.pioms.categoryThird.repository.CategoryThirdRepository;
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import com.akatsuki.pioms.exchange.aggregate.EXCHANGE_PRODUCT_STATUS;
@@ -12,8 +11,7 @@ import com.akatsuki.pioms.exchange.service.ExchangeService;
 import com.akatsuki.pioms.log.etc.LogStatus;
 import com.akatsuki.pioms.log.service.LogService;
 import com.akatsuki.pioms.order.dto.OrderDTO;
-import com.akatsuki.pioms.product.aggregate.ResponseProducts;
-
+import com.akatsuki.pioms.product.aggregate.ResponseProduct;
 import com.akatsuki.pioms.product.repository.ProductRepository;
 import com.akatsuki.pioms.categoryThird.aggregate.CategoryThird;
 import com.akatsuki.pioms.product.aggregate.Product;
@@ -37,7 +35,7 @@ public class ProductServiceImpl implements ProductService{
     private final CategoryThirdRepository categoryThirdRepository;
     private final ExchangeService exchangeService;
     private final AdminRepository adminRepository;
-    LogService logService;
+    private final LogService logService;
 
     @Autowired
     public ProductServiceImpl(ProductRepository productRepository, CategoryThirdRepository categoryThirdRepository, ExchangeService exchangeService, AdminRepository adminRepository, LogService logService) {
@@ -73,13 +71,13 @@ public class ProductServiceImpl implements ProductService{
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formattedDateTime = LocalDateTime.now().format(formatter);
 
-        CategoryThird categoryThird = categoryThirdRepository.findByCategoryThirdCode(request.getCategoryThirdCode());
+        List<CategoryThird> categoryThird = categoryThirdRepository.findByCategoryThirdCode(request.getCategoryThirdCode());
 
         if(categoryThird == null) {
             return ResponseEntity.badRequest().body("해당 카테고리가 존재하지 않습니다. 다시 확인해주세요.");
         }
 
-        product.setCategoryThird(categoryThird);
+//        product.setCategoryThird(categoryThird);
 
         product.setProductName(request.getProductName());
         product.setProductPrice(request.getProductPrice());
@@ -214,11 +212,11 @@ public class ProductServiceImpl implements ProductService{
 
     @Override
     @Transactional
-    public List<ResponseProducts> getCategoryProductList(int categoryThirdCode) {
+    public List<ResponseProduct> getCategoryProductList(int categoryThirdCode) {
         List<Product> products = productRepository.findAllByCategoryThirdCategoryThirdCode(categoryThirdCode);
-        List<ResponseProducts> responseProducts = new ArrayList<>();
+        List<ResponseProduct> responseProducts = new ArrayList<>();
         products.forEach(product -> {
-            responseProducts.add(new ResponseProducts(product));
+            responseProducts.add(new ResponseProduct(product));
         });
         return responseProducts;
     }

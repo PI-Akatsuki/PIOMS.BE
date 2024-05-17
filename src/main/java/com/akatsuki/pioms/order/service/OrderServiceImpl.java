@@ -41,33 +41,40 @@ public class OrderServiceImpl implements OrderService{
     @Override
     @Transactional(readOnly = true)
     public List<Order> getOrderListByAdminCode(int adminCode){
-        // 인가 필요 없음
-        List<Order> orderList = orderRepository.findAllByFranchiseAdminAdminCode(adminCode);
-        if (orderList == null)
+
+        List<Order> orderList;
+        if (adminCode==1){
+            // 루트 관리자는 전부
+            orderList = orderRepository.findAll();
+        }else
+            orderList = orderRepository.findAllByFranchiseAdminAdminCode(adminCode);
+
+        if (orderList == null || orderList.isEmpty())
             return null;
 
         List<Order> orderDTOList = new ArrayList<>();
 
-        orderList.forEach(order-> {
-            orderDTOList.add((order));
-        });
+        orderDTOList.addAll(orderList);
 
         return orderDTOList;
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Order> getAdminUncheckesOrders(int adminCode){
-        // 인가 필요 없음
-        List<Order> orderList = orderRepository.findAllByFranchiseAdminAdminCodeAndOrderCondition(adminCode, ORDER_CONDITION.승인대기);
-        System.out.println("orderList = " + orderList);
-        if (orderList == null)
+    public List<OrderDTO> getAdminUncheckesOrders(int adminCode){
+        List<Order> orderList;
+
+        if (adminCode == 1){
+            orderList = orderRepository.findAllByOrderCondition(ORDER_CONDITION.승인대기);
+        }else
+            orderList = orderRepository.findAllByFranchiseAdminAdminCodeAndOrderCondition(adminCode, ORDER_CONDITION.승인대기);
+        if (orderList == null || orderList.isEmpty())
             return null;
 
-        List<Order> orderDTOList = new ArrayList<>();
+        List<OrderDTO> orderDTOList = new ArrayList<>();
 
         orderList.forEach(order-> {
-            orderDTOList.add((order));
+            orderDTOList.add(new OrderDTO(order));
         });
 
         return orderDTOList;
@@ -79,28 +86,22 @@ public class OrderServiceImpl implements OrderService{
         System.out.println("acceptOrder");
         Order order = orderRepository.findById(orderId).orElseThrow();
 
-
         if (!checkOrderCondition(order))
             return null;
-        System.out.println("order = " + order);
         order.setOrderCondition(ORDER_CONDITION.승인완료);
+
         if (exchange!=null) {
             Exchange exchange1 = new Exchange();
             exchange1.setExchangeCode(exchange.getExchangeCode());
             order.setExchange(exchange1);
         }
-        System.out.println("order.getExchange() = " + order.getExchange());
+
         order=orderRepository.save(order);
-
-
-        System.out.println("acceptOrder End");
-
         return order;
     }
 
     @Override
     public boolean checkProductCnt(OrderDTO order) {
-        // 해당 상품의 수량이 본사 재고를 초과하는지 검사
         for (int i = 0; i < order.getOrderProductList().size(); i++) {
             if(order.getOrderProductList().get(i).getRequestProductCount() > order.getOrderProductList().get(i).getRequestProductCount())
                 return false;
@@ -110,17 +111,16 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     @Transactional
-    public String denyOrder(int adminCode,int orderId, String denyMessage){
-        Order order = orderRepository.findById(orderId).orElseThrow();
-        if(order.getFranchise().getAdmin().getAdminCode() != adminCode){
-            return "You dont\'t have permission to manage this franchise";
+    public OrderDTO denyOrder(int adminCode,int orderId, String denyMessage){
+        Order order = orderRepository.findById(orderId).orElse(null);
+        if(order==null||order.getFranchise().getAdmin().getAdminCode() != adminCode || !checkOrderCondition(order)){
+            return null;
         }
-        if (!checkOrderCondition(order))
-            return "This order is unavailable to accept. This order's condition is '" + order.getOrderCondition().name() + "', not '승인대기'. ";;
+
         order.setOrderCondition(ORDER_CONDITION.승인거부);
         order.setOrderReason(denyMessage);
-        orderRepository.save(order);
-        return "This order is denied.";
+        order = orderRepository.save(order);
+        return new OrderDTO(order);
     }
 
     @Override
@@ -187,12 +187,13 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     public OrderDTO getAdminOrder(int adminCode, int orderCode) {
-        Order order = orderRepository.findById(orderCode).orElseThrow(IllegalArgumentException::new);
-        System.out.println("order = " + order);
+        Order order = orderRepository.findById(orderCode).orElse(null);
+
         if(order==null || adminCode != order.getFranchise().getAdmin().getAdminCode()){
             return null;
         }
-        return (new OrderDTO(order));
+
+        return new OrderDTO(order);
     }
 
     @Override

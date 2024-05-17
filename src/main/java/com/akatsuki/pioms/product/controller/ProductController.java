@@ -1,7 +1,6 @@
 package com.akatsuki.pioms.product.controller;
 
 import com.akatsuki.pioms.product.aggregate.Product;
-import com.akatsuki.pioms.product.aggregate.ResponseProducts;
 import com.akatsuki.pioms.product.service.ProductService;
 import com.akatsuki.pioms.product.aggregate.RequestProduct;
 import com.akatsuki.pioms.product.aggregate.ResponseProduct;
@@ -56,7 +55,7 @@ public class ProductController {
     }
 
     @GetMapping("/category/{categoryThirdCode}")
-    public ResponseEntity<List<ResponseProducts>> getCategoryProductList(@PathVariable int categoryThirdCode) {
+    public ResponseEntity<List<ResponseProduct>> getCategoryProductList(@PathVariable int categoryThirdCode) {
         return ResponseEntity.ok(productService.getCategoryProductList(categoryThirdCode));
     }
 }

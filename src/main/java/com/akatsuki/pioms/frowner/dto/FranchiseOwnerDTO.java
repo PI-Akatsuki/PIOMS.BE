@@ -1,19 +1,14 @@
 package com.akatsuki.pioms.frowner.dto;
 
-
-
-import com.akatsuki.pioms.franchise.dto.FranchiseDTO;
 import com.akatsuki.pioms.frowner.aggregate.FranchiseOwner;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Builder;
-import java.time.LocalDateTime;
+import lombok.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@Setter
 @Builder
+@ToString
 public class FranchiseOwnerDTO {
     private int franchiseOwnerCode;
     private String franchiseOwnerName;
@@ -24,9 +19,8 @@ public class FranchiseOwnerDTO {
     private String franchiseOwnerEnrollDate;
     private String franchiseOwnerUpdateDate;
     private String franchiseOwnerDeleteDate;
-    private String franchiseName;
-    private String adminName;
-  
+
+    // FranchiseOwner 엔티티에서 FranchiseOwnerDTO로 변환하는 메서드
     public FranchiseOwnerDTO(FranchiseOwner franchiseOwner) {
         this.franchiseOwnerCode = franchiseOwner.getFranchiseOwnerCode();
         this.franchiseOwnerName = franchiseOwner.getFranchiseOwnerName();
@@ -34,8 +28,24 @@ public class FranchiseOwnerDTO {
         this.franchiseOwnerPwd = franchiseOwner.getFranchiseOwnerPwd();
         this.franchiseOwnerEmail = franchiseOwner.getFranchiseOwnerEmail();
         this.franchiseOwnerPhone = franchiseOwner.getFranchiseOwnerPhone();
-//         this.franchiseOwnerEnrollDate = franchiseOwner.getFranchiseOwnerEnrollDate();
-//         this.franchiseOwnerUpdateDate = franchiseOwner.getFranchiseOwnerUpdateDate();
-//         this.franchiseOwnerDeleteDate = franchiseOwner.getFranchiseOwnerDeleteDate();
+        this.franchiseOwnerEnrollDate = franchiseOwner.getFranchiseOwnerEnrollDate();
+        this.franchiseOwnerUpdateDate = franchiseOwner.getFranchiseOwnerUpdateDate();
+        this.franchiseOwnerDeleteDate = franchiseOwner.getFranchiseOwnerDeleteDate();
     }
+
+    // FranchiseOwnerDTO를 FranchiseOwner 엔티티로 변환
+    public FranchiseOwner toEntity() {
+        return FranchiseOwner.builder()
+                .franchiseOwnerCode(this.franchiseOwnerCode)
+                .franchiseOwnerId(this.franchiseOwnerId)
+                .franchiseOwnerName(this.franchiseOwnerName)
+                .franchiseOwnerPwd(this.franchiseOwnerPwd)
+                .franchiseOwnerEmail(this.franchiseOwnerEmail)
+                .franchiseOwnerPhone(this.franchiseOwnerPhone)
+                .franchiseOwnerEnrollDate(this.franchiseOwnerEnrollDate)
+                .franchiseOwnerUpdateDate(this.franchiseOwnerUpdateDate)
+                .franchiseOwnerDeleteDate(this.franchiseOwnerDeleteDate)
+                .build();
+    }
+
 }

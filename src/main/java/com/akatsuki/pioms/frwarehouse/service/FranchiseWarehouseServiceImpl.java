@@ -45,7 +45,6 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
         franchiseWarehouse.setFranchiseWarehouseTotal(franchiseWarehouse.getFranchiseWarehouseTotal()+changeVal);
         franchiseWarehouse.setFranchiseWarehouseCount(franchiseWarehouse.getFranchiseWarehouseCount()+changeVal);
         franchiseWarehouse.setFranchiseWarehouseEnable(franchiseWarehouse.getFranchiseWarehouseEnable()+changeVal);
-        System.out.println("franchiseWarehouse = " + franchiseWarehouse);
         franchiseWarehouseRepository.save(franchiseWarehouse);
     }
 
@@ -59,25 +58,19 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
             int cnt = product.getExchangeProductNormalCount();
             saveProduct(productCode,cnt,franchiseCode);
         });
-        System.out.println("exchange 처리 완료");
     }
 
     @Override
     @Transactional
     public boolean checkEnableToAddExchange(RequestExchange requestExchange) {
-        System.out.println("checkEnableToAddExchange 발생");
 
         for (int i = 0; i < requestExchange.getProducts().size(); i++) {
-
             ExchangeProductVO exchange =requestExchange.getProducts().get(i);
 
             FranchiseWarehouse franchiseWarehouse =
                     franchiseWarehouseRepository.findByProductProductCodeAndFranchiseCode(exchange.getProductCode(), requestExchange.getFranchiseCode());
 
             if(franchiseWarehouse==null || franchiseWarehouse.getFranchiseWarehouseEnable()< exchange.getExchangeProductCount()) {
-                System.out.println("error 신청 재고가 너무 많음!");
-                System.out.println("franchiseWarehouse.getFranchiseWarehouseEnable() = " + franchiseWarehouse.getFranchiseWarehouseEnable());
-                System.out.println("exchange = " + exchange.getExchangeProductCount());
                 return false;
             }
         }
@@ -118,11 +111,8 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
 
     @Transactional
     public void editCountByPostExchange(RequestExchange requestExchange) {
-        System.out.println("반송 신청 가능! 재고 수정합니다.");
         int cnt = requestExchange.getProducts().size();
-        System.out.println("cnt = " + cnt);
         for (int i = 0; i < cnt; i++) {
-
             ExchangeProductVO exchange = requestExchange.getProducts().get(i);
             System.out.println(exchange);
             FranchiseWarehouse franchiseWarehouse =
@@ -134,7 +124,5 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
                 franchiseWarehouseRepository.save(franchiseWarehouse);
             }
         }
-
     }
-
 }

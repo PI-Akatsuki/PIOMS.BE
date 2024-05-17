@@ -12,5 +12,5 @@ public interface AskRepository extends JpaRepository<Ask, Integer> {
     @Query("SELECT a FROM Ask a WHERE a.askStatus = '답변대기'")
     List<Ask> findAllByStatusWaitingForReply();
 
-    List<Ask> findByFranchiseOwner_FranchiseOwnerCode(Integer franchiseOwnerCode);
+    List<Ask> findByFranchiseOwner_FranchiseOwnerCode(int franchiseOwnerCode);
 }
