@@ -1,11 +1,16 @@
 package com.akatsuki.pioms.categoryThird.service;
 
+import com.akatsuki.pioms.admin.aggregate.Admin;
 import com.akatsuki.pioms.categoryThird.aggregate.CategoryThird;
+import com.akatsuki.pioms.categoryThird.aggregate.RequestCategoryThirdPost;
+import com.akatsuki.pioms.categoryThird.aggregate.RequestCategoryThirdUpdate;
 import com.akatsuki.pioms.categoryThird.dto.CategoryThirdDTO;
 import com.akatsuki.pioms.categoryThird.repository.CategoryThirdRepository;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -21,8 +26,11 @@ class CategoryThirdServiceTest {
 
     @Autowired
     private CategoryThirdRepository categoryThirdRepository;
+    static RequestCategoryThirdPost requestPost;
+    static RequestCategoryThirdUpdate requestUpdate;
 
     @Test
+    @DisplayName("카테고리(소) 전체 조회")
     void getAllCategoryThird() {
         List<CategoryThird> categoryThirdList = categoryThirdRepository.findAll();
         List<CategoryThirdDTO> categoryThirdDTOS = categoryThirdService.getAllCategoryThird();
@@ -30,6 +38,7 @@ class CategoryThirdServiceTest {
     }
 
     @Test
+    @DisplayName("카테고리(소) 상세 조회")
     void findCategoryThirdByCode() {
         int categoryThirdCode = 1;
         List<CategoryThird> categoryThirdList = categoryThirdRepository.findByCategoryThirdCode(categoryThirdCode);
@@ -38,10 +47,26 @@ class CategoryThirdServiceTest {
     }
 
     @Test
-    void postCategory() {assertEquals(true,true);}
+    void postCategory() {
+        Admin requestorAdmin = new Admin();
+        requestorAdmin.setAdminCode(1);
+
+        CategoryThird categoryThird = new CategoryThird();
+        categoryThird.setCategoryThirdName("postTest");
+        categoryThird.setCategoryThirdEnrollDate("2024-05-17 00:00:00");
+        categoryThird.setCategoryThirdUpdateDate("2024-05-17 00:00:00");
+        categoryThird.setCategoryThirdCode(1);
+
+//        ResponseEntity<String> response = categoryThirdService.postCategory()
+    }
 
     @Test
-    void updateCategory() {assertEquals(true,true);}
+    void updateCategory() {
+        Admin requestorAdmin = new Admin();
+        requestorAdmin.setAdminCode(1);
+
+
+    }
 
     @Test
     void deleteCategoryThird() {assertEquals(true,true);}

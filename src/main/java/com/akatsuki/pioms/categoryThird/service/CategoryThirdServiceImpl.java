@@ -44,7 +44,6 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
         this.logService = logService;
     }
 
-    /* 카테고리(소) 전체 조회 */
     @Override
     @Transactional
     public List<CategoryThirdDTO> getAllCategoryThird() {
@@ -57,7 +56,6 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
         return responseCategory;
     }
 
-    /* 카테고리(소) 코드로 카테고리(소) 조회 */
     @Override
     @Transactional
     public List<CategoryThirdDTO> findCategoryThirdByCode(int categoryThirdCode) {
@@ -69,7 +67,6 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
         return categoryThirdDTOS;
     }
 
-    /* 카테고리(소) 신규 등록 */
     @Override
     @Transactional
     public ResponseEntity<String> postCategory(RequestCategoryThirdPost request, int requesterAdminCode) {
@@ -101,7 +98,6 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
         return ResponseEntity.ok("카테고리(소) 생성 완료!");
     }
 
-    /* 카테고리(소) 수정 */
     @Override
     @Transactional
     public ResponseEntity<String> updateCategory(int categoryThirdCode, RequestCategoryThirdUpdate request, int requesterAdminCode) {
@@ -154,10 +150,4 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
 //        return ResponseEntity.badRequest().body(categoryThirdCode + "번의 해당 카테고리(소) 카테고리가 성공적으로 삭제되었습니다!");
 //    }
 
-//    @Override
-//    @Transactional
-//    public CategoryThird deleteCategory(int categoryThirdCode) {
-//        categoryThirdRepository.deleteById(categoryThirdCode);
-//        return null;
-//    }
 }
