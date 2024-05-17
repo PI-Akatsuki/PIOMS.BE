@@ -34,7 +34,8 @@ public class CategoryThird {
     @Column(name = "category_second_code")
     private int categorySecondCode;
 
-    public CategoryThird(CategoryThird categoryThird) {
+
+    public CategoryThird(int categoryThirdCode) {
         this.categoryThirdCode = categoryThirdCode;
     }
 }

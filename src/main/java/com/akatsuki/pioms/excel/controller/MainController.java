@@ -49,8 +49,8 @@ public class MainController {
         headStyle.setBorderRight(BorderStyle.THIN);
 
         // background color
-        headStyle.setFillBackgroundColor(HSSFColor.HSSFColorPredefined.YELLOW.getIndex());
-        headStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+//        headStyle.setFillBackgroundColor(HSSFColor.HSSFColorPredefined.YELLOW.getIndex());
+//        headStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
         // align-center
         headStyle.setAlignment(HorizontalAlignment.CENTER);
@@ -63,60 +63,17 @@ public class MainController {
         bodyStyle.setBorderRight(BorderStyle.THIN);
 
         // Header
+        String[] headers = {
+                "상품코드", "상품명", "상품가격", "등록일", "수정일", "상품 설명",
+                "색상", "사이즈", "성별", "본사 총 보유량", "상태", "노출상태",
+                "알림기준 수량", "본사 폐기량", "본사 보유량", "카테고리"
+        };
         row = sheet.createRow(rowNum++);
-        cell = row.createCell(0);
-        cell.setCellStyle(headStyle);
-        cell.setCellValue("번호");
-        cell = row.createCell(1);
-        cell.setCellStyle(headStyle);
-        cell.setCellValue("상품코드");
-        cell = row.createCell(2);
-        cell.setCellStyle(headStyle);
-        cell.setCellValue("상품명");
-        cell = row.createCell(3);
-        cell.setCellStyle(headStyle);
-        cell.setCellValue("상품가격");
-        cell = row.createCell(4);
-        cell.setCellStyle(headStyle);
-        cell.setCellValue("등록일");
-        cell = row.createCell(5);
-        cell.setCellStyle(headStyle);
-        cell.setCellValue("수정일");
-        cell = row.createCell(6);
-        cell.setCellStyle(headStyle);
-        cell.setCellValue("상품 설명");
-        cell = row.createCell(7);
-        cell.setCellStyle(headStyle);
-        cell.setCellValue("색상");
-        cell = row.createCell(8);
-        cell.setCellStyle(headStyle);
-        cell.setCellValue("사이즈");
-        cell = row.createCell(9);
-        cell.setCellStyle(headStyle);
-        cell.setCellValue("성별");
-        cell = row.createCell(10);
-        cell.setCellStyle(headStyle);
-        cell.setCellValue("본사 총 보유량");
-        cell = row.createCell(11);
-        cell.setCellStyle(headStyle);
-        cell.setCellValue("상태");
-        cell = row.createCell(12);
-        cell.setCellStyle(headStyle);
-        cell.setCellValue("노출상태");
-        cell = row.createCell(13);
-        cell.setCellStyle(headStyle);
-        cell.setCellValue("알림기준 수량");
-        cell = row.createCell(14);
-        cell.setCellStyle(headStyle);
-        cell.setCellValue("본사 폐기량");
-        cell = row.createCell(15);
-        cell.setCellStyle(headStyle);
-        cell.setCellValue("본사 보유량");
-        cell = row.createCell(16);
-        cell.setCellStyle(headStyle);
-//        cell.setCellValue("카테고리");
-//        cell = row.createCell(17);
-//        cell.setCellStyle(headStyle);
+        for (int i = 0; i < headers.length; i++) {
+            cell = row.createCell(i);
+            cell.setCellStyle(headStyle);
+            cell.setCellValue(headers[i]);
+        }
 
         // Body
         for (ProductDTO dto : productList) {
@@ -168,10 +125,16 @@ public class MainController {
             cell.setCellValue(dto.getProductCount());
             cell = row.createCell(15);
             cell.setCellStyle(bodyStyle);
-//            cell.setCellValue(dto.getCategoryThird().getCategoryThirdCode());
-//            cell = row.createCell(16);
-//            cell.setCellStyle(bodyStyle);
+            cell.setCellValue(dto.getCategoryThird());
         }
+
+        // Column width auto-sizing
+        for(int k = 0 ; k < headers.length ; k++){
+            sheet.autoSizeColumn(k);
+            sheet.setColumnWidth(k, (sheet.getColumnWidth(k))+(short)1024); //너비 더 넓게
+//            row.setHeight((short)512);
+        }
+
         System.out.println("productList = " + productList);
         // 컨텐츠 타입과 파일명 지정
         response.setContentType("ms-vnd/excel");

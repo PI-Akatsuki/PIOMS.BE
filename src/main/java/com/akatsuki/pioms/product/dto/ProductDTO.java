@@ -32,7 +32,7 @@ public class ProductDTO {
     private int productNoticeCount;
     private int productDiscount;
     private int productCount;
-    private CategoryThird categoryThird;
+    private int categoryThird;
 
 
     public ProductDTO(Product product) {
@@ -52,6 +52,7 @@ public class ProductDTO {
         this.productNoticeCount = product.getProductNoticeCount();
         this.productDiscount = product.getProductDiscount();
         this.productCount = product.getProductCount();
+        this.categoryThird = product.getCategoryThird().getCategoryThirdCode();
         //
     }
 }
