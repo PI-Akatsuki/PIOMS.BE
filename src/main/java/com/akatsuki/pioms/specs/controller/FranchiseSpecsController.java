@@ -33,17 +33,20 @@ public class FranchiseSpecsController {
     @GetMapping("/{franchiseCode}/specs/list")
     public ResponseEntity<List<ResponseSpecs>> getFranchiseSpecsList(@PathVariable int franchiseCode){
         List<SpecsDTO> specsDTOS = specsService.getFranchiseSpecsList(franchiseCode);
+        if (specsDTOS.isEmpty())
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         List<ResponseSpecs> responseSpecs = new ArrayList<>();
         specsDTOS.forEach( specsDTO -> {
             responseSpecs.add(new ResponseSpecs(specsDTO));
         });
         return ResponseEntity.ok(responseSpecs);
     }
+
     @GetMapping("/{franchiseCode}/specs/{specsId}")
     public ResponseEntity<ResponseSpecs> getFranchiseSpecs(@PathVariable int franchiseCode, @PathVariable int specsId){
         SpecsDTO specsDTO = specsService.getSpecsByFranchiseCode(franchiseCode, specsId);
         if (specsDTO == null){
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
         return ResponseEntity.ok(new ResponseSpecs(specsDTO));
     }

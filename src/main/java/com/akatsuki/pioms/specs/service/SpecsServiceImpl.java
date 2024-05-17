@@ -46,13 +46,20 @@ public class SpecsServiceImpl implements SpecsService{
     @Override
     public List<SpecsDTO> getSpecsListByAdminCode(int adminCode) {
         if (adminCode ==1 ){
+            // root 인 경우
             return getSpecsList();
         }
+
         List<SpecsEntity> specsList = specsRepository.findAllByOrderFranchiseAdminAdminCode(adminCode);
+        if (specsList.isEmpty())
+            return null;
+
         List<SpecsDTO> specsDTOS = new ArrayList<>();
+
         for (int i = 0; i < specsList.size(); i++) {
             specsDTOS.add(new SpecsDTO(specsList.get(i)));
         }
+
         return specsDTOS;
     }
 
@@ -61,9 +68,11 @@ public class SpecsServiceImpl implements SpecsService{
         SpecsEntity specs = specsRepository.findById(specsCode).orElse(null);
         if (adminCode==1 && specs!=null)
             return new SpecsDTO(specs);
+
         if (specs==null || specs.getOrder().getFranchise().getAdmin().getAdminCode() != adminCode){
             return null;
         }
+
         return new SpecsDTO(specs);
     }
 
