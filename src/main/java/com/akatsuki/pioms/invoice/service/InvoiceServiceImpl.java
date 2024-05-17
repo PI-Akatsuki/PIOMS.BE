@@ -1,11 +1,18 @@
 package com.akatsuki.pioms.invoice.service;
 
+import com.akatsuki.pioms.driver.dto.DeliveryRegionDTO;
+import com.akatsuki.pioms.driver.aggregate.DeliveryDriver;
+import com.akatsuki.pioms.driver.aggregate.DeliveryRegion;
+import com.akatsuki.pioms.driver.service.DeliveryService;
 import com.akatsuki.pioms.franchise.aggregate.DELIVERY_DATE;
+import com.akatsuki.pioms.franchise.aggregate.Franchise;
+import com.akatsuki.pioms.frowner.aggregate.FranchiseOwner;
 import com.akatsuki.pioms.invoice.aggregate.Invoice;
 import com.akatsuki.pioms.invoice.dto.InvoiceDTO;
 import com.akatsuki.pioms.invoice.aggregate.DELIVERY_STATUS;
 import com.akatsuki.pioms.invoice.repository.InvoiceRepository;
 import com.akatsuki.pioms.order.aggregate.Order;
+import com.akatsuki.pioms.order.dto.OrderDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,29 +23,12 @@ import java.util.List;
 @Service
 public class InvoiceServiceImpl implements InvoiceService {
     final private InvoiceRepository invoiceRepository;
+    final private DeliveryService deliveryService;
 
     @Autowired
-    public InvoiceServiceImpl(InvoiceRepository invoiceRepository) {
+    public InvoiceServiceImpl(InvoiceRepository invoiceRepository,DeliveryService deliveryService) {
         this.invoiceRepository = invoiceRepository;
-    }
-
-    @Override
-    public InvoiceDTO postInvoice(int orderCode, int franchiseCode, DELIVERY_DATE franchiseDeliveryDate, LocalDateTime orderDateTime){
-        Invoice invoice = new Invoice();
-        Order order = new Order();
-        order.setOrderCode(orderCode);
-        invoice.setOrder(order);
-
-        invoice.setDeliveryStatus(DELIVERY_STATUS.배송전);
-
-//        invoice.setDeliveryRegion(1);
-
-        DELIVERY_DATE deliveryDate = franchiseDeliveryDate;
-        invoice.setInvoiceDate(setDeliveryTime(orderDateTime, deliveryDate));
-
-
-        return saveInvoice(invoice);
-
+        this.deliveryService = deliveryService;
     }
 
     public LocalDateTime setDeliveryTime(LocalDateTime orderTime, DELIVERY_DATE deliveryDate){
@@ -73,9 +63,31 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public void afterAcceptOrder(int orderCode, int franchiseCode, DELIVERY_DATE deliveryDate, LocalDateTime orderDateTime){
+    public InvoiceDTO postInvoice(OrderDTO orderDTO){
+        System.out.println("order = " + orderDTO);
+        Order order = new Order(orderDTO);
+        System.out.println("order = " + order);
+        Invoice invoice = new Invoice();
+        invoice.setOrder(order);
+        invoice.setDeliveryStatus(DELIVERY_STATUS.배송전);
+
+        int deliveryRegionCode = deliveryService.getDeliveryRegionCodeByFranchiseCode(orderDTO.getFranchiseCode());
+        invoice.setDeliveryRegion(deliveryRegionCode);
+        invoice.setInvoiceDate(setDeliveryTime(order.getOrderDate(), orderDTO.getDeliveryDate()));
+        Invoice returnValue = invoiceRepository.save(invoice);
+        System.out.println("returnValue = " + returnValue.getOrder());
+        return new InvoiceDTO(returnValue);
+    }
+
+
+
+    @Override
+    public void afterAcceptOrder(OrderDTO orderEntity)
+//            (int orderCode, int franchiseCode, DELIVERY_DATE deliveryDate, LocalDateTime orderDateTime, int franchiseOwnerCode)
+    {
         System.out.println("Invoice event listen");
-        postInvoice(orderCode,franchiseCode, deliveryDate, orderDateTime);
+        InvoiceDTO invoiceDTO =  postInvoice(orderEntity);
+//        System.out.println("invoiceDTO = " + invoiceDTO);
         System.out.println("Invoice event End");
     }
 
@@ -86,7 +98,6 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoiceList.forEach(invoiceEntity -> {
             responseInvoice.add(new InvoiceDTO(invoiceEntity));
         });
-
         return responseInvoice;
     }
 
@@ -120,7 +131,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     public InvoiceDTO saveInvoice(Invoice invoice) {
-
+        System.out.println("invoice.getOrder() = " + invoice.getOrder());
         return new InvoiceDTO(invoiceRepository.save(invoice));
     }
 

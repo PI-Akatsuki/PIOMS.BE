@@ -11,6 +11,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class OrderDTO {
 
     private int orderCode;
@@ -49,6 +51,7 @@ public class OrderDTO {
 
 
     public OrderDTO(Order order) {
+        System.out.println("order = " + order);
         this.orderCode= order.getOrderCode();
         this.orderDate= order.getOrderDate();
         this.orderTotalPrice= order.getOrderTotalPrice();
@@ -58,16 +61,20 @@ public class OrderDTO {
         this.franchiseCode= order.getFranchise().getFranchiseCode();
         this.franchiseName= order.getFranchise().getFranchiseName();
         this.deliveryDate= order.getFranchise().getFranchiseDeliveryDate();
-        this.franchiseOwnerCode= order.getFranchise().getFranchiseOwner().getFranchiseOwnerCode();
-        this.franchiseOwnerName= order.getFranchise().getFranchiseOwner().getFranchiseOwnerName();
+        this.franchiseOwnerCode = order.getFranchise().getFranchiseOwner().getFranchiseOwnerCode();
+        this.franchiseOwnerName = order.getFranchise().getFranchiseOwner().getFranchiseOwnerName();
         this.AdminCode= order.getFranchise().getAdmin().getAdminCode();
         this.AdminName= order.getFranchise().getAdmin().getAdminName();
+
         if (exchange!=null)
             this.exchange= new ExchangeDTO(order.getExchange());
 //        this.orderProductList= order.getOrderProductList();
+
         orderProductList = new ArrayList<>();
-        for (int i = 0; i < order.getOrderProductList().size(); i++) {
-            orderProductList.add(new OrderProductDTO(order.getOrderProductList().get(i)));
-        }
+        if(order.getOrderProductList()!=null)
+            for (int i = 0; i < order.getOrderProductList().size(); i++) {
+                orderProductList.add(new OrderProductDTO(order.getOrderProductList().get(i)));
+            }
+
     }
 }

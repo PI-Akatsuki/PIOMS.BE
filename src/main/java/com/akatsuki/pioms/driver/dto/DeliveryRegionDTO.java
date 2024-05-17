@@ -1,4 +1,4 @@
-package com.akatsuki.pioms.driver;
+package com.akatsuki.pioms.driver.dto;
 
 import com.akatsuki.pioms.driver.aggregate.DeliveryDriver;
 import com.akatsuki.pioms.driver.aggregate.DeliveryRegion;
@@ -20,7 +20,6 @@ public class DeliveryRegionDTO {
     private int deliveryRegionCode;
 
     private FranchiseDTO franchise;
-
     private int driverCode;
     private String driverName;
 

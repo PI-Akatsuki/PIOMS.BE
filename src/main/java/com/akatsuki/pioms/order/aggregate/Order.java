@@ -1,7 +1,10 @@
 package com.akatsuki.pioms.order.aggregate;
 
+import com.akatsuki.pioms.admin.aggregate.Admin;
 import com.akatsuki.pioms.exchange.aggregate.Exchange;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
+import com.akatsuki.pioms.frowner.aggregate.FranchiseOwner;
+import com.akatsuki.pioms.order.dto.OrderDTO;
 import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
 import jakarta.persistence.*;
 import lombok.*;
@@ -16,6 +19,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
+@ToString
 public class Order {
 
     @Id
@@ -48,6 +52,7 @@ public class Order {
     private Exchange exchange;
 
     @OneToMany(mappedBy = "order")
+    @ToString.Exclude
     private List<OrderProduct> orderProductList;
 
     public Order(ORDER_CONDITION orderCondition, boolean orderStatus, Franchise franchise) {
@@ -58,4 +63,30 @@ public class Order {
     }
 
 
+    public Order(OrderDTO orderDTO) {
+        this.orderCode= orderDTO.getOrderCode();
+        this.orderDate= orderDTO.getOrderDate();
+        this.orderTotalPrice= orderDTO.getOrderTotalPrice();
+        this.orderCondition= orderDTO.getOrderCondition();
+        this.orderReason= orderDTO.getOrderReason();
+        this.orderStatus= orderDTO.isOrderStatus();
+        Franchise franchise1 = new Franchise();
+        franchise1.setFranchiseCode(orderDTO.getFranchiseCode());
+        franchise1.setFranchiseName(orderDTO.getFranchiseName());
+        FranchiseOwner franchiseOwner = new FranchiseOwner();
+        franchiseOwner.setFranchiseOwnerCode(orderDTO.getFranchiseOwnerCode());
+        franchiseOwner.setFranchiseOwnerName(orderDTO.getFranchiseOwnerName());
+        franchise1.setFranchiseOwner(franchiseOwner);
+        franchise1.setAdmin(new Admin());
+        franchise1.getAdmin().setAdminCode(orderDTO.getAdminCode());
+        franchise1.getAdmin().setAdminName(orderDTO.getAdminName());
+
+        this.franchise= franchise1;
+        if (orderDTO.getExchange()!=null) {
+            Exchange exchange1 = new Exchange();
+            exchange1.setExchangeCode(orderDTO.getExchange().getExchangeCode());
+            this.exchange = exchange1;
+        }
+//        this.orderProductList= orderDTO.;
+    }
 }

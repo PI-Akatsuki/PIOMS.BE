@@ -5,6 +5,7 @@ import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import com.akatsuki.pioms.exchange.service.ExchangeService;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import com.akatsuki.pioms.franchise.service.FranchiseService;
+import com.akatsuki.pioms.frowner.aggregate.FranchiseOwner;
 import com.akatsuki.pioms.invoice.service.InvoiceService;
 import com.akatsuki.pioms.order.aggregate.Order;
 import com.akatsuki.pioms.order.aggregate.RequestOrderVO;
@@ -80,6 +81,7 @@ public class OrderFacade {
 
         Order orderEntity = orderService.acceptOrder(adminCode,orderCode, exchange);
 
+
         System.out.println("orderEntity = " + orderEntity);
         productService.exportProducts(order);
         System.out.println("orderEntity = " + orderEntity);
@@ -88,8 +90,10 @@ public class OrderFacade {
             productService.exportExchangeProducts(exchange.getExchangeCode());
         specsService.afterAcceptOrder(orderCode, order.getFranchiseCode(), order.getDeliveryDate());
         System.out.println();
-        invoiceService.afterAcceptOrder(orderCode,order.getFranchiseCode(),order.getDeliveryDate(), order.getOrderDate());
+        invoiceService.afterAcceptOrder(order);
+
         System.out.println("End orderEntity = " + orderEntity);
+
         return new OrderDTO(orderEntity);
     }
 
@@ -98,8 +102,12 @@ public class OrderFacade {
         return returnValue;
     }
 
-    public boolean postFranchiseOrder(int franchiseCode, RequestOrderVO orders) {
+    public OrderDTO postFranchiseOrder(int franchiseCode, RequestOrderVO orders) {
+        Franchise franchise = franchiseService.findFranchiseById(franchiseCode).orElseThrow();
+        return orderService.postFranchiseOrder(franchise,orders);
+    }
 
-        return orderService.postFranchiseOrder(franchiseCode,orders);
+    public List<OrderDTO> getOrderListByFranchiseCode(int franchiseCode) {
+        return orderService.getOrderList(franchiseCode);
     }
 }

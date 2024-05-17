@@ -155,18 +155,5 @@ public class AdminInfoServiceImpl implements AdminInfoService {
         }
     }
 
-    @Override
-    public ResponseEntity<Admin> login(String adminId, String password, String accessNumber) {
-        Optional<Admin> optionalAdmin = adminRepository.findByAdminId(adminId);
 
-        if (optionalAdmin.isPresent()) {
-            Admin admin = optionalAdmin.get();
-
-            if (passwordEncoder.matches(password, admin.getAdminPwd()) && admin.getAccessNumber().equals(accessNumber)) {
-                return ResponseEntity.ok(admin);
-            }
-        }
-
-        return ResponseEntity.status(401).build();
-    }
 }

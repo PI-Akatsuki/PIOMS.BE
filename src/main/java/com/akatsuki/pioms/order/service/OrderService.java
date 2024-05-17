@@ -1,6 +1,7 @@
 package com.akatsuki.pioms.order.service;
 
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
+import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import com.akatsuki.pioms.order.aggregate.*;
 import com.akatsuki.pioms.order.dto.OrderDTO;
 
@@ -14,7 +15,7 @@ public interface OrderService {
     // 가맹점에서 새로운 발주를 생성합니다.
     // 생성을 정상적으로 한 경우 true를 반환합니다.
     // 비정상적인 생성인 경우: 신청한 상품이 본사 창고의 보유량보다 많은 경우. 발주서와 가맹점 코드가 불일치 하는 경우
-    boolean postFranchiseOrder(int franchiseCode, RequestOrderVO order);
+    OrderDTO postFranchiseOrder(Franchise franchise, RequestOrderVO order);
 
     // 관리자가 승인하지 않은 발주들을 반환합니다.
     List<Order> getAdminUncheckesOrders(int adminId);
