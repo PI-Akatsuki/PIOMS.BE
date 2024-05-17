@@ -1,5 +1,6 @@
 package com.akatsuki.pioms.invoice.repository;
 
+import com.akatsuki.pioms.invoice.aggregate.DELIVERY_STATUS;
 import com.akatsuki.pioms.invoice.aggregate.Invoice;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -18,4 +19,6 @@ public interface InvoiceRepository extends JpaRepository<Invoice,Integer> {
     List<Invoice> findAllByOrderFranchiseFranchiseOwnerFranchiseOwnerCode(int franchiseOwnerCode);
 
     List<Invoice> findByDeliveryRegion(int deliveryRegion);
+
+    List<Invoice> findByDeliveryRegionAndDeliveryStatus(int deliveryRegionCode, DELIVERY_STATUS deliveryStatus);
 }
