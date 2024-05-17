@@ -4,6 +4,8 @@ package com.akatsuki.pioms.specs.controller;
 import com.akatsuki.pioms.specs.aggregate.ResponseSpecs;
 import com.akatsuki.pioms.specs.dto.SpecsDTO;
 import com.akatsuki.pioms.specs.service.SpecsService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,25 +16,27 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/franchise")
+@Tag(name = "Franchise Specs API", description = "점주의 명세서 조회")
 public class FranchiseSpecsController {
 
     /**
      * <h1>명세서 컨트롤러</h1>
-     * 관리자: 모든 발주 리스트를 조회할 수 있다. <br>
      * 점주: 자신의 발주 리스트를 조회할 수 있다.<br>
      *
      * */
 
-    private SpecsService specsService;
+    private final SpecsService specsService;
 
     @Autowired
     public FranchiseSpecsController(SpecsService specsService) {
         this.specsService = specsService;
     }
 
-    @GetMapping("/{franchiseCode}/specs/list")
-    public ResponseEntity<List<ResponseSpecs>> getFranchiseSpecsList(@PathVariable int franchiseCode){
-        List<SpecsDTO> specsDTOS = specsService.getFranchiseSpecsList(franchiseCode);
+
+    @GetMapping("/{franchiseOwnerCode}/specs/list")
+    @Operation(summary = "점주의 명세서 전체 조회")
+    public ResponseEntity<List<ResponseSpecs>> getFranchiseSpecsList(@PathVariable int franchiseOwnerCode){
+        List<SpecsDTO> specsDTOS = specsService.getSpecsListByFrOwnerCode(franchiseOwnerCode);
         if (specsDTOS.isEmpty())
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         List<ResponseSpecs> responseSpecs = new ArrayList<>();
@@ -42,12 +46,15 @@ public class FranchiseSpecsController {
         return ResponseEntity.ok(responseSpecs);
     }
 
-    @GetMapping("/{franchiseCode}/specs/{specsId}")
-    public ResponseEntity<ResponseSpecs> getFranchiseSpecs(@PathVariable int franchiseCode, @PathVariable int specsId){
-        SpecsDTO specsDTO = specsService.getSpecsByFranchiseCode(franchiseCode, specsId);
+    @GetMapping("/{franchiseOwnerCode}/specs/{specsId}")
+    @Operation(summary = "점주의 명세서 상세 조회")
+    public ResponseEntity<ResponseSpecs> getFranchiseSpecs(@PathVariable int franchiseOwnerCode, @PathVariable int specsId){
+        SpecsDTO specsDTO = specsService.getSpecsByFranchiseCode(franchiseOwnerCode, specsId);
+
         if (specsDTO == null){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
+
         return ResponseEntity.ok(new ResponseSpecs(specsDTO));
     }
 

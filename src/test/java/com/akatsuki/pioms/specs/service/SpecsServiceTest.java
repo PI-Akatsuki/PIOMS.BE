@@ -1,10 +1,9 @@
 package com.akatsuki.pioms.specs.service;
 
-import com.akatsuki.pioms.invoice.aggregate.Invoice;
 import com.akatsuki.pioms.order.aggregate.RequestOrderVO;
 import com.akatsuki.pioms.order.dto.OrderDTO;
 import com.akatsuki.pioms.order.service.OrderFacade;
-import com.akatsuki.pioms.specs.aggregate.SpecsEntity;
+import com.akatsuki.pioms.specs.aggregate.Specs;
 import com.akatsuki.pioms.specs.dto.SpecsDTO;
 import com.akatsuki.pioms.specs.repository.SpecsRepository;
 import org.junit.jupiter.api.Test;
@@ -34,7 +33,7 @@ class SpecsServiceTest {
     @Test
     void getSpecsList() {
         //fin
-        List<SpecsEntity> specsList = specsRepository.findAll();
+        List<Specs> specsList = specsRepository.findAll();
         List<SpecsDTO> specsDTOS = specsService.getSpecsList();
         assertEquals(specsList.size(),specsDTOS.size());
     }
@@ -55,7 +54,7 @@ class SpecsServiceTest {
         int lastOrderCode = orderDTO.getOrderCode();
         int adminCode = orderDTO.getAdminCode();
         OrderDTO orderDTOCmp = orderFacade.acceptOrder(adminCode,lastOrderCode);
-        SpecsEntity specs = specsRepository.findByOrderOrderCode(orderDTOCmp.getOrderCode());
+        Specs specs = specsRepository.findByOrderOrderCode(orderDTOCmp.getOrderCode());
         System.out.println("specs = " + specs);
         assertEquals(specs.getOrder().getOrderCode(), orderDTOCmp.getOrderCode());
     }
@@ -65,8 +64,8 @@ class SpecsServiceTest {
         //fin
         int franchiseCode =1;
 
-        List<SpecsEntity> specsList = specsRepository.findAllByOrderFranchiseFranchiseCode(franchiseCode);
-        List<SpecsDTO> specsDTOS = specsService.getFranchiseSpecsList(franchiseCode);
+        List<Specs> specsList = specsRepository.findAllByOrderFranchiseFranchiseCode(franchiseCode);
+        List<SpecsDTO> specsDTOS = specsService.getSpecsListByFrOwnerCode(franchiseCode);
 
         assertEquals(specsList.size(),specsDTOS.size());
     }
@@ -82,7 +81,7 @@ class SpecsServiceTest {
             assertEquals(true, true);
             return;
         }
-        SpecsEntity specs = specsRepository.findByOrderOrderCode(orderDTO.getOrderCode());
+        Specs specs = specsRepository.findByOrderOrderCode(orderDTO.getOrderCode());
         if (specs!=null) {
             SpecsDTO specsDTO = specsService.getSpecsByFranchiseCode(franchiseCode, specs.getOrder().getOrderCode());
             assertEquals(specs.getSpecsCode(), specsDTO.getSpecsCode());
@@ -95,7 +94,7 @@ class SpecsServiceTest {
     @Test
     void getSpecsListByAdminCode() {
         int adminCode = 1;
-        List<SpecsEntity> specsList = specsRepository.findAllByOrderFranchiseAdminAdminCode(adminCode);
+        List<Specs> specsList = specsRepository.findAllByOrderFranchiseAdminAdminCode(adminCode);
         List<SpecsDTO> specsDTOS = specsService.getSpecsListByAdminCode(adminCode);
         assertEquals(specsList.size(), specsDTOS.size());
     }

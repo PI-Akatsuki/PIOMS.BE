@@ -3,6 +3,8 @@ package com.akatsuki.pioms.specs.controller;
 import com.akatsuki.pioms.specs.aggregate.ResponseSpecs;
 import com.akatsuki.pioms.specs.dto.SpecsDTO;
 import com.akatsuki.pioms.specs.service.SpecsService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/admin")
+@Tag(name = "Admin Specs API", description = "관리자 명세서 조회 관련 API")
 public class AdminSpecsController {
     private final SpecsService specsService;
     @Autowired
@@ -24,6 +27,7 @@ public class AdminSpecsController {
     }
 
     @GetMapping("/{adminCode}/specs")
+    @Operation(summary = "전체 명세서 조회")
     public ResponseEntity<List<ResponseSpecs>> getSpecsList(@PathVariable int adminCode){
         List<SpecsDTO> specsDTOS = specsService.getSpecsListByAdminCode(adminCode);
 
@@ -39,6 +43,7 @@ public class AdminSpecsController {
     }
 
     @GetMapping("/{adminCode}/specs/{specsCode}")
+    @Operation(summary = "명세서 상세 조회")
     public ResponseEntity<ResponseSpecs> getSpecs(@PathVariable int adminCode,@PathVariable int specsCode){
         SpecsDTO specsDTO = specsService.getSpecsByAdminCode(adminCode,specsCode);
         return ResponseEntity.ok(new ResponseSpecs(specsDTO));
