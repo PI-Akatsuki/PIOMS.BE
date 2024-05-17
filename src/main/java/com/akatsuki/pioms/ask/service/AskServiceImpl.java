@@ -38,11 +38,9 @@ public class AskServiceImpl implements AskService{
         this.adminRepository = adminRepository;
         this.logService = logService;
     }
-
     @Override
     public AskListDTO getAllAskList() {
         List<Ask> askList = askRepository.findAll();
-        System.out.println("askList = " + askList);
         List<AskDTO> askDTOList = new ArrayList<>();
         askList.forEach(ask -> {
             askDTOList.add(new AskDTO(ask));
@@ -57,6 +55,7 @@ public class AskServiceImpl implements AskService{
         return new AskDTO(ask);
     }
 
+    @Override
     public AskListDTO getWaitingForReplyAsks() {
         List<Ask> askList = askRepository.findAllByStatusWaitingForReply();
         return convertToAskListDTO(askList);
@@ -74,6 +73,7 @@ public class AskServiceImpl implements AskService{
         return new AskListDTO(askDTOList);
     }
 
+    @Override
     public AskDTO answerAsk(Integer askId, String answer) {
         Optional<Ask> ask = askRepository.findById(askId);
         if (ask.isPresent()) {
@@ -111,6 +111,7 @@ public class AskServiceImpl implements AskService{
         return new AskDTO(ask);
     }
 
+    @Override
     public Ask updateAsk(int askCode, AskUpdateDTO askUpdateDTO) throws Exception {
         Ask ask = askRepository.findById(askCode)
                 .orElseThrow(() -> new RuntimeException("Ask not found with id: " + askCode));
