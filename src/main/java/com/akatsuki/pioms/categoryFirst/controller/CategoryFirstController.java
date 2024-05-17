@@ -1,21 +1,19 @@
 package com.akatsuki.pioms.categoryFirst.controller;
 
 
-import com.akatsuki.pioms.categoryFirst.aggregate.CategoryFirst;
 import com.akatsuki.pioms.categoryFirst.dto.CategoryFirstDTO;
 import com.akatsuki.pioms.categoryFirst.service.CategoryFirstService;
 import com.akatsuki.pioms.categoryFirst.aggregate.RequestCategoryFirstPost;
 import com.akatsuki.pioms.categoryFirst.aggregate.RequestCategoryFirstUpdate;
 import com.akatsuki.pioms.categoryFirst.aggregate.ResponseCategoryFirstPost;
-import com.akatsuki.pioms.categoryFirst.aggregate.ResponseCategoryFirstUpdate;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/category/first")
@@ -36,9 +34,14 @@ public class CategoryFirstController {
     }
 
     @GetMapping("/{categoryFirstCode}")
-    @Operation(summary = "카테고리(대) code로 카테고리(대) 하나 조회", description = "카테고리(대)코드로 카테고리(대) 하나 조회")
-    public ResponseEntity<CategoryFirst> getCategoryFirstByCode(@PathVariable int categoryFirstCode) {
-        return ResponseEntity.ok().body(categoryFirstService.findCategoryFirstByCode(categoryFirstCode));
+    @Operation(summary = "카테고리(대) 하나 조회", description = "카테고리(대)코드로 카테고리(대) 하나 조회")
+    public ResponseEntity<List<ResponseCategoryFirstPost>> getCategoryFirstByCode(@PathVariable int categoryFirstCode) {
+        List<CategoryFirstDTO> categoryFirstDTOS = categoryFirstService.findCategoryFirstByCode(categoryFirstCode);
+        List<ResponseCategoryFirstPost> categoryFirstPostList = new ArrayList<>();
+        categoryFirstDTOS.forEach(categoryFirstDTO -> {
+            categoryFirstPostList.add(new ResponseCategoryFirstPost(categoryFirstDTO));
+        });
+        return ResponseEntity.ok(categoryFirstPostList);
     }
 
     @PostMapping("/post")

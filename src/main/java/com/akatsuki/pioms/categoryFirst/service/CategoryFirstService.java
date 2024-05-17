@@ -14,7 +14,7 @@ import java.util.Optional;
 public interface CategoryFirstService {
     List<CategoryFirstDTO> getAllCategoryFirst();
 
-    CategoryFirst findCategoryFirstByCode(int categoryFirstCode);
+    List<CategoryFirstDTO> findCategoryFirstByCode(int categoryFirstCode);
 
     ResponseEntity<String> updateCategoryFirst(int categoryFirstCode, RequestCategoryFirstUpdate request, int requesterAdminCode);
 

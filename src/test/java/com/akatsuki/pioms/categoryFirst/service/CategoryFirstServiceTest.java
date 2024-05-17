@@ -1,6 +1,8 @@
 package com.akatsuki.pioms.categoryFirst.service;
 
+import com.akatsuki.pioms.admin.aggregate.Admin;
 import com.akatsuki.pioms.categoryFirst.aggregate.CategoryFirst;
+import com.akatsuki.pioms.categoryFirst.aggregate.RequestCategoryFirstPost;
 import com.akatsuki.pioms.categoryFirst.dto.CategoryFirstDTO;
 import com.akatsuki.pioms.categoryFirst.repository.CategoryFirstRepository;
 import jakarta.transaction.Transactional;
@@ -11,15 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -34,6 +30,8 @@ class CategoryFirstServiceTest {
     @MockBean
     private CategoryFirstRepository categoryFirstRepository;
 
+    static RequestCategoryFirstPost request;
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -44,7 +42,7 @@ class CategoryFirstServiceTest {
 
     @BeforeEach
     void init() {
-
+        request = new RequestCategoryFirstPost("테스트");
     }
 
     @Test
@@ -58,21 +56,26 @@ class CategoryFirstServiceTest {
     }
 
     @Test
-    void findCategoryFirstByCode() {assertEquals(true,true);}
+    void findCategoryFirstByCode() {
+        int categoryFirstCode = 1;
+        List<CategoryFirst> categoryFirstList = categoryFirstRepository.findByCategoryFirstCode(categoryFirstCode);
+        List<CategoryFirstDTO> categoryFirstDTOS = categoryFirstService.findCategoryFirstByCode(categoryFirstCode);
+        assertEquals(categoryFirstList.size(), categoryFirstDTOS.size());
+    }
 
     @Test
-    void postCategoryFirst() throws Exception {
+    void postCategoryFirst() {
+        Admin requestorAdmin = new Admin();
+        requestorAdmin.setAdminCode(1);
 
-//        int categoryFirstCode = 10;
-//        Map<String, String> input = new HashMap<>();
-//
-//        input.put("categoryFirstName", "test");
-//        input.put("categoryFirstEnrollDate", "2024-05-16 22:32:00");
-//        input.put("categoryFirstUpdateDate", "2024-05-16 22:32:00");
-//
-//        mockMvc.perform(MockMvcRequestBuilders.post("/category/first/post"))
-//                .con
+        CategoryFirst categoryFirst = new CategoryFirst();
+        categoryFirst.setCategoryFirstName("test");
+        categoryFirst.setCategoryFirstEnrollDate("2024-05-17 00:00:00");
+        categoryFirst.setCategoryFirstUpdateDate("2024-05-17 00:00:00");
 
+        ResponseEntity<String> response = categoryFirstService.postCategoryFirst(request, categoryFirst.getCategoryFirstCode());
+
+        assertEquals("신규 카테고리 등록은 루트 관리자만 가능합니다.",response.getBody());
     }
 
     @Test

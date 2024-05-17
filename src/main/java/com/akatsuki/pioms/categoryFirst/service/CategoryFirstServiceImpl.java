@@ -51,8 +51,13 @@ public class CategoryFirstServiceImpl implements CategoryFirstService {
 
     @Override
     @Transactional
-    public CategoryFirst findCategoryFirstByCode(int categoryFirstCode) {
-        return categoryFirstRepository.findById(categoryFirstCode).orElseThrow(null);
+    public List<CategoryFirstDTO> findCategoryFirstByCode(int categoryFirstCode) {
+        List<CategoryFirst> categoryFirstList = categoryFirstRepository.findByCategoryFirstCode(categoryFirstCode);
+        List<CategoryFirstDTO> categoryFirstDTOS = new ArrayList<>();
+        categoryFirstList.forEach(categoryFirst -> {
+            categoryFirstDTOS.add(new CategoryFirstDTO(categoryFirst));
+        });
+        return categoryFirstDTOS;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.akatsuki.pioms.categoryFirst.aggregate;
 
+import com.akatsuki.pioms.categoryFirst.dto.CategoryFirstDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,5 +21,7 @@ public class ResponseCategoryFirstPost {
     }
 
 
+    public ResponseCategoryFirstPost(CategoryFirstDTO categoryFirstDTO) {
 
+    }
 }
