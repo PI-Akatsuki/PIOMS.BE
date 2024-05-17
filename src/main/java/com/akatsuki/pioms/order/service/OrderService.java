@@ -10,6 +10,8 @@ import java.util.List;
 public interface OrderService {
 
     /**
+     * @CopyRight 32173594@dankook.ac.kr
+     * <br><br><br>
      * <h1>Order Service</h1>
      *     <br>
      * <h1>Admin Functions</h1>
