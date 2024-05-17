@@ -1,6 +1,8 @@
 package com.akatsuki.pioms.frwarehouse.service;
 
 
+import com.akatsuki.pioms.admin.aggregate.Admin;
+import com.akatsuki.pioms.admin.repository.AdminRepository;
 import com.akatsuki.pioms.exchange.aggregate.Exchange;
 import com.akatsuki.pioms.exchange.aggregate.ExchangeProduct;
 import com.akatsuki.pioms.exchange.aggregate.RequestExchange;
@@ -25,10 +27,12 @@ import java.util.Optional;
 @Service
 public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
     private final FranchiseWarehouseRepository franchiseWarehouseRepository;
+    private final AdminRepository adminRepository;
 
     @Autowired
-    public FranchiseWarehouseServiceImpl(FranchiseWarehouseRepository franchiseWarehouseRepository) {
+    public FranchiseWarehouseServiceImpl(FranchiseWarehouseRepository franchiseWarehouseRepository, AdminRepository adminRepository) {
         this.franchiseWarehouseRepository = franchiseWarehouseRepository;
+        this.adminRepository = adminRepository;
     }
 
     @Transactional
@@ -75,17 +79,24 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
     }
 
     @Override
+    @Transactional
     public List<FranchiseWarehouse> getAllWarehouse() {
         return franchiseWarehouseRepository.findAll();
     }
 
     @Override
+    @Transactional
     public FranchiseWarehouse getWarehouseByWarehouseCode(int franchiseWarehouseCode) {
         return franchiseWarehouseRepository.findById(franchiseWarehouseCode).orElseThrow(null);
     }
 
     @Override
-    public ResponseEntity<String> updateWarehouseCount(int franchiseWarehouseCode, RequestFranchiseWarehouseUpdate request/*, int requesterAdminCode*/) {
+    @Transactional
+    public ResponseEntity<String> updateWarehouseCount(int franchiseWarehouseCode, RequestFranchiseWarehouseUpdate request, int requesterAdminCode) {
+        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
+        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
+            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
+        }
         FranchiseWarehouse franchiseWarehouse = franchiseWarehouseRepository.findById(franchiseWarehouseCode)
                 .orElseThrow(() -> new EntityNotFoundException("FranchiseWarehouse not found"));
 

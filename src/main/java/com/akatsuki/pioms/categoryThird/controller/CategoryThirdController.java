@@ -38,19 +38,19 @@ public class CategoryThirdController {
         return ResponseEntity.ok().body(categoryThirdService.findCategoryThirdByCode(categoryThirdCode));
     }
     @PostMapping("/create")
-    public ResponseEntity<String> postCategoryThird(@RequestBody RequestCategoryThirdPost request/*, int requesterAdminCode*/) {
-        return categoryThirdService.postCategory(request/*, requesterAdminCode*/);
+    public ResponseEntity<String> postCategoryThird(@RequestBody RequestCategoryThirdPost request, int requesterAdminCode) {
+        return categoryThirdService.postCategory(request, requesterAdminCode);
     }
 
     @PostMapping("/update/{categoryThirdCode}")
-    public ResponseEntity<String> updateCategoryThird(@PathVariable int categoryThirdCode, @RequestBody RequestCategoryThirdUpdate request/*, int requesterAdminCode*/) {
-        return categoryThirdService.updateCategory(categoryThirdCode, request/*, int requesterAdminCode*/);
+    public ResponseEntity<String> updateCategoryThird(@PathVariable int categoryThirdCode, @RequestBody RequestCategoryThirdUpdate request, int requesterAdminCode) {
+        return categoryThirdService.updateCategory(categoryThirdCode, request, requesterAdminCode);
     }
 
     @DeleteMapping("/delete/{categoryThirdCode}")
     @Operation(summary = "카테고리(소) 카테고리 삭제", description = "포함되어 있는 상품이 0개인 카테고리(소) 카테고리 삭제 기능")
-    public String deleteCategoryThird(@PathVariable int categoryThirdCode/*, int requesterAdminCode*/) {
-        return categoryThirdService.deleteCategoryThird(categoryThirdCode/*, int requesterAdminCode*/);
+    public ResponseEntity<String> deleteCategoryThird(@PathVariable int categoryThirdCode, int requesterAdminCode) {
+        return categoryThirdService.deleteCategoryThird(categoryThirdCode, requesterAdminCode);
     }
 
 }
