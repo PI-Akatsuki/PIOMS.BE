@@ -41,6 +41,7 @@ public class OrderDTO {
 
     private int franchiseOwnerCode;
     private String franchiseOwnerName;
+    private String franchiseAddress;
 
     private int AdminCode;
     private String AdminName;
@@ -63,6 +64,7 @@ public class OrderDTO {
         this.deliveryDate= order.getFranchise().getFranchiseDeliveryDate();
         this.franchiseOwnerCode = order.getFranchise().getFranchiseOwner().getFranchiseOwnerCode();
         this.franchiseOwnerName = order.getFranchise().getFranchiseOwner().getFranchiseOwnerName();
+        this.franchiseAddress = order.getFranchise().getFranchiseAddress();
         this.AdminCode= order.getFranchise().getAdmin().getAdminCode();
         this.AdminName= order.getFranchise().getAdmin().getAdminName();
 

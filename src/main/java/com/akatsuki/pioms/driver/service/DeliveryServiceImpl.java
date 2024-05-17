@@ -6,6 +6,8 @@ import com.akatsuki.pioms.driver.repository.DeliveryRegionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class DeliveryServiceImpl implements DeliveryService{
 
@@ -26,4 +28,10 @@ public class DeliveryServiceImpl implements DeliveryService{
         DeliveryRegion deliveryRegion = deliveryRegionRepository.findByFranchiseFranchiseCode(franchiseCode);
         return new DeliveryRegionDTO(deliveryRegion);
     }
+
+    @Override
+    public List<DeliveryRegion> findAllByDeliveryDriverDriverCode(int driverCode) {
+        return deliveryRegionRepository.findAllByDeliveryDriverDriverCode(driverCode);
+    }
+
 }
