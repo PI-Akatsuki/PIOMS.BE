@@ -1,45 +1,39 @@
 package com.akatsuki.pioms.invoice.service;
 
+import com.akatsuki.pioms.driver.aggregate.DeliveryDriver;
+import com.akatsuki.pioms.driver.aggregate.DeliveryRegion;
+import com.akatsuki.pioms.driver.service.DeliveryService;
 import com.akatsuki.pioms.franchise.aggregate.DELIVERY_DATE;
 import com.akatsuki.pioms.invoice.aggregate.Invoice;
+import com.akatsuki.pioms.invoice.aggregate.ResponseDriverInvoice;
 import com.akatsuki.pioms.invoice.dto.InvoiceDTO;
 import com.akatsuki.pioms.invoice.aggregate.DELIVERY_STATUS;
 import com.akatsuki.pioms.invoice.repository.InvoiceRepository;
 import com.akatsuki.pioms.order.aggregate.Order;
+import com.akatsuki.pioms.order.dto.OrderDTO;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 @Service
+@Log4j2
 public class InvoiceServiceImpl implements InvoiceService {
     final private InvoiceRepository invoiceRepository;
+    final private DeliveryService deliveryService;
+    final private DeliveryService deliveryRegionService;
 
     @Autowired
-    public InvoiceServiceImpl(InvoiceRepository invoiceRepository) {
+    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, DeliveryService deliveryService, DeliveryService deliveryRegionService) {
         this.invoiceRepository = invoiceRepository;
+        this.deliveryService = deliveryService;
+        this.deliveryRegionService = deliveryRegionService;
     }
 
-    @Override
-    public InvoiceDTO postInvoice(int orderCode, int franchiseCode, DELIVERY_DATE franchiseDeliveryDate, LocalDateTime orderDateTime){
-        Invoice invoice = new Invoice();
-        Order order = new Order();
-        order.setOrderCode(orderCode);
-        invoice.setOrder(order);
-
-        invoice.setDeliveryStatus(DELIVERY_STATUS.배송전);
-
-//        invoice.setDeliveryRegion(1);
-
-        DELIVERY_DATE deliveryDate = franchiseDeliveryDate;
-        invoice.setInvoiceDate(setDeliveryTime(orderDateTime, deliveryDate));
-
-
-        return saveInvoice(invoice);
-
-    }
 
     public LocalDateTime setDeliveryTime(LocalDateTime orderTime, DELIVERY_DATE deliveryDate){
 
@@ -73,11 +67,83 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public void afterAcceptOrder(int orderCode, int franchiseCode, DELIVERY_DATE deliveryDate, LocalDateTime orderDateTime){
+    public InvoiceDTO postInvoice(OrderDTO orderDTO){
+        System.out.println("order = " + orderDTO);
+        Order order = new Order(orderDTO);
+        System.out.println("order = " + order);
+        Invoice invoice = new Invoice();
+        invoice.setOrder(order);
+        invoice.setDeliveryStatus(DELIVERY_STATUS.배송전);
+
+        int deliveryRegionCode = deliveryService.getDeliveryRegionCodeByFranchiseCode(orderDTO.getFranchiseCode());
+        invoice.setDeliveryRegion(deliveryRegionCode);
+        invoice.setInvoiceDate(setDeliveryTime(order.getOrderDate(), orderDTO.getDeliveryDate()));
+        Invoice returnValue = invoiceRepository.save(invoice);
+        System.out.println("returnValue = " + returnValue.getOrder());
+        return new InvoiceDTO(returnValue);
+    }
+
+
+
+    @Override
+    public void afterAcceptOrder(OrderDTO orderEntity)
+//            (int orderCode, int franchiseCode, DELIVERY_DATE deliveryDate, LocalDateTime orderDateTime, int franchiseOwnerCode)
+    {
         System.out.println("Invoice event listen");
-        postInvoice(orderCode,franchiseCode, deliveryDate, orderDateTime);
+        InvoiceDTO invoiceDTO =  postInvoice(orderEntity);
+//        System.out.println("invoiceDTO = " + invoiceDTO);
         System.out.println("Invoice event End");
     }
+
+    @Override
+    public List<InvoiceDTO> getAdminInvoiceList(int adminCode) {
+        List<Invoice> invoices;
+
+        if (adminCode==1)
+            invoices = invoiceRepository.findAll();
+        else
+            invoices = invoiceRepository.findAllByOrderFranchiseAdminAdminCode(adminCode);
+
+        List<InvoiceDTO> invoiceDTOS= new ArrayList<>();
+        for (int i = 0; i < invoices.size(); i++) {
+            invoiceDTOS.add(new InvoiceDTO(invoices.get(i)));
+        }
+        return invoiceDTOS;
+    }
+
+    @Override
+    public InvoiceDTO getInvoiceByAdminCode(int adminCode, int invoiceCode) {
+        Invoice invoice = invoiceRepository.findById(invoiceCode).orElse(null);
+
+        if (adminCode==1 || invoice!=null && invoice.getOrder().getFranchise().getAdmin().getAdminCode() == adminCode){
+            return new InvoiceDTO(invoice);
+        }
+
+        return null;
+    }
+
+    @Override
+    public List<InvoiceDTO> getFranchiseInvoiceList(int franchiseOwnerCode) {
+        List<Invoice> invoices = invoiceRepository.findAllByOrderFranchiseFranchiseOwnerFranchiseOwnerCode(franchiseOwnerCode);
+        if (invoices == null)
+            return null;
+        List<InvoiceDTO> invoiceDTOS = new ArrayList<>();
+        for (int i = 0; i < invoices.size(); i++) {
+            invoiceDTOS.add(new InvoiceDTO(invoices.get(i)));
+        }
+        return invoiceDTOS;
+    }
+
+    @Override
+    public InvoiceDTO getInvoiceByFranchiseOwnerCode(int franchiseOwnerCode, int invoiceCode) {
+        Invoice invoice = invoiceRepository.findById(invoiceCode).orElse(null);
+
+        if (invoice==null || invoice.getOrder().getFranchise().getFranchiseOwner().getFranchiseOwnerCode() != franchiseOwnerCode)
+            return null;
+
+        return new InvoiceDTO(invoice);
+    }
+
 
     public List<InvoiceDTO> getAllInvoiceList(){
         List<Invoice> invoiceList = invoiceRepository.findAll();
@@ -86,25 +152,24 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoiceList.forEach(invoiceEntity -> {
             responseInvoice.add(new InvoiceDTO(invoiceEntity));
         });
-
         return responseInvoice;
     }
 
     @Override
-    public InvoiceDTO putInvoice(int invoiceCode, DELIVERY_STATUS invoiceStatus) {
-        System.out.println("invoiceStatus = " + invoiceStatus);
-        Invoice invoiceEntity = invoiceRepository.findById(invoiceCode).orElseThrow(IllegalArgumentException::new);
+    public InvoiceDTO putInvoice(int adminCode, int invoiceCode, DELIVERY_STATUS invoiceStatus) {
+        Invoice invoice = invoiceRepository.findById(invoiceCode).orElse(null);
+        if (invoice== null)
+            return  null;
+        if ( invoice.getOrder().getFranchise().getAdmin().getAdminCode() != adminCode && adminCode!=1){
+            return null;
+        }
 
-        invoiceEntity.setDeliveryStatus(invoiceStatus);
-        invoiceRepository.save(invoiceEntity);
-        return new InvoiceDTO(invoiceEntity);
-    }
+        invoice.setDeliveryStatus(invoiceStatus);
+        invoiceRepository.save(invoice);
 
-    @Override
-    public InvoiceDTO getInvoice(int invoiceCode) {
-        Invoice invoice = invoiceRepository.findById(invoiceCode).orElseThrow(IllegalArgumentException::new);
         return new InvoiceDTO(invoice);
     }
+
 
     public Boolean checkInvoiceStatus(int orderCode){
         Invoice invoice = invoiceRepository.findByOrderOrderCode(orderCode);
@@ -115,18 +180,62 @@ public class InvoiceServiceImpl implements InvoiceService {
         return false;
     }
     public InvoiceDTO getInvoiceByOrderCode(int orderCode){
-        return new InvoiceDTO(invoiceRepository.findByOrderOrderCode(orderCode));
+        Invoice invoice =  invoiceRepository.findByOrderOrderCode(orderCode);
+        if (invoice== null)
+            return null;
+
+        return new InvoiceDTO(invoice);
     }
 
     @Override
     public InvoiceDTO saveInvoice(Invoice invoice) {
-
+        System.out.println("invoice.getOrder() = " + invoice.getOrder());
         return new InvoiceDTO(invoiceRepository.save(invoice));
     }
 
     @Override
-    public void deleteInvoice(Invoice invoiceDTO) {
-        invoiceRepository.delete(invoiceDTO);
+    public boolean deleteInvoice(int franchiseOwnerCode,int invoiceCode) {
+        Invoice invoice = invoiceRepository.findById(invoiceCode).orElse(null);
+
+        if (invoice==null || invoice.getOrder().getFranchise().getFranchiseOwner().getFranchiseOwnerCode() != franchiseOwnerCode
+        || invoice.getDeliveryStatus()!= DELIVERY_STATUS.배송전 )
+            return false;
+
+        invoiceRepository.deleteById(invoiceCode);
+
+        return true;
     }
 
+    // 배송상태조회 - 배송기사코드로 담당 지역의 배송상태 전체조회
+    @Override
+    public List<ResponseDriverInvoice> getAllDriverInvoiceList(int driverCode) {
+
+        // 배송기사가 담당하고 있는 지역에 배송목록이 있는지 여부 확인
+        List<DeliveryRegion> deliveryRegion = deliveryRegionService.findAllByDeliveryDriverDriverCode(driverCode);
+        if (deliveryRegion == null || deliveryRegion.isEmpty())
+            return null;
+
+        // 배송기사 송장 목록
+        List<Invoice> driverInvoiceList = new ArrayList<>();
+
+        // 배송기사 코드로 송장 목록을 가져와 그 갯수만큼 추가
+        for (int i = 0; i < deliveryRegion.size(); i++) {
+            List<Invoice> invoices = invoiceRepository.findByDeliveryRegion(deliveryRegion.get(i).getDeliveryRegionCode());
+            if (invoices != null && !invoices.isEmpty())
+                driverInvoiceList.addAll(invoices);
+        }
+
+        // 배송기사의 배송(송장) 리스트 조회
+        List<ResponseDriverInvoice> responseDriverInvoices = new ArrayList<>();
+        driverInvoiceList.forEach(
+
+                // entity를 DTO로 변환
+                invoice -> {
+                    InvoiceDTO invoiceDTO = new InvoiceDTO(invoice);
+                    responseDriverInvoices.add(new ResponseDriverInvoice(driverCode, invoiceDTO));
+                }
+        );
+
+        return responseDriverInvoices;
+    }
 }

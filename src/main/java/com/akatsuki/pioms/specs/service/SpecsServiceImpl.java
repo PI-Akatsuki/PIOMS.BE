@@ -34,6 +34,40 @@ public class SpecsServiceImpl implements SpecsService{
     }
 
     @Override
+    public SpecsDTO getSpecsByFranchiseCode(int franchiseCode, int specsId) {
+        SpecsEntity specs = specsRepository.findById(specsId).orElse(null);
+        if (specs == null || specs.getOrder().getFranchise().getFranchiseCode() != franchiseCode){
+            return null;
+        }
+
+        return new SpecsDTO(specs);
+    }
+
+    @Override
+    public List<SpecsDTO> getSpecsListByAdminCode(int adminCode) {
+        if (adminCode ==1 ){
+            return getSpecsList();
+        }
+        List<SpecsEntity> specsList = specsRepository.findAllByOrderFranchiseAdminAdminCode(adminCode);
+        List<SpecsDTO> specsDTOS = new ArrayList<>();
+        for (int i = 0; i < specsList.size(); i++) {
+            specsDTOS.add(new SpecsDTO(specsList.get(i)));
+        }
+        return specsDTOS;
+    }
+
+    @Override
+    public SpecsDTO getSpecsByAdminCode(int adminCode, int specsCode) {
+        SpecsEntity specs = specsRepository.findById(specsCode).orElse(null);
+        if (adminCode==1 && specs!=null)
+            return new SpecsDTO(specs);
+        if (specs==null || specs.getOrder().getFranchise().getAdmin().getAdminCode() != adminCode){
+            return null;
+        }
+        return new SpecsDTO(specs);
+    }
+
+    @Override
     public List<SpecsDTO> getSpecsList(){
         List<SpecsEntity> specsList = specsRepository.findAll();
         List<SpecsDTO> responseSpecs = new ArrayList<>();
@@ -43,13 +77,6 @@ public class SpecsServiceImpl implements SpecsService{
         });
         System.out.println(responseSpecs.size());
         return responseSpecs;
-    }
-
-    @Override
-    public SpecsDTO getSpecs(int specsCode){
-        SpecsEntity specsEntity = specsRepository.findById(specsCode).orElseThrow(IllegalArgumentException::new);
-        SpecsDTO specsDTO = new SpecsDTO(specsEntity);
-        return specsDTO;
     }
 
     @Override

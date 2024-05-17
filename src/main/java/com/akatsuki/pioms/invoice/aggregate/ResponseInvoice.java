@@ -18,7 +18,7 @@ public class ResponseInvoice {
     private int invoiceCode;
     private DELIVERY_STATUS deliveryStatus;
     private LocalDateTime invoiceDate;
-    private String delveryRegionName;
+    private int deliveryRegionCode;
     private int orderCode;
     private List<ResponseInvoiceOrderProduct> orderProductVOList;
 
@@ -26,7 +26,7 @@ public class ResponseInvoice {
         this.invoiceCode = invoiceDTO.getInvoiceCode();
         this.deliveryStatus = invoiceDTO.getDeliveryStatus();
         this.invoiceDate = invoiceDTO.getInvoiceDate();
-        this.delveryRegionName = invoiceDTO.getDeliveryRegionDTO().getDriverName();
+        this.deliveryRegionCode = invoiceDTO.getDeliveryRegionCode();
         if(invoiceDTO.getOrder()!=null){
             this.orderCode = invoiceDTO.getOrder().getOrderCode();
             this.orderProductVOList = new ArrayList<>();
