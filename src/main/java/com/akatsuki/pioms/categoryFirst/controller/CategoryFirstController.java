@@ -1,6 +1,7 @@
 package com.akatsuki.pioms.categoryFirst.controller;
 
 
+import com.akatsuki.pioms.categoryFirst.aggregate.ResponseCategoryFirst;
 import com.akatsuki.pioms.categoryFirst.dto.CategoryFirstDTO;
 import com.akatsuki.pioms.categoryFirst.service.CategoryFirstService;
 import com.akatsuki.pioms.categoryFirst.aggregate.RequestCategoryFirstPost;
@@ -29,19 +30,24 @@ public class CategoryFirstController {
 
     @GetMapping("")
     @Operation(summary = "카테고리(대) 전체 조회", description = "단순 카테고리(대) 조회 기능")
-    public ResponseEntity<List<CategoryFirstDTO>> getAllCategoryFirst() {
-        return ResponseEntity.ok().body(categoryFirstService.getAllCategoryFirst());
+    public ResponseEntity<List<ResponseCategoryFirst>> getAllCategoryFirst() {
+        List<CategoryFirstDTO> categoryFirstDTOS = categoryFirstService.getAllCategoryFirst();
+        List<ResponseCategoryFirst> responseCategory = new ArrayList<>();
+        categoryFirstDTOS.forEach(categoryFirstDTO -> {
+            responseCategory.add(new ResponseCategoryFirst(categoryFirstDTO));
+        });
+        return ResponseEntity.ok(responseCategory);
     }
 
     @GetMapping("/{categoryFirstCode}")
     @Operation(summary = "카테고리(대) 하나 조회", description = "카테고리(대)코드로 카테고리(대) 하나 조회")
-    public ResponseEntity<List<ResponseCategoryFirstPost>> getCategoryFirstByCode(@PathVariable int categoryFirstCode) {
+    public ResponseEntity<List<ResponseCategoryFirst>> getCategoryFirstByCode(@PathVariable int categoryFirstCode) {
         List<CategoryFirstDTO> categoryFirstDTOS = categoryFirstService.findCategoryFirstByCode(categoryFirstCode);
-        List<ResponseCategoryFirstPost> categoryFirstPostList = new ArrayList<>();
+        List<ResponseCategoryFirst> responseCategory = new ArrayList<>();
         categoryFirstDTOS.forEach(categoryFirstDTO -> {
-            categoryFirstPostList.add(new ResponseCategoryFirstPost(categoryFirstDTO));
+            responseCategory.add(new ResponseCategoryFirst(categoryFirstDTO));
         });
-        return ResponseEntity.ok(categoryFirstPostList);
+        return ResponseEntity.ok(responseCategory);
     }
 
     @PostMapping("/post")
@@ -51,7 +57,7 @@ public class CategoryFirstController {
     }
 
     @PostMapping("/update/{categoryFirstCode}")
-    @Operation(summary = "카테고리(대) code로 카테고리(대) 수정" ,description = "update_date 자동 기입")
+    @Operation(summary = "카테고리(대) 수정" ,description = "updateDate 자동 기입")
     public ResponseEntity<String> updateCategoryFirst(@PathVariable int categoryFirstCode, @RequestBody RequestCategoryFirstUpdate request, int requesterAdminCode) {
         return categoryFirstService.updateCategoryFirst(categoryFirstCode, request, requesterAdminCode);
     }

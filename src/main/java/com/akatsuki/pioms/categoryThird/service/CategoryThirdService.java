@@ -17,6 +17,6 @@ public interface CategoryThirdService {
 
     ResponseEntity<String> updateCategory(int categoryThirdCode, RequestCategoryThirdUpdate request, int requesterAdminCode);
 
-//    ResponseEntity<String> deleteCategoryThird(int categoryThirdCode, int requesterAdminCode);
+    ResponseEntity<String> deleteCategoryThird(int categoryThirdCode, int requesterAdminCode);
 
 }

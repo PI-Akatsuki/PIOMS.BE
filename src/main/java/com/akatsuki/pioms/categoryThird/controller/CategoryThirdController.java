@@ -52,10 +52,10 @@ public class CategoryThirdController {
         return categoryThirdService.updateCategory(categoryThirdCode, request, requesterAdminCode);
     }
 
-//    @DeleteMapping("/delete/{categoryThirdCode}")
-//    @Operation(summary = "카테고리(소) 카테고리 삭제", description = "포함되어 있는 상품이 0개인 카테고리(소) 카테고리 삭제 기능")
-//    public ResponseEntity<String> deleteCategoryThird(@PathVariable int categoryThirdCode, int requesterAdminCode) {
-//        return categoryThirdService.deleteCategoryThird(categoryThirdCode, requesterAdminCode);
-//    }
+    @DeleteMapping("/delete/{categoryThirdCode}")
+    @Operation(summary = "카테고리(소) 카테고리 삭제", description = "포함되어 있는 상품이 0개인 카테고리(소) 카테고리 삭제 기능")
+    public ResponseEntity<String> deleteCategoryThird(@PathVariable int categoryThirdCode, int requesterAdminCode) {
+        return categoryThirdService.deleteCategoryThird(categoryThirdCode, requesterAdminCode);
+    }
 
 }
