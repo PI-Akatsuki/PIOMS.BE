@@ -4,6 +4,7 @@ import com.akatsuki.pioms.admin.aggregate.Admin;
 import com.akatsuki.pioms.admin.repository.AdminRepository;
 import com.akatsuki.pioms.categoryFirst.aggregate.CategoryFirst;
 import com.akatsuki.pioms.categorySecond.aggregate.*;
+import com.akatsuki.pioms.categorySecond.dto.CategorySecondDTO;
 import com.akatsuki.pioms.categorySecond.repository.CategorySecondRepository;
 import com.akatsuki.pioms.log.etc.LogStatus;
 import com.akatsuki.pioms.log.service.LogService;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,19 +37,30 @@ public class CategorySecondServiceImpl implements CategorySecondService{
 
     @Override
     @Transactional
-    public List<CategorySecond> getAllCategorySecond() {
-        return categorySecondRepository.findAll();
+    public List<CategorySecondDTO> getAllCategorySecond() {
+        List<CategorySecond> categorySecondList = categorySecondRepository.findAll();
+        List<CategorySecondDTO> responseCategory = new ArrayList<>();
+
+        categorySecondList.forEach(categorySecond -> {
+            responseCategory.add(new CategorySecondDTO(categorySecond));
+        });
+        return responseCategory;
     }
 
     @Override
     @Transactional
-    public CategorySecond findCategorySecondByCode(int categorySecondCode) {
-        return categorySecondRepository.findById(categorySecondCode).orElseThrow(null);
+    public List<CategorySecondDTO> findCategorySecondByCode(int categorySecondCode) {
+        List<CategorySecond> categorySecondList = categorySecondRepository.findByCategorySecondCode(categorySecondCode);
+        List<CategorySecondDTO> categorySecondDTOS = new ArrayList<>();
+        categorySecondList.forEach(categorySecond -> {
+            categorySecondDTOS.add(new CategorySecondDTO(categorySecond));
+        });
+        return categorySecondDTOS;
     }
 
     @Override
     @Transactional
-    public ResponseEntity<String> postCategorySecond(RequestCategorySecondPost request, int requesterAdminCode) {
+    public ResponseEntity<String> postCategorySecond(RequestCategorySecond request, int requesterAdminCode) {
         Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
         if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
             return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
@@ -65,14 +78,14 @@ public class CategorySecondServiceImpl implements CategorySecondService{
 
         CategorySecond savedCategorySecond = categorySecondRepository.save(categorySecond);
 
-        ResponseCategorySecondPost responseValue = new ResponseCategorySecondPost(savedCategorySecond.getCategorySecondCode(), savedCategorySecond.getCategorySecondName(), savedCategorySecond.getCategorySecondEnrollDate());
+        ResponseCategorySecond responseValue = new ResponseCategorySecond(savedCategorySecond.getCategorySecondCode(), savedCategorySecond.getCategorySecondName(), savedCategorySecond.getCategorySecondEnrollDate(), savedCategorySecond.getCategorySecondUpdateDate());
         logService.saveLog("root", LogStatus.등록,savedCategorySecond.getCategorySecondName(),"CategorySecond");
         return ResponseEntity.ok("카테고리(중) 생성 완료!");
     }
 
     @Override
     @Transactional
-    public ResponseEntity<String> updateCategorySecond(int categorySecondCode, RequestCategorySecondUpdate request, int requesterAdminCode) {
+    public ResponseEntity<String> updateCategorySecond(int categorySecondCode, RequestCategorySecond request, int requesterAdminCode) {
         Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
         if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
             return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
