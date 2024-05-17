@@ -1,9 +1,8 @@
-package com.akatsuki.pioms.excel.controller;
+package com.akatsuki.pioms.excel;
 
 import com.akatsuki.pioms.product.dto.ProductDTO;
 import com.akatsuki.pioms.product.service.ProductService;
 import jakarta.servlet.http.HttpServletResponse;
-import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.context.annotation.ComponentScan;
@@ -15,12 +14,12 @@ import java.util.List;
 
 @RestController
 @ComponentScan
-public class MainController {
+public class ProductExcelController {
 
     private final ProductService productService;
     private List<ProductDTO> productList;
 
-    public MainController(ProductService productService) {
+    public ProductExcelController(ProductService productService) {
         this.productService = productService;
         this.productList = productService.getAllProduct();
     }
@@ -30,7 +29,7 @@ public class MainController {
         return "home";
     }
 
-    @RequestMapping(value = "/excel/download")
+    @RequestMapping(value = "/excel/download/product")
     public void excelDownload(HttpServletResponse response) throws Exception {
 //        Workbook wb = new HSSFWorkbook();
         Workbook wb = new XSSFWorkbook();
@@ -43,14 +42,14 @@ public class MainController {
         CellStyle headStyle = wb.createCellStyle();
 
         // thin border style
-        headStyle.setBorderTop(BorderStyle.THIN);
-        headStyle.setBorderBottom(BorderStyle.THIN);
-        headStyle.setBorderLeft(BorderStyle.THIN);
-        headStyle.setBorderRight(BorderStyle.THIN);
+        headStyle.setBorderTop(BorderStyle.THICK);
+        headStyle.setBorderBottom(BorderStyle.THICK);
+        headStyle.setBorderLeft(BorderStyle.THICK);
+        headStyle.setBorderRight(BorderStyle.THICK);
 
         // background color
-//        headStyle.setFillBackgroundColor(HSSFColor.HSSFColorPredefined.YELLOW.getIndex());
-//        headStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        headStyle.setFillForegroundColor(IndexedColors.LEMON_CHIFFON.getIndex());
+        headStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
         // align-center
         headStyle.setAlignment(HorizontalAlignment.CENTER);
@@ -61,6 +60,7 @@ public class MainController {
         bodyStyle.setBorderBottom(BorderStyle.THIN);
         bodyStyle.setBorderLeft(BorderStyle.THIN);
         bodyStyle.setBorderRight(BorderStyle.THIN);
+
 
         // Header
         String[] headers = {
@@ -74,6 +74,7 @@ public class MainController {
             cell.setCellStyle(headStyle);
             cell.setCellValue(headers[i]);
         }
+
 
         // Body
         for (ProductDTO dto : productList) {
