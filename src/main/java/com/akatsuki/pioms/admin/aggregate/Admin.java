@@ -52,6 +52,9 @@ public class Admin {
     @Column(name = "admin_status")
     private boolean adminStatus;
 
+    @Column(name = "admin_role")
+    private String  adminRole;
+
     @OneToMany(mappedBy = "admin")
     private List<Franchise> franchise;
 
