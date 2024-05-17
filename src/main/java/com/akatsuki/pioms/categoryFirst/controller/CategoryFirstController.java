@@ -41,15 +41,14 @@ public class CategoryFirstController {
     }
 
     @PostMapping("/post")
-    public ResponseEntity<String> postCategoryFirst(@RequestBody RequestCategoryFirstPost request/*, int requesterAdminCode*/) {
-        return categoryFirstService.postCategoryFirst(request/*, int requesterAdminCode*/);
+    public ResponseEntity<String> postCategoryFirst(@RequestBody RequestCategoryFirstPost request, int requesterAdminCode) {
+        return categoryFirstService.postCategoryFirst(request, requesterAdminCode);
 
     }
 
     @PostMapping("/update/{categoryFirstCode}")
     @Operation(summary = "카테고리(대) code로 카테고리(대) 수정" ,description = "update_date 자동 기입")
-    public ResponseEntity<ResponseCategoryFirstUpdate> updateCategoryFirst(@PathVariable int categoryFirstCode, @RequestBody RequestCategoryFirstUpdate request/*, int requesterAdminCode*/) {
-        ResponseCategoryFirstUpdate response = categoryFirstService.updateCategoryFirst(categoryFirstCode, request/*, int requesterAdminCode*/);
-        return ResponseEntity.ok().body(response);
+    public ResponseEntity<String> updateCategoryFirst(@PathVariable int categoryFirstCode, @RequestBody RequestCategoryFirstUpdate request, int requesterAdminCode) {
+        return categoryFirstService.updateCategoryFirst(categoryFirstCode, request, requesterAdminCode);
     }
 }

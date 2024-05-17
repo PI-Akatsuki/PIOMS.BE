@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/product")
@@ -40,22 +39,20 @@ public class ProductController {
 
     @PostMapping("/create")
     @Operation(summary = "상품 등록")
-    public String postProduct(@RequestBody RequestProduct request/*, int requesterAdminCode*/) {
-        return productService.postProduct(request/*, int requesterAdminCode*/);
+    public ResponseEntity<String> postProduct(@RequestBody RequestProduct request, int requesterAdminCode) {
+        return productService.postProduct(request, requesterAdminCode);
     }
 
     @DeleteMapping("/delete/{productCode}")
     @Operation(summary = "상품 삭제", description = "상품 코드로 상품 삭제")
-    public String deleteProduct(@PathVariable int productCode/*, int requesterAdminCode*/) {
-
-        return productService.deleteProduct(productCode/*, int requesterAdminCode*/);
+    public ResponseEntity<String> deleteProduct(@PathVariable int productCode, int requesterAdminCode) {
+        return productService.deleteProduct(productCode, requesterAdminCode);
     }
 
     @PostMapping("/update/{productCode}")
     @Operation(summary = "상품 정보 수정", description = "상품 수정 기능")
-    public ResponseEntity<ResponseProduct> updateProduct(@PathVariable int productCode, @RequestBody RequestProduct request/*, int requesterAdminCode*/) {
-        ResponseProduct response = productService.updateProduct(productCode, request/*, int requesterAdminCode*/);
-        return ResponseEntity.ok().body(response);
+    public ResponseEntity<String> updateProduct(@PathVariable int productCode, @RequestBody RequestProduct request, int requesterAdminCode) {
+        return productService.updateProduct(productCode, request, requesterAdminCode);
     }
 
     @GetMapping("/category/{categoryThirdCode}")

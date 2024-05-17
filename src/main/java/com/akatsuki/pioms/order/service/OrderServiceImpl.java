@@ -79,22 +79,19 @@ public class OrderServiceImpl implements OrderService{
         System.out.println("acceptOrder");
         Order order = orderRepository.findById(orderId).orElseThrow();
 
+
         if (!checkOrderCondition(order))
             return null;
         System.out.println("order = " + order);
-        try {
-            order.setOrderCondition(ORDER_CONDITION.승인완료);
-            if (exchange!=null) {
-                Exchange exchange1 = new Exchange();
-                exchange1.setExchangeCode(exchange.getExchangeCode());
-                order.setExchange(exchange1);
-            }
-            System.out.println("order.getExchange() = " + order.getExchange());
-            order=orderRepository.save(order);
-
-        }catch (Exception e){
-            System.out.println("exception occuered: check accept order service...");
+        order.setOrderCondition(ORDER_CONDITION.승인완료);
+        if (exchange!=null) {
+            Exchange exchange1 = new Exchange();
+            exchange1.setExchangeCode(exchange.getExchangeCode());
+            order.setExchange(exchange1);
         }
+        System.out.println("order.getExchange() = " + order.getExchange());
+        order=orderRepository.save(order);
+
 
         System.out.println("acceptOrder End");
 
@@ -128,20 +125,21 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     @Transactional
-    public boolean postFranchiseOrder(int franchiseCode, RequestOrderVO requestOrder){
-        if(franchiseCode != requestOrder.getFranchiseCode()){
+    public OrderDTO postFranchiseOrder(Franchise franchise, RequestOrderVO requestOrder){
+        if(franchise.getFranchiseCode() != requestOrder.getFranchiseCode()){
             System.out.println("가맹점 코드, 주문의 가맹점 코드 불일치! ");
-            return false;
+            return null;
         }
         // 이미 존재하는 발주 있는지 확인
-        if (orderRepository.existsByFranchiseFranchiseCodeAndOrderCondition(franchiseCode, ORDER_CONDITION.승인대기)
-                || orderRepository.existsByFranchiseFranchiseCodeAndOrderCondition(franchiseCode,ORDER_CONDITION.승인거부)){
+        if (orderRepository.existsByFranchiseFranchiseCodeAndOrderCondition(franchise.getFranchiseCode(), ORDER_CONDITION.승인대기)
+                || orderRepository.existsByFranchiseFranchiseCodeAndOrderCondition(franchise.getFranchiseCode(),ORDER_CONDITION.승인거부)){
             System.out.println("이미 대기중인 발주가 존재합니다.");
-            return false;
+            return null;
         }
         // 발주 생성
-        Franchise franchise = new Franchise();
-        franchise.setFranchiseCode(requestOrder.getFranchiseCode());
+//        Franchise franchise = new Franchise();
+//        franchise.setFranchiseCode(requestOrder.getFranchiseCode());
+
         Order order = new Order(ORDER_CONDITION.승인대기,false,franchise);
         order= orderRepository.save(order);
 
@@ -151,7 +149,7 @@ public class OrderServiceImpl implements OrderService{
             Order order1 = orderRepository.findById(orderId).orElseThrow();
             orderProductRepository.save(new OrderProduct(count,0, order1, productId));
         });
-        return true;
+        return new OrderDTO(order);
     }
 
     private static boolean checkOrderCondition(Order order) {
@@ -254,9 +252,6 @@ public class OrderServiceImpl implements OrderService{
 
         return true;
     }
-
-
-
 
     @Override
     public boolean findOrderByExchangeCode(int exchangeCode) {

@@ -34,4 +34,7 @@ public interface NoticeService {
     ResponseEntity<String> updateNotice(Notice updatedNotice, int noticeCode, int requesterAdminCode);
 
 
+    // root 관리자가 공지사항 삭제
+    @Transactional
+    ResponseEntity<String> deleteNotice(int noticeCode, int requesterAdminCode);
 }
