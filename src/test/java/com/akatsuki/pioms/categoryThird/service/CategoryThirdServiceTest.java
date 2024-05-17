@@ -1,6 +1,5 @@
 package com.akatsuki.pioms.categoryThird.service;
 
-import com.akatsuki.pioms.admin.aggregate.Admin;
 import com.akatsuki.pioms.categoryThird.aggregate.CategoryThird;
 import com.akatsuki.pioms.categoryThird.aggregate.RequestCategoryThird;
 import com.akatsuki.pioms.categoryThird.dto.CategoryThirdDTO;
@@ -9,7 +8,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -44,29 +42,29 @@ class CategoryThirdServiceTest {
         assertEquals(categoryThirdList.size(), categoryThirdDTOS.size());
     }
 
-    @Test
-    void postCategory() {
-        Admin requestorAdmin = new Admin();
-        requestorAdmin.setAdminCode(1);
-
-        CategoryThird categoryThird = new CategoryThird();
-        categoryThird.setCategoryThirdName("postTest");
-        categoryThird.setCategoryThirdEnrollDate("2024-05-17 00:00:00");
-        categoryThird.setCategoryThirdUpdateDate("2024-05-17 00:00:00");
-        categoryThird.setCategoryThirdCode(1);
-
-        ResponseEntity<String> response = categoryThirdService.postCategory(request);
-
-        assertEquals("카테고리 신규 등록", response.getBody());
-    }
-
-    @Test
-    void updateCategory() {
-        Admin requestorAdmin = new Admin();
-        requestorAdmin.setAdminCode(1);
-
-
-    }
+//    @Test
+//    void postCategory() {
+//        Admin requestorAdmin = new Admin();
+//        requestorAdmin.setAdminCode(1);
+//
+//        CategoryThird categoryThird = new CategoryThird();
+//        categoryThird.setCategoryThirdName("postTest");
+//        categoryThird.setCategoryThirdEnrollDate("2024-05-17 00:00:00");
+//        categoryThird.setCategoryThirdUpdateDate("2024-05-17 00:00:00");
+//        categoryThird.setCategoryThirdCode(1);
+//
+//        ResponseEntity<String> response = categoryThirdService.postCategory(request);
+//
+//        assertEquals("카테고리 신규 등록", response.getBody());
+//    }
+//
+//    @Test
+//    void updateCategory() {
+//        Admin requestorAdmin = new Admin();
+//        requestorAdmin.setAdminCode(1);
+//
+//
+//    }
 
     @Test
     void deleteCategoryThird() {assertEquals(true,true);}

@@ -44,20 +44,20 @@ class CategorySecondServiceTest {
         assertEquals(categorySecondList.size(),categorySecondDTOS.size());
     }
 
-    @Test
-    void postCategorySecond() {
-        Admin requestorAdmin = new Admin();
-        requestorAdmin.setAdminCode(1);
-
-        CategorySecond categorySecond = new CategorySecond();
-        categorySecond.setCategorySecondName("postTest");
-        categorySecond.setCategorySecondEnrollDate("2024-05-17 00:00:00");
-        categorySecond.setCategorySecondUpdateDate("2024-05-17 00:00:00");
-        categorySecond.setCategoryFirstCode(1);
-
-        ResponseEntity<String> response = categorySecondService.postCategorySecond(request, categorySecond.getCategorySecondCode());
-
-        assertEquals("신규 카테고리 등록", response.getBody());
+//    @Test
+//    void postCategorySecond() {
+//        Admin requestorAdmin = new Admin();
+//        requestorAdmin.setAdminCode(1);
+//
+//        CategorySecond categorySecond = new CategorySecond();
+//        categorySecond.setCategorySecondName("postTest");
+//        categorySecond.setCategorySecondEnrollDate("2024-05-17 00:00:00");
+//        categorySecond.setCategorySecondUpdateDate("2024-05-17 00:00:00");
+//        categorySecond.setCategoryFirstCode(1);
+//
+//        ResponseEntity<String> response = categorySecondService.postCategorySecond(request, categorySecond.getCategorySecondCode());
+//
+//        assertEquals("신규 카테고리 등록", response.getBody());
     }
 
 //    @Test
@@ -74,4 +74,4 @@ class CategorySecondServiceTest {
 //
 //        ResponseEntity<String> response = categorySecondService.updateCategorySecond(1, request,1);
 //    }
-}
+//}

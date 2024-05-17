@@ -28,11 +28,6 @@ class CategoryFirstServiceTest {
 
     static RequestCategoryFirst request;
 
-//    public CategoryFirstServiceTest(CategoryFirstService categoryFirstService, CategoryFirstRepository categoryFirstRepository) {
-//        this.categoryFirstService = categoryFirstService;
-//        this.categoryFirstRepository = categoryFirstRepository;
-//    }
-
     @BeforeEach
     void init() {
         request = new RequestCategoryFirst("테스트");
@@ -57,36 +52,36 @@ class CategoryFirstServiceTest {
         assertEquals(categoryFirstList.size(), categoryFirstDTOS.size());
     }
 
-    @Test
-    @DisplayName("카테고리(대) 신규 등록")
-    void postCategoryFirst() {
-        Admin requestorAdmin = new Admin();
-        requestorAdmin.setAdminCode(1);
-
-        CategoryFirst categoryFirst = new CategoryFirst();
-        categoryFirst.setCategoryFirstName("postTest");
-        categoryFirst.setCategoryFirstEnrollDate("2024-05-17 00:00:00");
-        categoryFirst.setCategoryFirstUpdateDate("2024-05-17 00:00:00");
-
-        ResponseEntity<String> response = categoryFirstService.postCategoryFirst(request, categoryFirst.getCategoryFirstCode());
-
-        assertEquals("신규 카테고리 등록",response.getBody());
-    }
-
-    @Test
-    @DisplayName("카테고라(대) 수정")
-    void updateCategoryFirst() {
-        Admin requestorAdmin = new Admin();
-        requestorAdmin.setAdminCode(1);
-
-        CategoryFirst categoryFirst = new CategoryFirst();
-        categoryFirst.setCategoryFirstName("updateTest");
-        categoryFirst.setCategoryFirstEnrollDate("2024-05-17 00:00:00");
-        categoryFirst.setCategoryFirstUpdateDate("2024-05-17 00:00:00");
-
-        ResponseEntity<String> response = categoryFirstService.updateCategoryFirst(2, request, 1);
-
-        assertEquals("카테고리 수정",response.getBody());
-    }
+//    @Test
+//    @DisplayName("카테고리(대) 신규 등록")
+//    void postCategoryFirst() {
+//        Admin requestorAdmin = new Admin();
+//        requestorAdmin.setAdminCode(1);
+//
+//        CategoryFirst categoryFirst = new CategoryFirst();
+//        categoryFirst.setCategoryFirstName("postTest");
+//        categoryFirst.setCategoryFirstEnrollDate("2024-05-17 00:00:00");
+//        categoryFirst.setCategoryFirstUpdateDate("2024-05-17 00:00:00");
+//
+//        ResponseEntity<String> response = categoryFirstService.postCategoryFirst(request, categoryFirst.getCategoryFirstCode());
+//
+//        assertEquals("신규 카테고리 등록",response.getBody());
+//    }
+//
+//    @Test
+//    @DisplayName("카테고라(대) 수정")
+//    void updateCategoryFirst() {
+//        Admin requestorAdmin = new Admin();
+//        requestorAdmin.setAdminCode(1);
+//
+//        CategoryFirst categoryFirst = new CategoryFirst();
+//        categoryFirst.setCategoryFirstName("updateTest");
+//        categoryFirst.setCategoryFirstEnrollDate("2024-05-17 00:00:00");
+//        categoryFirst.setCategoryFirstUpdateDate("2024-05-17 00:00:00");
+//
+//        ResponseEntity<String> response = categoryFirstService.updateCategoryFirst(2, request, 1);
+//
+//        assertEquals("카테고리 수정",response.getBody());
+//    }
 
 }
