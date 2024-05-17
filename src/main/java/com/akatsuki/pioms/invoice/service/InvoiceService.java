@@ -2,6 +2,7 @@ package com.akatsuki.pioms.invoice.service;
 
 import com.akatsuki.pioms.franchise.aggregate.DELIVERY_DATE;
 import com.akatsuki.pioms.invoice.aggregate.Invoice;
+import com.akatsuki.pioms.invoice.aggregate.ResponseDriverInvoice;
 import com.akatsuki.pioms.invoice.dto.InvoiceDTO;
 import com.akatsuki.pioms.invoice.aggregate.DELIVERY_STATUS;
 import com.akatsuki.pioms.order.aggregate.Order;
@@ -33,4 +34,7 @@ public interface InvoiceService {
     List<InvoiceDTO> getFranchiseInvoiceList(int franchiseOwnerCode);
 
     InvoiceDTO getInvoiceByFranchiseOwnerCode(int franchiseOwnerCode, int invoiceCode);
+
+    // 배송상태조회 - 전체조회
+    List<ResponseDriverInvoice> getAllDriverInvoiceList(int driverCode);
 }
