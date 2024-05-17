@@ -24,7 +24,7 @@ public class CategorySecondServiceImpl implements CategorySecondService{
     private final CategorySecondRepository categorySecondRepository;
     private final AdminRepository adminRepository;
 
-    LogService logService;
+    private final LogService logService;
 
     @Autowired
     public CategorySecondServiceImpl(CategorySecondRepository categorySecondRepository, AdminRepository adminRepository, LogService logService) {
