@@ -5,7 +5,6 @@ import com.akatsuki.pioms.admin.repository.AdminRepository;
 import com.akatsuki.pioms.frowner.aggregate.FranchiseOwner;
 import com.akatsuki.pioms.frowner.dto.FranchiseOwnerDTO;
 import com.akatsuki.pioms.frowner.repository.FranchiseOwnerRepository;
-import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import com.akatsuki.pioms.log.etc.LogStatus;
 import com.akatsuki.pioms.log.service.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +25,7 @@ public class FranchiseOwnerServiceImpl implements FranchiseOwnerService {
     private final AdminRepository adminRepository;
     private final LogService logService;
     private final PasswordEncoder passwordEncoder;
-  
+
     @Autowired
     public FranchiseOwnerServiceImpl(FranchiseOwnerRepository franchiseOwnerRepository, AdminRepository adminRepository, LogService logService, PasswordEncoder passwordEncoder) {
         this.franchiseOwnerRepository = franchiseOwnerRepository;
@@ -126,17 +125,17 @@ public class FranchiseOwnerServiceImpl implements FranchiseOwnerService {
                     existingFranchiseOwner.getFranchiseOwnerCode() == requestorAdminCode) {
 
                 StringBuilder changes = new StringBuilder();
-                if (!Objects.equals(existingFranchiseOwner.getFranchiseOwnerPwd(), updatedFranchiseOwner.getFranchiseOwnerPwd())) {
-                    changes.append(String.format("pwd 변경 '%s'에서 '%s(으)로; ", existingFranchiseOwner.getFranchiseOwnerPwd(), updatedFranchiseOwner.getFranchiseOwnerPwd()));
-                    existingFranchiseOwner.setFranchiseOwnerPwd(updatedFranchiseOwner.getFranchiseOwnerPwd());
+                if (!Objects.equals(existingFranchiseOwner.getFranchiseOwnerPwd(), updatedFranchiseOwnerDTO.getFranchiseOwnerPwd())) {
+                    changes.append(String.format("pwd 변경 '%s'에서 '%s(으)로; ", existingFranchiseOwner.getFranchiseOwnerPwd(), updatedFranchiseOwnerDTO.getFranchiseOwnerPwd()));
+                    existingFranchiseOwner.setFranchiseOwnerPwd(updatedFranchiseOwnerDTO.getFranchiseOwnerPwd());
                 }
-                if (!Objects.equals(existingFranchiseOwner.getFranchiseOwnerPhone(), updatedFranchiseOwner.getFranchiseOwnerPhone())) {
-                    changes.append(String.format("phone 변경 '%s'에서 '%s'(으)로; ", existingFranchiseOwner.getFranchiseOwnerPhone(), updatedFranchiseOwner.getFranchiseOwnerPhone()));
-                    existingFranchiseOwner.setFranchiseOwnerPhone(updatedFranchiseOwner.getFranchiseOwnerPhone());
+                if (!Objects.equals(existingFranchiseOwner.getFranchiseOwnerPhone(), updatedFranchiseOwnerDTO.getFranchiseOwnerPhone())) {
+                    changes.append(String.format("phone 변경 '%s'에서 '%s'(으)로; ", existingFranchiseOwner.getFranchiseOwnerPhone(), updatedFranchiseOwnerDTO.getFranchiseOwnerPhone()));
+                    existingFranchiseOwner.setFranchiseOwnerPhone(updatedFranchiseOwnerDTO.getFranchiseOwnerPhone());
                 }
-                if (!Objects.equals(existingFranchiseOwner.getFranchiseOwnerEmail(), updatedFranchiseOwner.getFranchiseOwnerEmail())) {
-                    changes.append(String.format("Email 변경 '%s'에서  '%s'(으)로; ", existingFranchiseOwner.getFranchiseOwnerEmail(), updatedFranchiseOwner.getFranchiseOwnerEmail()));
-                    existingFranchiseOwner.setFranchiseOwnerEmail(updatedFranchiseOwner.getFranchiseOwnerEmail());
+                if (!Objects.equals(existingFranchiseOwner.getFranchiseOwnerEmail(), updatedFranchiseOwnerDTO.getFranchiseOwnerEmail())) {
+                    changes.append(String.format("Email 변경 '%s'에서  '%s'(으)로; ", existingFranchiseOwner.getFranchiseOwnerEmail(), updatedFranchiseOwnerDTO.getFranchiseOwnerEmail()));
+                    existingFranchiseOwner.setFranchiseOwnerEmail(updatedFranchiseOwnerDTO.getFranchiseOwnerEmail());
                 }
                 // 이름 수정 불가
                 existingFranchiseOwner.setFranchiseOwnerPwd(passwordEncoder.encode(updatedFranchiseOwnerDTO.getFranchiseOwnerPwd()));
