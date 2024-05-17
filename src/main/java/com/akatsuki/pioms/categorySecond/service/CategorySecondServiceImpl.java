@@ -49,8 +49,13 @@ public class CategorySecondServiceImpl implements CategorySecondService{
 
     @Override
     @Transactional
-    public CategorySecond findCategorySecondByCode(int categorySecondCode) {
-        return categorySecondRepository.findById(categorySecondCode).orElseThrow(null);
+    public List<CategorySecondDTO> findCategorySecondByCode(int categorySecondCode) {
+        List<CategorySecond> categorySecondList = categorySecondRepository.findByCategorySecondCode(categorySecondCode);
+        List<CategorySecondDTO> categorySecondDTOS = new ArrayList<>();
+        categorySecondList.forEach(categorySecond -> {
+            categorySecondDTOS.add(new CategorySecondDTO(categorySecond));
+        });
+        return categorySecondDTOS;
     }
 
     @Override

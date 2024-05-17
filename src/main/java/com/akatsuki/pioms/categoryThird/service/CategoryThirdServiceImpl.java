@@ -70,7 +70,7 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formattedDateTime = LocalDateTime.now().format(formatter);
 
-        CategorySecond categorySecond = categorySecondRepository.findByCategorySecondCode(request.getCategorySecondCode());
+        List<CategorySecond> categorySecond = categorySecondRepository.findByCategorySecondCode(request.getCategorySecondCode());
 
         if(categorySecond == null) {
             return ResponseEntity.badRequest().body("해당 카테고리(중)이 존재하지 않습니다. 다시 확인해주세요.");

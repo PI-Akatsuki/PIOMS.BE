@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,8 +32,13 @@ public class CategorySecondController {
 
     @GetMapping("/{categorySecondCode}")
     @Operation(summary = "카테고리(중) code로 카테고리(중) 하나 조회", description = "카테고리(중)코드로 카테고리(중) 하나 조회")
-    public ResponseEntity<CategorySecond> getCategorySecondByCode(@PathVariable int categorySecondCode) {
-        return ResponseEntity.ok().body(categorySecondService.findCategorySecondByCode(categorySecondCode));
+    public ResponseEntity<List<ResponseCategorySecondPost>> getCategorySecondByCode(@PathVariable int categorySecondCode) {
+        List<CategorySecondDTO> categorySecondDTOS = categorySecondService.findCategorySecondByCode(categorySecondCode);
+        List<ResponseCategorySecondPost> categorySecondPostList = new ArrayList<>();
+        categorySecondDTOS.forEach(categorySecondDTO -> {
+            categorySecondPostList.add(new ResponseCategorySecondPost(categorySecondDTO));
+        });
+        return ResponseEntity.ok(categorySecondPostList);
     }
 
     @PostMapping("/create")

@@ -9,7 +9,7 @@ import java.util.List;
 public interface CategorySecondService {
     List<CategorySecondDTO> getAllCategorySecond();
 
-    CategorySecond findCategorySecondByCode(int categorySecondCode);
+    List<CategorySecondDTO> findCategorySecondByCode(int categorySecondCode);
 
     ResponseEntity<String> postCategorySecond(RequestCategorySecondPost request, int requesterAdminCode);
 

@@ -36,7 +36,13 @@ class CategorySecondServiceTest {
     }
 
     @Test
-    void findCategorySecondByCode() {assertEquals(true,true);}
+    @DisplayName("카테고리(중) 상세조회")
+    void findCategorySecondByCode() {
+        int categorySecondCode = 1;
+        List<CategorySecond> categorySecondList = categorySecondRepository.findByCategorySecondCode(categorySecondCode);
+        List<CategorySecondDTO> categorySecondDTOS = categorySecondService.findCategorySecondByCode(categorySecondCode);
+        assertEquals(categorySecondList.size(),categorySecondDTOS.size());
+    }
 
     @Test
     void postCategorySecond() {assertEquals(true,true);}

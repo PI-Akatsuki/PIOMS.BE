@@ -1,5 +1,6 @@
 package com.akatsuki.pioms.categorySecond.aggregate;
 
+import com.akatsuki.pioms.categorySecond.dto.CategorySecondDTO;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,5 +15,9 @@ public class ResponseCategorySecondPost {
         this.categorySecondCode = categorySecondCode;
         this.categorySecondName = categorySecondName;
         this.categorySecondEnrollDate = categorySecondEnrollDate;
+    }
+
+    public ResponseCategorySecondPost(CategorySecondDTO categorySecondDTO) {
+
     }
 }
