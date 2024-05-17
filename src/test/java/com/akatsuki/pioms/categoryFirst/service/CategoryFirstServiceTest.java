@@ -2,8 +2,7 @@ package com.akatsuki.pioms.categoryFirst.service;
 
 import com.akatsuki.pioms.admin.aggregate.Admin;
 import com.akatsuki.pioms.categoryFirst.aggregate.CategoryFirst;
-import com.akatsuki.pioms.categoryFirst.aggregate.RequestCategoryFirstPost;
-import com.akatsuki.pioms.categoryFirst.aggregate.RequestCategoryFirstUpdate;
+import com.akatsuki.pioms.categoryFirst.aggregate.RequestCategoryFirst;
 import com.akatsuki.pioms.categoryFirst.dto.CategoryFirstDTO;
 import com.akatsuki.pioms.categoryFirst.repository.CategoryFirstRepository;
 import jakarta.transaction.Transactional;
@@ -12,7 +11,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.ResponseEntity;
 import java.util.List;
 
@@ -28,8 +26,7 @@ class CategoryFirstServiceTest {
     @Autowired
     private CategoryFirstRepository categoryFirstRepository;
 
-    static RequestCategoryFirstPost requestPost;
-    static RequestCategoryFirstUpdate requestUpdate;
+    static RequestCategoryFirst request;
 
 //    public CategoryFirstServiceTest(CategoryFirstService categoryFirstService, CategoryFirstRepository categoryFirstRepository) {
 //        this.categoryFirstService = categoryFirstService;
@@ -38,7 +35,7 @@ class CategoryFirstServiceTest {
 
     @BeforeEach
     void init() {
-        requestPost = new RequestCategoryFirstPost("테스트");
+        request = new RequestCategoryFirst("테스트");
     }
 
     @Test
@@ -71,7 +68,7 @@ class CategoryFirstServiceTest {
         categoryFirst.setCategoryFirstEnrollDate("2024-05-17 00:00:00");
         categoryFirst.setCategoryFirstUpdateDate("2024-05-17 00:00:00");
 
-        ResponseEntity<String> response = categoryFirstService.postCategoryFirst(requestPost, categoryFirst.getCategoryFirstCode());
+        ResponseEntity<String> response = categoryFirstService.postCategoryFirst(request, categoryFirst.getCategoryFirstCode());
 
         assertEquals("신규 카테고리 등록",response.getBody());
     }
@@ -87,7 +84,7 @@ class CategoryFirstServiceTest {
         categoryFirst.setCategoryFirstEnrollDate("2024-05-17 00:00:00");
         categoryFirst.setCategoryFirstUpdateDate("2024-05-17 00:00:00");
 
-        ResponseEntity<String> response = categoryFirstService.updateCategoryFirst(2, requestUpdate, 1);
+        ResponseEntity<String> response = categoryFirstService.updateCategoryFirst(2, request, 1);
 
         assertEquals("카테고리 수정",response.getBody());
     }

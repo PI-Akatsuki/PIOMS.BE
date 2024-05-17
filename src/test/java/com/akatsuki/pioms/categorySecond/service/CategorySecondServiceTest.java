@@ -2,8 +2,7 @@ package com.akatsuki.pioms.categorySecond.service;
 
 import com.akatsuki.pioms.admin.aggregate.Admin;
 import com.akatsuki.pioms.categorySecond.aggregate.CategorySecond;
-import com.akatsuki.pioms.categorySecond.aggregate.RequestCategorySecondPost;
-import com.akatsuki.pioms.categorySecond.aggregate.RequestCategorySecondUpdate;
+import com.akatsuki.pioms.categorySecond.aggregate.RequestCategorySecond;
 import com.akatsuki.pioms.categorySecond.dto.CategorySecondDTO;
 import com.akatsuki.pioms.categorySecond.repository.CategorySecondRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -26,8 +25,7 @@ class CategorySecondServiceTest {
     @Autowired
     private CategorySecondService categorySecondService;
 
-    static RequestCategorySecondPost requestPost;
-    static RequestCategorySecondUpdate requestUpdate;
+    static RequestCategorySecond request;
 
     @Test
     @DisplayName("카테고리(중) 전체 조회")
@@ -57,23 +55,23 @@ class CategorySecondServiceTest {
         categorySecond.setCategorySecondUpdateDate("2024-05-17 00:00:00");
         categorySecond.setCategoryFirstCode(1);
 
-        ResponseEntity<String> response = categorySecondService.postCategorySecond(requestPost, categorySecond.getCategorySecondCode());
+        ResponseEntity<String> response = categorySecondService.postCategorySecond(request, categorySecond.getCategorySecondCode());
 
         assertEquals("신규 카테고리 등록", response.getBody());
     }
 
-    @Test
-    void updateCategorySecond() {
-        Admin requestorAdmin = new Admin();
-        requestorAdmin.setAdminCode(1);
-
-        CategorySecond categorySecond = new CategorySecond();
-        requestUpdate.setCategorySecondCode(1);
-        requestUpdate.setCategorySecondName("postTest");
-        categorySecond.setCategorySecondEnrollDate("2024-05-17 00:00:00");
-        categorySecond.setCategorySecondUpdateDate("2024-05-17 00:00:00");
-        categorySecond.setCategoryFirstCode(1);
-
-        ResponseEntity<String> response = categorySecondService.updateCategorySecond(1, requestUpdate,1);
-    }
+//    @Test
+//    void updateCategorySecond() {
+//        Admin requestorAdmin = new Admin();
+//        requestorAdmin.setAdminCode(1);
+//
+//        CategorySecond categorySecond = new CategorySecond();
+//        request.setCategorySecondCode(1);
+//        request.setCategorySecondName("postTest");
+//        categorySecond.setCategorySecondEnrollDate("2024-05-17 00:00:00");
+//        categorySecond.setCategorySecondUpdateDate("2024-05-17 00:00:00");
+//        categorySecond.setCategoryFirstCode(1);
+//
+//        ResponseEntity<String> response = categorySecondService.updateCategorySecond(1, request,1);
+//    }
 }

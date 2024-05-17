@@ -2,8 +2,7 @@ package com.akatsuki.pioms.categoryThird.service;
 
 import com.akatsuki.pioms.admin.aggregate.Admin;
 import com.akatsuki.pioms.categoryThird.aggregate.CategoryThird;
-import com.akatsuki.pioms.categoryThird.aggregate.RequestCategoryThirdPost;
-import com.akatsuki.pioms.categoryThird.aggregate.RequestCategoryThirdUpdate;
+import com.akatsuki.pioms.categoryThird.aggregate.RequestCategoryThird;
 import com.akatsuki.pioms.categoryThird.dto.CategoryThirdDTO;
 import com.akatsuki.pioms.categoryThird.repository.CategoryThirdRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -26,8 +25,7 @@ class CategoryThirdServiceTest {
 
     @Autowired
     private CategoryThirdRepository categoryThirdRepository;
-    static RequestCategoryThirdPost requestPost;
-    static RequestCategoryThirdUpdate requestUpdate;
+    static RequestCategoryThird request;
 
     @Test
     @DisplayName("카테고리(소) 전체 조회")
@@ -57,7 +55,9 @@ class CategoryThirdServiceTest {
         categoryThird.setCategoryThirdUpdateDate("2024-05-17 00:00:00");
         categoryThird.setCategoryThirdCode(1);
 
-//        ResponseEntity<String> response = categoryThirdService.postCategory()
+        ResponseEntity<String> response = categoryThirdService.postCategory(request);
+
+        assertEquals("카테고리 신규 등록", response.getBody());
     }
 
     @Test

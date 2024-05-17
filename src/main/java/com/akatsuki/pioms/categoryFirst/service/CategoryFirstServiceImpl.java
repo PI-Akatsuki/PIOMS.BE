@@ -3,12 +3,10 @@ package com.akatsuki.pioms.categoryFirst.service;
 import com.akatsuki.pioms.admin.aggregate.Admin;
 import com.akatsuki.pioms.admin.repository.AdminRepository;
 import com.akatsuki.pioms.categoryFirst.aggregate.CategoryFirst;
+import com.akatsuki.pioms.categoryFirst.aggregate.ResponseCategoryFirst;
 import com.akatsuki.pioms.categoryFirst.dto.CategoryFirstDTO;
 import com.akatsuki.pioms.categoryFirst.repository.CategoryFirstRepository;
-import com.akatsuki.pioms.categoryFirst.aggregate.RequestCategoryFirstPost;
-import com.akatsuki.pioms.categoryFirst.aggregate.RequestCategoryFirstUpdate;
-import com.akatsuki.pioms.categoryFirst.aggregate.ResponseCategoryFirstPost;
-import com.akatsuki.pioms.categoryFirst.aggregate.ResponseCategoryFirstUpdate;
+import com.akatsuki.pioms.categoryFirst.aggregate.RequestCategoryFirst;
 import com.akatsuki.pioms.log.etc.LogStatus;
 import com.akatsuki.pioms.log.service.LogService;
 import jakarta.persistence.EntityNotFoundException;
@@ -62,7 +60,7 @@ public class CategoryFirstServiceImpl implements CategoryFirstService {
 
     @Override
     @Transactional
-    public ResponseEntity<String> updateCategoryFirst(int categoryFirstCode, RequestCategoryFirstUpdate request, int requesterAdminCode) {
+    public ResponseEntity<String> updateCategoryFirst(int categoryFirstCode, RequestCategoryFirst request, int requesterAdminCode) {
         Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
         if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
             return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
@@ -78,14 +76,14 @@ public class CategoryFirstServiceImpl implements CategoryFirstService {
         categoryFirst.setCategoryFirstName(request.getCategoryFirstName());
         categoryFirst.setCategoryFirstUpdateDate(formattedDateTime);
 
-        ResponseCategoryFirstUpdate responseValue = new ResponseCategoryFirstUpdate(updatedCategoryFirst.getCategoryFirstCode(), updatedCategoryFirst.getCategoryFirstName(), updatedCategoryFirst.getCategoryFirstUpdateDate());
+        ResponseCategoryFirst responseValue = new ResponseCategoryFirst(updatedCategoryFirst.getCategoryFirstCode(), updatedCategoryFirst.getCategoryFirstName(), updatedCategoryFirst.getCategoryFirstEnrollDate(), updatedCategoryFirst.getCategoryFirstUpdateDate());
         logService.saveLog("root", LogStatus.수정,updatedCategoryFirst.getCategoryFirstName(),"CategoryFirst");
         return ResponseEntity.ok("카테고리(대) 수정 완료!");
     }
 
     @Override
     @Transactional
-    public ResponseEntity<String> postCategoryFirst(RequestCategoryFirstPost request, int requesterAdminCode) {
+    public ResponseEntity<String> postCategoryFirst(RequestCategoryFirst request, int requesterAdminCode) {
         Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
         if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
             return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
@@ -100,7 +98,7 @@ public class CategoryFirstServiceImpl implements CategoryFirstService {
 
         CategoryFirst savedCategoryFirst = categoryFirstRepository.save(categoryFirst);
 
-        ResponseCategoryFirstPost responseValue = new ResponseCategoryFirstPost(savedCategoryFirst.getCategoryFirstCode(),savedCategoryFirst.getCategoryFirstName(), savedCategoryFirst.getCategoryFirstEnrollDate());
+        ResponseCategoryFirst responseValue = new ResponseCategoryFirst(savedCategoryFirst.getCategoryFirstCode(),savedCategoryFirst.getCategoryFirstName(), savedCategoryFirst.getCategoryFirstEnrollDate(), savedCategoryFirst.getCategoryFirstUpdateDate());
         logService.saveLog("root", LogStatus.등록,savedCategoryFirst.getCategoryFirstName(),"CategoryFirst");
         return ResponseEntity.ok("카테고리(대) 생성 완료!");
     }

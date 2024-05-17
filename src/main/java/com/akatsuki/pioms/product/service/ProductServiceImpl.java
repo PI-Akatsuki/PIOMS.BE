@@ -2,7 +2,6 @@ package com.akatsuki.pioms.product.service;
 
 import com.akatsuki.pioms.admin.aggregate.Admin;
 import com.akatsuki.pioms.admin.repository.AdminRepository;
-import com.akatsuki.pioms.exchange.aggregate.ExchangeProduct;
 import com.akatsuki.pioms.categoryThird.repository.CategoryThirdRepository;
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import com.akatsuki.pioms.exchange.aggregate.EXCHANGE_PRODUCT_STATUS;
@@ -12,8 +11,7 @@ import com.akatsuki.pioms.exchange.service.ExchangeService;
 import com.akatsuki.pioms.log.etc.LogStatus;
 import com.akatsuki.pioms.log.service.LogService;
 import com.akatsuki.pioms.order.dto.OrderDTO;
-import com.akatsuki.pioms.product.aggregate.ResponseProducts;
-
+import com.akatsuki.pioms.product.aggregate.ResponseProduct;
 import com.akatsuki.pioms.product.repository.ProductRepository;
 import com.akatsuki.pioms.categoryThird.aggregate.CategoryThird;
 import com.akatsuki.pioms.product.aggregate.Product;
@@ -214,11 +212,11 @@ public class ProductServiceImpl implements ProductService{
 
     @Override
     @Transactional
-    public List<ResponseProducts> getCategoryProductList(int categoryThirdCode) {
+    public List<ResponseProduct> getCategoryProductList(int categoryThirdCode) {
         List<Product> products = productRepository.findAllByCategoryThirdCategoryThirdCode(categoryThirdCode);
-        List<ResponseProducts> responseProducts = new ArrayList<>();
+        List<ResponseProduct> responseProducts = new ArrayList<>();
         products.forEach(product -> {
-            responseProducts.add(new ResponseProducts(product));
+            responseProducts.add(new ResponseProduct(product));
         });
         return responseProducts;
     }

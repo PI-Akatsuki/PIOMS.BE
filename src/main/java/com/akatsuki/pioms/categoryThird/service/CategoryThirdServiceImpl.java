@@ -5,11 +5,10 @@ import com.akatsuki.pioms.admin.repository.AdminRepository;
 import com.akatsuki.pioms.categorySecond.aggregate.CategorySecond;
 import com.akatsuki.pioms.categorySecond.repository.CategorySecondRepository;
 import com.akatsuki.pioms.categoryThird.aggregate.CategoryThird;
-import com.akatsuki.pioms.categoryThird.aggregate.RequestCategoryThirdUpdate;
+import com.akatsuki.pioms.categoryThird.aggregate.RequestCategoryThird;
+import com.akatsuki.pioms.categoryThird.aggregate.ResponseCategoryThird;
 import com.akatsuki.pioms.categoryThird.dto.CategoryThirdDTO;
 import com.akatsuki.pioms.categoryThird.repository.CategoryThirdRepository;
-import com.akatsuki.pioms.categoryThird.aggregate.RequestCategoryThirdPost;
-import com.akatsuki.pioms.categoryThird.aggregate.ResponseCategoryThirdPost;
 import com.akatsuki.pioms.log.etc.LogStatus;
 import com.akatsuki.pioms.log.service.LogService;
 import com.akatsuki.pioms.product.aggregate.Product;
@@ -69,11 +68,11 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
 
     @Override
     @Transactional
-    public ResponseEntity<String> postCategory(RequestCategoryThirdPost request, int requesterAdminCode) {
-        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
-        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
-            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
-        }
+    public ResponseEntity<String> postCategory(RequestCategoryThird request/*, int requesterAdminCode*/) {
+//        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
+//        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
+//            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
+//        }
 
         CategoryThird categoryThird = new CategoryThird();
 
@@ -92,7 +91,7 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
         categoryThird.setCategoryThirdEnrollDate(formattedDateTime);
 
         CategoryThird savedCategoryThird = categoryThirdRepository.save(categoryThird);
-
+        System.out.println("savedCategoryThird = " + savedCategoryThird);
         logService.saveLog("root", LogStatus.등록, savedCategoryThird.getCategoryThirdName(), "CategoryThird");
 
         return ResponseEntity.ok("카테고리(소) 생성 완료!");
@@ -100,7 +99,7 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
 
     @Override
     @Transactional
-    public ResponseEntity<String> updateCategory(int categoryThirdCode, RequestCategoryThirdUpdate request, int requesterAdminCode) {
+    public ResponseEntity<String> updateCategory(int categoryThirdCode, RequestCategoryThird request, int requesterAdminCode) {
         Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
         if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
             return ResponseEntity.status(403).body("카테고리 수정은 루트 관리자만 가능합니다.");
@@ -117,7 +116,6 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
         categoryThird.setCategoryThirdName(request.getCategoryThirdName());
         categoryThird.setCategoryThirdUpdateDate(formattedDateTime);
 
-        ResponseCategoryThirdPost responseValue = new ResponseCategoryThirdPost(updatedCategoryThird.getCategoryThirdCode(), updatedCategoryThird.getCategoryThirdName(), updatedCategoryThird.getCategoryThirdUpdateDate());
         logService.saveLog("root", LogStatus.수정,updatedCategoryThird.getCategoryThirdName(),"CategoryThird");
         return ResponseEntity.ok("카테고리(소) 수정 완료!");
     }
