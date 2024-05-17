@@ -71,6 +71,7 @@ class AskServiceTests {
         admin.setAdminEmail("test@test.com");
         admin.setAdminId("root");
         admin.setAdminPhone("01089898989");
+        admin.setAdminRole("ROLE_ROOT");
         adminRepository.save(admin);
 
         ask1 = new Ask(
