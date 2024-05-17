@@ -23,4 +23,6 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
     boolean existsByFranchiseFranchiseCodeAndOrderCondition(int franchiseCode, ORDER_CONDITION orderCondition);
 
     boolean existsByExchangeExchangeCode(int exchangeCode);
+
+    List<Order> findAllByOrderCondition(ORDER_CONDITION orderCondition);
 }

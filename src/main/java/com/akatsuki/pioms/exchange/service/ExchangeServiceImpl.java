@@ -45,26 +45,15 @@ public class ExchangeServiceImpl implements ExchangeService{
     @Override
     @Transactional
     public ExchangeDTO findExchangeToSend(int franchiseCode) {
-
-        System.out.println("반품신청 찾기. franchisecode: " + franchiseCode);
-
-        Exchange exchange = null;
-        try {
-            exchange = exchangeRepository.findByFranchiseFranchiseCodeAndExchangeStatus(franchiseCode, EXCHANGE_STATUS.반송신청);
-            System.out.println("exchange = " + exchange);
-        }catch (Exception e){
-            System.out.println("처리 할 반품 요소가 많음! 이에 관련된 가장 오래된 데이터를 제외한 모든 반품 삭제 실행");
-            exchangeProductRepository.deleteAllByExchangeFranchiseFranchiseCodeAndExchangeExchangeStatus(franchiseCode,EXCHANGE_STATUS.반송신청);
-            exchangeRepository.deleteAllByFranchiseFranchiseCodeAndExchangeStatus(franchiseCode,EXCHANGE_STATUS.반송신청);
-        }
-
-        if(exchange==null)
+        List<Exchange> exchange = null;
+        exchange = exchangeRepository.findAllByFranchiseFranchiseCodeAndExchangeStatus(franchiseCode, EXCHANGE_STATUS.반송신청);
+        if(exchange.isEmpty())
             return null;
+        Exchange returnExchange = exchange.get(0);
 
-        exchange.setExchangeStatus(EXCHANGE_STATUS.반송중);
-        exchangeRepository.save(exchange);
-
-        return new ExchangeDTO(exchange);
+        returnExchange.setExchangeStatus(EXCHANGE_STATUS.반송중);
+        exchangeRepository.save(returnExchange);
+        return new ExchangeDTO(returnExchange);
     }
 
     @Override

@@ -18,7 +18,7 @@ public interface OrderService {
     OrderDTO postFranchiseOrder(Franchise franchise, RequestOrderVO order);
 
     // 관리자가 승인하지 않은 발주들을 반환합니다.
-    List<Order> getAdminUncheckesOrders(int adminId);
+    List<OrderDTO> getAdminUncheckesOrders(int adminId);
 
     // 관리자가 승인대기 중인 발주를 승낙하여 결과를 String으로 반환힙니다.
     // 정상적으로 이루어진 경우: 관리자 코드와 주문코드의 관리자 코드가 일치. OrderCondition이 승인대기인 경우
@@ -33,7 +33,7 @@ public interface OrderService {
     // 관리자가 승인대기 중인 발주를 거절하여 결과를 String으로 반환합니다.
     // 정상적으로 이루어진 경우: 관리자 코드와 주문코드의 관리자 코드가 일치. OrderCondition이 승인대기인 경우
     // 비정상적으로 이루어진 경우: 관리자 코드와 주문코드의 관리자 코드 불일치. OrderCondition이 승인 대기가 아닌 경우
-    String denyOrder(int adminCode,int orderId,String denyMessage);
+    OrderDTO denyOrder(int adminCode,int orderId,String denyMessage);
 
     // 가맹점이 가맹점의 모든 발주 리스트를 반환합니다.
     List<OrderDTO> getOrderList(int franchiseCode);
