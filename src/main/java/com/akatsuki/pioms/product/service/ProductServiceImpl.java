@@ -37,7 +37,7 @@ public class ProductServiceImpl implements ProductService{
     private final CategoryThirdRepository categoryThirdRepository;
     private final ExchangeService exchangeService;
     private final AdminRepository adminRepository;
-    LogService logService;
+    private final LogService logService;
 
     @Autowired
     public ProductServiceImpl(ProductRepository productRepository, CategoryThirdRepository categoryThirdRepository, ExchangeService exchangeService, AdminRepository adminRepository, LogService logService) {

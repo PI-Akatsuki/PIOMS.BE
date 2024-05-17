@@ -25,7 +25,7 @@ import java.util.Optional;
 public class CategoryFirstServiceImpl implements CategoryFirstService {
     private final CategoryFirstRepository categoryFirstRepository;
     private final AdminRepository adminRepository;
-    LogService logService;
+    private final LogService logService;
 
     @Autowired
     public CategoryFirstServiceImpl(CategoryFirstRepository categoryFirstRepository, AdminRepository adminRepository, LogService logService) {

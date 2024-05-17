@@ -31,7 +31,7 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
     private final CategorySecondRepository categorySecondRepository;
     private final ProductRepository productRepository;
     private final AdminRepository adminRepository;
-    LogService logService;
+    private final LogService logService;
 
     @Autowired
     public CategoryThirdServiceImpl(CategoryThirdRepository categoryThirdRepository, CategorySecondRepository categorySecondRepository, ProductRepository productRepository, AdminRepository adminRepository, LogService logService) {
