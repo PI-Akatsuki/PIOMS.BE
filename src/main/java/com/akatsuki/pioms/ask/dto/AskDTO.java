@@ -1,21 +1,43 @@
 package com.akatsuki.pioms.ask.dto;
 
-import com.akatsuki.pioms.ask.entity.AdminEntity;
-import com.akatsuki.pioms.ask.entity.FranchiseOwnerEntity;
-import com.akatsuki.pioms.ask.etc.ASK_STATUS;
+import com.akatsuki.pioms.admin.aggregate.Admin;
+import com.akatsuki.pioms.ask.aggregate.ASK_STATUS;
+import com.akatsuki.pioms.ask.aggregate.Ask;
+import com.akatsuki.pioms.frowner.aggregate.FranchiseOwner;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@ToString
 public class AskDTO {
 
     private int askCode;
-    private String askComment;
-    private ASK_STATUS askCondition;
+    private String askContent;
+    private ASK_STATUS askStatus;
+    private String askAnswer;
     private LocalDateTime askEnrollDate;
     private LocalDateTime askUpdateDate;
     private LocalDateTime askCommentDate;
     private String askTitle;
-    private FranchiseOwnerEntity franchiseOwner;
-    private AdminEntity admin;
+    private int franchiseOwnerCode;
+    private int adminCode;
+
+    public AskDTO(Ask ask) {
+        this.askCode= ask.getAskCode();
+        this.askContent = ask.getAskContent();
+        this.askStatus = ask.getAskStatus();
+        this.askAnswer = ask.getAskAnswer();
+        this.askEnrollDate = ask.getAskEnrollDate();
+        this.askUpdateDate = ask.getAskUpdateDate();
+        this.askCommentDate = ask.getAskCommentDate();
+        this.askTitle = ask.getAskTitle();
+        this.franchiseOwnerCode = ask.getFranchiseOwner().getFranchiseOwnerCode();
+        this.adminCode = ask.getAdmin().getAdminCode();
+    }
 }

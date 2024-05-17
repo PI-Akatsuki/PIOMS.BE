@@ -1,14 +1,31 @@
 package com.akatsuki.pioms.invoice.service;
 
-import com.akatsuki.pioms.invoice.vo.ResponseInvoice;
-import com.akatsuki.pioms.invoice.vo.ResponseInvoiceList;
+import com.akatsuki.pioms.franchise.aggregate.DELIVERY_DATE;
+import com.akatsuki.pioms.invoice.aggregate.Invoice;
+import com.akatsuki.pioms.invoice.dto.InvoiceDTO;
+import com.akatsuki.pioms.invoice.aggregate.DELIVERY_STATUS;
+import com.akatsuki.pioms.order.aggregate.Order;
+import com.akatsuki.pioms.order.dto.OrderDTO;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 public interface InvoiceService {
-    ResponseInvoiceList getAllInvoiceList();
+    List<InvoiceDTO> getAllInvoiceList();
+    InvoiceDTO postInvoice(OrderDTO order);
 
-    ResponseInvoice putInvoice(int invoiceCode, String invoiceStatus);
+    InvoiceDTO putInvoice(int invoiceCode, DELIVERY_STATUS invoiceStatus);
 
-    ResponseInvoice getInvoice(int invoiceCode);
+    InvoiceDTO getInvoice(int invoiceCode);
 
     Boolean checkInvoiceStatus(int orderCode);
+
+    InvoiceDTO saveInvoice(Invoice invoiceEntity);
+
+    void deleteInvoice(Invoice invoiceEntity);
+
+    InvoiceDTO getInvoiceByOrderCode(int orderCode);
+
+    void afterAcceptOrder(OrderDTO orderEntity);
+
 }

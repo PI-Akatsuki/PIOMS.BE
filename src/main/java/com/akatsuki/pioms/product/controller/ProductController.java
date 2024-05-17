@@ -1,9 +1,10 @@
 package com.akatsuki.pioms.product.controller;
 
-import com.akatsuki.pioms.product.entity.Product;
+import com.akatsuki.pioms.product.aggregate.Product;
+import com.akatsuki.pioms.product.aggregate.ResponseProducts;
 import com.akatsuki.pioms.product.service.ProductService;
-import com.akatsuki.pioms.product.vo.RequestProductPost;
-import com.akatsuki.pioms.product.vo.ResponseProductPost;
+import com.akatsuki.pioms.product.aggregate.RequestProduct;
+import com.akatsuki.pioms.product.aggregate.ResponseProduct;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/product")
@@ -33,29 +33,30 @@ public class ProductController {
 
     @GetMapping("/{productCode}")
     @Operation(summary = "상품코드로 상품 조회", description = "상품 코드로 상품 하나 단순 조회")
-    public ResponseEntity<Optional<Product>> getProductByCode(@PathVariable int productCode) {
-        Optional<Product> product = productService.findProductByCode(productCode);
-        return ResponseEntity.ok().body(product);
+    public ResponseEntity<Product> getProductByCode(@PathVariable int productCode) {
+        return ResponseEntity.ok().body(productService.findProductByCode(productCode));
     }
 
     @PostMapping("/create")
     @Operation(summary = "상품 등록")
-    public ResponseEntity<ResponseProductPost> postProduct(@RequestBody RequestProductPost request) {
-        ResponseProductPost response = productService.postProduct(request);
-        return ResponseEntity.ok().body(response);
+    public ResponseEntity<String> postProduct(@RequestBody RequestProduct request, int requesterAdminCode) {
+        return productService.postProduct(request, requesterAdminCode);
     }
 
     @DeleteMapping("/delete/{productCode}")
     @Operation(summary = "상품 삭제", description = "상품 코드로 상품 삭제")
-    public ResponseEntity<Product> deleteProduct(@PathVariable int productCode) {
-        Product product = productService.deleteProduct(productCode);
-        return ResponseEntity.ok().body(product);
+    public ResponseEntity<String> deleteProduct(@PathVariable int productCode, int requesterAdminCode) {
+        return productService.deleteProduct(productCode, requesterAdminCode);
     }
 
     @PostMapping("/update/{productCode}")
     @Operation(summary = "상품 정보 수정", description = "상품 수정 기능")
-    public ResponseEntity<ResponseProductPost> updateProduct(@PathVariable int productCode, @RequestBody RequestProductPost request) {
-        ResponseProductPost response = productService.updateProduct(productCode, request);
-        return ResponseEntity.ok().body(response);
+    public ResponseEntity<String> updateProduct(@PathVariable int productCode, @RequestBody RequestProduct request, int requesterAdminCode) {
+        return productService.updateProduct(productCode, request, requesterAdminCode);
+    }
+
+    @GetMapping("/category/{categoryThirdCode}")
+    public ResponseEntity<List<ResponseProducts>> getCategoryProductList(@PathVariable int categoryThirdCode) {
+        return ResponseEntity.ok(productService.getCategoryProductList(categoryThirdCode));
     }
 }
