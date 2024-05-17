@@ -55,6 +55,7 @@ class CategorySecondServiceTest {
         categorySecond.setCategorySecondName("postTest");
         categorySecond.setCategorySecondEnrollDate("2024-05-17 00:00:00");
         categorySecond.setCategorySecondUpdateDate("2024-05-17 00:00:00");
+        categorySecond.setCategoryFirstCode(1);
 
         ResponseEntity<String> response = categorySecondService.postCategorySecond(requestPost, categorySecond.getCategorySecondCode());
 
@@ -62,5 +63,17 @@ class CategorySecondServiceTest {
     }
 
     @Test
-    void updateCategorySecond() {assertEquals(true,true);}
+    void updateCategorySecond() {
+        Admin requestorAdmin = new Admin();
+        requestorAdmin.setAdminCode(1);
+
+        CategorySecond categorySecond = new CategorySecond();
+        requestUpdate.setCategorySecondCode(1);
+        requestUpdate.setCategorySecondName("postTest");
+        categorySecond.setCategorySecondEnrollDate("2024-05-17 00:00:00");
+        categorySecond.setCategorySecondUpdateDate("2024-05-17 00:00:00");
+        categorySecond.setCategoryFirstCode(1);
+
+        ResponseEntity<String> response = categorySecondService.updateCategorySecond(1, requestUpdate,1);
+    }
 }
