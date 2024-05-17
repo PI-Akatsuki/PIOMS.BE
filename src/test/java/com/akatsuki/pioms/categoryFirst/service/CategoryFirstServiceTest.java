@@ -3,6 +3,7 @@ package com.akatsuki.pioms.categoryFirst.service;
 import com.akatsuki.pioms.admin.aggregate.Admin;
 import com.akatsuki.pioms.categoryFirst.aggregate.CategoryFirst;
 import com.akatsuki.pioms.categoryFirst.aggregate.RequestCategoryFirstPost;
+import com.akatsuki.pioms.categoryFirst.aggregate.RequestCategoryFirstUpdate;
 import com.akatsuki.pioms.categoryFirst.dto.CategoryFirstDTO;
 import com.akatsuki.pioms.categoryFirst.repository.CategoryFirstRepository;
 import jakarta.transaction.Transactional;
@@ -30,7 +31,8 @@ class CategoryFirstServiceTest {
     @MockBean
     private CategoryFirstRepository categoryFirstRepository;
 
-    static RequestCategoryFirstPost request;
+    static RequestCategoryFirstPost requestPost;
+    static RequestCategoryFirstUpdate requestUpdate;
 
     @Autowired
     private MockMvc mockMvc;
@@ -42,7 +44,7 @@ class CategoryFirstServiceTest {
 
     @BeforeEach
     void init() {
-        request = new RequestCategoryFirstPost("테스트");
+        requestPost = new RequestCategoryFirstPost("테스트");
     }
 
     @Test
@@ -69,16 +71,28 @@ class CategoryFirstServiceTest {
         requestorAdmin.setAdminCode(1);
 
         CategoryFirst categoryFirst = new CategoryFirst();
-        categoryFirst.setCategoryFirstName("test");
+        categoryFirst.setCategoryFirstName("postTest");
         categoryFirst.setCategoryFirstEnrollDate("2024-05-17 00:00:00");
         categoryFirst.setCategoryFirstUpdateDate("2024-05-17 00:00:00");
 
-        ResponseEntity<String> response = categoryFirstService.postCategoryFirst(request, categoryFirst.getCategoryFirstCode());
+        ResponseEntity<String> response = categoryFirstService.postCategoryFirst(requestPost, categoryFirst.getCategoryFirstCode());
 
-        assertEquals("신규 카테고리 등록은 루트 관리자만 가능합니다.",response.getBody());
+        assertEquals("신규 카테고리 등록",response.getBody());
     }
 
     @Test
-    void updateCategoryFirst() {assertEquals(true,true);}
+    void updateCategoryFirst() {
+        Admin requestorAdmin = new Admin();
+        requestorAdmin.setAdminCode(1);
+
+        CategoryFirst categoryFirst = new CategoryFirst();
+        categoryFirst.setCategoryFirstName("updateTest");
+        categoryFirst.setCategoryFirstEnrollDate("2024-05-17 00:00:00");
+        categoryFirst.setCategoryFirstUpdateDate("2024-05-17 00:00:00");
+
+        ResponseEntity<String> response = categoryFirstService.updateCategoryFirst(1, requestUpdate, 1);
+
+        assertEquals("카테고리 수정",response.getBody());
+    }
 
 }
