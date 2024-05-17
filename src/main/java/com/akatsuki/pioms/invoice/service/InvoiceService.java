@@ -16,13 +16,11 @@ public interface InvoiceService {
 
     InvoiceDTO putInvoice(int adminCode,int invoiceCode, DELIVERY_STATUS invoiceStatus);
 
-    InvoiceDTO getInvoice(int invoiceCode);
-
     Boolean checkInvoiceStatus(int orderCode);
 
     InvoiceDTO saveInvoice(Invoice invoiceEntity);
 
-    void deleteInvoice(Invoice invoiceEntity);
+    boolean deleteInvoice(int franchiseOwnerCode, int invoiceCode);
 
     InvoiceDTO getInvoiceByOrderCode(int orderCode);
 
@@ -31,4 +29,8 @@ public interface InvoiceService {
     List<InvoiceDTO> getAdminInvoiceList(int adminCode);
 
     InvoiceDTO getInvoiceByAdminCode(int adminCode, int invoiceCode);
+
+    List<InvoiceDTO> getFranchiseInvoiceList(int franchiseOwnerCode);
+
+    InvoiceDTO getInvoiceByFranchiseOwnerCode(int franchiseOwnerCode, int invoiceCode);
 }

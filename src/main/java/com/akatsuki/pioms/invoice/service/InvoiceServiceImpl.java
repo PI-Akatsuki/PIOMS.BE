@@ -121,6 +121,28 @@ public class InvoiceServiceImpl implements InvoiceService {
         return null;
     }
 
+    @Override
+    public List<InvoiceDTO> getFranchiseInvoiceList(int franchiseOwnerCode) {
+        List<Invoice> invoices = invoiceRepository.findAllByOrderFranchiseFranchiseOwnerFranchiseOwnerCode(franchiseOwnerCode);
+        if (invoices == null)
+            return null;
+        List<InvoiceDTO> invoiceDTOS = new ArrayList<>();
+        for (int i = 0; i < invoices.size(); i++) {
+            invoiceDTOS.add(new InvoiceDTO(invoices.get(i)));
+        }
+        return invoiceDTOS;
+    }
+
+    @Override
+    public InvoiceDTO getInvoiceByFranchiseOwnerCode(int franchiseOwnerCode, int invoiceCode) {
+        Invoice invoice = invoiceRepository.findById(invoiceCode).orElse(null);
+
+        if (invoice==null || invoice.getOrder().getFranchise().getFranchiseOwner().getFranchiseOwnerCode() != franchiseOwnerCode)
+            return null;
+
+        return new InvoiceDTO(invoice);
+    }
+
     public List<InvoiceDTO> getAllInvoiceList(){
         List<Invoice> invoiceList = invoiceRepository.findAll();
         List<InvoiceDTO> responseInvoice = new ArrayList<>();
@@ -146,11 +168,6 @@ public class InvoiceServiceImpl implements InvoiceService {
         return new InvoiceDTO(invoice);
     }
 
-    @Override
-    public InvoiceDTO getInvoice(int invoiceCode) {
-        Invoice invoice = invoiceRepository.findById(invoiceCode).orElseThrow(IllegalArgumentException::new);
-        return new InvoiceDTO(invoice);
-    }
 
     public Boolean checkInvoiceStatus(int orderCode){
         Invoice invoice = invoiceRepository.findByOrderOrderCode(orderCode);
@@ -175,8 +192,16 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public void deleteInvoice(Invoice invoiceDTO) {
-        invoiceRepository.delete(invoiceDTO);
+    public boolean deleteInvoice(int franchiseOwnerCode,int invoiceCode) {
+        Invoice invoice = invoiceRepository.findById(invoiceCode).orElse(null);
+
+        if (invoice==null || invoice.getOrder().getFranchise().getFranchiseOwner().getFranchiseOwnerCode() != franchiseOwnerCode
+        || invoice.getDeliveryStatus()!= DELIVERY_STATUS.배송전 )
+            return false;
+
+        invoiceRepository.deleteById(invoiceCode);
+
+        return true;
     }
 
 }
