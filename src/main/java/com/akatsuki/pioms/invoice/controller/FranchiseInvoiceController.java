@@ -39,14 +39,16 @@ public class FranchiseInvoiceController {
         return ResponseEntity.ok(new ResponseInvoice(invoiceDTO));
     }
 
-    @DeleteMapping("/{franchiseOwnerCode}/invoice/{invoiceCode}")
-    public ResponseEntity<ResponseInvoice> deleteInvoice(@PathVariable int franchiseOwnerCode,@PathVariable int invoiceCode){
 
-        boolean flag = invoiceService.deleteInvoice(franchiseOwnerCode,invoiceCode);
-
-        if (!flag)
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
-        return ResponseEntity.ok().build();
-    }
+    // 🥸dummy🥸
+//    @DeleteMapping("/{franchiseOwnerCode}/invoice/{invoiceCode}")
+//    public ResponseEntity<ResponseInvoice> deleteInvoice(@PathVariable int franchiseOwnerCode,@PathVariable int invoiceCode){
+//
+//        boolean flag = invoiceService.deleteInvoice(franchiseOwnerCode,invoiceCode);
+//
+//        if (!flag)
+//            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+//        return ResponseEntity.ok().build();
+//    }
 
 }

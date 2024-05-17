@@ -3,7 +3,6 @@ package com.akatsuki.pioms.specs.aggregate;
 
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import com.akatsuki.pioms.order.aggregate.Order;
-import com.akatsuki.pioms.order.dto.OrderDTO;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
@@ -15,7 +14,7 @@ import java.time.LocalDateTime;
 @ToString
 @Table(name = "specs")
 @Entity
-public class SpecsEntity {
+public class Specs {
 
     @Id
     @Column(name = "specs_code")
@@ -29,7 +28,7 @@ public class SpecsEntity {
     @OneToOne
     private Order order;
 
-    public SpecsEntity(int orderId, int franchiseId) {
+    public Specs(int orderId, int franchiseId) {
         this.specsDate = LocalDateTime.now();
         Order order1 = new Order();
         order1.setOrderCode(orderId);

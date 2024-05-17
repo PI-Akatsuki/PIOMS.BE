@@ -2,13 +2,11 @@ package com.akatsuki.pioms.order.service;
 
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import com.akatsuki.pioms.franchise.service.FranchiseService;
-import com.akatsuki.pioms.invoice.aggregate.Invoice;
 import com.akatsuki.pioms.order.aggregate.Order;
 import com.akatsuki.pioms.order.aggregate.RequestOrderVO;
 import com.akatsuki.pioms.order.dto.OrderDTO;
 import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
 import com.akatsuki.pioms.order.repository.OrderRepository;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +23,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @Transactional
 class OrderFacadeTest {
-    private OrderFacade orderFacade;
-    private OrderRepository orderRepository;
-    private OrderService orderService;
-    private FranchiseService franchiseService;
+    private final OrderFacade orderFacade;
+    private final OrderRepository orderRepository;
+    private final OrderService orderService;
+    private final FranchiseService franchiseService;
 
     @Autowired
     public OrderFacadeTest(OrderFacade orderFacade, OrderRepository orderRepository, OrderService orderService, FranchiseService franchiseService) {
@@ -61,7 +59,7 @@ class OrderFacadeTest {
     @Test
     void getAdminUncheckesOrders() {
         List<Order> orders = orderRepository.findAllByFranchiseAdminAdminCodeAndOrderCondition(order.getFranchise().getAdmin().getAdminCode(), ORDER_CONDITION.승인대기);
-        List<OrderDTO> orderDTOS = orderFacade.getAdminUncheckesOrders(order.getFranchise().getAdmin().getAdminCode());
+        List<OrderDTO> orderDTOS = orderFacade.getAdminUncheckedOrders(order.getFranchise().getAdmin().getAdminCode());
         assertEquals(orders.size(), orderDTOS.size());
         for (int i = 0; i < orderDTOS.size(); i++) {
             assertEquals(orderDTOS.get(i).getOrderCondition(), ORDER_CONDITION.승인대기);
@@ -89,7 +87,7 @@ class OrderFacadeTest {
     void denyOrder() {
         ORDER_CONDITION pastOrderCondition = order.getOrderCondition();
         String denyReason = "당신은 이게 발주라고 보낸건가요?";
-        String result = orderFacade.denyOrder(order.getFranchise().getAdmin().getAdminCode(),
+        OrderDTO orderDTO1 = orderFacade.denyOrder(order.getFranchise().getAdmin().getAdminCode(),
                 order.getOrderCode(), denyReason );
 
         assertNotEquals(pastOrderCondition, order.getOrderCondition());

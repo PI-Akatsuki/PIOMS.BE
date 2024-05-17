@@ -66,11 +66,14 @@ public class InvoiceServiceImpl implements InvoiceService {
         return orderTime;
     }
 
+
+
+
+
     @Override
-    public InvoiceDTO postInvoice(OrderDTO orderDTO){
-        System.out.println("order = " + orderDTO);
+    public void afterAcceptOrder(OrderDTO orderDTO)
+    {
         Order order = new Order(orderDTO);
-        System.out.println("order = " + order);
         Invoice invoice = new Invoice();
         invoice.setOrder(order);
         invoice.setDeliveryStatus(DELIVERY_STATUS.배송전);
@@ -78,22 +81,9 @@ public class InvoiceServiceImpl implements InvoiceService {
         int deliveryRegionCode = deliveryService.getDeliveryRegionCodeByFranchiseCode(orderDTO.getFranchiseCode());
         invoice.setDeliveryRegion(deliveryRegionCode);
         invoice.setInvoiceDate(setDeliveryTime(order.getOrderDate(), orderDTO.getDeliveryDate()));
-        Invoice returnValue = invoiceRepository.save(invoice);
-        System.out.println("returnValue = " + returnValue.getOrder());
-        return new InvoiceDTO(returnValue);
+        invoiceRepository.save(invoice);
     }
 
-
-
-    @Override
-    public void afterAcceptOrder(OrderDTO orderEntity)
-//            (int orderCode, int franchiseCode, DELIVERY_DATE deliveryDate, LocalDateTime orderDateTime, int franchiseOwnerCode)
-    {
-        System.out.println("Invoice event listen");
-        InvoiceDTO invoiceDTO =  postInvoice(orderEntity);
-//        System.out.println("invoiceDTO = " + invoiceDTO);
-        System.out.println("Invoice event End");
-    }
 
     @Override
     public List<InvoiceDTO> getAdminInvoiceList(int adminCode) {
@@ -185,12 +175,6 @@ public class InvoiceServiceImpl implements InvoiceService {
             return null;
 
         return new InvoiceDTO(invoice);
-    }
-
-    @Override
-    public InvoiceDTO saveInvoice(Invoice invoice) {
-        System.out.println("invoice.getOrder() = " + invoice.getOrder());
-        return new InvoiceDTO(invoiceRepository.save(invoice));
     }
 
     @Override

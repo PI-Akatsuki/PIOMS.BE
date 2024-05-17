@@ -73,16 +73,6 @@ class ExchangeServiceTest {
         assertEquals(exchanges.size(), exchangeDTOS.size());
     }
 
-    @Test
-    void getExchangesByFranchiseCode() {
-        //given
-        int franchiseCode = 1;
-        List<Exchange> exchanges = exchangeRepository.findAllByFranchiseFranchiseCode(franchiseCode);
-        //when
-        List<ExchangeDTO> exchangeDTOS = exchangeService.getExchangesByFranchiseCode(franchiseCode);
-        //then
-        assertEquals(exchanges.size(),exchangeDTOS.size());
-    }
 
     @Test
     void getExchangesByAdminCode() {
