@@ -1,7 +1,6 @@
-package com.akatsuki.pioms.ask.entity;
+package com.akatsuki.pioms.ask.aggregate;
 
 import com.akatsuki.pioms.admin.aggregate.Admin;
-import com.akatsuki.pioms.ask.etc.ASK_STATUS;
 import com.akatsuki.pioms.frowner.aggregate.FranchiseOwner;
 import jakarta.persistence.*;
 import lombok.*;
@@ -14,7 +13,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString
-public class AskEntity {
+public class Ask {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ask_code")
@@ -51,7 +50,7 @@ public class AskEntity {
     @OneToOne
     private Admin admin;
 
-    public AskEntity() {
+    public Ask() {
         this.admin = new Admin(); // 이 부분은 Admin의 기본 생성자가 필요합니다.
         this.admin.setAdminCode(1); // 관리자 ID를 1로 설정
     }

@@ -3,14 +3,16 @@ package com.akatsuki.pioms.ask.service;
 import com.akatsuki.pioms.admin.aggregate.Admin;
 import com.akatsuki.pioms.admin.repository.AdminRepository;
 import com.akatsuki.pioms.ask.dto.AskCreateDTO;
+import com.akatsuki.pioms.ask.dto.AskDTO;
+import com.akatsuki.pioms.ask.dto.AskListDTO;
 import com.akatsuki.pioms.ask.dto.AskUpdateDTO;
-import com.akatsuki.pioms.ask.entity.AskEntity;
-import com.akatsuki.pioms.ask.etc.ASK_STATUS;
+import com.akatsuki.pioms.ask.aggregate.Ask;
+import com.akatsuki.pioms.ask.aggregate.ASK_STATUS;
 import com.akatsuki.pioms.ask.repository.AskRepository;
-import com.akatsuki.pioms.ask.vo.AskListVO;
-import com.akatsuki.pioms.ask.vo.AskVO;
 import com.akatsuki.pioms.frowner.aggregate.FranchiseOwner;
 import com.akatsuki.pioms.frowner.repository.FranchiseOwnerRepository;
+import com.akatsuki.pioms.log.etc.LogStatus;
+import com.akatsuki.pioms.log.service.LogService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.akatsuki.pioms.ask.etc.ASK_STATUS.답변완료;
+import static com.akatsuki.pioms.ask.aggregate.ASK_STATUS.답변완료;
 
 @Service
 public class AskServiceImpl implements AskService{
@@ -27,60 +29,61 @@ public class AskServiceImpl implements AskService{
     private final AskRepository askRepository;
     private final FranchiseOwnerRepository franchiseOwnerRepository;
     private final AdminRepository adminRepository;
+    private final LogService logService;
 
     @Autowired
-    public AskServiceImpl(AskRepository askRepository,FranchiseOwnerRepository franchiseOwnerRepository,AdminRepository adminRepository){
+    public AskServiceImpl(AskRepository askRepository,FranchiseOwnerRepository franchiseOwnerRepository,AdminRepository adminRepository,LogService logService){
         this.askRepository = askRepository;
         this.franchiseOwnerRepository = franchiseOwnerRepository;
         this.adminRepository = adminRepository;
-
+        this.logService = logService;
     }
 
     @Override
-    public AskListVO getAllAskList() {
-        List<AskEntity> askList = askRepository.findAll();
+    public AskListDTO getAllAskList() {
+        List<Ask> askList = askRepository.findAll();
         System.out.println("askList = " + askList);
-        List<AskVO> askVOList = new ArrayList<>();
-        askList.forEach(ask-> {
-            askVOList.add(new AskVO(ask));
+        List<AskDTO> askDTOList = new ArrayList<>();
+        askList.forEach(ask -> {
+            askDTOList.add(new AskDTO(ask));
         });
-        return new AskListVO(askVOList);
+        return new AskListDTO(askDTOList);
     }
-
     @Override
-    public AskVO getAskDetails(int askCode) throws EntityNotFoundException {
-        AskEntity askEntity = askRepository.findById(askCode)
+    public AskDTO getAskDetails(int askCode) throws EntityNotFoundException {
+        Ask ask = askRepository.findById(askCode)
                 .orElseThrow(() -> new EntityNotFoundException("Ask not found with id: " + askCode));
 
-        return new AskVO(askEntity);
+        return new AskDTO(ask);
     }
 
-    public AskListVO getWaitingForReplyAsks() {
-        List<AskEntity> askList = askRepository.findAllByStatusWaitingForReply();
-        return convertToAskListVO(askList);
+    public AskListDTO getWaitingForReplyAsks() {
+        List<Ask> askList = askRepository.findAllByStatusWaitingForReply();
+        return convertToAskListDTO(askList);
     }
 
     @Override
-    public AskListVO getAsksByFranchiseOwnerId(Integer franchiseOwnerId) {
-        List<AskEntity> askList = askRepository.findByFranchiseOwner_FranchiseOwnerCode(franchiseOwnerId);
-        return convertToAskListVO(askList);
+    public AskListDTO getAsksByFranchiseOwnerId(Integer franchiseOwnerId) {
+        List<Ask> askList = askRepository.findByFranchiseOwner_FranchiseOwnerCode(franchiseOwnerId);
+        return convertToAskListDTO(askList);
     }
 
-    private AskListVO convertToAskListVO(List<AskEntity> askList) {
-        List<AskVO> askVOList = new ArrayList<>();
-        askList.forEach(ask -> askVOList.add(new AskVO(ask)));
-        return new AskListVO(askVOList);
+    private AskListDTO convertToAskListDTO(List<Ask> askList) {
+        List<AskDTO> askDTOList = new ArrayList<>();
+        askList.forEach(ask -> askDTOList.add(new AskDTO(ask)));
+        return new AskListDTO(askDTOList);
     }
 
-    public AskVO answerAsk(Integer askId, String answer) {
-        Optional<AskEntity> ask = askRepository.findById(askId);
+    public AskDTO answerAsk(Integer askId, String answer) {
+        Optional<Ask> ask = askRepository.findById(askId);
         if (ask.isPresent()) {
-            AskEntity askEntity = ask.get();
+            Ask askEntity = ask.get();
             askEntity.setAskAnswer(answer);
             askEntity.setAskStatus(답변완료);
             askEntity.setAskCommentDateNow();  // 답변 등록 시각 설정
             askRepository.save(askEntity);
-            return new AskVO(askEntity);
+            logService.saveLog("Admin", LogStatus.등록,askEntity.getAskAnswer(),"Ask");
+            return new AskDTO(askEntity);
         } else {
             throw new RuntimeException("Ask not found with id: " + askId);
         }
@@ -90,35 +93,50 @@ public class AskServiceImpl implements AskService{
 
 
     @Override
-    public AskVO createAsk(AskCreateDTO askDTO) {
-        AskEntity askEntity = new AskEntity();
-        askEntity.setAskTitle(askDTO.getTitle());
-        askEntity.setAskContent(askDTO.getContent());
+    public AskDTO createAsk(AskCreateDTO askDTO) {
+        Ask ask = new Ask();
+        ask.setAskTitle(askDTO.getTitle());
+        ask.setAskContent(askDTO.getContent());
 
         FranchiseOwner owner = franchiseOwnerRepository.findById(askDTO.getFranchiseOwnerCode())
                 .orElseThrow(() -> new RuntimeException("Franchise owner not found"));
-        askEntity.setFranchiseOwner(owner);
+        ask.setFranchiseOwner(owner);
 
         // Admin 정보 가져오기
         Admin admin = adminRepository.findById(1)  // 예: 관리자 ID가 1인 경우
                 .orElseThrow(() -> new RuntimeException("Admin not found"));
-        askEntity.setAdmin(admin);
-        askRepository.save(askEntity);
-        return new AskVO(askEntity);
+        ask.setAdmin(admin);
+        askRepository.save(ask);
+        logService.saveLog("FranchiseOwner", LogStatus.등록,ask.getAskTitle(),"Ask");
+        return new AskDTO(ask);
     }
 
-    public AskEntity updateAsk(int askCode, AskUpdateDTO askUpdateDTO) throws Exception {
-        AskEntity askEntity = askRepository.findById(askCode)
+    public Ask updateAsk(int askCode, AskUpdateDTO askUpdateDTO) throws Exception {
+        Ask ask = askRepository.findById(askCode)
                 .orElseThrow(() -> new RuntimeException("Ask not found with id: " + askCode));
 
-        if (askEntity.getAskStatus() != ASK_STATUS.답변대기) {
+        if (ask.getAskStatus() != ASK_STATUS.답변대기) {
             throw new Exception("답변완료의 경우 수정할 수 없습니다.");
         }
 
-        askEntity.setAskTitle(askUpdateDTO.getTitle());
-        askEntity.setAskContent(askUpdateDTO.getContent());
-        askEntity.updateAskUpdateDate();  // Ensure this method is implemented to only update ask_update_date
-        return askRepository.save(askEntity);
+        StringBuilder changes = new StringBuilder();
+
+        if (!ask.getAskTitle().equals(askUpdateDTO.getTitle())) {
+            changes.append(String.format("제목: '%s'에서 '%s'로 변경됨; ", ask.getAskTitle(), askUpdateDTO.getTitle()));
+            ask.setAskTitle(askUpdateDTO.getTitle());
+        }
+
+        if (!ask.getAskContent().equals(askUpdateDTO.getContent())) {
+            changes.append(String.format("내용: '%s'에서 '%s'로 변경됨; ", ask.getAskContent(), askUpdateDTO.getContent()));
+            ask.setAskContent(askUpdateDTO.getContent());
+        }
+        ask.updateAskUpdateDate();  // Ensure this method is implemented to only update ask_update_date
+        askRepository.save(ask);
+        if (changes.length() > 0) {
+            logService.saveLog("FranchiseOwner", LogStatus.수정, changes.toString(), "Ask");
+        }
+        return askRepository.save(ask);
+
     }
 
 

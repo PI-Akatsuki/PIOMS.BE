@@ -1,21 +1,21 @@
 package com.akatsuki.pioms.ask.service;
 
 import com.akatsuki.pioms.ask.dto.AskCreateDTO;
+import com.akatsuki.pioms.ask.dto.AskDTO;
+import com.akatsuki.pioms.ask.dto.AskListDTO;
 import com.akatsuki.pioms.ask.dto.AskUpdateDTO;
-import com.akatsuki.pioms.ask.entity.AskEntity;
-import com.akatsuki.pioms.ask.vo.AskListVO;
-import com.akatsuki.pioms.ask.vo.AskVO;
+import com.akatsuki.pioms.ask.aggregate.Ask;
 import jakarta.persistence.EntityNotFoundException;
 
 public interface AskService {
-    AskListVO getAllAskList();
+    AskListDTO getAllAskList();
 
-    AskVO getAskDetails(int askCode) throws EntityNotFoundException;
+    AskDTO getAskDetails(int askCode) throws EntityNotFoundException;
 
-    AskListVO getWaitingForReplyAsks();
-    AskVO answerAsk(Integer askId, String answer);
-    AskListVO getAsksByFranchiseOwnerId(Integer franchiseOwnerId);
-    AskVO createAsk(AskCreateDTO askDTO);
+    AskListDTO getWaitingForReplyAsks();
+    AskDTO answerAsk(Integer askId, String answer);
+    AskListDTO getAsksByFranchiseOwnerId(Integer franchiseOwnerId);
+    AskDTO createAsk(AskCreateDTO askDTO);
 
-    AskEntity updateAsk(int askCode, AskUpdateDTO askUpdateDTO) throws Exception;
+    Ask updateAsk(int askCode, AskUpdateDTO askUpdateDTO) throws Exception;
 }

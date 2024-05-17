@@ -1,11 +1,11 @@
-package com.akatsuki.pioms.ask;
+package com.akatsuki.pioms.ask.controller;
 
 import com.akatsuki.pioms.ask.dto.AskCreateDTO;
+import com.akatsuki.pioms.ask.dto.AskDTO;
+import com.akatsuki.pioms.ask.dto.AskListDTO;
 import com.akatsuki.pioms.ask.dto.AskUpdateDTO;
-import com.akatsuki.pioms.ask.entity.AskEntity;
+import com.akatsuki.pioms.ask.aggregate.Ask;
 import com.akatsuki.pioms.ask.service.AskService;
-import com.akatsuki.pioms.ask.vo.AskListVO;
-import com.akatsuki.pioms.ask.vo.AskVO;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,19 +22,19 @@ public class AskFranchiseController {
      * 문의사항 전체조회
      * */
     @GetMapping("/ask/list")
-    public ResponseEntity<AskListVO> getAllAskList(){
-        AskListVO askListVO = askService.getAllAskList();
-        return ResponseEntity.ok().body(askListVO);
+    public ResponseEntity<AskListDTO> getAllAskList(){
+        AskListDTO askListDTO = askService.getAllAskList();
+        return ResponseEntity.ok().body(askListDTO);
     }
 
     /**
      * 문의사항 상세 조회
      * */
     @GetMapping("/ask/{askCode}")
-    public ResponseEntity<AskVO> getAskDetails(@PathVariable int askCode) {
+    public ResponseEntity<AskDTO> getAskDetails(@PathVariable int askCode) {
         try {
-            AskVO askVO = askService.getAskDetails(askCode);
-            return ResponseEntity.ok(askVO);
+            AskDTO askDTO = askService.getAskDetails(askCode);
+            return ResponseEntity.ok(askDTO);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
@@ -46,10 +46,10 @@ public class AskFranchiseController {
      * 문의사항 작성
      * */
     @PostMapping("/ask/create/{franchise_owner_code}")
-    public ResponseEntity<AskVO> createAsk(@PathVariable("franchise_owner_code") int franchiseOwnerCode, @RequestBody AskCreateDTO askDTO) {
+    public ResponseEntity<AskDTO> createAsk(@PathVariable("franchise_owner_code") int franchiseOwnerCode, @RequestBody AskCreateDTO askDTO) {
         askDTO.setFranchiseOwnerCode(franchiseOwnerCode);
-        AskVO askVO = askService.createAsk(askDTO);
-        return ResponseEntity.ok(askVO);
+        AskDTO AskDTO = askService.createAsk(askDTO);
+        return ResponseEntity.ok(AskDTO);
     }
 
     /**
@@ -58,9 +58,9 @@ public class AskFranchiseController {
     @PutMapping("/update/{askCode}")
     public ResponseEntity<?> updateAsk(@PathVariable int askCode, @RequestBody AskUpdateDTO askUpdateDTO) {
         try {
-            AskEntity updatedAsk = askService.updateAsk(askCode, askUpdateDTO);
-            AskVO askVO = new AskVO(updatedAsk);
-            return ResponseEntity.ok(askVO);
+            Ask updatedAsk = askService.updateAsk(askCode, askUpdateDTO);
+            AskDTO askDTO = new AskDTO(updatedAsk);
+            return ResponseEntity.ok(askDTO);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
         }
