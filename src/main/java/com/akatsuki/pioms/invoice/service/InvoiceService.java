@@ -14,7 +14,7 @@ public interface InvoiceService {
     List<InvoiceDTO> getAllInvoiceList();
     InvoiceDTO postInvoice(OrderDTO order);
 
-    InvoiceDTO putInvoice(int invoiceCode, DELIVERY_STATUS invoiceStatus);
+    InvoiceDTO putInvoice(int adminCode,int invoiceCode, DELIVERY_STATUS invoiceStatus);
 
     InvoiceDTO getInvoice(int invoiceCode);
 
@@ -28,4 +28,7 @@ public interface InvoiceService {
 
     void afterAcceptOrder(OrderDTO orderEntity);
 
+    List<InvoiceDTO> getAdminInvoiceList(int adminCode);
+
+    InvoiceDTO getInvoiceByAdminCode(int adminCode, int invoiceCode);
 }

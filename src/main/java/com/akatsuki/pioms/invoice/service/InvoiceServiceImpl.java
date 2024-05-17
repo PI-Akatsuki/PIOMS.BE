@@ -13,14 +13,17 @@ import com.akatsuki.pioms.invoice.aggregate.DELIVERY_STATUS;
 import com.akatsuki.pioms.invoice.repository.InvoiceRepository;
 import com.akatsuki.pioms.order.aggregate.Order;
 import com.akatsuki.pioms.order.dto.OrderDTO;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.RecursiveTask;
 
 @Service
+@Log4j2
 public class InvoiceServiceImpl implements InvoiceService {
     final private InvoiceRepository invoiceRepository;
     final private DeliveryService deliveryService;
@@ -91,6 +94,33 @@ public class InvoiceServiceImpl implements InvoiceService {
         System.out.println("Invoice event End");
     }
 
+    @Override
+    public List<InvoiceDTO> getAdminInvoiceList(int adminCode) {
+        List<Invoice> invoices;
+
+        if (adminCode==1)
+            invoices = invoiceRepository.findAll();
+        else
+            invoices = invoiceRepository.findAllByOrderFranchiseAdminAdminCode(adminCode);
+
+        List<InvoiceDTO> invoiceDTOS= new ArrayList<>();
+        for (int i = 0; i < invoices.size(); i++) {
+            invoiceDTOS.add(new InvoiceDTO(invoices.get(i)));
+        }
+        return invoiceDTOS;
+    }
+
+    @Override
+    public InvoiceDTO getInvoiceByAdminCode(int adminCode, int invoiceCode) {
+        Invoice invoice = invoiceRepository.findById(invoiceCode).orElse(null);
+
+        if (adminCode==1 || invoice!=null && invoice.getOrder().getFranchise().getAdmin().getAdminCode() == adminCode){
+            return new InvoiceDTO(invoice);
+        }
+
+        return null;
+    }
+
     public List<InvoiceDTO> getAllInvoiceList(){
         List<Invoice> invoiceList = invoiceRepository.findAll();
         List<InvoiceDTO> responseInvoice = new ArrayList<>();
@@ -102,13 +132,18 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public InvoiceDTO putInvoice(int invoiceCode, DELIVERY_STATUS invoiceStatus) {
-        System.out.println("invoiceStatus = " + invoiceStatus);
-        Invoice invoiceEntity = invoiceRepository.findById(invoiceCode).orElseThrow(IllegalArgumentException::new);
+    public InvoiceDTO putInvoice(int adminCode, int invoiceCode, DELIVERY_STATUS invoiceStatus) {
+        Invoice invoice = invoiceRepository.findById(invoiceCode).orElse(null);
+        if (invoice== null)
+            return  null;
+        if ( invoice.getOrder().getFranchise().getAdmin().getAdminCode() != adminCode && adminCode!=1){
+            return null;
+        }
 
-        invoiceEntity.setDeliveryStatus(invoiceStatus);
-        invoiceRepository.save(invoiceEntity);
-        return new InvoiceDTO(invoiceEntity);
+        invoice.setDeliveryStatus(invoiceStatus);
+        invoiceRepository.save(invoice);
+
+        return new InvoiceDTO(invoice);
     }
 
     @Override
@@ -126,7 +161,11 @@ public class InvoiceServiceImpl implements InvoiceService {
         return false;
     }
     public InvoiceDTO getInvoiceByOrderCode(int orderCode){
-        return new InvoiceDTO(invoiceRepository.findByOrderOrderCode(orderCode));
+        Invoice invoice =  invoiceRepository.findByOrderOrderCode(orderCode);
+        if (invoice== null)
+            return null;
+
+        return new InvoiceDTO(invoice);
     }
 
     @Override

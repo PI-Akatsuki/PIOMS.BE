@@ -36,14 +36,4 @@ public class InvoiceController {
         return ResponseEntity.ok(new ResponseInvoice(invoiceService.getInvoice(invoiceCode)));
     }
 
-    @PutMapping("/{invoiceCode}/{invoiceStatus}")
-    public ResponseEntity<ResponseInvoice> putInvoice(@PathVariable int invoiceCode, @PathVariable DELIVERY_STATUS invoiceStatus){
-        InvoiceDTO invoice = invoiceService.putInvoice(invoiceCode, invoiceStatus);
-        return ResponseEntity.ok(new ResponseInvoice(invoice));
-    }
-
-
-
-
-
 }

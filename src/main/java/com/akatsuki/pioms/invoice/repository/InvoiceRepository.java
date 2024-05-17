@@ -12,4 +12,6 @@ public interface InvoiceRepository extends JpaRepository<Invoice,Integer> {
     List<Invoice> findByOrderFranchiseFranchiseCode(int franchiseCode);
 
     boolean existsByOrderOrderCode(int orderCode);
+
+    List<Invoice> findAllByOrderFranchiseAdminAdminCode(int adminCode);
 }
