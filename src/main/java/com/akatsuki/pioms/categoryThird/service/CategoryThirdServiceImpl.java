@@ -60,8 +60,13 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
     /* 카테고리(소) 코드로 카테고리(소) 조회 */
     @Override
     @Transactional
-    public CategoryThird findCategoryThirdByCode(int categoryThirdCode) {
-        return categoryThirdRepository.findById(categoryThirdCode).orElseThrow(null);
+    public List<CategoryThirdDTO> findCategoryThirdByCode(int categoryThirdCode) {
+        List<CategoryThird> categoryThirdList = categoryThirdRepository.findByCategoryThirdCode(categoryThirdCode);
+        List<CategoryThirdDTO> categoryThirdDTOS = new ArrayList<>();
+        categoryThirdList.forEach(categoryThird -> {
+            categoryThirdDTOS.add(new CategoryThirdDTO(categoryThird));
+        });
+        return categoryThirdDTOS;
     }
 
     /* 카테고리(소) 신규 등록 */
@@ -121,33 +126,33 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
         return ResponseEntity.ok("카테고리(소) 수정 완료!");
     }
 
-    @Override
-    @Transactional
-    public ResponseEntity<String> deleteCategoryThird(int categoryThirdCode, int requesterAdminCode) {
-        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
-        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
-            return ResponseEntity.status(403).body("카테고리 삭제는 루트 관리자만 가능합니다.");
-        }
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        String formattedDateTime = LocalDateTime.now().format(formatter);
-
-        CategoryThird categoryThird = categoryThirdRepository.findByCategoryThirdCode(categoryThirdCode);
-        if (categoryThird == null) {
-            return ResponseEntity.badRequest().body(categoryThirdCode + "번 카테고리(소) 카테고리가 없습니다!");
-        }
-
-        // Check if there are any products associated with this categoryThirdCode
-        List<Product> products = productRepository.findByCategoryThird_CategoryThirdCode(categoryThirdCode);
-        if (!products.isEmpty()) {
-            return ResponseEntity.badRequest().body("상품이 존재하는 해당 " + categoryThirdCode + "번 카테고리(소) 카테고리는 삭제할 수 없습니다!");
-        }
-
-        categoryThird.setCategoryThirdDeleteDate(formattedDateTime);
-        categoryThirdRepository.delete(categoryThird);
-        logService.saveLog("root", LogStatus.삭제,categoryThird.getCategoryThirdName(),"CategoryThird");
-        return ResponseEntity.badRequest().body(categoryThirdCode + "번의 해당 카테고리(소) 카테고리가 성공적으로 삭제되었습니다!");
-    }
+//    @Override
+//    @Transactional
+//    public ResponseEntity<String> deleteCategoryThird(int categoryThirdCode, int requesterAdminCode) {
+//        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
+//        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
+//            return ResponseEntity.status(403).body("카테고리 삭제는 루트 관리자만 가능합니다.");
+//        }
+//
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+//        String formattedDateTime = LocalDateTime.now().format(formatter);
+//
+//        CategoryThird categoryThird = categoryThirdRepository.findByCategoryThirdCode(categoryThirdCode);
+//        if (categoryThird == null) {
+//            return ResponseEntity.badRequest().body(categoryThirdCode + "번 카테고리(소) 카테고리가 없습니다!");
+//        }
+//
+//        // Check if there are any products associated with this categoryThirdCode
+//        List<Product> products = productRepository.findByCategoryThird_CategoryThirdCode(categoryThirdCode);
+//        if (!products.isEmpty()) {
+//            return ResponseEntity.badRequest().body("상품이 존재하는 해당 " + categoryThirdCode + "번 카테고리(소) 카테고리는 삭제할 수 없습니다!");
+//        }
+//
+//        categoryThird.setCategoryThirdDeleteDate(formattedDateTime);
+//        categoryThirdRepository.delete(categoryThird);
+//        logService.saveLog("root", LogStatus.삭제,categoryThird.getCategoryThirdName(),"CategoryThird");
+//        return ResponseEntity.badRequest().body(categoryThirdCode + "번의 해당 카테고리(소) 카테고리가 성공적으로 삭제되었습니다!");
+//    }
 
 //    @Override
 //    @Transactional

@@ -30,7 +30,12 @@ class CategoryThirdServiceTest {
     }
 
     @Test
-    void findCategoryThirdByCode() {assertEquals(true,true);}
+    void findCategoryThirdByCode() {
+        int categoryThirdCode = 1;
+        List<CategoryThird> categoryThirdList = categoryThirdRepository.findByCategoryThirdCode(categoryThirdCode);
+        List<CategoryThirdDTO> categoryThirdDTOS = categoryThirdService.findCategoryThirdByCode(categoryThirdCode);
+        assertEquals(categoryThirdList.size(), categoryThirdDTOS.size());
+    }
 
     @Test
     void postCategory() {assertEquals(true,true);}

@@ -73,13 +73,13 @@ public class ProductServiceImpl implements ProductService{
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formattedDateTime = LocalDateTime.now().format(formatter);
 
-        CategoryThird categoryThird = categoryThirdRepository.findByCategoryThirdCode(request.getCategoryThirdCode());
+        List<CategoryThird> categoryThird = categoryThirdRepository.findByCategoryThirdCode(request.getCategoryThirdCode());
 
         if(categoryThird == null) {
             return ResponseEntity.badRequest().body("해당 카테고리가 존재하지 않습니다. 다시 확인해주세요.");
         }
 
-        product.setCategoryThird(categoryThird);
+//        product.setCategoryThird(categoryThird);
 
         product.setProductName(request.getProductName());
         product.setProductPrice(request.getProductPrice());

@@ -1,6 +1,5 @@
 package com.akatsuki.pioms.categoryThird.controller;
 
-import com.akatsuki.pioms.categoryThird.aggregate.CategoryThird;
 import com.akatsuki.pioms.categoryThird.aggregate.RequestCategoryThirdUpdate;
 import com.akatsuki.pioms.categoryThird.dto.CategoryThirdDTO;
 import com.akatsuki.pioms.categoryThird.service.CategoryThirdService;
@@ -12,8 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/category/third")
@@ -35,8 +34,13 @@ public class CategoryThirdController {
 
     @GetMapping("/{categoryThirdCode}")
     @Operation(summary = "카테고리(소) code로 카테고리(소) 하나 조회", description = "카테고리(소)코드로 카테고리(소) 하나 조회")
-    public  ResponseEntity<CategoryThird> getCategoryThirdByCode(@PathVariable int categoryThirdCode) {
-        return ResponseEntity.ok().body(categoryThirdService.findCategoryThirdByCode(categoryThirdCode));
+    public ResponseEntity<List<ResponseCategoryThirdPost>> getCategoryThirdByCode(@PathVariable int categoryThirdCode) {
+        List<CategoryThirdDTO> categoryThirdDTOS = categoryThirdService.findCategoryThirdByCode(categoryThirdCode);
+        List<ResponseCategoryThirdPost> categoryThirdPostList = new ArrayList<>();
+        categoryThirdDTOS.forEach(categoryThirdDTO -> {
+            categoryThirdPostList.add(new ResponseCategoryThirdPost(categoryThirdDTO));
+        });
+        return ResponseEntity.ok(categoryThirdPostList);
     }
     @PostMapping("/create")
     public ResponseEntity<String> postCategoryThird(@RequestBody RequestCategoryThirdPost request, int requesterAdminCode) {
@@ -48,10 +52,10 @@ public class CategoryThirdController {
         return categoryThirdService.updateCategory(categoryThirdCode, request, requesterAdminCode);
     }
 
-    @DeleteMapping("/delete/{categoryThirdCode}")
-    @Operation(summary = "카테고리(소) 카테고리 삭제", description = "포함되어 있는 상품이 0개인 카테고리(소) 카테고리 삭제 기능")
-    public ResponseEntity<String> deleteCategoryThird(@PathVariable int categoryThirdCode, int requesterAdminCode) {
-        return categoryThirdService.deleteCategoryThird(categoryThirdCode, requesterAdminCode);
-    }
+//    @DeleteMapping("/delete/{categoryThirdCode}")
+//    @Operation(summary = "카테고리(소) 카테고리 삭제", description = "포함되어 있는 상품이 0개인 카테고리(소) 카테고리 삭제 기능")
+//    public ResponseEntity<String> deleteCategoryThird(@PathVariable int categoryThirdCode, int requesterAdminCode) {
+//        return categoryThirdService.deleteCategoryThird(categoryThirdCode, requesterAdminCode);
+//    }
 
 }

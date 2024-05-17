@@ -11,12 +11,12 @@ import java.util.List;
 public interface CategoryThirdService {
     List<CategoryThirdDTO> getAllCategoryThird();
 
-    CategoryThird findCategoryThirdByCode(int categoryThirdCode);
+    List<CategoryThirdDTO> findCategoryThirdByCode(int categoryThirdCode);
 
     ResponseEntity<String> postCategory(RequestCategoryThirdPost request, int requesterAdminCode);
 
     ResponseEntity<String> updateCategory(int categoryThirdCode, RequestCategoryThirdUpdate request, int requesterAdminCode);
 
-    ResponseEntity<String> deleteCategoryThird(int categoryThirdCode, int requesterAdminCode);
+//    ResponseEntity<String> deleteCategoryThird(int categoryThirdCode, int requesterAdminCode);
 
 }

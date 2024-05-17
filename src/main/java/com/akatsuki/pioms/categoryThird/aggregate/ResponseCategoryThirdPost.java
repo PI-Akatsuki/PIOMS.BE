@@ -1,5 +1,6 @@
 package com.akatsuki.pioms.categoryThird.aggregate;
 
+import com.akatsuki.pioms.categoryThird.dto.CategoryThirdDTO;
 import lombok.Data;
 
 @Data
@@ -15,4 +16,7 @@ public class ResponseCategoryThirdPost {
         this.category_third_enroll_date = category_third_enroll_date;
     }
 
+    public ResponseCategoryThirdPost(CategoryThirdDTO categoryThirdDTO) {
+
+    }
 }
