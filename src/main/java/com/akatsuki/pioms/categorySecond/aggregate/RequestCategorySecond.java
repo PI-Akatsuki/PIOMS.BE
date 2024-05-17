@@ -5,12 +5,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import java.util.List;
-
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @ToString
-public class CategorySecondListVO {
-    List<CategorySecondVO> categoryList;
+public class RequestCategorySecond {
+    private int categoryFirstCode;
+    private String categorySecondName;
+
 }

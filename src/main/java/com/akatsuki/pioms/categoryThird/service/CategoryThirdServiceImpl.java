@@ -5,10 +5,10 @@ import com.akatsuki.pioms.admin.repository.AdminRepository;
 import com.akatsuki.pioms.categorySecond.aggregate.CategorySecond;
 import com.akatsuki.pioms.categorySecond.repository.CategorySecondRepository;
 import com.akatsuki.pioms.categoryThird.aggregate.CategoryThird;
-import com.akatsuki.pioms.categoryThird.aggregate.RequestCategoryThirdUpdate;
+import com.akatsuki.pioms.categoryThird.aggregate.RequestCategoryThird;
+import com.akatsuki.pioms.categoryThird.aggregate.ResponseCategoryThird;
+import com.akatsuki.pioms.categoryThird.dto.CategoryThirdDTO;
 import com.akatsuki.pioms.categoryThird.repository.CategoryThirdRepository;
-import com.akatsuki.pioms.categoryThird.aggregate.RequestCategoryThirdPost;
-import com.akatsuki.pioms.categoryThird.aggregate.ResponseCategoryThirdPost;
 import com.akatsuki.pioms.log.etc.LogStatus;
 import com.akatsuki.pioms.log.service.LogService;
 import com.akatsuki.pioms.product.aggregate.Product;
@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,7 +32,7 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
     private final CategorySecondRepository categorySecondRepository;
     private final ProductRepository productRepository;
     private final AdminRepository adminRepository;
-    LogService logService;
+    private final LogService logService;
 
     @Autowired
     public CategoryThirdServiceImpl(CategoryThirdRepository categoryThirdRepository, CategorySecondRepository categorySecondRepository, ProductRepository productRepository, AdminRepository adminRepository, LogService logService) {
@@ -42,35 +43,43 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
         this.logService = logService;
     }
 
-    /* 카테고리(소) 전체 조회 */
     @Override
     @Transactional
-    public List<CategoryThird> getAllCategoryThird() {
-        return categoryThirdRepository.findAll();
+    public List<CategoryThirdDTO> getAllCategoryThird() {
+        List<CategoryThird> categoryThirdList = categoryThirdRepository.findAll();
+        List<CategoryThirdDTO> responseCategory = new ArrayList<>();
+
+        categoryThirdList.forEach(categoryThird -> {
+            responseCategory.add(new CategoryThirdDTO(categoryThird));
+        });
+        return responseCategory;
     }
 
-    /* 카테고리(소) 코드로 카테고리(소) 조회 */
     @Override
     @Transactional
-    public CategoryThird findCategoryThirdByCode(int categoryThirdCode) {
-        return categoryThirdRepository.findById(categoryThirdCode).orElseThrow(null);
+    public List<CategoryThirdDTO> findCategoryThirdByCode(int categoryThirdCode) {
+        List<CategoryThird> categoryThirdList = categoryThirdRepository.findByCategoryThirdCode(categoryThirdCode);
+        List<CategoryThirdDTO> categoryThirdDTOS = new ArrayList<>();
+        categoryThirdList.forEach(categoryThird -> {
+            categoryThirdDTOS.add(new CategoryThirdDTO(categoryThird));
+        });
+        return categoryThirdDTOS;
     }
 
-    /* 카테고리(소) 신규 등록 */
     @Override
     @Transactional
-    public ResponseEntity<String> postCategory(RequestCategoryThirdPost request, int requesterAdminCode) {
-        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
-        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
-            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
-        }
+    public ResponseEntity<String> postCategory(RequestCategoryThird request/*, int requesterAdminCode*/) {
+//        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
+//        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
+//            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
+//        }
 
         CategoryThird categoryThird = new CategoryThird();
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formattedDateTime = LocalDateTime.now().format(formatter);
 
-        CategorySecond categorySecond = categorySecondRepository.findByCategorySecondCode(request.getCategorySecondCode());
+        List<CategorySecond> categorySecond = categorySecondRepository.findByCategorySecondCode(request.getCategorySecondCode());
 
         if(categorySecond == null) {
             return ResponseEntity.badRequest().body("해당 카테고리(중)이 존재하지 않습니다. 다시 확인해주세요.");
@@ -82,16 +91,15 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
         categoryThird.setCategoryThirdEnrollDate(formattedDateTime);
 
         CategoryThird savedCategoryThird = categoryThirdRepository.save(categoryThird);
-
+        System.out.println("savedCategoryThird = " + savedCategoryThird);
         logService.saveLog("root", LogStatus.등록, savedCategoryThird.getCategoryThirdName(), "CategoryThird");
 
         return ResponseEntity.ok("카테고리(소) 생성 완료!");
     }
 
-    /* 카테고리(소) 수정 */
     @Override
     @Transactional
-    public ResponseEntity<String> updateCategory(int categoryThirdCode, RequestCategoryThirdUpdate request, int requesterAdminCode) {
+    public ResponseEntity<String> updateCategory(int categoryThirdCode, RequestCategoryThird request, int requesterAdminCode) {
         Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
         if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
             return ResponseEntity.status(403).body("카테고리 수정은 루트 관리자만 가능합니다.");
@@ -108,7 +116,6 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
         categoryThird.setCategoryThirdName(request.getCategoryThirdName());
         categoryThird.setCategoryThirdUpdateDate(formattedDateTime);
 
-        ResponseCategoryThirdPost responseValue = new ResponseCategoryThirdPost(updatedCategoryThird.getCategoryThirdCode(), updatedCategoryThird.getCategoryThirdName(), updatedCategoryThird.getCategoryThirdUpdateDate());
         logService.saveLog("root", LogStatus.수정,updatedCategoryThird.getCategoryThirdName(),"CategoryThird");
         return ResponseEntity.ok("카테고리(소) 수정 완료!");
     }
@@ -124,7 +131,8 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formattedDateTime = LocalDateTime.now().format(formatter);
 
-        CategoryThird categoryThird = categoryThirdRepository.findByCategoryThirdCode(categoryThirdCode);
+        CategoryThird categoryThird = categoryThirdRepository.findById(categoryThirdCode)
+                .orElseThrow(() -> new EntityNotFoundException("그런거 없다."));
         if (categoryThird == null) {
             return ResponseEntity.badRequest().body(categoryThirdCode + "번 카테고리(소) 카테고리가 없습니다!");
         }
@@ -141,10 +149,4 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
         return ResponseEntity.badRequest().body(categoryThirdCode + "번의 해당 카테고리(소) 카테고리가 성공적으로 삭제되었습니다!");
     }
 
-//    @Override
-//    @Transactional
-//    public CategoryThird deleteCategory(int categoryThirdCode) {
-//        categoryThirdRepository.deleteById(categoryThirdCode);
-//        return null;
-//    }
 }
