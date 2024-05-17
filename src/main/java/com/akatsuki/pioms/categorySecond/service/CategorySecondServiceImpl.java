@@ -4,6 +4,7 @@ import com.akatsuki.pioms.admin.aggregate.Admin;
 import com.akatsuki.pioms.admin.repository.AdminRepository;
 import com.akatsuki.pioms.categoryFirst.aggregate.CategoryFirst;
 import com.akatsuki.pioms.categorySecond.aggregate.*;
+import com.akatsuki.pioms.categorySecond.dto.CategorySecondDTO;
 import com.akatsuki.pioms.categorySecond.repository.CategorySecondRepository;
 import com.akatsuki.pioms.log.etc.LogStatus;
 import com.akatsuki.pioms.log.service.LogService;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,8 +37,14 @@ public class CategorySecondServiceImpl implements CategorySecondService{
 
     @Override
     @Transactional
-    public List<CategorySecond> getAllCategorySecond() {
-        return categorySecondRepository.findAll();
+    public List<CategorySecondDTO> getAllCategorySecond() {
+        List<CategorySecond> categorySecondList = categorySecondRepository.findAll();
+        List<CategorySecondDTO> responseCategory = new ArrayList<>();
+
+        categorySecondList.forEach(categorySecond -> {
+            responseCategory.add(new CategorySecondDTO(categorySecond));
+        });
+        return responseCategory;
     }
 
     @Override

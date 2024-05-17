@@ -1,6 +1,7 @@
 package com.akatsuki.pioms.categorySecond.controller;
 
 import com.akatsuki.pioms.categorySecond.aggregate.*;
+import com.akatsuki.pioms.categorySecond.dto.CategorySecondDTO;
 import com.akatsuki.pioms.categorySecond.service.CategorySecondService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,7 +25,7 @@ public class CategorySecondController {
     }
     @GetMapping("")
     @Operation(summary = "카테고리(중) 전체 조회", description = "단순 카테고리(중) 조회 기능")
-    public ResponseEntity<List<CategorySecond>> getAllCategorySecond() {
+    public ResponseEntity<List<CategorySecondDTO>> getAllCategorySecond() {
         return ResponseEntity.ok().body(categorySecondService.getAllCategorySecond());
     }
 
