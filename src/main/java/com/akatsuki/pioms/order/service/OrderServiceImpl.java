@@ -200,13 +200,11 @@ public class OrderServiceImpl implements OrderService{
     @Transactional
     public boolean putFranchiseOrder(int franchiseCode, RequestPutOrder requestOrder) {
         Order order = orderRepository.findById(requestOrder.getOrderCode()).orElseThrow(IllegalArgumentException::new);
-        System.out.println("order = " + order);
+
         if(order.getFranchise().getFranchiseCode() != franchiseCode) {
-            System.out.println("프랜차이즈 코드 불일치");
             return false;
         }
         if (order.getOrderCondition() == ORDER_CONDITION.승인완료) {
-            System.out.println("이미 처리된 발주");
             return false;
         }
         orderProductRepository.deleteAllByOrderOrderCode(order.getOrderCode());
