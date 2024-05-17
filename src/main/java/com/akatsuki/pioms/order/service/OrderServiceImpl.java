@@ -41,16 +41,19 @@ public class OrderServiceImpl implements OrderService{
     @Override
     @Transactional(readOnly = true)
     public List<Order> getOrderListByAdminCode(int adminCode){
-        // 인가 필요 없음
-        List<Order> orderList = orderRepository.findAllByFranchiseAdminAdminCode(adminCode);
-        if (orderList == null)
+
+        List<Order> orderList;
+        if (adminCode==1){
+            orderList = orderRepository.findAll();
+        }else
+            orderList = orderRepository.findAllByFranchiseAdminAdminCode(adminCode);
+
+        if (orderList == null || orderList.isEmpty())
             return null;
 
         List<Order> orderDTOList = new ArrayList<>();
 
-        orderList.forEach(order-> {
-            orderDTOList.add((order));
-        });
+        orderDTOList.addAll(orderList);
 
         return orderDTOList;
     }

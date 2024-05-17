@@ -14,18 +14,23 @@ public interface InvoiceService {
     List<InvoiceDTO> getAllInvoiceList();
     InvoiceDTO postInvoice(OrderDTO order);
 
-    InvoiceDTO putInvoice(int invoiceCode, DELIVERY_STATUS invoiceStatus);
-
-    InvoiceDTO getInvoice(int invoiceCode);
+    InvoiceDTO putInvoice(int adminCode,int invoiceCode, DELIVERY_STATUS invoiceStatus);
 
     Boolean checkInvoiceStatus(int orderCode);
 
     InvoiceDTO saveInvoice(Invoice invoiceEntity);
 
-    void deleteInvoice(Invoice invoiceEntity);
+    boolean deleteInvoice(int franchiseOwnerCode, int invoiceCode);
 
     InvoiceDTO getInvoiceByOrderCode(int orderCode);
 
     void afterAcceptOrder(OrderDTO orderEntity);
 
+    List<InvoiceDTO> getAdminInvoiceList(int adminCode);
+
+    InvoiceDTO getInvoiceByAdminCode(int adminCode, int invoiceCode);
+
+    List<InvoiceDTO> getFranchiseInvoiceList(int franchiseOwnerCode);
+
+    InvoiceDTO getInvoiceByFranchiseOwnerCode(int franchiseOwnerCode, int invoiceCode);
 }
