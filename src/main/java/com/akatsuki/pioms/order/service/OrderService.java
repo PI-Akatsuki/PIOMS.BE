@@ -9,6 +9,32 @@ import java.util.List;
 
 public interface OrderService {
 
+    /**
+     * <h1>Order Service</h1>
+     *     <br>
+     * <h1>Admin Functions</h1>
+     * <h2>1. Get Order List By Admin Code : 관리자가 관리하고 있는 모든 가맹점에 대한 발주 목록 반환 </h2>
+     * <h2>2. Get Admin Unchecked Orders : 관리자가 처리하지 않은 발주 목록 반환 </h2>
+     * <h2>3. Accept Order : 관리자가 발주를 승인 </h2>
+     * <h2>4. Deny Order : 관리자가 발주를 거절 </h2>
+     * <h2>5. Get Admin Order : 관리자가 발주를 상세 조회 </h2>
+     * <br>
+     *
+     * <h1> Franchise Owner Functions</h1>
+     * <h2>1. Post Franchise Order : 점주가 새로운 발주 생성 </h2>
+     * <h2>2. Get Order List : 점주의 모든 발주 반환</h2>
+     * <h2>3. Get Order : 점주의 발주 상세 조회</h2>
+     * <h2>4. Put Franchise Order : 주문 수정 </h2>
+     * <h2>5. Put Franchise Order Check : 배송 온 발주의 검수 로직</h2>
+     * <br>
+     *
+     * <h1> INNER FUNCTIONS </h1>
+     * <h2>1. Add Exchange To Order : 관리자가 승인을 하면서 주문에 요청 온 교환을 발주에 추가  </h2>
+     * <h2>2. Check Product Cnt : 물건 보낼 수 있는지 확인하기 위함 </h2>
+     * <h2>3. Find Order By Exchange Code : 반송 코드를 통해 주문  </h2>
+     * <h2>4. Add Exchange To Order : 주문에 교환 코드 추가 </h2>
+     * */
+
     // 관리자가 관리하고 있는 모든 가맹점에 대한 발주들을 반환합니다.
     List<Order> getOrderListByAdminCode(int adminId);
 
