@@ -58,6 +58,7 @@ class CategoryFirstServiceTest {
     }
 
     @Test
+    @DisplayName("카테고리(대) 상세조회")
     void findCategoryFirstByCode() {
         int categoryFirstCode = 1;
         List<CategoryFirst> categoryFirstList = categoryFirstRepository.findByCategoryFirstCode(categoryFirstCode);
@@ -66,6 +67,7 @@ class CategoryFirstServiceTest {
     }
 
     @Test
+    @DisplayName("카테고리(대) 신규 등록")
     void postCategoryFirst() {
         Admin requestorAdmin = new Admin();
         requestorAdmin.setAdminCode(1);
@@ -81,6 +83,7 @@ class CategoryFirstServiceTest {
     }
 
     @Test
+    @DisplayName("카테고라(대) 수정")
     void updateCategoryFirst() {
         Admin requestorAdmin = new Admin();
         requestorAdmin.setAdminCode(1);
@@ -90,7 +93,7 @@ class CategoryFirstServiceTest {
         categoryFirst.setCategoryFirstEnrollDate("2024-05-17 00:00:00");
         categoryFirst.setCategoryFirstUpdateDate("2024-05-17 00:00:00");
 
-        ResponseEntity<String> response = categoryFirstService.updateCategoryFirst(1, requestUpdate, 1);
+        ResponseEntity<String> response = categoryFirstService.updateCategoryFirst(2, requestUpdate, 1);
 
         assertEquals("카테고리 수정",response.getBody());
     }
