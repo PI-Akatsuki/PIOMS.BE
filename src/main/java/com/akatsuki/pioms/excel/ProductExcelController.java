@@ -29,7 +29,7 @@ public class ProductExcelController {
         return "home";
     }
 
-    @RequestMapping(value = "/excel/download/product")
+    @GetMapping(value = "/product-excel")
     public void excelDownload(HttpServletResponse response) throws Exception {
 //        Workbook wb = new HSSFWorkbook();
         Workbook wb = new XSSFWorkbook();
