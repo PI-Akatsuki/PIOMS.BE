@@ -91,4 +91,8 @@ public class Product {
         this.productCount= product.getProductCount();
         this.categoryThird= product.getCategoryThird();
     }
+
+    public Product(int categoryThirdcode) {
+
+    }
 }
