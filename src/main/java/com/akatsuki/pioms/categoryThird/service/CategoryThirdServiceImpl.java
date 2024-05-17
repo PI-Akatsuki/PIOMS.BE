@@ -6,6 +6,7 @@ import com.akatsuki.pioms.categorySecond.aggregate.CategorySecond;
 import com.akatsuki.pioms.categorySecond.repository.CategorySecondRepository;
 import com.akatsuki.pioms.categoryThird.aggregate.CategoryThird;
 import com.akatsuki.pioms.categoryThird.aggregate.RequestCategoryThirdUpdate;
+import com.akatsuki.pioms.categoryThird.dto.CategoryThirdDTO;
 import com.akatsuki.pioms.categoryThird.repository.CategoryThirdRepository;
 import com.akatsuki.pioms.categoryThird.aggregate.RequestCategoryThirdPost;
 import com.akatsuki.pioms.categoryThird.aggregate.ResponseCategoryThirdPost;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,8 +47,14 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
     /* 카테고리(소) 전체 조회 */
     @Override
     @Transactional
-    public List<CategoryThird> getAllCategoryThird() {
-        return categoryThirdRepository.findAll();
+    public List<CategoryThirdDTO> getAllCategoryThird() {
+        List<CategoryThird> categoryThirdList = categoryThirdRepository.findAll();
+        List<CategoryThirdDTO> responseCategory = new ArrayList<>();
+
+        categoryThirdList.forEach(categoryThird -> {
+            responseCategory.add(new CategoryThirdDTO(categoryThird));
+        });
+        return responseCategory;
     }
 
     /* 카테고리(소) 코드로 카테고리(소) 조회 */

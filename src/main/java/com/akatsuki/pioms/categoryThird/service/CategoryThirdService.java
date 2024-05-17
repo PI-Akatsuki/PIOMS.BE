@@ -3,12 +3,13 @@ package com.akatsuki.pioms.categoryThird.service;
 import com.akatsuki.pioms.categoryThird.aggregate.CategoryThird;
 import com.akatsuki.pioms.categoryThird.aggregate.RequestCategoryThirdPost;
 import com.akatsuki.pioms.categoryThird.aggregate.RequestCategoryThirdUpdate;
+import com.akatsuki.pioms.categoryThird.dto.CategoryThirdDTO;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
 public interface CategoryThirdService {
-    List<CategoryThird> getAllCategoryThird();
+    List<CategoryThirdDTO> getAllCategoryThird();
 
     CategoryThird findCategoryThirdByCode(int categoryThirdCode);
 

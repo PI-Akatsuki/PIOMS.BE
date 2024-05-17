@@ -2,6 +2,7 @@ package com.akatsuki.pioms.categoryThird.controller;
 
 import com.akatsuki.pioms.categoryThird.aggregate.CategoryThird;
 import com.akatsuki.pioms.categoryThird.aggregate.RequestCategoryThirdUpdate;
+import com.akatsuki.pioms.categoryThird.dto.CategoryThirdDTO;
 import com.akatsuki.pioms.categoryThird.service.CategoryThirdService;
 import com.akatsuki.pioms.categoryThird.aggregate.RequestCategoryThirdPost;
 import com.akatsuki.pioms.categoryThird.aggregate.ResponseCategoryThirdPost;
@@ -28,7 +29,7 @@ public class CategoryThirdController {
 
     @GetMapping("")
     @Operation(summary = "카테고리(소) 전체 조회", description = "단순 카테고리(소) 조회 기능")
-    public ResponseEntity<List<CategoryThird>> getAllCategoryThird() {
+    public ResponseEntity<List<CategoryThirdDTO>> getAllCategoryThird() {
         return ResponseEntity.ok().body(categoryThirdService.getAllCategoryThird());
     }
 
