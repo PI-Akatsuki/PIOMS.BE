@@ -1,5 +1,6 @@
 package com.akatsuki.pioms.order.controller;
 
+import com.akatsuki.pioms.config.Pagination;
 import com.akatsuki.pioms.order.dto.OrderDTO;
 import com.akatsuki.pioms.order.service.OrderFacade;
 import com.akatsuki.pioms.order.aggregate.OrderListVO;
@@ -7,6 +8,10 @@ import com.akatsuki.pioms.order.aggregate.OrderVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -47,11 +52,15 @@ public class AdminOrderController {
 
     @GetMapping("/{adminCode}/orders")
     @Operation(summary = "관리자가 관리하고 있는 모든 가맹점들의 발주 리스트를 조회합니다.")
-    public ResponseEntity<List<OrderDTO>> getFranchisesOrderList(@PathVariable int adminCode){
+    public ResponseEntity<List<OrderDTO>> getFranchisesOrderList(@PathVariable int adminCode , @RequestParam(defaultValue = "0") int page,
+                                                                 @RequestParam(defaultValue = "10") int size ){
         List<OrderDTO> orderListVO = orderFacade.getOrderListByAdminCode(adminCode);
 
-        if (orderListVO.isEmpty())
+        if (orderListVO.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+
+        orderListVO = Pagination.splitPage(orderListVO, page, size);
 
         return ResponseEntity.ok().body(orderListVO);
     }
@@ -98,4 +107,7 @@ public class AdminOrderController {
         }
         return ResponseEntity.ok(new OrderVO(orderDTO));
     }
+
+
+
 }
