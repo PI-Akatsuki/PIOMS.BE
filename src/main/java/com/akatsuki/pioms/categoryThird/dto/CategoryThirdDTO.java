@@ -19,10 +19,10 @@ public class CategoryThirdDTO {
 
     public CategoryThirdDTO(CategoryThird categoryThird) {
         System.out.println("categoryThird = " + categoryThird);
-        this.categoryThirdCode = categoryThirdCode;
-        this.categoryThirdName = categoryThirdName;
-        this.categoryThirdEnrollDate = categoryThirdEnrollDate;
-        this.categoryThirdUpdateDate = categoryThirdUpdateDate;
-        this.categorySecondCode = categorySecondCode;
+        this.categoryThirdCode = categoryThird.getCategoryThirdCode();
+        this.categoryThirdName = categoryThird.getCategoryThirdName();
+        this.categoryThirdEnrollDate = categoryThird.getCategoryThirdEnrollDate();
+        this.categoryThirdUpdateDate = categoryThird.getCategoryThirdUpdateDate();
+        this.categorySecondCode = categoryThird.getCategorySecondCode();
     }
 }

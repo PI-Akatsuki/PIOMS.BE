@@ -18,10 +18,10 @@ public class CategoryFirstDTO {
 
     public CategoryFirstDTO(CategoryFirst categoryFirst) {
         System.out.println("categoryFirst = " + categoryFirst);
-        this.categoryFirstCode = categoryFirstCode;
-        this.categoryFirstName = categoryFirstName;
-        this.categoryFirstEnrollDate = categoryFirstEnrollDate;
-        this.categoryFirstUpdateDate = categoryFirstUpdateDate;
+        this.categoryFirstCode = categoryFirst.getCategoryFirstCode();
+        this.categoryFirstName = categoryFirst.getCategoryFirstName();
+        this.categoryFirstEnrollDate = categoryFirst.getCategoryFirstEnrollDate();
+        this.categoryFirstUpdateDate = categoryFirst.getCategoryFirstUpdateDate();
     }
 
 }
