@@ -15,4 +15,5 @@ import java.util.Map;
 public class RequestPutOrderCheck {
     private int orderCode;
     private Map<Integer,Integer> requestProduct;
+
 }

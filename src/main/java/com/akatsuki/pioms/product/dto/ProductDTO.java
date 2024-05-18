@@ -6,7 +6,6 @@ import com.akatsuki.pioms.product.aggregate.Product;
 import com.akatsuki.pioms.product.etc.PRODUCT_COLOR;
 import com.akatsuki.pioms.product.etc.PRODUCT_GENDER;
 import com.akatsuki.pioms.product.etc.PRODUCT_STATUS;
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

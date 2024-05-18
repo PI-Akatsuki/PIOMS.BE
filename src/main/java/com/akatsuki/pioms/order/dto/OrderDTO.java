@@ -52,7 +52,6 @@ public class OrderDTO {
 
 
     public OrderDTO(Order order) {
-        System.out.println("order = " + order);
         this.orderCode= order.getOrderCode();
         this.orderDate= order.getOrderDate();
         this.orderTotalPrice= order.getOrderTotalPrice();
