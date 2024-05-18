@@ -52,29 +52,33 @@ public class AdminOrderController {
 
     @GetMapping("/{adminCode}/orders")
     @Operation(summary = "관리자가 관리하고 있는 모든 가맹점들의 발주 리스트를 조회합니다.")
-    public ResponseEntity<List<OrderDTO>> getFranchisesOrderList(@PathVariable int adminCode , @RequestParam(defaultValue = "0") int page,
-                                                                 @RequestParam(defaultValue = "10") int size ){
-        List<OrderDTO> orderListVO = orderFacade.getOrderListByAdminCode(adminCode);
+    public ResponseEntity<List<OrderDTO>> getFranchisesOrderList(@PathVariable int adminCode ,
+                                                                 @RequestParam(defaultValue = "0") int page,
+                                                                 @RequestParam(defaultValue = "3") int size ){
+        List<OrderDTO> orderDTOS = orderFacade.getOrderListByAdminCode(adminCode);
 
-        if (orderListVO.isEmpty()) {
+        if (orderDTOS.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
 
-        orderListVO = Pagination.splitPage(orderListVO, page, size);
+        orderDTOS = Pagination.splitPage(orderDTOS, page, size);
 
-        return ResponseEntity.ok().body(orderListVO);
+        return ResponseEntity.ok().body(orderDTOS);
     }
     /**
      * <h2>모든 가맹점 승인대기 발주 목록 조회</h2>
      * */
     @GetMapping("/{adminCode}/unchecked-orders")
     @Operation(summary = "관리자가 관리하는 모든 가맹점들 중 승인 하지 않은 발주 리스틀 조회합니다.")
-    public ResponseEntity<OrderListVO> getFranchisesUncheckedOrderList(@PathVariable int adminCode){
+    public ResponseEntity<OrderListVO> getFranchisesUncheckedOrderList(@PathVariable int adminCode,
+                                                                       @RequestParam(defaultValue = "0") int page,
+                                                                       @RequestParam(defaultValue = "3") int size ){
         List<OrderDTO> orderDTO = orderFacade.getAdminUncheckedOrders(adminCode);
 
         if (orderDTO == null)
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 
+        orderDTO = Pagination.splitPage(orderDTO,page,size);
         return ResponseEntity.ok().body(new OrderListVO(orderDTO));
     }
 
