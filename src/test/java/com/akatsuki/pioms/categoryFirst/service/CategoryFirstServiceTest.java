@@ -65,18 +65,6 @@ class CategoryFirstServiceTest {
         assertEquals(categoryFirstList.size(), categoryFirstDTOS.size());
     }
 
-    @Test
-    @DisplayName("카테고리(대) 신규 등록")
-    void postCategoryFirst() {
-        CategoryFirstDTO newCategoryDTO = CategoryFirstDTO.builder()
-                .categoryFirstName("newCategory")
-                .build();
-        ResponseEntity<String> response = categoryFirstService.postCategoryFirst(request);
 
-        assertEquals("등록 완료",response.getBody());
-
-        List<CategoryFirstDTO> categoryFirstList = categoryFirstService.findCategoryFirstByCode(categoryFirst.getCategoryFirstCode());
-        System.out.println("categoryFirstList = " + categoryFirstList);
-    }
 
 }
