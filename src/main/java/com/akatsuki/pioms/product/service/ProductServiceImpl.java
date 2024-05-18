@@ -222,7 +222,8 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public void editIncorrectCount(Product product, int cnt) {
+    public void editIncorrectCount(int productCode, int cnt) {
+        Product product = productRepository.findById(productCode).orElse(null);
         // 가맹에서 검수 시 수량 불일치인 경우 처리하기 위한 로직
         product.setProductCount(product.getProductCount()+cnt);
         productRepository.save(product);

@@ -3,6 +3,7 @@ package com.akatsuki.pioms.frwarehouse.controller;
 import com.akatsuki.pioms.frwarehouse.aggregate.FranchiseWarehouse;
 import com.akatsuki.pioms.frwarehouse.aggregate.RequestFranchiseWarehouseUpdate;
 import com.akatsuki.pioms.frwarehouse.aggregate.ResponseFranchiseWarehouseUpdate;
+import com.akatsuki.pioms.frwarehouse.service.FranchiseWarehouseDTO;
 import com.akatsuki.pioms.frwarehouse.service.FranchiseWarehouseService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,7 @@ import java.util.Optional;
 @RequestMapping("/warehouse")
 public class franchiseWarehouseController {
 
-    private FranchiseWarehouseService franchiseWarehouseService;
+    private final FranchiseWarehouseService franchiseWarehouseService;
 
     @Autowired
     public franchiseWarehouseController(FranchiseWarehouseService franchiseWarehouseService) {
@@ -38,5 +39,10 @@ public class franchiseWarehouseController {
     @Operation(summary = "사라졌을 상품을 위한 재고 수정 기능")
     public ResponseEntity<String> updateWarehouseCount(@PathVariable int franchiseWarehouseCode, @RequestBody RequestFranchiseWarehouseUpdate request, int requesterAdminCode) {
         return franchiseWarehouseService.updateWarehouseCount(franchiseWarehouseCode,request, requesterAdminCode);
+    }
+
+    @GetMapping("/{franchiseOwnerCode}/list")
+    public ResponseEntity<List<FranchiseWarehouseDTO>> getFrWarehouseList(@PathVariable int franchiseOwnerCode){
+        return ResponseEntity.ok(franchiseWarehouseService.getFrWarehouseList(franchiseOwnerCode));
     }
 }
