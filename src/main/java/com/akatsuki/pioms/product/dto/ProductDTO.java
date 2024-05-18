@@ -10,10 +10,12 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class ProductDTO {
     private int productCode;
     private String productName;
@@ -34,7 +36,6 @@ public class ProductDTO {
 
 
     public ProductDTO(Product product) {
-        System.out.println("product = " + product);
         this.productCode = product.getProductCode();
         this.productName = product.getProductName();
         this.productPrice = product.getProductPrice();
