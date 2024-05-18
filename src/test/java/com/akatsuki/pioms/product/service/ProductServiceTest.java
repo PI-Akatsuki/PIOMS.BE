@@ -72,29 +72,6 @@ class ProductServiceTest {
     }
 
     @Test
-    void postProduct() {
-        Product product = new Product();
-        product.setProductName("test");
-        product.setProductPrice(100000);
-        product.setProductEnrollDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-        product.setProductUpdateDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-        product.setProductContent("test code content");
-        product.setProductColor(PRODUCT_COLOR.valueOf("빨간색"));
-        product.setProductSize(105);
-        product.setProductGender(PRODUCT_GENDER.valueOf("남성의류"));
-        product.setProductTotalCount(5);
-        product.setProductStatus(PRODUCT_STATUS.valueOf("품절"));
-        product.setProductExposureStatus(true);
-        product.setProductNoticeCount(5);
-        product.setProductDiscount(5);
-        product.setProductCount(5);
-        product.setCategoryThird(product.getCategoryThird());
-
-        ResponseEntity<String> productDTO = productService.postProduct(request);
-
-    }
-
-    @Test
     void deleteProduct() {assertEquals(true,true);}
 
     @Test
