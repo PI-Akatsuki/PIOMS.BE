@@ -23,7 +23,8 @@ public class OrderProduct {
     private int requestProductGetCount;
 
     @JoinColumn(name = "request_code")
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne
+    @ToString.Exclude
     private Order order;
 
     @JoinColumn(name = "product_code")

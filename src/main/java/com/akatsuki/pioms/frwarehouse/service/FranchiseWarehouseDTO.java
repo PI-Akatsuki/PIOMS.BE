@@ -9,6 +9,7 @@ import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 
 @Getter
@@ -31,5 +32,17 @@ public class FranchiseWarehouseDTO {
         this.franchiseWarehouseFavorite = franchiseWarehouse.isFranchiseWarehouseFavorite();
         this.franchiseCode = franchiseWarehouse.getFranchiseCode();
         this.product = new ProductDTO(franchiseWarehouse.getProduct());
+    }
+
+    @Override
+    public String toString() {
+        return "FranchiseWarehouseDTO{" +
+                "  Code=" + franchiseWarehouseCode +
+                ", Total=" + franchiseWarehouseTotal +
+                ", Count=" + franchiseWarehouseCount +
+                ", Enable=" + franchiseWarehouseEnable +
+                ", Favorite=" + franchiseWarehouseFavorite +
+                ", product=" + product.getProductCode() +
+                '}';
     }
 }

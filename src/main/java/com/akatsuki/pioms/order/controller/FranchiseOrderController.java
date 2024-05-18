@@ -41,7 +41,7 @@ public class FranchiseOrderController {
     }
     @PutMapping("/{franchiseCode}/check")
     public ResponseEntity<String> putFranchiseOrder(@PathVariable int franchiseCode, @RequestBody RequestPutOrderCheck requestPutOrder){
-        boolean result = orderService.putFranchiseOrderCheck(franchiseCode,requestPutOrder);
+        boolean result = orderFacade.putFranchiseOrderCheck(franchiseCode,requestPutOrder);
         if(!result)
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("put failed");
         return ResponseEntity.ok("put finished");

@@ -41,6 +41,7 @@ public class franchiseWarehouseController {
         return franchiseWarehouseService.updateWarehouseCount(franchiseWarehouseCode,request, requesterAdminCode);
     }
 
+
     @GetMapping("/{franchiseOwnerCode}/list")
     public ResponseEntity<List<FranchiseWarehouseDTO>> getFrWarehouseList(@PathVariable int franchiseOwnerCode){
         return ResponseEntity.ok(franchiseWarehouseService.getFrWarehouseList(franchiseOwnerCode));

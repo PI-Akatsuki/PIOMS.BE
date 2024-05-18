@@ -41,31 +41,47 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
         this.franchiseService = franchiseService;
     }
 
-    @Transactional
-    public void saveProduct(int productCode, int changeVal, int franchiseCode){
-        FranchiseWarehouse franchiseWarehouse
-                = franchiseWarehouseRepository.findByProductProductCodeAndFranchiseCode(productCode,franchiseCode);
-        if(franchiseWarehouse == null){
-            franchiseWarehouse = new FranchiseWarehouse(false,franchiseCode,productCode);
-        }
-        franchiseWarehouse.setFranchiseWarehouseTotal(franchiseWarehouse.getFranchiseWarehouseTotal()+changeVal);
-        franchiseWarehouse.setFranchiseWarehouseCount(franchiseWarehouse.getFranchiseWarehouseCount()+changeVal);
-        franchiseWarehouse.setFranchiseWarehouseEnable(franchiseWarehouse.getFranchiseWarehouseEnable()+changeVal);
-        franchiseWarehouseRepository.save(franchiseWarehouse);
-    }
-
     @Override
     @Transactional
     public void saveExchangeProduct(ExchangeDTO exchange, int franchiseCode) {
         if (exchange==null) return;
-
-//        List<ExchangeProduct> products = exchange.getExchangeProducts();
         exchange.getExchangeProducts().forEach(
                 product -> {
                     int productCode = product.getProductCode();
                     int cnt = product.getExchangeProductNormalCount();
                     saveProduct(productCode,cnt,franchiseCode);
         });
+    }
+    @Transactional
+    @Override
+    public void saveProduct(int productCode, int changeVal, int franchiseCode){
+        FranchiseWarehouse franchiseWarehouse
+                = franchiseWarehouseRepository.findByProductProductCodeAndFranchiseCode(productCode,franchiseCode);
+        System.out.println("franchiseWarehouse = " + franchiseWarehouse);
+        //없다면 새로 저장하긔
+        if(franchiseWarehouse == null ){
+            franchiseWarehouse = new FranchiseWarehouse(false,franchiseCode,productCode);
+        }
+        franchiseWarehouse.setFranchiseWarehouseTotal(franchiseWarehouse.getFranchiseWarehouseTotal()+changeVal);
+        franchiseWarehouse.setFranchiseWarehouseCount(franchiseWarehouse.getFranchiseWarehouseCount()+changeVal);
+        franchiseWarehouse.setFranchiseWarehouseEnable(franchiseWarehouse.getFranchiseWarehouseEnable()+changeVal);
+        franchiseWarehouseRepository.save(franchiseWarehouse);
+        System.out.println("saved");
+    }
+
+    @Transactional
+    @Override
+    public void saveProductWhenDeleteExchange(int productCode, int changeVal, int franchiseCode){
+        FranchiseWarehouse franchiseWarehouse
+                = franchiseWarehouseRepository.findByProductProductCodeAndFranchiseCode(productCode,franchiseCode);
+        //없다면 새로 저장하긔
+        if(franchiseWarehouse == null ){
+            franchiseWarehouse = new FranchiseWarehouse(false,franchiseCode,productCode);
+        }
+        franchiseWarehouse.setFranchiseWarehouseCount(franchiseWarehouse.getFranchiseWarehouseCount()+changeVal);
+        franchiseWarehouse.setFranchiseWarehouseEnable(franchiseWarehouse.getFranchiseWarehouseEnable()+changeVal);
+        franchiseWarehouseRepository.save(franchiseWarehouse);
+        System.out.println("saved");
     }
 
     @Override

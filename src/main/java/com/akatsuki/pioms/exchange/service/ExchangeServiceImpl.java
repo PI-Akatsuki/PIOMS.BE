@@ -169,6 +169,13 @@ public class ExchangeServiceImpl implements ExchangeService{
         || orderService.findOrderByExchangeCode(exchangeCode)/*있으면 true로 삭제 불가*/)
             return false;
         System.out.println("delete");
+        for (int i = 0; i <exchange.getProducts().size(); i++) {
+            franchiseWarehouseService.saveProductWhenDeleteExchange(
+                    exchange.getProducts().get(i).getProduct().getProductCode(),
+                    exchange.getProducts().get(i).getExchangeProductCount(),
+                    exchange.getFranchise().getFranchiseCode()
+            );
+        }
         exchangeProductRepository.deleteByExchangeExchangeCode(exchangeCode);
         exchangeRepository.delete(exchange);
         return true;

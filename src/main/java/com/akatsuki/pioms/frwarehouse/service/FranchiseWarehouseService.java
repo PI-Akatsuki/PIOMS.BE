@@ -12,7 +12,7 @@ import java.util.Optional;
 
 
 public interface FranchiseWarehouseService {
-    void saveProduct(int productCocde, int changeVal, int franchiseCode);
+    void saveProduct(int productCode, int changeVal, int franchiseCode);
 
     void saveExchangeProduct(ExchangeDTO exchange, int franchiseCode);
 
@@ -25,4 +25,6 @@ public interface FranchiseWarehouseService {
     ResponseEntity<String> updateWarehouseCount(int franchiseWarehouseCode, RequestFranchiseWarehouseUpdate request, int requesterAdminCode);
 
     List<FranchiseWarehouseDTO> getFrWarehouseList(int franchiseOwnerCode);
+
+    void saveProductWhenDeleteExchange(int productCode, int exchangeProductCount, int franchiseCode);
 }
