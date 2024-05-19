@@ -1,13 +1,13 @@
 package com.akatsuki.pioms.categoryThird.aggregate;
 
 import com.akatsuki.pioms.categorySecond.aggregate.CategorySecond;
+import com.akatsuki.pioms.categoryThird.dto.CategoryThirdDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
 @Table(name="category_third")
 @AllArgsConstructor
-@NoArgsConstructor
 @Setter
 @Getter
 @ToString
@@ -31,11 +31,25 @@ public class CategoryThird {
     @Column(name = "category_third_delete_date")
     private String categoryThirdDeleteDate;
 
-    @Column(name = "category_second_code")
-    private int categorySecondCode;
+    @ManyToOne
+    @JoinColumn(name = "category_second_code")
+    private CategorySecond categorySecond;
 
+    public CategoryThird(CategoryThirdDTO categoryThird) {
+        this.categoryThirdCode = categoryThird.getCategoryThirdCode();
+        this.categoryThirdName = categoryThird.getCategoryThirdName();
+        this.categoryThirdEnrollDate = categoryThird.getCategoryThirdEnrollDate();
+        this.categoryThirdUpdateDate = categoryThird.getCategoryThirdUpdateDate();
 
-    public CategoryThird(int categoryThirdCode) {
-        this.categoryThirdCode = categoryThirdCode;
     }
+
+    public CategoryThird(int categorySecondCode) {
+        this.categorySecond = new CategorySecond(categorySecondCode);
+    }
+
+    public CategoryThird() {
+        this.categorySecond = new CategorySecond();
+    }
+
+
 }

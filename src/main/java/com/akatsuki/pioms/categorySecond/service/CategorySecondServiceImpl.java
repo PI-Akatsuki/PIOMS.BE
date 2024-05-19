@@ -72,7 +72,9 @@ public class CategorySecondServiceImpl implements CategorySecondService{
         CategorySecond categorySecond = new CategorySecond();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formattedDateTime = LocalDateTime.now().format(formatter);
+
         List<CategoryFirst> categoryFirstList = categoryFirstRepository.findByCategoryFirstCode(request.getCategoryFirstCode());
+
         CategoryFirst categoryFirst = new CategoryFirst();
         categoryFirst.setCategoryFirstCode(request.getCategoryFirstCode());
         categorySecond.setCategoryFirst(categoryFirst);

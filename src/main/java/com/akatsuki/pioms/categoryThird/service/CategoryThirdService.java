@@ -1,6 +1,7 @@
 package com.akatsuki.pioms.categoryThird.service;
 
 import com.akatsuki.pioms.categoryThird.aggregate.RequestCategoryThird;
+import com.akatsuki.pioms.categoryThird.aggregate.ResponseCategoryThird;
 import com.akatsuki.pioms.categoryThird.dto.CategoryThirdDTO;
 import org.springframework.http.ResponseEntity;
 
@@ -17,4 +18,5 @@ public interface CategoryThirdService {
 
     ResponseEntity<String> deleteCategoryThird(int categoryThirdCode/*, int requesterAdminCode*/);
 
+    List<ResponseCategoryThird> getCategoryThirdInSecond(int categorySecondCode);
 }
