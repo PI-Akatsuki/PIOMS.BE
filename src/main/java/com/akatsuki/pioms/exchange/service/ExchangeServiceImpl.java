@@ -80,9 +80,6 @@ public class ExchangeServiceImpl implements ExchangeService{
     @Override
     @Transactional
     public ExchangeDTO postExchange(int franchiseOwnerCode, RequestExchange requestExchange) {
-        System.out.println("franchiseOwnerCode = " + franchiseOwnerCode);
-        System.out.println("requestExchange = " + requestExchange);
-        System.out.println("post Exchange 발생");
         if(exchangeRepository.existsByFranchiseFranchiseCodeAndExchangeStatus(requestExchange.getFranchiseCode(), EXCHANGE_STATUS.반송신청))
             return null;
         FranchiseDTO franchise = franchiseService.findFranchiseByFranchiseOwnerCode(franchiseOwnerCode);
@@ -90,13 +87,10 @@ public class ExchangeServiceImpl implements ExchangeService{
             return null;
         if(!franchiseWarehouseService.checkEnableToAddExchange(requestExchange))
             return null;
-        System.out.println("exchange 저장");
-
 
         Exchange exchange = new Exchange();
         exchange.setExchangeDate(LocalDateTime.now());
         exchange.setExchangeStatus(EXCHANGE_STATUS.반송신청);
-
 
         Franchise franchise1 = new Franchise();
         franchise1.setFranchiseCode(franchise.getFranchiseCode());
@@ -175,6 +169,13 @@ public class ExchangeServiceImpl implements ExchangeService{
         || orderService.findOrderByExchangeCode(exchangeCode)/*있으면 true로 삭제 불가*/)
             return false;
         System.out.println("delete");
+        for (int i = 0; i <exchange.getProducts().size(); i++) {
+            franchiseWarehouseService.saveProductWhenDeleteExchange(
+                    exchange.getProducts().get(i).getProduct().getProductCode(),
+                    exchange.getProducts().get(i).getExchangeProductCount(),
+                    exchange.getFranchise().getFranchiseCode()
+            );
+        }
         exchangeProductRepository.deleteByExchangeExchangeCode(exchangeCode);
         exchangeRepository.delete(exchange);
         return true;

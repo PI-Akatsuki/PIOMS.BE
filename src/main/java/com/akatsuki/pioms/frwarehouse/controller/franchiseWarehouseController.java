@@ -3,6 +3,7 @@ package com.akatsuki.pioms.frwarehouse.controller;
 import com.akatsuki.pioms.frwarehouse.aggregate.FranchiseWarehouse;
 import com.akatsuki.pioms.frwarehouse.aggregate.RequestFranchiseWarehouseUpdate;
 import com.akatsuki.pioms.frwarehouse.aggregate.ResponseFranchiseWarehouseUpdate;
+import com.akatsuki.pioms.frwarehouse.service.FranchiseWarehouseDTO;
 import com.akatsuki.pioms.frwarehouse.service.FranchiseWarehouseService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,7 @@ import java.util.Optional;
 @RequestMapping("/warehouse")
 public class franchiseWarehouseController {
 
-    private FranchiseWarehouseService franchiseWarehouseService;
+    private final FranchiseWarehouseService franchiseWarehouseService;
 
     @Autowired
     public franchiseWarehouseController(FranchiseWarehouseService franchiseWarehouseService) {
@@ -52,5 +53,9 @@ public class franchiseWarehouseController {
     public ResponseEntity<List<FranchiseWarehouse>> findAllFavorites() {
         List<FranchiseWarehouse> favorites = franchiseWarehouseService.findAllFavorites();
         return ResponseEntity.ok(favorites);
+
+    @GetMapping("/{franchiseOwnerCode}/list")
+    public ResponseEntity<List<FranchiseWarehouseDTO>> getFrWarehouseList(@PathVariable int franchiseOwnerCode){
+        return ResponseEntity.ok(franchiseWarehouseService.getFrWarehouseList(franchiseOwnerCode));
     }
 }
