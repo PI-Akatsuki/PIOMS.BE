@@ -139,6 +139,17 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
+    public List<ProductDTO> getAllExposureProduct() {
+        List<Product> productList = productRepository.findAllByProductExposureStatusTrue();
+        List<ProductDTO> responseProduct = new ArrayList<>();
+
+        productList.forEach(product -> {
+            responseProduct.add(new ProductDTO(product));
+        });
+        return responseProduct;
+    }
+
+    @Override
     @Transactional
     public ResponseEntity<String> updateProduct(int productCode, RequestProduct request, int requesterAdminCode) {
         Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
@@ -244,6 +255,5 @@ public class ProductServiceImpl implements ProductService{
             productRepository.save(product);
         }
     }
-
 
 }

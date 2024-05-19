@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/category/first")
+@RequestMapping("admin/category/first")
 @Tag(name = "카테고리(대) 조회 컨트롤러", description = "카테고리(대) 조회")
 public class CategoryFirstController {
 
@@ -49,14 +49,14 @@ public class CategoryFirstController {
     }
 
     @PostMapping("/post")
-    public ResponseEntity<String> postCategoryFirst(@RequestBody RequestCategoryFirst request/*, int requesterAdminCode*/) {
-        return categoryFirstService.postCategoryFirst(request/*, requesterAdminCode*/);
+    public ResponseEntity<String> postCategoryFirst(@RequestBody RequestCategoryFirst request, int requesterAdminCode) {
+        return categoryFirstService.postCategoryFirst(request, requesterAdminCode);
 
     }
 
     @PutMapping("/update/{categoryFirstCode}")
     @Operation(summary = "카테고리(대) 수정" ,description = "updateDate 자동 기입")
-    public ResponseEntity<String> updateCategoryFirst(@PathVariable int categoryFirstCode, @RequestBody RequestCategoryFirst request/*, int requesterAdminCode*/) {
-        return categoryFirstService.updateCategoryFirst(categoryFirstCode, request/*, requesterAdminCode*/);
+    public ResponseEntity<String> updateCategoryFirst(@PathVariable int categoryFirstCode, @RequestBody RequestCategoryFirst request, int requesterAdminCode) {
+        return categoryFirstService.updateCategoryFirst(categoryFirstCode, request, requesterAdminCode);
     }
 }

@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/category/second")
+@RequestMapping("admin/category/second")
 @Tag(name = "카테고리(중) 조회 컨트롤러", description = "카테고리(중) 조회")
 public class CategorySecondController {
 

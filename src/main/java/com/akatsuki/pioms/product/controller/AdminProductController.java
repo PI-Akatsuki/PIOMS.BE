@@ -1,6 +1,5 @@
 package com.akatsuki.pioms.product.controller;
 
-import com.akatsuki.pioms.product.aggregate.Product;
 import com.akatsuki.pioms.product.dto.ProductDTO;
 import com.akatsuki.pioms.product.service.ProductService;
 import com.akatsuki.pioms.product.aggregate.RequestProduct;
@@ -15,14 +14,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/product")
-@Tag(name="상품 CRUD 컨트롤러", description = "상품 조회,등록,수정,삭제")
-public class ProductController {
+@RequestMapping("admin/product")
+@Tag(name="관리자 상품 CRUD 컨트롤러", description = "상품 조회,등록,수정,삭제")
+public class AdminProductController {
 
     private final ProductService productService;
 
     @Autowired
-    public ProductController(ProductService productService) {
+    public AdminProductController(ProductService productService) {
         this.productService = productService;
     }
 
