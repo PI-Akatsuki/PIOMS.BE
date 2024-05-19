@@ -64,11 +64,11 @@ public class CategorySecondServiceImpl implements CategorySecondService{
 
     @Override
     @Transactional
-    public ResponseEntity<String> postCategorySecond(RequestCategorySecond request/*, int requesterAdminCode*/) {
-//        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
-//        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
-//            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
-//        }
+    public ResponseEntity<String> postCategorySecond(RequestCategorySecond request, int requesterAdminCode) {
+        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
+        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
+            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
+        }
         CategorySecond categorySecond = new CategorySecond();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formattedDateTime = LocalDateTime.now().format(formatter);
@@ -91,11 +91,11 @@ public class CategorySecondServiceImpl implements CategorySecondService{
 
     @Override
     @Transactional
-    public ResponseEntity<String> updateCategorySecond(int categorySecondCode, RequestCategorySecond request/*, int requesterAdminCode*/) {
-//        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
-//        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
-//            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
-//        }
+    public ResponseEntity<String> updateCategorySecond(int categorySecondCode, RequestCategorySecond request, int requesterAdminCode) {
+        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
+        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
+            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
+        }
         CategorySecond categorySecond = categorySecondRepository.findById(categorySecondCode)
                 .orElseThrow(() -> new EntityNotFoundException("CategorySecond not found"));
 
