@@ -78,7 +78,6 @@ public class CategorySecondServiceImpl implements CategorySecondService{
 
         CategorySecond savedCategorySecond = categorySecondRepository.save(categorySecond);
 
-        ResponseCategorySecond responseValue = new ResponseCategorySecond(savedCategorySecond.getCategorySecondCode(), savedCategorySecond.getCategorySecondName(), savedCategorySecond.getCategorySecondEnrollDate(), savedCategorySecond.getCategorySecondUpdateDate());
         logService.saveLog("root", LogStatus.등록,savedCategorySecond.getCategorySecondName(),"CategorySecond");
         return ResponseEntity.ok("카테고리(중) 생성 완료!");
     }

@@ -76,7 +76,6 @@ public class CategoryFirstServiceImpl implements CategoryFirstService {
         categoryFirst.setCategoryFirstName(request.getCategoryFirstName());
         categoryFirst.setCategoryFirstUpdateDate(formattedDateTime);
 
-        ResponseCategoryFirst responseValue = new ResponseCategoryFirst(updatedCategoryFirst.getCategoryFirstCode(), updatedCategoryFirst.getCategoryFirstName(), updatedCategoryFirst.getCategoryFirstEnrollDate(), updatedCategoryFirst.getCategoryFirstUpdateDate());
         logService.saveLog("root", LogStatus.수정,updatedCategoryFirst.getCategoryFirstName(),"CategoryFirst");
         return ResponseEntity.ok("카테고리(대) 수정 완료!");
     }
@@ -98,7 +97,6 @@ public class CategoryFirstServiceImpl implements CategoryFirstService {
 
         CategoryFirst savedCategoryFirst = categoryFirstRepository.save(categoryFirst);
 
-        ResponseCategoryFirst responseValue = new ResponseCategoryFirst(savedCategoryFirst.getCategoryFirstCode(),savedCategoryFirst.getCategoryFirstName(), savedCategoryFirst.getCategoryFirstEnrollDate(), savedCategoryFirst.getCategoryFirstUpdateDate());
         logService.saveLog("root", LogStatus.등록,savedCategoryFirst.getCategoryFirstName(),"CategoryFirst");
         return ResponseEntity.ok("카테고리(대) 생성 완료!");
     }

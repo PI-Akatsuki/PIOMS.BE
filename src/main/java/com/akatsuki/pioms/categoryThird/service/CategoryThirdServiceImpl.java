@@ -137,7 +137,6 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
             return ResponseEntity.badRequest().body(categoryThirdCode + "번 카테고리(소) 카테고리가 없습니다!");
         }
 
-        // Check if there are any products associated with this categoryThirdCode
         List<Product> products = productRepository.findByCategoryThird_CategoryThirdCode(categoryThirdCode);
         if (!products.isEmpty()) {
             return ResponseEntity.badRequest().body("상품이 존재하는 해당 " + categoryThirdCode + "번 카테고리(소) 카테고리는 삭제할 수 없습니다!");

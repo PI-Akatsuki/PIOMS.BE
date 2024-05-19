@@ -166,7 +166,6 @@ public class ProductServiceImpl implements ProductService{
         product.setProductNoticeCount(request.getProductNoticeCount());
         product.setProductDiscount(request.getProductDisCount());
         product.setProductCount(request.getProductCount());
-        Product savedProduct = productRepository.save(product);
         Product updatedProduct = productRepository.save(product);
         logService.saveLog("root", LogStatus.수정, updatedProduct.getProductName(), "Product");
 
