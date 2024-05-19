@@ -11,6 +11,7 @@ import lombok.*;
 @Setter
 @Getter
 @ToString
+@Builder
 public class CategoryThird {
 
     @Id

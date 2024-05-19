@@ -148,7 +148,7 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
         categoryThird.setCategoryThirdDeleteDate(formattedDateTime);
         categoryThirdRepository.delete(categoryThird);
         logService.saveLog("root", LogStatus.삭제,categoryThird.getCategoryThirdName(),"CategoryThird");
-        return ResponseEntity.badRequest().body(categoryThirdCode + "번의 해당 카테고리(소) 카테고리가 성공적으로 삭제되었습니다!");
+        return ResponseEntity.badRequest().body("해당 카테고리(소) 카테고리가 성공적으로 삭제되었습니다!");
     }
 
     @Override
