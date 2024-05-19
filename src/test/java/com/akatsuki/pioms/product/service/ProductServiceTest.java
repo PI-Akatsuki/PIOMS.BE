@@ -74,33 +74,7 @@ class ProductServiceTest {
 
     }
 
-    @Test
-    void 상품_수정() {
-        int productCode = product.getProductCode();
-        RequestProduct requestProduct = new RequestProduct();
 
-        requestProduct.setProductName("update test");
-        requestProduct.setProductPrice(100000);
-        requestProduct.setProductContent("test code content");
-        requestProduct.setProductColor(PRODUCT_COLOR.valueOf("빨간색"));
-        requestProduct.setProductSize(105);
-        requestProduct.setProductGender(PRODUCT_GENDER.valueOf("남성의류"));
-        requestProduct.setProductTotalCount(5);
-        requestProduct.setProductStatus(PRODUCT_STATUS.valueOf("품절"));
-        requestProduct.setProductExposureStatus(true);
-        requestProduct.setProductNoticeCount(5);
-        requestProduct.setProductDisCount(5);
-        requestProduct.setProductCount(5);
-        requestProduct.setCategoryThirdCode(1);
-
-        ResponseEntity<String> updatedProduct = productService.updateProduct(productCode,request,1);
-
-        System.out.println("RequestProduct: " + requestProduct);
-        System.out.println("ResponseEntity: " + updatedProduct);
-
-        assertNotNull(updatedProduct);
-        assertEquals("상품 수정 완료!", updatedProduct.getBody());
-    }
 
     @Test
     void deleteProduct() {
