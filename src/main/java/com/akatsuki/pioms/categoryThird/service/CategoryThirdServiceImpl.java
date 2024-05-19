@@ -102,11 +102,11 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
 
     @Override
     @Transactional
-    public ResponseEntity<String> updateCategory(int categoryThirdCode, RequestCategoryThird request, int requesterAdminCode) {
-        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
-        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
-            return ResponseEntity.status(403).body("카테고리 수정은 루트 관리자만 가능합니다.");
-        }
+    public ResponseEntity<String> updateCategory(int categoryThirdCode, RequestCategoryThird request/*, int requesterAdminCode*/) {
+//        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
+//        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
+//            return ResponseEntity.status(403).body("카테고리 수정은 루트 관리자만 가능합니다.");
+//        }
         CategoryThird categoryThird = categoryThirdRepository.findById(categoryThirdCode)
                 .orElseThrow(() -> new EntityNotFoundException("CategoryThird not found"));
 
@@ -125,11 +125,11 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
 
     @Override
     @Transactional
-    public ResponseEntity<String> deleteCategoryThird(int categoryThirdCode, int requesterAdminCode) {
-        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
-        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
-            return ResponseEntity.status(403).body("카테고리 삭제는 루트 관리자만 가능합니다.");
-        }
+    public ResponseEntity<String> deleteCategoryThird(int categoryThirdCode/*, int requesterAdminCode*/) {
+//        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
+//        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
+//            return ResponseEntity.status(403).body("카테고리 삭제는 루트 관리자만 가능합니다.");
+//        }
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formattedDateTime = LocalDateTime.now().format(formatter);

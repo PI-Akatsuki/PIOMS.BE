@@ -52,4 +52,8 @@ public class CategoryThird {
     }
 
 
+
+    public CategoryThird(int categoryThirdCode) {
+        this.categoryThirdCode = categoryThirdCode;
+    }
 }
