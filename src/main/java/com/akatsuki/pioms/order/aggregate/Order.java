@@ -51,8 +51,7 @@ public class Order {
     @OneToOne
     private Exchange exchange;
 
-    @OneToMany(mappedBy = "order")
-    @ToString.Exclude
+    @OneToMany(mappedBy = "order" , cascade = CascadeType.PERSIST)
     private List<OrderProduct> orderProductList;
 
     public Order(ORDER_CONDITION orderCondition, boolean orderStatus, Franchise franchise) {

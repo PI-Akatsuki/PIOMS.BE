@@ -12,6 +12,7 @@ import com.akatsuki.pioms.log.etc.LogStatus;
 import com.akatsuki.pioms.log.service.LogService;
 import com.akatsuki.pioms.order.dto.OrderDTO;
 import com.akatsuki.pioms.product.aggregate.ResponseProduct;
+import com.akatsuki.pioms.product.dto.ProductDTO;
 import com.akatsuki.pioms.product.repository.ProductRepository;
 import com.akatsuki.pioms.categoryThird.aggregate.CategoryThird;
 import com.akatsuki.pioms.product.aggregate.Product;
@@ -48,36 +49,48 @@ public class ProductServiceImpl implements ProductService{
 
     @Override
     @Transactional
-    public List<Product> getAllProduct() {
-        return productRepository.findAll();
+    public List<ProductDTO> getAllProduct() {
+        List<Product> productList = productRepository.findAll();
+        List<ProductDTO> responseProduct = new ArrayList<>();
+
+        productList.forEach(product -> {
+            responseProduct.add(new ProductDTO(product));
+        });
+        return responseProduct;
     }
 
     @Override
     @Transactional
-    public Product findProductByCode(int productCode) {
-        return productRepository.findById(productCode).orElseThrow(null);
+    public List<ProductDTO> findProductByCode(int productCode) {
+        List<Product> productList = productRepository.findByProductCode(productCode);
+        List<ProductDTO> productDTOS = new ArrayList<>();
+        productList.forEach(product -> {
+            productDTOS.add(new ProductDTO(product));
+        });
+        return productDTOS;
     }
 
     @Override
     @Transactional
-    public ResponseEntity<String> postProduct(RequestProduct request, int requesterAdminCode) {
-        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
-        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
-            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
-        }
+    public ResponseEntity<String> postProduct(RequestProduct request/*, int requesterAdminCode*/) {
+//        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
+//        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
+//            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
+//        }
 
         Product product = new Product();
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formattedDateTime = LocalDateTime.now().format(formatter);
 
-        List<CategoryThird> categoryThird = categoryThirdRepository.findByCategoryThirdCode(request.getCategoryThirdCode());
+        List<CategoryThird> categoryThirdList = categoryThirdRepository.findByCategoryThirdCode(request.getCategoryThirdCode());
 
-        if(categoryThird == null) {
+        if(categoryThirdList == null) {
             return ResponseEntity.badRequest().body("해당 카테고리가 존재하지 않습니다. 다시 확인해주세요.");
         }
+        CategoryThird categoryThird = categoryThirdList.get(0);
 
-//        product.setCategoryThird(categoryThird);
+        product.setCategoryThird(categoryThird);
 
         product.setProductName(request.getProductName());
         product.setProductPrice(request.getProductPrice());
@@ -102,12 +115,12 @@ public class ProductServiceImpl implements ProductService{
 
     @Override
     @Transactional
-    public ResponseEntity<String> deleteProduct(int productCode, int requesterAdminCode) {
-        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
-        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
-            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
-        }
-        Product product = productRepository.findByProductCode(productCode);
+    public ResponseEntity<String> deleteProduct(int productCode/*, int requesterAdminCode*/) {
+//        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
+//        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
+//            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
+//        }
+        Product product = productRepository.findById(productCode).orElseThrow(()-> new EntityNotFoundException("그런거 없다."));
         if(product == null) {
             return ResponseEntity.badRequest().body("해당 상품이 없습니다.");
         }
@@ -125,11 +138,11 @@ public class ProductServiceImpl implements ProductService{
 
     @Override
     @Transactional
-    public ResponseEntity<String> updateProduct(int productCode, RequestProduct request, int requesterAdminCode) {
-        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
-        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
-            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
-        }
+    public ResponseEntity<String> updateProduct(int productCode, RequestProduct request/*, int requesterAdminCode*/) {
+//        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
+//        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
+//            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
+//        }
         Product product = productRepository.findById(productCode)
                 .orElseThrow(() -> new EntityNotFoundException("해당 상품이 존재하지 않습니다."));
 
@@ -222,10 +235,13 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public void editIncorrectCount(Product product, int cnt) {
+    public void editIncorrectCount(int productCode, int cnt) {
+        Product product = productRepository.findById(productCode).orElse(null);
         // 가맹에서 검수 시 수량 불일치인 경우 처리하기 위한 로직
-        product.setProductCount(product.getProductCount()+cnt);
-        productRepository.save(product);
+        if (product!=null) {
+            product.setProductCount(product.getProductCount() + cnt);
+            productRepository.save(product);
+        }
     }
 
 

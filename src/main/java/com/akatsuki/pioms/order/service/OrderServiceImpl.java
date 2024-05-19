@@ -137,19 +137,15 @@ public class OrderServiceImpl implements OrderService{
             return null;
         }
         // 발주 생성
-//        Franchise franchise = new Franchise();
-//        franchise.setFranchiseCode(requestOrder.getFranchiseCode());
-
         Order order = new Order(ORDER_CONDITION.승인대기,false,franchise);
-        order= orderRepository.save(order);
-
-        int orderId = order.getOrderCode();
-        // 발주 상품 저장
+        Order result= orderRepository.save(order);
+        result.setOrderProductList(new ArrayList<>());
         requestOrder.getProducts().forEach((productId, count)->{
-            Order order1 = orderRepository.findById(orderId).orElseThrow();
-            orderProductRepository.save(new OrderProduct(count,0, order1, productId));
+            OrderProduct orderProduct = orderProductRepository.save(new OrderProduct(count,0, result, productId));
+            result.getOrderProductList().add(orderProduct);
         });
-        return new OrderDTO(order);
+
+        return new OrderDTO(result);
     }
 
     private static boolean checkOrderCondition(Order order) {
@@ -180,8 +176,6 @@ public class OrderServiceImpl implements OrderService{
             System.out.println("가맹점 코드, 주문의 가맹점 코드 불일치!");
             return null;
         }
-        System.out.println("order = " + order);
-        System.out.println(order.getOrderProductList());
         return new OrderDTO(order);
     }
 
@@ -199,55 +193,63 @@ public class OrderServiceImpl implements OrderService{
     @Override
     @Transactional
     public boolean putFranchiseOrder(int franchiseCode, RequestPutOrder requestOrder) {
-        Order order = orderRepository.findById(requestOrder.getOrderCode()).orElseThrow(IllegalArgumentException::new);
-        System.out.println("order = " + order);
-        if(order.getFranchise().getFranchiseCode() != franchiseCode) {
-            System.out.println("프랜차이즈 코드 불일치");
+        Order order = orderRepository.findById(requestOrder.getOrderCode())
+                .orElseThrow(() -> new IllegalArgumentException("Order not found"));
+
+        if (order.getFranchise().getFranchiseCode() != franchiseCode) {
             return false;
         }
+
         if (order.getOrderCondition() == ORDER_CONDITION.승인완료) {
-            System.out.println("이미 처리된 발주");
             return false;
         }
+
+        // 기존 주문서의 상품 리스트 삭제
         orderProductRepository.deleteAllByOrderOrderCode(order.getOrderCode());
 
-        Order deletedorder = orderRepository.findById(requestOrder.getOrderCode()).orElseThrow(IllegalArgumentException::new);
-        deletedorder.setOrderCondition(ORDER_CONDITION.승인대기);
-        requestOrder.getProducts().forEach((productId, count)->{
-            orderProductRepository.save(new OrderProduct(count,0, deletedorder, productId));
+        // 주문서 상태 업데이트
+        order.setOrderCondition(ORDER_CONDITION.승인대기);
+
+        // 새로운 상품 리스트 추가
+        requestOrder.getProducts().forEach((productId, count) -> {
+            OrderProduct newOrderProduct = new OrderProduct(count, 0, order, productId);
+            orderProductRepository.save(newOrderProduct);
         });
-        System.out.println(deletedorder.getOrderProductList());
-        orderRepository.save(deletedorder);
+
         return true;
     }
+
 
     @Override
     @Transactional
     public boolean putFranchiseOrderCheck(int franchiseCode, RequestPutOrderCheck requestPutOrder) {
-        Order order = orderRepository.findById(requestPutOrder.getOrderCode()).orElseThrow(IllegalArgumentException::new);
-        System.out.println("requestPutOrder = " + requestPutOrder);
-        if(franchiseCode != order.getFranchise().getFranchiseCode() || order.isOrderStatus()
+//        if(franchiseCode != order.getFranchise().getFranchiseCode() || order.isOrderStatus()
 //                || !invoiceService.checkInvoiceStatus(order.getOrderCode())
-        ){
-            System.out.println("franchiseCode is not equal or this order's status is true or delivery's status is not \"배송완료\" ");
+//        ){
+//            System.out.println("franchiseCode is not equal or this order's status is true or delivery's status is not \"배송완료\" ");
+//            return false;
+//        }
+
+        // 인수 완료 표시
+        Order order = orderRepository.findById(requestPutOrder.getOrderCode()).orElse(null);
+        if ( order == null ||order.getOrderProductList() == null) {
             return false;
         }
-        // 인수 완료 표시
         order.setOrderStatus(true);
-        order.getOrderProductList().forEach(orderProduct->{
+        for (int i = 0; i < order.getOrderProductList().size(); i++) {
+            OrderProduct orderProduct = order.getOrderProductList().get(i);
             if(requestPutOrder.getRequestProduct().get(orderProduct.getProduct().getProductCode())!=null) {
                 int changeVal = requestPutOrder.getRequestProduct().get(orderProduct.getProduct().getProductCode());
                 int requestVal = orderProduct.getRequestProductCount();
-
                 orderProduct.setRequestProductGetCount(changeVal);
-                //검수 결과 가맹 창고에 저장
-//                franchiseWarehouseService.saveProduct(orderProduct.getProduct().getProductCode(), changeVal, orderProduct.getOrder().getFranchise().getFranchiseCode());
-                if(changeVal != requestVal){
-//                    productService.editIncorrectCount(orderProduct.getProduct(), requestVal-changeVal);
-                }
+//                //검수 결과 가맹 창고에 저장
+////                franchiseWarehouseService.saveProduct(orderProduct.getProduct().getProductCode(), changeVal, orderProduct.getOrder().getFranchise().getFranchiseCode());
+//                if(changeVal != requestVal){
+////                    productService.editIncorrectCount(orderProduct.getProduct(), requestVal-changeVal);
+//                }
                 orderProductRepository.save(orderProduct);
             }
-        });
+        }
 
 //        franchiseWarehouseService.saveExchangeProduct(order.getExchange(), franchiseCode);
 
@@ -262,9 +264,11 @@ public class OrderServiceImpl implements OrderService{
     @Override
     public OrderDTO addExchangeToOrder(ExchangeDTO exchange, int orderCode) {
         Order order = orderRepository.findById(orderCode).orElseThrow();
+        System.out.println("order = " + order);
         Exchange exchange1 = new Exchange();
         exchange1.setExchangeCode(exchange.getExchangeCode());
         order.setExchange(exchange1);
+        
         order = orderRepository.save(order);
         return new OrderDTO(order);
     }

@@ -65,10 +65,6 @@ public class InvoiceServiceImpl implements InvoiceService {
         return orderTime;
     }
 
-
-
-
-
     @Override
     public void afterAcceptOrder(OrderDTO orderDTO)
     {

@@ -7,6 +7,9 @@ import com.akatsuki.pioms.exchange.aggregate.Exchange;
 import com.akatsuki.pioms.exchange.aggregate.ExchangeProduct;
 import com.akatsuki.pioms.exchange.aggregate.RequestExchange;
 import com.akatsuki.pioms.exchange.aggregate.ExchangeProductVO;
+import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
+import com.akatsuki.pioms.franchise.dto.FranchiseDTO;
+import com.akatsuki.pioms.franchise.service.FranchiseService;
 import com.akatsuki.pioms.frwarehouse.aggregate.FranchiseWarehouse;
 import com.akatsuki.pioms.frwarehouse.aggregate.RequestFranchiseWarehouseUpdate;
 import com.akatsuki.pioms.frwarehouse.aggregate.ResponseFranchiseWarehouseUpdate;
@@ -20,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,36 +32,56 @@ import java.util.Optional;
 public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
     private final FranchiseWarehouseRepository franchiseWarehouseRepository;
     private final AdminRepository adminRepository;
+    private final FranchiseService franchiseService;
 
     @Autowired
-    public FranchiseWarehouseServiceImpl(FranchiseWarehouseRepository franchiseWarehouseRepository, AdminRepository adminRepository) {
+    public FranchiseWarehouseServiceImpl(FranchiseWarehouseRepository franchiseWarehouseRepository, AdminRepository adminRepository,FranchiseService franchiseService) {
         this.franchiseWarehouseRepository = franchiseWarehouseRepository;
         this.adminRepository = adminRepository;
+        this.franchiseService = franchiseService;
     }
 
+    @Override
     @Transactional
+    public void saveExchangeProduct(ExchangeDTO exchange, int franchiseCode) {
+        if (exchange==null) return;
+        exchange.getExchangeProducts().forEach(
+                product -> {
+                    int productCode = product.getProductCode();
+                    int cnt = product.getExchangeProductNormalCount();
+                    saveProduct(productCode,cnt,franchiseCode);
+        });
+    }
+    @Transactional
+    @Override
     public void saveProduct(int productCode, int changeVal, int franchiseCode){
         FranchiseWarehouse franchiseWarehouse
                 = franchiseWarehouseRepository.findByProductProductCodeAndFranchiseCode(productCode,franchiseCode);
-        if(franchiseWarehouse == null){
+        System.out.println("franchiseWarehouse = " + franchiseWarehouse);
+        //없다면 새로 저장하긔
+        if(franchiseWarehouse == null ){
             franchiseWarehouse = new FranchiseWarehouse(false,franchiseCode,productCode);
         }
         franchiseWarehouse.setFranchiseWarehouseTotal(franchiseWarehouse.getFranchiseWarehouseTotal()+changeVal);
         franchiseWarehouse.setFranchiseWarehouseCount(franchiseWarehouse.getFranchiseWarehouseCount()+changeVal);
         franchiseWarehouse.setFranchiseWarehouseEnable(franchiseWarehouse.getFranchiseWarehouseEnable()+changeVal);
         franchiseWarehouseRepository.save(franchiseWarehouse);
+        System.out.println("saved");
     }
 
-    @Override
     @Transactional
-    public void saveExchangeProduct(Exchange exchange, int franchiseCode) {
-        if (exchange==null) return;
-        List<ExchangeProduct> products = exchange.getProducts();
-        products.forEach(product -> {
-            int productCode = product.getProduct().getProductCode();
-            int cnt = product.getExchangeProductNormalCount();
-            saveProduct(productCode,cnt,franchiseCode);
-        });
+    @Override
+    public void saveProductWhenDeleteExchange(int productCode, int changeVal, int franchiseCode){
+        FranchiseWarehouse franchiseWarehouse
+                = franchiseWarehouseRepository.findByProductProductCodeAndFranchiseCode(productCode,franchiseCode);
+        //없다면 새로 저장하긔
+        if(franchiseWarehouse == null ){
+            franchiseWarehouse = new FranchiseWarehouse(false,franchiseCode,productCode);
+        }
+        franchiseWarehouse.setFranchiseWarehouseCount(franchiseWarehouse.getFranchiseWarehouseCount()+changeVal);
+        franchiseWarehouse.setFranchiseWarehouseEnable(franchiseWarehouse.getFranchiseWarehouseEnable()+changeVal);
+        franchiseWarehouseRepository.save(franchiseWarehouse);
+        System.out.println("saved");
     }
 
     @Override
@@ -107,6 +131,17 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
         franchiseWarehouseRepository.save(franchiseWarehouse);
         return ResponseEntity.ok("재고 수정 완료!");
 
+    }
+
+    @Override
+    public List<FranchiseWarehouseDTO> getFrWarehouseList(int franchiseOwnerCode) {
+        int franchiseCode = franchiseService.findFranchiseByFranchiseOwnerCode(franchiseOwnerCode).getFranchiseCode();
+        List<FranchiseWarehouse> franchiseWarehouses = franchiseWarehouseRepository.findAllByFranchiseCode(franchiseCode);
+        List<FranchiseWarehouseDTO> franchiseWarehouseDTOS = new ArrayList<>();
+        for (int i = 0; i < franchiseWarehouses.size(); i++) {
+            franchiseWarehouseDTOS.add(new FranchiseWarehouseDTO(franchiseWarehouses.get(i)));
+        }
+        return franchiseWarehouseDTOS;
     }
 
     @Transactional
