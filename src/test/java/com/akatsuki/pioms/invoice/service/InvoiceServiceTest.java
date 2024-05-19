@@ -1,16 +1,12 @@
 package com.akatsuki.pioms.invoice.service;
 
-import com.akatsuki.pioms.franchise.aggregate.DELIVERY_DATE;
 import com.akatsuki.pioms.invoice.aggregate.DELIVERY_STATUS;
 import com.akatsuki.pioms.invoice.aggregate.Invoice;
-import com.akatsuki.pioms.invoice.dto.InvoiceDTO;
 import com.akatsuki.pioms.invoice.repository.InvoiceRepository;
 import com.akatsuki.pioms.order.aggregate.RequestOrderVO;
 import com.akatsuki.pioms.order.dto.OrderDTO;
-import com.akatsuki.pioms.order.service.OrderFacade;
-import com.akatsuki.pioms.order.service.OrderService;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
+import com.akatsuki.pioms.order.service.AdminOrderFacade;
+import com.akatsuki.pioms.order.service.FranchiseOrderFacade;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -29,13 +24,14 @@ class InvoiceServiceTest {
 
     InvoiceService invoiceService;
     InvoiceRepository invoiceRepository;
-    OrderFacade orderFacade;
+    AdminOrderFacade orderFacade;
+    FranchiseOrderFacade franchiseOrderFacade;
 
     static int adminCode= 1;
     static int franchiseCode =1;
 
     @Autowired
-    public InvoiceServiceTest(InvoiceService invoiceService, InvoiceRepository invoiceRepository, OrderFacade orderFacade) {
+    public InvoiceServiceTest(InvoiceService invoiceService, InvoiceRepository invoiceRepository, AdminOrderFacade orderFacade) {
         this.invoiceService = invoiceService;
         this.invoiceRepository = invoiceRepository;
         this.orderFacade = orderFacade;
@@ -57,7 +53,7 @@ class InvoiceServiceTest {
         List<Invoice>  invoices = invoiceRepository.findByOrderFranchiseFranchiseCode(franchiseCode);
         int invoicesCnt = invoices.size();
         System.out.println("invoicesCnt = " + invoicesCnt);
-        OrderDTO orderDTO = orderFacade.postFranchiseOrder(franchiseCode,requestOrderVO);
+        OrderDTO orderDTO = franchiseOrderFacade.postFranchiseOrder(franchiseCode,requestOrderVO);
         if (orderDTO==null) {
             assertEquals(true, true);
             return;

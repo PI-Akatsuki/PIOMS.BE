@@ -2,16 +2,12 @@ package com.akatsuki.pioms.order.controller;
 
 import com.akatsuki.pioms.config.Pagination;
 import com.akatsuki.pioms.order.dto.OrderDTO;
-import com.akatsuki.pioms.order.service.OrderFacade;
+import com.akatsuki.pioms.order.service.AdminOrderFacade;
 import com.akatsuki.pioms.order.aggregate.OrderListVO;
 import com.akatsuki.pioms.order.aggregate.OrderVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -43,10 +39,10 @@ import java.util.List;
 @RequestMapping("/admin")
 @Tag(name = "Admin Order API" ,description = "관리자 관련 API 명세서입니다.")
 public class AdminOrderController {
-    OrderFacade orderFacade;
+    AdminOrderFacade orderFacade;
 
     @Autowired
-    public AdminOrderController(OrderFacade orderFacade) {
+    public AdminOrderController(AdminOrderFacade orderFacade) {
         this.orderFacade = orderFacade;
     }
 

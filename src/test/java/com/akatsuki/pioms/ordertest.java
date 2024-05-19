@@ -2,7 +2,6 @@ package com.akatsuki.pioms;
 
 import com.akatsuki.pioms.exchange.aggregate.*;
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
-import com.akatsuki.pioms.exchange.dto.ExchangeProductDTO;
 import com.akatsuki.pioms.exchange.repository.ExchangeRepository;
 import com.akatsuki.pioms.exchange.service.ExchangeService;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
@@ -19,18 +18,16 @@ import com.akatsuki.pioms.order.aggregate.RequestPutOrder;
 import com.akatsuki.pioms.order.aggregate.RequestPutOrderCheck;
 import com.akatsuki.pioms.order.dto.OrderDTO;
 import com.akatsuki.pioms.order.repository.OrderRepository;
-import com.akatsuki.pioms.order.service.OrderFacade;
+import com.akatsuki.pioms.order.service.AdminOrderFacade;
+import com.akatsuki.pioms.order.service.FranchiseOrderFacade;
 import com.akatsuki.pioms.order.service.OrderService;
 import com.akatsuki.pioms.specs.aggregate.Specs;
 import com.akatsuki.pioms.specs.repository.SpecsRepository;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -42,7 +39,9 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ordertest {
 
     @Autowired
-    OrderFacade orderFacade;
+    AdminOrderFacade orderFacade;
+    @Autowired
+    FranchiseOrderFacade franchiseOrderFacade;
     @Autowired
     ExchangeService exchangeService;
     @Autowired
@@ -175,7 +174,7 @@ public class ordertest {
 
         // 2-1. 발주 생성
         System.out.println("requestOrderVO = " + requestOrderVO);
-        OrderDTO orderDTO = orderFacade.postFranchiseOrder(franchiseCode, requestOrderVO);
+        OrderDTO orderDTO = franchiseOrderFacade.postFranchiseOrder(franchiseCode, requestOrderVO);
         Order order = orderRepository.findById(orderDTO.getOrderCode()).orElseThrow();
 
         // 2-2. 발주 수정
@@ -212,13 +211,13 @@ public class ordertest {
         // 검수 전/후 창고 상태 확인
         List<FranchiseWarehouseDTO> warehouseBeforeCheck = franchiseWarehouseService.getFrWarehouseList(franchiseCode);
         System.out.println("검수 전 창고 = " + warehouseBeforeCheck);
-        System.out.println(orderFacade.putFranchiseOrderCheck(franchiseCode, requestPutOrderCheck));
+        System.out.println(franchiseOrderFacade.putFranchiseOrderCheck(franchiseCode, requestPutOrderCheck));
         List<FranchiseWarehouseDTO> warehouseAfterCheck = franchiseWarehouseService.getFrWarehouseList(franchiseCode);
         System.out.println("검수 후 창고 = " + warehouseAfterCheck);
 
         assertNotEquals(warehouseBeforeCheck, warehouseAfterCheck);
-
         // 교환 처리 관련 코드 (추가 필요 시)
+
     }
 
 

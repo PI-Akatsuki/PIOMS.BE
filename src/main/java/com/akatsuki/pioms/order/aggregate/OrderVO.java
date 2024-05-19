@@ -22,7 +22,6 @@ public class OrderVO {
     private int orderTotalPrice;
     private ORDER_CONDITION orderCondition;
     private String orderReason;
-    private boolean orderStatus;
 
     private int franchiseCode;
     private String franchiseName;
@@ -39,7 +38,6 @@ public class OrderVO {
         this.orderTotalPrice = order.getOrderTotalPrice();
         this.orderCondition = order.getOrderCondition();
         this.orderReason = order.getOrderReason();
-        this.orderStatus = order.isOrderStatus();
         this.franchiseCode = order.getFranchiseCode();
         this.franchiseName = order.getFranchiseName();
         this.franchiseOwnerCode = order.getFranchiseOwnerCode();

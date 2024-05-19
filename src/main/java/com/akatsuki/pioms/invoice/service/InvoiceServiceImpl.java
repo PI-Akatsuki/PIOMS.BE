@@ -11,6 +11,7 @@ import com.akatsuki.pioms.invoice.aggregate.DELIVERY_STATUS;
 import com.akatsuki.pioms.invoice.repository.InvoiceRepository;
 import com.akatsuki.pioms.order.aggregate.Order;
 import com.akatsuki.pioms.order.dto.OrderDTO;
+import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -149,10 +150,8 @@ public class InvoiceServiceImpl implements InvoiceService {
         if ( invoice.getOrder().getFranchise().getAdmin().getAdminCode() != adminCode && adminCode!=1){
             return null;
         }
-
         invoice.setDeliveryStatus(invoiceStatus);
         invoiceRepository.save(invoice);
-
         return new InvoiceDTO(invoice);
     }
 
@@ -160,7 +159,6 @@ public class InvoiceServiceImpl implements InvoiceService {
     public Boolean checkInvoiceStatus(int orderCode){
         Invoice invoice = invoiceRepository.findByOrderOrderCode(orderCode);
         if (invoice.getDeliveryStatus() == DELIVERY_STATUS.배송완료){
-            System.out.println("invoice = " + invoice.getDeliveryStatus());
             return true;
         }
         return false;

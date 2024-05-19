@@ -23,13 +23,15 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @Transactional
 class OrderFacadeTest {
-    private final OrderFacade orderFacade;
+    private final AdminOrderFacade orderFacade;
     private final OrderRepository orderRepository;
     private final OrderService orderService;
     private final FranchiseService franchiseService;
+    @Autowired
+    private FranchiseOrderFacade franchiseOrderFacade;
 
     @Autowired
-    public OrderFacadeTest(OrderFacade orderFacade, OrderRepository orderRepository, OrderService orderService, FranchiseService franchiseService) {
+    public OrderFacadeTest(AdminOrderFacade orderFacade, OrderRepository orderRepository, OrderService orderService, FranchiseService franchiseService) {
         this.orderFacade = orderFacade;
         this.orderRepository = orderRepository;
         this.orderService = orderService;
@@ -45,7 +47,7 @@ class OrderFacadeTest {
         Map<Integer,Integer> requestProducts =  new HashMap<Integer,Integer>(){{ put(1, 1); put(2,2); put(3,3);}};
 
         RequestOrderVO requestOrderVO = new RequestOrderVO(requestProducts,franchise.getFranchiseCode());
-        orderDTO = orderFacade.postFranchiseOrder(franchise.getFranchiseCode(),requestOrderVO);
+        orderDTO = franchiseOrderFacade.postFranchiseOrder(franchise.getFranchiseCode(),requestOrderVO);
         order = orderRepository.findById(orderDTO.getOrderCode()).orElseThrow();
     }
 
@@ -101,7 +103,7 @@ class OrderFacadeTest {
         Map<Integer,Integer> requestProducts =  new HashMap<Integer,Integer>(){{ put(1, 1); put(2,2); put(3,3);}};
         RequestOrderVO requestOrderVO = new RequestOrderVO(requestProducts,franchise.getFranchiseCode());
 
-        OrderDTO orderDTO1 = orderFacade.postFranchiseOrder(franchise.getFranchiseCode(),requestOrderVO);
+        OrderDTO orderDTO1 = franchiseOrderFacade.postFranchiseOrder(franchise.getFranchiseCode(),requestOrderVO);
         if (orderDTO1 == null){
             return;
         }
