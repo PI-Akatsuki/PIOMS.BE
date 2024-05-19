@@ -58,8 +58,8 @@ public class CategorySecondController {
     }
 
     @PutMapping("/update/{categorySecondCode}")
-    public ResponseEntity<String> updateCategorySecond(@PathVariable int categorySecondCode, @RequestBody RequestCategorySecond request/*, int requesterAdminCode*/) {
-        return categorySecondService.updateCategorySecond(categorySecondCode, request/*, requesterAdminCode*/);
+    public ResponseEntity<String> updateCategorySecond(@PathVariable int categorySecondCode, @RequestBody RequestCategorySecond request, int requesterAdminCode) {
+        return categorySecondService.updateCategorySecond(categorySecondCode, request, requesterAdminCode);
     }
 
 }

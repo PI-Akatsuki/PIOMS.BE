@@ -66,7 +66,7 @@ class ProductServiceTest {
         requestProduct.setProductCount(5);
         requestProduct.setCategoryThirdCode(1);
 
-        ResponseEntity<String> productDTO = productService.postProduct(requestProduct);
+        ResponseEntity<String> productDTO = productService.postProduct(requestProduct, 1);
         System.out.println("requestProduct = " + requestProduct);
 
         assertNotNull(productDTO);
@@ -93,7 +93,7 @@ class ProductServiceTest {
         requestProduct.setProductCount(5);
         requestProduct.setCategoryThirdCode(1);
 
-        ResponseEntity<String> updatedProduct = productService.updateProduct(productCode,request);
+        ResponseEntity<String> updatedProduct = productService.updateProduct(productCode,request,1);
 
         System.out.println("RequestProduct: " + requestProduct);
         System.out.println("ResponseEntity: " + updatedProduct);

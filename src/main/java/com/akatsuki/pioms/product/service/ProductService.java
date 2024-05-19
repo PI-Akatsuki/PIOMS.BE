@@ -14,9 +14,9 @@ import java.util.List;
 public interface ProductService {
     List<ProductDTO> getAllProduct();
     List<ProductDTO> findProductByCode(int productCode);
-    ResponseEntity<String> postProduct(RequestProduct request/*, int requesterAdminCode*/);
-    ResponseEntity<String> deleteProduct(int productCode/*, int requesterAdminCode*/);
-    ResponseEntity<String> updateProduct(int productCode, RequestProduct request/*, int requesterAdminCode*/);
+    ResponseEntity<String> postProduct(RequestProduct request, int requesterAdminCode);
+    ResponseEntity<String> deleteProduct(int productCode, int requesterAdminCode);
+    ResponseEntity<String> updateProduct(int productCode, RequestProduct request, int requesterAdminCode);
     void exportProducts(OrderDTO order);
     void exportExchangeProducts(int exchange);
     boolean checkExchangeProduct(OrderDTO order, ExchangeDTO exchange);
