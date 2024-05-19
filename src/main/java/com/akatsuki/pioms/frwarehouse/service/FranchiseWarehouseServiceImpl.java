@@ -125,4 +125,18 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
             }
         }
     }
+
+    @Override
+    @Transactional
+    public void toggleFavorite(int franchiseWarehouseCode) {
+        FranchiseWarehouse favorite = franchiseWarehouseRepository.findById(franchiseWarehouseCode)
+                .orElseThrow(() -> new RuntimeException("Warehouse not found"));
+        favorite.setFranchiseWarehouseFavorite(!favorite.isFranchiseWarehouseFavorite());
+        franchiseWarehouseRepository.save(favorite);
+    }
+
+    @Override
+    public List<FranchiseWarehouse> findAllFavorites() {
+        return franchiseWarehouseRepository.findByFranchiseWarehouseFavoriteTrue();
+    }
 }

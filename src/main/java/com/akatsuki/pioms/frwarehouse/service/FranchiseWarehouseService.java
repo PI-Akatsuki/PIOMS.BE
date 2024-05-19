@@ -22,4 +22,8 @@ public interface FranchiseWarehouseService {
     FranchiseWarehouse getWarehouseByWarehouseCode(int franchiseWarehouseCode);
 
     ResponseEntity<String> updateWarehouseCount(int franchiseWarehouseCode, RequestFranchiseWarehouseUpdate request, int requesterAdminCode);
+
+    void toggleFavorite(int franchiseWarehouseCode);
+
+    List<FranchiseWarehouse> findAllFavorites();
 }
