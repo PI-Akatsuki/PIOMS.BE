@@ -94,6 +94,7 @@ public class CategoryFirstServiceImpl implements CategoryFirstService {
 
         categoryFirst.setCategoryFirstName(request.getCategoryFirstName());
         categoryFirst.setCategoryFirstEnrollDate(formattedDateTime);
+        categoryFirst.setCategoryFirstUpdateDate(formattedDateTime);
 
         CategoryFirst savedCategoryFirst = categoryFirstRepository.save(categoryFirst);
 

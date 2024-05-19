@@ -54,7 +54,7 @@ public class CategoryFirstController {
 
     }
 
-    @PostMapping("/update/{categoryFirstCode}")
+    @PutMapping("/update/{categoryFirstCode}")
     @Operation(summary = "카테고리(대) 수정" ,description = "updateDate 자동 기입")
     public ResponseEntity<String> updateCategoryFirst(@PathVariable int categoryFirstCode, @RequestBody RequestCategoryFirst request/*, int requesterAdminCode*/) {
         return categoryFirstService.updateCategoryFirst(categoryFirstCode, request/*, requesterAdminCode*/);
