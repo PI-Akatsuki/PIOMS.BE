@@ -31,23 +31,8 @@ class CategoryThirdServiceTest {
     @Autowired
     private CategoryThirdRepository categoryThirdRepository;
 
-    @Autowired
-    private ProductRepository productRepository;
-
-    @Autowired
-    private EntityManager entityManager;
     static RequestCategoryThird request;
 
-    @BeforeEach
-    public void setUp() {
-        // Ensure the database is clean before each test
-        productRepository.deleteAll();
-        categoryThirdRepository.deleteAll();
-
-        // Flush and clear to ensure changes are applied
-        entityManager.flush();
-        entityManager.clear();
-    }
 
     @Test
     @DisplayName("카테고리(소) 전체 조회")
