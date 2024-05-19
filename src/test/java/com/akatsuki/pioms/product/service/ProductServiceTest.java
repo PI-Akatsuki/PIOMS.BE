@@ -2,6 +2,7 @@ package com.akatsuki.pioms.product.service;
 
 import com.akatsuki.pioms.product.aggregate.Product;
 import com.akatsuki.pioms.product.aggregate.RequestProduct;
+import com.akatsuki.pioms.product.aggregate.ResponseProduct;
 import com.akatsuki.pioms.product.dto.ProductDTO;
 import com.akatsuki.pioms.product.etc.PRODUCT_COLOR;
 import com.akatsuki.pioms.product.etc.PRODUCT_GENDER;
@@ -13,8 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -40,6 +39,15 @@ class ProductServiceTest {
     }
 
     @Test
+    void getCategoryProductList() {
+        int categoryThirdCode = 1;
+        List<Product> productList = productRepository.findAllByCategoryThirdCategoryThirdCode(categoryThirdCode);
+        List<ResponseProduct> productDTOS = productService.getCategoryProductList(categoryThirdCode);
+        System.out.println("productList = " + productList);
+        assertEquals(productList.size(),productDTOS.size());
+    }
+
+    @Test
     void postProduct() {
         RequestProduct requestProduct = new RequestProduct();
         requestProduct.setProductCode(20);
@@ -58,9 +66,10 @@ class ProductServiceTest {
         requestProduct.setCategoryThirdCode(1);
 
         ResponseEntity<String> productDTO = productService.postProduct(requestProduct);
+        System.out.println("requestProduct = " + requestProduct);
 
         assertNotNull(productDTO);
-        assertEquals("상품 등록 완료!", productDTO);
+        assertEquals("상품 등록 완료!", productDTO.getBody());
 
     }
     @Test
@@ -73,8 +82,4 @@ class ProductServiceTest {
         assertEquals(true, true);
     }
 
-    @Test
-    void getCategoryProductList() {
-        assertEquals(true, true);
-    }
 }
