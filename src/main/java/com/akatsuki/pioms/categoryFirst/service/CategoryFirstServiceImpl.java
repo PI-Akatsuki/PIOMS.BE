@@ -60,11 +60,11 @@ public class CategoryFirstServiceImpl implements CategoryFirstService {
 
     @Override
     @Transactional
-    public ResponseEntity<String> updateCategoryFirst(int categoryFirstCode, RequestCategoryFirst request/*, int requesterAdminCode*/) {
-//        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
-//        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
-//            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
-//        }
+    public ResponseEntity<String> updateCategoryFirst(int categoryFirstCode, RequestCategoryFirst request, int requesterAdminCode) {
+        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
+        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
+            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
+        }
         CategoryFirst categoryFirst = categoryFirstRepository.findById(categoryFirstCode)
                 .orElseThrow(() -> new EntityNotFoundException("CategoryFirst not found"));
 
@@ -76,18 +76,17 @@ public class CategoryFirstServiceImpl implements CategoryFirstService {
         categoryFirst.setCategoryFirstName(request.getCategoryFirstName());
         categoryFirst.setCategoryFirstUpdateDate(formattedDateTime);
 
-        ResponseCategoryFirst responseValue = new ResponseCategoryFirst(updatedCategoryFirst.getCategoryFirstCode(), updatedCategoryFirst.getCategoryFirstName(), updatedCategoryFirst.getCategoryFirstEnrollDate(), updatedCategoryFirst.getCategoryFirstUpdateDate());
         logService.saveLog("root", LogStatus.수정,updatedCategoryFirst.getCategoryFirstName(),"CategoryFirst");
         return ResponseEntity.ok("카테고리(대) 수정 완료!");
     }
 
     @Override
     @Transactional
-    public ResponseEntity<String> postCategoryFirst(RequestCategoryFirst request/*, int requesterAdminCode*/) {
-//        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
-//        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
-//            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
-//        }
+    public ResponseEntity<String> postCategoryFirst(RequestCategoryFirst request, int requesterAdminCode) {
+        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
+        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
+            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
+        }
         CategoryFirst categoryFirst = new CategoryFirst();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formattedDateTime = LocalDateTime.now().format(formatter);
@@ -95,10 +94,10 @@ public class CategoryFirstServiceImpl implements CategoryFirstService {
 
         categoryFirst.setCategoryFirstName(request.getCategoryFirstName());
         categoryFirst.setCategoryFirstEnrollDate(formattedDateTime);
+        categoryFirst.setCategoryFirstUpdateDate(formattedDateTime);
 
         CategoryFirst savedCategoryFirst = categoryFirstRepository.save(categoryFirst);
 
-        ResponseCategoryFirst responseValue = new ResponseCategoryFirst(savedCategoryFirst.getCategoryFirstCode(),savedCategoryFirst.getCategoryFirstName(), savedCategoryFirst.getCategoryFirstEnrollDate(), savedCategoryFirst.getCategoryFirstUpdateDate());
         logService.saveLog("root", LogStatus.등록,savedCategoryFirst.getCategoryFirstName(),"CategoryFirst");
         return ResponseEntity.ok("카테고리(대) 생성 완료!");
     }

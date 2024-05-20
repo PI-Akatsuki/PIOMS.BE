@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/category/second")
+@RequestMapping("admin/category/second")
 @Tag(name = "카테고리(중) 조회 컨트롤러", description = "카테고리(중) 조회")
 public class CategorySecondController {
 
@@ -45,15 +45,21 @@ public class CategorySecondController {
         return ResponseEntity.ok(responseCategory);
     }
 
+    @GetMapping("/categoryfirst/{categoryFirstCode}")
+    @Operation(summary = "카테고리(대)에 속한 카테고리(중) 목록 조회")
+    public ResponseEntity<List<ResponseCategorySecond>> getCategorySecondInCategoryFirst(@PathVariable int categoryFirstCode) {
+        return ResponseEntity.ok(categorySecondService.getCategorySecondInFirst(categoryFirstCode));
+    }
+
     @PostMapping("/create")
-    public ResponseEntity<String> postCategorySecond(@RequestBody RequestCategorySecond request/*, int requesterAdminCode*/) {
-        return categorySecondService.postCategorySecond(request/*, requesterAdminCode*/);
+    public ResponseEntity<String> postCategorySecond(@RequestBody RequestCategorySecond request, int requesterAdminCode) {
+        return categorySecondService.postCategorySecond(request, requesterAdminCode);
 
     }
 
-    @PostMapping("/update/{categorySecondCode}")
-    public ResponseEntity<String> updateCategorySecond(@PathVariable int categorySecondCode, @RequestBody RequestCategorySecond request/*, int requesterAdminCode*/) {
-        return categorySecondService.updateCategorySecond(categorySecondCode, request/*, requesterAdminCode*/);
+    @PutMapping("/update/{categorySecondCode}")
+    public ResponseEntity<String> updateCategorySecond(@PathVariable int categorySecondCode, @RequestBody RequestCategorySecond request, int requesterAdminCode) {
+        return categorySecondService.updateCategorySecond(categorySecondCode, request, requesterAdminCode);
     }
 
 }

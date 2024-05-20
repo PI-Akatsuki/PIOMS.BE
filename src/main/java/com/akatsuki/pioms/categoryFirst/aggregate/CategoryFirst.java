@@ -25,5 +25,9 @@ public class CategoryFirst {
 
     @Column(name = "category_first_update_date")
     private String categoryFirstUpdateDate;
+
+    public CategoryFirst(int categoryFirstCode) {
+        this.categoryFirstCode = categoryFirstCode;
+    }
 }
 

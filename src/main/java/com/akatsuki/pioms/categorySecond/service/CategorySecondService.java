@@ -11,7 +11,9 @@ public interface CategorySecondService {
 
     List<CategorySecondDTO> findCategorySecondByCode(int categorySecondCode);
 
-    ResponseEntity<String> postCategorySecond(RequestCategorySecond request/*, int requesterAdminCode*/);
+    ResponseEntity<String> postCategorySecond(RequestCategorySecond request, int requesterAdminCode);
 
-    ResponseEntity<String> updateCategorySecond(int categorySecondCode, RequestCategorySecond request/*, int requesterAdminCode*/);
+    ResponseEntity<String> updateCategorySecond(int categorySecondCode, RequestCategorySecond request, int requesterAdminCode);
+
+    List<ResponseCategorySecond> getCategorySecondInFirst(int categoryFirstCode);
 }

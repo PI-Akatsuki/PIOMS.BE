@@ -15,12 +15,14 @@ public class ResponseCategoryThird {
     private String categoryThirdName;
     private String categoryThirdEnrollDate;
     private String categoryThirdUpdateDate;
+    private int categorySecondCode;
 
     public ResponseCategoryThird(CategoryThird categoryThird) {
         this.categoryThirdCode = categoryThird.getCategoryThirdCode();
         this.categoryThirdName = categoryThird.getCategoryThirdName();
         this.categoryThirdEnrollDate = categoryThird.getCategoryThirdEnrollDate();
         this.categoryThirdUpdateDate = categoryThird.getCategoryThirdUpdateDate();
+        this.categorySecondCode = categoryThird.getCategorySecond().getCategorySecondCode();
     }
 
     public ResponseCategoryThird(CategoryThirdDTO categoryThirdDTO) {
@@ -28,5 +30,6 @@ public class ResponseCategoryThird {
         this.categoryThirdName = categoryThirdDTO.getCategoryThirdName();
         this.categoryThirdEnrollDate = categoryThirdDTO.getCategoryThirdEnrollDate();
         this.categoryThirdUpdateDate = categoryThirdDTO.getCategoryThirdUpdateDate();
+        this.categorySecondCode = categoryThirdDTO.getCategorySecondCode();
     }
 }

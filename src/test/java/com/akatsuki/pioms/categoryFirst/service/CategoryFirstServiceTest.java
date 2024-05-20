@@ -65,6 +65,32 @@ class CategoryFirstServiceTest {
         assertEquals(categoryFirstList.size(), categoryFirstDTOS.size());
     }
 
+    @Test
+    @DisplayName("카테고리(대) 신규 등록")
+    void postCategoryFirst() {
+        RequestCategoryFirst requestCategory = new RequestCategoryFirst();
+        requestCategory.setCategoryFirstCode(20);
+        requestCategory.setCategoryFirstName("test");
 
+        ResponseEntity<String> postCategory = categoryFirstService.postCategoryFirst(requestCategory, 1);
+        System.out.println("postCategory = " + postCategory);
 
+        assertNotNull(postCategory);
+        assertEquals("카테고리(대) 생성 완료!", postCategory.getBody());
+    }
+
+    @Test
+    @DisplayName("카테고리(대) 수정")
+    void updateCategoryFirst() {
+
+        RequestCategoryFirst requestCategory = new RequestCategoryFirst();
+        requestCategory.setCategoryFirstName("test22");
+
+        ResponseEntity<String> updateCategory = categoryFirstService.updateCategoryFirst(1, requestCategory,1);
+        System.out.println("updateCategory = " + updateCategory);
+
+        assertNotNull(updateCategory);
+        assertEquals("카테고리(대) 수정 완료!", updateCategory.getBody());
+
+    }
 }
