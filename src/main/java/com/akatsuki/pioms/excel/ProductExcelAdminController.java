@@ -15,12 +15,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/exceldownload")
 @ComponentScan
-public class ProductExcelController {
+public class ProductExcelAdminController {
 
     private ProductService productService;
     private List<ProductDTO> productList;
 
-    public ProductExcelController(ProductService productService) {
+    public ProductExcelAdminController(ProductService productService) {
         this.productService = productService;
         this.productList = productService.getAllProduct();
     }
