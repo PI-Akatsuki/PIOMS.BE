@@ -41,6 +41,19 @@ public class franchiseWarehouseController {
         return franchiseWarehouseService.updateWarehouseCount(franchiseWarehouseCode,request, requesterAdminCode);
     }
 
+    @PutMapping("/toggleFavorite/{franchiseWarehouseCode}")
+    @Operation(summary = "즐겨찾기 추가,삭제 기능")
+    public ResponseEntity<?> toggleFavorite(@PathVariable int franchiseWarehouseCode){
+        franchiseWarehouseService.toggleFavorite(franchiseWarehouseCode);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/favorites")
+    @Operation(summary = "즐겨찾기 상품 조회")
+    public ResponseEntity<List<FranchiseWarehouse>> findAllFavorites() {
+        List<FranchiseWarehouse> favorites = franchiseWarehouseService.findAllFavorites();
+        return ResponseEntity.ok(favorites);
+    }
 
     @GetMapping("/{franchiseOwnerCode}/list")
     public ResponseEntity<List<FranchiseWarehouseDTO>> getFrWarehouseList(@PathVariable int franchiseOwnerCode){
