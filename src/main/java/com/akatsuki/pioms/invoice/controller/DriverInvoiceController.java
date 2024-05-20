@@ -49,4 +49,11 @@ public class DriverInvoiceController {
         List<ResponseDriverInvoice> responseDriverInvoice = invoiceService.getStatusIngDeliveryDriverInvoiceList(driverCode);
         return ResponseEntity.ok().body(responseDriverInvoice);
     }
+
+    @Operation(summary = "배송상태조회-배송완료", description = "배송기사코드로 담당지역의 배송상태(배송완료) 상세조회")
+    @GetMapping("/invoice/status/complete_delivery/{driverCode}")
+    public ResponseEntity<List<ResponseDriverInvoice>> getStatusCompleteDeliveryDriverInvoiceList(@PathVariable int driverCode) {
+        List<ResponseDriverInvoice> responseDriverInvoice = invoiceService.getStatusCompleteDeliveryDriverInvoiceList(driverCode);
+        return ResponseEntity.ok().body(responseDriverInvoice);
+    }
 }
