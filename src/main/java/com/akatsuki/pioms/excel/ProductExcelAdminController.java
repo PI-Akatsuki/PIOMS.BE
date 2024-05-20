@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/exceldownload")
+@RequestMapping("admin/exceldownload")
 @ComponentScan
 public class ProductExcelAdminController {
 
