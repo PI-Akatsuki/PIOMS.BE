@@ -12,5 +12,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     List<Product> findByCategoryThird_CategoryThirdCode(int categoryThirdCode);
 
-    Product findByProductCode(int productCode);
+    List<Product> findByProductCode(int productCode);
+
+    List<Product> findAllByProductExposureStatusTrue();
 }

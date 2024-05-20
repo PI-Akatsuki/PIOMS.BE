@@ -1,20 +1,17 @@
 package com.akatsuki.pioms.categoryFirst.service;
 
-import com.akatsuki.pioms.categoryFirst.aggregate.CategoryFirst;
-import com.akatsuki.pioms.categoryFirst.aggregate.RequestCategoryFirstPost;
-import com.akatsuki.pioms.categoryFirst.aggregate.RequestCategoryFirstUpdate;
-import com.akatsuki.pioms.categoryFirst.aggregate.ResponseCategoryFirstPost;
-import com.akatsuki.pioms.categoryFirst.aggregate.ResponseCategoryFirstUpdate;
+import com.akatsuki.pioms.categoryFirst.aggregate.RequestCategoryFirst;
+import com.akatsuki.pioms.categoryFirst.dto.CategoryFirstDTO;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface CategoryFirstService {
-    List<CategoryFirst> getAllCategoryFirst();
+    List<CategoryFirstDTO> getAllCategoryFirst();
 
-    Optional<CategoryFirst> findCategoryFirstByCode(int categoryFirstCode);
+    List<CategoryFirstDTO> findCategoryFirstByCode(int categoryFirstCode);
 
-    ResponseCategoryFirstUpdate updateCategoryFirst(int categoryFirstCode, RequestCategoryFirstUpdate request);
+    ResponseEntity<String> updateCategoryFirst(int categoryFirstCode, RequestCategoryFirst request, int requesterAdminCode);
 
-    ResponseCategoryFirstPost postCategoryFirst(RequestCategoryFirstPost request);
+    ResponseEntity<String> postCategoryFirst(RequestCategoryFirst request, int requesterAdminCode);
 }

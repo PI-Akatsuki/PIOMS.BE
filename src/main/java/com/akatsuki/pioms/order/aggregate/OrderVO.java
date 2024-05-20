@@ -3,6 +3,7 @@ package com.akatsuki.pioms.order.aggregate;
 
 import com.akatsuki.pioms.franchise.aggregate.DELIVERY_DATE;
 import com.akatsuki.pioms.order.aggregate.Order;
+import com.akatsuki.pioms.order.dto.OrderDTO;
 import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,7 +22,6 @@ public class OrderVO {
     private int orderTotalPrice;
     private ORDER_CONDITION orderCondition;
     private String orderReason;
-    private boolean orderStatus;
 
     private int franchiseCode;
     private String franchiseName;
@@ -32,19 +32,18 @@ public class OrderVO {
     private int adminCode;
     private String adminName;
 
-    public OrderVO(Order order) {
+    public OrderVO(OrderDTO order) {
         this.orderCode= order.getOrderCode();
         this.orderDate = order.getOrderDate();
         this.orderTotalPrice = order.getOrderTotalPrice();
         this.orderCondition = order.getOrderCondition();
         this.orderReason = order.getOrderReason();
-        this.orderStatus = order.isOrderStatus();
-        this.franchiseCode = order.getFranchise().getFranchiseCode();
-        this.franchiseName = order.getFranchise().getFranchiseName();
-        this.franchiseOwnerCode = order.getFranchise().getFranchiseOwner().getFranchiseOwnerCode();
-        this.franchiseOwnerName = order.getFranchise().getFranchiseOwner().getFranchiseOwnerName();
-        this.franchiseDeliveryDate = order.getFranchise().getFranchiseDeliveryDate();
-        this.adminCode = order.getFranchise().getAdmin().getAdminCode();
-        this.adminName = order.getFranchise().getAdmin().getAdminName();
+        this.franchiseCode = order.getFranchiseCode();
+        this.franchiseName = order.getFranchiseName();
+        this.franchiseOwnerCode = order.getFranchiseOwnerCode();
+        this.franchiseOwnerName = order.getFranchiseOwnerName();
+        this.franchiseDeliveryDate = order.getDeliveryDate();
+        this.adminCode = order.getAdminCode();
+        this.adminName = order.getAdminName();
     }
 }

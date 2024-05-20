@@ -1,9 +1,11 @@
 package com.akatsuki.pioms.admin.aggregate;
 
+import com.akatsuki.pioms.admin.dto.AdminDTO;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -50,6 +52,11 @@ public class Admin {
     @Column(name = "admin_status")
     private boolean adminStatus;
 
+    @Column(name = "admin_role")
+    private String  adminRole;
+
     @OneToMany(mappedBy = "admin")
     private List<Franchise> franchise;
+
+
 }

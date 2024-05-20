@@ -1,15 +1,13 @@
 package com.akatsuki.pioms.product.aggregate;
 
+import com.akatsuki.pioms.product.dto.ProductDTO;
 import com.akatsuki.pioms.product.etc.PRODUCT_COLOR;
 import com.akatsuki.pioms.product.etc.PRODUCT_GENDER;
 import com.akatsuki.pioms.product.etc.PRODUCT_STATUS;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-import java.util.Date;
-
-@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Setter
 @Getter
 public class ResponseProduct {
@@ -29,29 +27,44 @@ public class ResponseProduct {
     private int productNoticeCount;
     private int productDisCount;
     private int productCount;
-
-    public ResponseProduct(int productCode, String productName, int productPrice, String productEnrollDate, String productUpdateDate, String productContent, PRODUCT_COLOR productColor, int productSize, PRODUCT_GENDER productGender, int productTotalCount, PRODUCT_STATUS productStatus, boolean productExposureStatus, int productNoticeCount, int productDisCount, int productCount) {
-        this.productCode = productCode;
-        this.productName = productName;
-        this.productPrice = productPrice;
-        this.productEnrollDate = productEnrollDate;
-        this.productUpdateDate = productUpdateDate;
-        this.productContent = productContent;
-        this.productColor = productColor;
-        this.productSize = productSize;
-        this.productGender = productGender;
-        this.productTotalCount = productTotalCount;
-        this.productStatus = productStatus;
-        this.productExposureStatus = productExposureStatus;
-        this.productNoticeCount = productNoticeCount;
-        this.productDisCount = productDisCount;
-        this.productCount = productCount;
-    }
+    private int categoryThirdCode;
 
     public ResponseProduct(Product product) {
-
+        this.productCode = product.getProductCode();
+        this.productName = product.getProductName();
+        this.productPrice = product.getProductPrice();
+        this.productEnrollDate = product.getProductEnrollDate();
+        this.productUpdateDate = product.getProductUpdateDate();
+        this.productContent = product.getProductContent();
+        this.productColor = product.getProductColor();
+        this.productSize = product.getProductSize();
+        this.productGender = product.getProductGender();
+        this.productTotalCount = product.getProductTotalCount();
+        this.productStatus = product.getProductStatus();
+        this.productExposureStatus = product.isProductExposureStatus();
+        this.productNoticeCount = product.getProductNoticeCount();
+        this.productDisCount = product.getProductDiscount();
+        this.productCount = product.getProductCount();
+        this.categoryThirdCode = product.getCategoryThird().getCategoryThirdCode();
     }
 
-    public ResponseProduct(int productCode, String productName, int productPrice, String productEnrollDate, String productContent, PRODUCT_COLOR productColor, int productSize, PRODUCT_GENDER productGender, int productTotalCount, PRODUCT_STATUS productStatus, boolean productExposureStatus, int productNoticeCount, int productDiscount, int productCount) {
+    public ResponseProduct(ProductDTO productDTO) {
+        this.productCode = productDTO.getProductCode();
+        this.productName = productDTO.getProductName();
+        this.productPrice = productDTO.getProductPrice();
+        this.productEnrollDate = productDTO.getProductEnrollDate();
+        this.productUpdateDate = productDTO.getProductUpdateDate();
+        this.productContent = productDTO.getProductContent();
+        this.productColor = productDTO.getProductColor();
+        this.productSize = productDTO.getProductSize();
+        this.productGender = productDTO.getProductGender();
+        this.productTotalCount = productDTO.getProductTotalCount();
+        this.productStatus = productDTO.getProductStatus();
+        this.productExposureStatus = productDTO.isProductExposureStatus();
+        this.productNoticeCount = productDTO.getProductNoticeCount();
+        this.productDisCount = productDTO.getProductDiscount();
+        this.productCount = productDTO.getProductCount();
+        this.categoryThirdCode = productDTO.getCategoryThirdCode();
     }
+
 }

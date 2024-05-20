@@ -15,8 +15,14 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
     List<Order> findAllByFranchiseAdminAdminCode(int adminId);
 
     // 관리자가 관리하는 모든 가맹점에 대하여 발주 상태에 따라 조회를 합니다.
-    List<Order> findAllByFranchiseAdminAdminCodeAndOrderCondition(int adminId, ORDER_CONDITION orderCondition);
+    List<Order> findAllByFranchiseAdminAdminCodeAndOrderCondition(int adminCode, ORDER_CONDITION orderCondition);
 
     // 가맹점의 모든 발주들을 조회합니다.
     List<Order> findByFranchiseFranchiseCode(int franchiseCode);
+
+    boolean existsByFranchiseFranchiseCodeAndOrderCondition(int franchiseCode, ORDER_CONDITION orderCondition);
+
+    boolean existsByExchangeExchangeCode(int exchangeCode);
+
+    List<Order> findAllByOrderCondition(ORDER_CONDITION orderCondition);
 }

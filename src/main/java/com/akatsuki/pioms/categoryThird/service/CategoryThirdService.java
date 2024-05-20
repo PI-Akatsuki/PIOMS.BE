@@ -1,24 +1,22 @@
 package com.akatsuki.pioms.categoryThird.service;
 
-import com.akatsuki.pioms.categoryThird.aggregate.CategoryThird;
-import com.akatsuki.pioms.categoryThird.aggregate.RequestCategoryThirdPost;
-import com.akatsuki.pioms.categoryThird.aggregate.RequestCategoryThirdUpdate;
-import com.akatsuki.pioms.categoryThird.aggregate.ResponseCategoryThirdPost;
+import com.akatsuki.pioms.categoryThird.aggregate.RequestCategoryThird;
+import com.akatsuki.pioms.categoryThird.aggregate.ResponseCategoryThird;
+import com.akatsuki.pioms.categoryThird.dto.CategoryThirdDTO;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface CategoryThirdService {
-    List<CategoryThird> getAllCategoryThird();
+    List<CategoryThirdDTO> getAllCategoryThird();
 
-    Optional<CategoryThird> findCategoryThirdByCode(int categoryThirdCode);
+    List<CategoryThirdDTO> findCategoryThirdByCode(int categoryThirdCode);
 
-    String postCategory(RequestCategoryThirdPost request);
+    ResponseEntity<String> postCategory(RequestCategoryThird request, int requesterAdminCode);
 
-    ResponseCategoryThirdPost updateCategory(int categoryThirdCode, RequestCategoryThirdUpdate request);
+    ResponseEntity<String> updateCategory(int categoryThirdCode, RequestCategoryThird request, int requesterAdminCode);
 
-    String deleteCategoryThird(int categoryThirdCode);
+    ResponseEntity<String> deleteCategoryThird(int categoryThirdCode, int requesterAdminCode);
 
-
-//    CategoryThird deleteCategory(int categoryThirdCode);
+    List<ResponseCategoryThird> getCategoryThirdInSecond(int categorySecondCode);
 }

@@ -4,8 +4,6 @@ import com.akatsuki.pioms.admin.aggregate.Admin;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Table(name = "notice")
 @AllArgsConstructor
@@ -35,5 +33,4 @@ public class Notice {
     @JoinColumn(name = "admin_code")
     @ManyToOne
     private Admin admin;
-
 }

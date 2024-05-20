@@ -1,6 +1,7 @@
 package com.akatsuki.pioms.product.aggregate;
 
 import com.akatsuki.pioms.categoryThird.aggregate.CategoryThird;
+import com.akatsuki.pioms.product.dto.ProductDTO;
 import com.akatsuki.pioms.product.etc.PRODUCT_COLOR;
 import com.akatsuki.pioms.product.etc.PRODUCT_GENDER;
 import com.akatsuki.pioms.product.etc.PRODUCT_STATUS;
@@ -13,7 +14,6 @@ import java.util.Date;
 @Table(name="product")
 @Setter
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
 @ToString
 public class Product {
@@ -71,4 +71,32 @@ public class Product {
     @ManyToOne
     @JoinColumn(name="category_third_code")
     private CategoryThird categoryThird;
+
+    public Product(ProductDTO product) {
+        this.productCode= product.getProductCode();
+        this.productName= product.getProductName();
+        this.productPrice= product.getProductPrice();
+        this.productEnrollDate= product.getProductEnrollDate();
+        this.productUpdateDate= product.getProductUpdateDate();
+        this.productContent= product.getProductContent();
+        this.productColor= product.getProductColor();
+        this.productSize= product.getProductSize();
+        this.productGender= product.getProductGender();
+        this.productTotalCount= product.getProductTotalCount();
+        this.productStatus= product.getProductStatus();
+        this.productExposureStatus= product.isProductExposureStatus();
+        this.productNoticeCount= product.getProductNoticeCount();
+        this.productDiscount= product.getProductDiscount();
+        this.productCount= product.getProductCount();
+    }
+
+    public Product(int categoryThirdCode) {
+        this.categoryThird = new CategoryThird(categoryThirdCode);
+    }
+
+    public Product() {
+        this.categoryThird = new CategoryThird();
+    }
+
+
 }

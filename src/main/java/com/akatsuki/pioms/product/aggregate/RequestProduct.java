@@ -3,16 +3,16 @@ package com.akatsuki.pioms.product.aggregate;
 import com.akatsuki.pioms.product.etc.PRODUCT_COLOR;
 import com.akatsuki.pioms.product.etc.PRODUCT_GENDER;
 import com.akatsuki.pioms.product.etc.PRODUCT_STATUS;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Date;
 import java.util.List;
 
-@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
+@ToString
 public class RequestProduct {
 
     private int productCode;
@@ -30,24 +30,4 @@ public class RequestProduct {
     private int productCount;
     private int categoryThirdCode;
 
-    public RequestProduct(int productCode, String productName, int productPrice, String productContent, PRODUCT_COLOR productColor, int productSize, PRODUCT_GENDER productGender, int productTotalCount, PRODUCT_STATUS productStatus, boolean productExposureStatus, int productNoticeCount, int productDisCount, int productCount, int categoryThirdCode) {
-        this.productCode = productCode;
-        this.productName = productName;
-        this.productPrice = productPrice;
-        this.productContent = productContent;
-        this.productColor = productColor;
-        this.productSize = productSize;
-        this.productGender = productGender;
-        this.productTotalCount = productTotalCount;
-        this.productStatus = productStatus;
-        this.productExposureStatus = productExposureStatus;
-        this.productNoticeCount = productNoticeCount;
-        this.productDisCount = productDisCount;
-        this.productCount = productCount;
-        this.categoryThirdCode = categoryThirdCode;
-    }
-
-    public RequestProduct(List<ResponseProduct> responseProductList) {
-
-    }
 }

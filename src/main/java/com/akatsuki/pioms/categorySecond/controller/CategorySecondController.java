@@ -1,6 +1,7 @@
 package com.akatsuki.pioms.categorySecond.controller;
 
 import com.akatsuki.pioms.categorySecond.aggregate.*;
+import com.akatsuki.pioms.categorySecond.dto.CategorySecondDTO;
 import com.akatsuki.pioms.categorySecond.service.CategorySecondService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -8,11 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
-@RequestMapping("/category/second")
+@RequestMapping("admin/category/second")
 @Tag(name = "카테고리(중) 조회 컨트롤러", description = "카테고리(중) 조회")
 public class CategorySecondController {
 
@@ -24,27 +25,41 @@ public class CategorySecondController {
     }
     @GetMapping("")
     @Operation(summary = "카테고리(중) 전체 조회", description = "단순 카테고리(중) 조회 기능")
-    public ResponseEntity<List<CategorySecond>> getAllCategorySecond() {
-        return ResponseEntity.ok().body(categorySecondService.getAllCategorySecond());
+    public ResponseEntity<List<ResponseCategorySecond>> getAllCategorySecond() {
+        List<CategorySecondDTO> categorySecondDTOS = categorySecondService.getAllCategorySecond();
+        List<ResponseCategorySecond> responseCategory = new ArrayList<>();
+        categorySecondDTOS.forEach(categorySecondDTO -> {
+            responseCategory.add(new ResponseCategorySecond(categorySecondDTO));
+        });
+        return ResponseEntity.ok(responseCategory);
     }
 
     @GetMapping("/{categorySecondCode}")
-    @Operation(summary = "카테고리(중) code로 카테고리(중) 하나 조회", description = "카테고리(중)코드로 카테고리(중) 하나 조회")
-    public ResponseEntity<Optional<CategorySecond>> getCategorySecondByCode(@PathVariable int categorySecondCode) {
-        Optional<CategorySecond> categorySecond = categorySecondService.findCategorySecondByCode(categorySecondCode);
-        return ResponseEntity.ok().body(categorySecond);
+    @Operation(summary = "카테고리(중) 상세 조회")
+    public ResponseEntity<List<ResponseCategorySecond>> getCategorySecondByCode(@PathVariable int categorySecondCode) {
+        List<CategorySecondDTO> categorySecondDTOS = categorySecondService.findCategorySecondByCode(categorySecondCode);
+        List<ResponseCategorySecond> responseCategory = new ArrayList<>();
+        categorySecondDTOS.forEach(categorySecondDTO -> {
+            responseCategory.add(new ResponseCategorySecond(categorySecondDTO));
+        });
+        return ResponseEntity.ok(responseCategory);
+    }
+
+    @GetMapping("/list/detail/categoryfirst/{categoryFirstCode}")
+    @Operation(summary = "카테고리(대)에 속한 카테고리(중) 목록 조회")
+    public ResponseEntity<List<ResponseCategorySecond>> getCategorySecondInCategoryFirst(@PathVariable int categoryFirstCode) {
+        return ResponseEntity.ok(categorySecondService.getCategorySecondInFirst(categoryFirstCode));
     }
 
     @PostMapping("/create")
-    public ResponseEntity<ResponseCategorySecondPost> postCategorySecond(@RequestBody RequestCategorySecondPost request) {
-        ResponseCategorySecondPost response = categorySecondService.postCategorySecond(request);
-        return ResponseEntity.ok().body(response);
+    public ResponseEntity<String> postCategorySecond(@RequestBody RequestCategorySecond request, int requesterAdminCode) {
+        return categorySecondService.postCategorySecond(request, requesterAdminCode);
+
     }
 
-    @PostMapping("/update/{categorySecondCode}")
-    public ResponseEntity<ResponseCategorySecondUpdate> updateCategorySecond(@PathVariable int categorySecondCode, @RequestBody RequestCategorySecondUpdate request) {
-        ResponseCategorySecondUpdate response = categorySecondService.updateCategorySecond(categorySecondCode, request);
-        return ResponseEntity.ok().body(response);
+    @PutMapping("/update/{categorySecondCode}")
+    public ResponseEntity<String> updateCategorySecond(@PathVariable int categorySecondCode, @RequestBody RequestCategorySecond request, int requesterAdminCode) {
+        return categorySecondService.updateCategorySecond(categorySecondCode, request, requesterAdminCode);
     }
 
 }

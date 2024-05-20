@@ -1,21 +1,32 @@
 package com.akatsuki.pioms.invoice.dto;
 
-import com.akatsuki.pioms.invoice.etc.DELIVERY_STATUS;
+import com.akatsuki.pioms.invoice.aggregate.Invoice;
+import com.akatsuki.pioms.invoice.aggregate.DELIVERY_STATUS;
 import com.akatsuki.pioms.order.dto.OrderDTO;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Setter
-@ToString
 public class InvoiceDTO {
     private int invoiceCode;
     private DELIVERY_STATUS deliveryStatus;
     private LocalDateTime invoiceDate;
-    private int invoiceRegionCode;
+    private int deliveryRegionCode;
+
     private OrderDTO order;
+
+    public InvoiceDTO(Invoice invoice) {
+        System.out.println("invoice = " + invoice);
+        this.invoiceCode = invoice.getInvoiceCode();
+        this.deliveryStatus = invoice.getDeliveryStatus();
+        this.invoiceDate = invoice.getInvoiceDate();
+//        this.deliveryRegionDTO = new DeliveryRegionDTO(invoice.getDeliveryRegion());
+        this.order = new OrderDTO(invoice.getOrder());
+
+    }
 }

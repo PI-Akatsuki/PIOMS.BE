@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -19,6 +20,7 @@ public class DriverOnlyDriverInfoController {
     public DriverOnlyDriverInfoController(DeliveryDriverService deliveryDriverService) {
         this.deliveryDriverService = deliveryDriverService;
     }
+
 
     @Operation(summary = "배송기사 상세 조회", description = "배송기사 상세 정보를 조회합니다.")
     @GetMapping("/info/detail/{driverId}")
@@ -38,5 +40,4 @@ public class DriverOnlyDriverInfoController {
     ) {
         return deliveryDriverService.updateDriver(driverId, updatedDriver, requestorAdminCode, requestorDriverCode);
     }
-
 }

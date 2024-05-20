@@ -1,6 +1,6 @@
 package com.akatsuki.pioms.admin.controller;
 
-import com.akatsuki.pioms.admin.aggregate.Admin;
+import com.akatsuki.pioms.admin.dto.AdminDTO;
 import com.akatsuki.pioms.admin.service.AdminInfoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("admin")
@@ -26,18 +25,16 @@ public class AdminInfoController {
     // 관리자 전체 조회
     @Operation(summary = "본사 관리자 전체 조회", description = "본사 관리자 전체 조회")
     @GetMapping("/list")
-    public ResponseEntity<List<Admin>> getAdminList() {
-        List<Admin> adminList = adminService.findAdminList();
+    public ResponseEntity<List<AdminDTO>> getAdminList() {
+        List<AdminDTO> adminList = adminService.findAdminList();
         return ResponseEntity.ok(adminList);
     }
 
     // 관리자 상세 조회
     @Operation(summary = "본사 관리자 상세조회", description = "본사 관리자를 조회합니다.")
     @GetMapping("/list/detail/{adminCode}")
-    public ResponseEntity<Admin> getAdminById(@PathVariable int adminCode) {
-        Optional<Admin> admin = adminService.findAdminById(adminCode);
-        return admin.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<AdminDTO> getAdminById(@PathVariable int adminCode) {
+        return adminService.findAdminById(adminCode);
     }
 
     // 관리자 등록
@@ -45,10 +42,10 @@ public class AdminInfoController {
     @PostMapping("/register")
     public ResponseEntity<String> registerAdmin(
             // Root관리자만 등록이 가능
-            @RequestBody Admin admin,
+            @RequestBody AdminDTO adminDTO,
             @RequestParam int requestorAdminCode
     ) {
-        return adminService.saveAdmin(admin, requestorAdminCode);
+        return adminService.registerAdmin(adminDTO, requestorAdminCode);
     }
 
     // 관리자 정보 수정
@@ -56,11 +53,10 @@ public class AdminInfoController {
     @PutMapping("/update/{adminCode}")
     public ResponseEntity<String> updateAdmin(
             @PathVariable int adminCode,
-            @RequestBody Admin updatedAdmin
+            @RequestBody AdminDTO updatedAdminDTO
     ) {
-        return adminService.updateAdminInfo(adminCode, updatedAdmin);
+        return adminService.updateAdminInfo(adminCode, updatedAdminDTO);
     }
-
 
     // 관리자 비활성화(삭제)
     @Operation(summary = "본사 관리자 삭제", description = "본사 관리자를 삭제합니다.")
@@ -71,5 +67,4 @@ public class AdminInfoController {
     ) {
         return adminService.deleteAdmin(adminCode, requestorAdminCode);
     }
-
 }

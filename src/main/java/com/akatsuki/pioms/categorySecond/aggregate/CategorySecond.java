@@ -1,6 +1,7 @@
 package com.akatsuki.pioms.categorySecond.aggregate;
 
 import com.akatsuki.pioms.categoryFirst.aggregate.CategoryFirst;
+import com.akatsuki.pioms.categorySecond.dto.CategorySecondDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -8,7 +9,6 @@ import lombok.*;
 @Table(name="category_second")
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
 
@@ -29,7 +29,22 @@ public class CategorySecond {
 
     @ManyToOne
     @JoinColumn(name="category_first_code")
-    private CategoryFirst categoryFirstCode;
+    private CategoryFirst categoryFirst;
+
+    public CategorySecond(CategorySecondDTO categorySecond) {
+        this.categorySecondCode = categorySecond.getCategorySecondCode();
+        this.categorySecondName = categorySecond.getCategorySecondName();
+        this.categorySecondEnrollDate = categorySecond.getCategorySecondEnrollDate();
+        this.categorySecondUpdateDate = categorySecond.getCategorySecondUpdateDate();
+    }
+
+    public CategorySecond(int categoryFirstCode) {
+        this.categoryFirst = new CategoryFirst(categoryFirstCode);
+    }
+
+    public CategorySecond() {
+        this.categoryFirst = new CategoryFirst();
+    }
 }
 
 

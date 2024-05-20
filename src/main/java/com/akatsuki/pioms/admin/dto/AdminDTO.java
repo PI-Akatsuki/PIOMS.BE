@@ -1,10 +1,14 @@
 package com.akatsuki.pioms.admin.dto;
 
+import com.akatsuki.pioms.franchise.dto.FranchiseDTO;
 import lombok.*;
+
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@Setter
 @Builder
 @ToString
 public class AdminDTO {
@@ -28,5 +32,9 @@ public class AdminDTO {
 
     private String accessNumber;
 
+    private String adminRole;
+
     private boolean adminStatus;
+
+    private List<FranchiseDTO> franchiseList;
 }

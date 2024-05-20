@@ -2,6 +2,8 @@ package com.akatsuki.pioms.franchise.aggregate;
 
 import com.akatsuki.pioms.admin.aggregate.Admin;
 
+import com.akatsuki.pioms.driver.aggregate.DeliveryDriver;
+import com.akatsuki.pioms.franchise.dto.FranchiseDTO;
 import com.akatsuki.pioms.frowner.aggregate.FranchiseOwner;
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,6 +14,7 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
 @ToString
 public class Franchise {
     @Id
@@ -48,7 +51,14 @@ public class Franchise {
     @OneToOne
     private FranchiseOwner franchiseOwner;
 
+    @JoinColumn(name = "delivery_man_code")
+    @ManyToOne
+    private DeliveryDriver deliveryDriver;
+
     @ManyToOne
     @JoinColumn(name = "admin_code", referencedColumnName = "admin_code")
+    @ToString.Exclude
     private Admin admin;
+
+
 }

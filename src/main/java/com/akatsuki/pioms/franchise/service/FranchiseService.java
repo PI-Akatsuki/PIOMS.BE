@@ -1,6 +1,7 @@
 package com.akatsuki.pioms.franchise.service;
 
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
+import com.akatsuki.pioms.franchise.dto.FranchiseDTO;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -23,4 +24,7 @@ public interface FranchiseService {
     // 프랜차이즈 삭제
     ResponseEntity<String> deleteFranchise(int franchiseCode, int requestorAdminCode);
 
+    FranchiseDTO findFranchiseByFranchiseOwnerCode(int franchiseOwnerCode);
+
+    List<FranchiseDTO> findFranchiseListByDriverCode(int driverCode);
 }
