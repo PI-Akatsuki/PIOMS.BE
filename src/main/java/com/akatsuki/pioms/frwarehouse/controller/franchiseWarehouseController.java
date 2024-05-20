@@ -53,6 +53,7 @@ public class franchiseWarehouseController {
     public ResponseEntity<List<FranchiseWarehouse>> findAllFavorites() {
         List<FranchiseWarehouse> favorites = franchiseWarehouseService.findAllFavorites();
         return ResponseEntity.ok(favorites);
+    }
 
     @GetMapping("/{franchiseOwnerCode}/list")
     public ResponseEntity<List<FranchiseWarehouseDTO>> getFrWarehouseList(@PathVariable int franchiseOwnerCode){
