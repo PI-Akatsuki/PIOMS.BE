@@ -66,14 +66,14 @@ class FranchiseWarehouseServiceTest {
         categorySecond1.setCategorySecondName("Category Second 1");
         categorySecond1.setCategorySecondEnrollDate("2023-01-01");
         categorySecond1.setCategorySecondUpdateDate("2023-01-01");
-        categorySecond1.setCategoryFirstCode(categoryFirst1.getCategoryFirstCode());
+        categorySecond1.setCategoryFirst(categoryFirst1);
         categorySecondRepository.save(categorySecond1);
 
         CategorySecond categorySecond2 = new CategorySecond();
         categorySecond2.setCategorySecondName("Category Second 2");
         categorySecond2.setCategorySecondEnrollDate("2023-01-02");
         categorySecond2.setCategorySecondUpdateDate("2023-01-02");
-        categorySecond2.setCategoryFirstCode(categoryFirst2.getCategoryFirstCode());
+        categorySecond2.setCategoryFirst(categoryFirst2);
         categorySecondRepository.save(categorySecond2);
 
         // CategoryThird 엔티티 생성 및 저장
@@ -81,14 +81,14 @@ class FranchiseWarehouseServiceTest {
         categoryThird1.setCategoryThirdName("Category 1");
         categoryThird1.setCategoryThirdEnrollDate("2023-01-01");
         categoryThird1.setCategoryThirdUpdateDate("2023-01-01");
-        categoryThird1.setCategorySecondCode(categorySecond1.getCategorySecondCode());
+        categoryThird1.setCategorySecond(categorySecond1);
         categoryThirdRepository.save(categoryThird1);
 
         CategoryThird categoryThird2 = new CategoryThird();
         categoryThird2.setCategoryThirdName("Category 2");
         categoryThird2.setCategoryThirdEnrollDate("2023-01-02");
         categoryThird2.setCategoryThirdUpdateDate("2023-01-02");
-        categoryThird2.setCategorySecondCode(categorySecond2.getCategorySecondCode());
+        categoryThird2.setCategorySecond(categorySecond2);
         categoryThirdRepository.save(categoryThird2);
 
         // Product 엔티티 생성 및 저장
