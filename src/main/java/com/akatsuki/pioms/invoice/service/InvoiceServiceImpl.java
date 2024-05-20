@@ -65,10 +65,6 @@ public class InvoiceServiceImpl implements InvoiceService {
         return orderTime;
     }
 
-
-
-
-
     @Override
     public void afterAcceptOrder(OrderDTO orderDTO)
     {
@@ -223,16 +219,32 @@ public class InvoiceServiceImpl implements InvoiceService {
         return responseDriverInvoices;
     }
 
-    // 배송상태조회 - 배송기사코드와 담당지역의 배송상태에 따른 상세조회
+    // 배송상태조회 - 배송기사코드와 담당지역의 배송상태에 따른 상세조회 (배송전)
     @Override
     @Transactional(readOnly = true)
-    public List<ResponseDriverInvoice> getStatusDeliveryDriverInvoiceList(int driverCode) {
+    public List<ResponseDriverInvoice> getStatusBeforeDeliveryDriverInvoiceList(int driverCode) {
 
         List<ResponseDriverInvoice> responseDriverInvoices = getAllDriverInvoiceList(driverCode);
         List<ResponseDriverInvoice> returnList = new ArrayList<>();
         for (int i = 0; i < responseDriverInvoices.size(); i++) {
             ResponseDriverInvoice responseDriverInvoice = responseDriverInvoices.get(i);
             if (responseDriverInvoice.getDeliveryStatus() == DELIVERY_STATUS.배송전)
+                returnList.add(responseDriverInvoice);
+        }
+
+        return returnList;
+    }
+
+    // 배송상태조회 - 배송기사코드와 담당지역의 배송상태에 따른 상세조회 (배송중)
+    @Override
+    @Transactional(readOnly = true)
+    public List<ResponseDriverInvoice> getStatusIngDeliveryDriverInvoiceList(int driverCode) {
+
+        List<ResponseDriverInvoice> responseDriverInvoices = getAllDriverInvoiceList(driverCode);
+        List<ResponseDriverInvoice> returnList = new ArrayList<>();
+        for (int i = 0; i < responseDriverInvoices.size(); i++) {
+            ResponseDriverInvoice responseDriverInvoice = responseDriverInvoices.get(i);
+            if (responseDriverInvoice.getDeliveryStatus() == DELIVERY_STATUS.배송중)
                 returnList.add(responseDriverInvoice);
         }
 
