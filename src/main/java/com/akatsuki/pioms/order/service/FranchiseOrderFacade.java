@@ -53,9 +53,8 @@ public class FranchiseOrderFacade {
             return false;
         }
 
-        if(franchiseCode != order.getFranchiseCode() || order.getOrderCondition() == ORDER_CONDITION.검수대기
+        if(franchiseCode != order.getFranchiseCode() || order.getOrderCondition() != ORDER_CONDITION.검수대기
                 || !invoiceService.checkInvoiceStatus(order.getOrderCode())
-
         ){
             return false;
         }
@@ -67,13 +66,13 @@ public class FranchiseOrderFacade {
 //                //검수 결과 가맹 창고에 저장
                 franchiseWarehouseService.saveProduct(orderProduct.getProductCode(), changeVal, order.getFranchiseCode());
                 if(changeVal != requestVal){
-                    // 검수 수량 이상 있을 시 본사 창고에 잘못된 수량 업데이트~
+                    // 검수 수량 이상 있을 시 본사 창고에 잘못된 수량 업데이트
                     productService.editIncorrectCount(orderProduct.getProductCode(), requestVal-changeVal);
                 }
             }
         });
 //        // 가맹 창고 업데이트
-        franchiseWarehouseService.saveExchangeProduct(order.getExchange(), franchiseCode);
+//        franchiseWarehouseService.saveExchangeProduct(order.getExchange(), franchiseCode);
         return true;
     }
 }

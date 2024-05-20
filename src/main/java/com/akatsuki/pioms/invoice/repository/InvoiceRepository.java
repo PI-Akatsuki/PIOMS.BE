@@ -17,5 +17,4 @@ public interface InvoiceRepository extends JpaRepository<Invoice,Integer> {
 
     List<Invoice> findAllByOrderFranchiseFranchiseOwnerFranchiseOwnerCode(int franchiseOwnerCode);
 
-    List<Invoice> findByDeliveryRegion(int deliveryRegion);
 }

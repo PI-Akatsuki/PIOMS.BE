@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -171,5 +172,15 @@ public class FranchiseServiceImpl implements FranchiseService {
     public FranchiseDTO findFranchiseByFranchiseOwnerCode(int franchiseOwnerCode) {
         Franchise franchise = franchiseRepository.findByFranchiseOwnerFranchiseOwnerCode(franchiseOwnerCode);
         return new FranchiseDTO(franchise);
+    }
+
+    @Override
+    public List<FranchiseDTO> findFranchiseListByDriverCode(int driverCode) {
+        List<Franchise> franchises = franchiseRepository.findAllByDeliveryDriverDriverCode(driverCode);
+        List<FranchiseDTO> franchiseDTOS = new ArrayList<>();
+        for (int i = 0; i < franchises.size(); i++) {
+            franchiseDTOS.add(new FranchiseDTO(franchises.get(i)));
+        }
+        return franchiseDTOS;
     }
 }

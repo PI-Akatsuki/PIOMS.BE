@@ -41,17 +41,6 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
         this.franchiseService = franchiseService;
     }
 
-    @Override
-    @Transactional
-    public void saveExchangeProduct(ExchangeDTO exchange, int franchiseCode) {
-        if (exchange==null) return;
-        exchange.getExchangeProducts().forEach(
-                product -> {
-                    int productCode = product.getProductCode();
-                    int cnt = product.getExchangeProductNormalCount();
-                    saveProduct(productCode,cnt,franchiseCode);
-        });
-    }
     @Transactional
     @Override
     public void saveProduct(int productCode, int changeVal, int franchiseCode){

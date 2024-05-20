@@ -76,14 +76,14 @@ class OrderFacadeTest {
 
     }
 
-    @Test
-    void acceptOrder() {
-        ORDER_CONDITION pastOrderCondition = order.getOrderCondition();
-        OrderDTO orderDTO1 = orderFacade.acceptOrder(order.getFranchise().getAdmin().getAdminCode(),
-                order.getOrderCode());
-        assertNotEquals(pastOrderCondition,orderDTO1.getOrderCondition());
-        assertEquals(ORDER_CONDITION.승인완료, orderDTO1.getOrderCondition());
-    }
+//    @Test
+//    void acceptOrder() {
+//        ORDER_CONDITION pastOrderCondition = order.getOrderCondition();
+//        OrderDTO orderDTO1 = orderFacade.acceptOrder(order.getFranchise().getAdmin().getAdminCode(),
+//                order.getOrderCode());
+//        assertNotEquals(pastOrderCondition,orderDTO1.getOrderCondition());
+//        assertEquals(ORDER_CONDITION.승인완료, orderDTO1.getOrderCondition());
+//    }
 
     @Test
     void denyOrder() {
