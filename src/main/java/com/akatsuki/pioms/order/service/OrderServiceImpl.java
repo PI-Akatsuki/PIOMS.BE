@@ -26,12 +26,6 @@ public class OrderServiceImpl implements OrderService{
     OrderRepository orderRepository;
     OrderProductRepository orderProductRepository;
 
-
-//    ExchangeService exchangeService;
-//    ProductService productService;
-//    InvoiceService invoiceService;
-//    FranchiseWarehouseService franchiseWarehouseService;
-
     @Autowired
     public OrderServiceImpl(OrderRepository orderRepository, OrderProductRepository orderProductRepository) {
         this.orderRepository = orderRepository;
@@ -48,10 +42,8 @@ public class OrderServiceImpl implements OrderService{
             orderList = orderRepository.findAll();
         }else
             orderList = orderRepository.findAllByFranchiseAdminAdminCode(adminCode);
-
         if (orderList == null || orderList.isEmpty())
             return null;
-
         List<Order> orderDTOList = new ArrayList<>();
 
         orderDTOList.addAll(orderList);
@@ -207,10 +199,8 @@ public class OrderServiceImpl implements OrderService{
         }
         // 기존 주문서의 상품 리스트 삭제
         orderProductRepository.deleteAllByOrderOrderCode(order.getOrderCode());
-
         // 주문서 상태 업데이트
         order.setOrderCondition(ORDER_CONDITION.승인대기);
-
         // 새로운 상품 리스트 추가
         requestOrder.getProducts().forEach((productId, count) -> {
             OrderProduct newOrderProduct = new OrderProduct(count, 0, order, productId);
@@ -220,10 +210,7 @@ public class OrderServiceImpl implements OrderService{
         return true;
     }
 
-    @Override
-    public boolean putFranchiseOrderCheck(int franchiseCode, RequestPutOrderCheck requestPutOrder) {
-        return false;
-    }
+
 
     @Override
     public boolean findOrderByExchangeCode(int exchangeCode) {
@@ -233,11 +220,9 @@ public class OrderServiceImpl implements OrderService{
     @Override
     public OrderDTO addExchangeToOrder(ExchangeDTO exchange, int orderCode) {
         Order order = orderRepository.findById(orderCode).orElseThrow();
-        System.out.println("order = " + order);
         Exchange exchange1 = new Exchange();
         exchange1.setExchangeCode(exchange.getExchangeCode());
         order.setExchange(exchange1);
-        
         order = orderRepository.save(order);
         return new OrderDTO(order);
     }

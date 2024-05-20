@@ -50,7 +50,7 @@ public class AdminOrderController {
     @Operation(summary = "관리자가 관리하고 있는 모든 가맹점들의 발주 리스트를 조회합니다.")
     public ResponseEntity<List<OrderDTO>> getFranchisesOrderList(@PathVariable int adminCode ,
                                                                  @RequestParam(defaultValue = "0") int page,
-                                                                 @RequestParam(defaultValue = "3") int size ){
+                                                                 @RequestParam(defaultValue = "20") int size ){
         List<OrderDTO> orderDTOS = orderFacade.getOrderListByAdminCode(adminCode);
 
         if (orderDTOS.isEmpty()) {
