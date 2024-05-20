@@ -3,7 +3,6 @@ package com.akatsuki.pioms.invoice.aggregate;
 
 import com.akatsuki.pioms.invoice.dto.InvoiceDTO;
 import com.akatsuki.pioms.order.dto.OrderProductDTO;
-import com.akatsuki.pioms.product.dto.ProductDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -36,4 +35,5 @@ public class ResponseDriverInvoice {
         this.deliveryStatus= invoiceDTO.getDeliveryStatus();
         this.invoiceDate= invoiceDTO.getInvoiceDate();
     }
+
 }

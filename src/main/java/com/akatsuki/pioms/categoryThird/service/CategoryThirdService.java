@@ -13,8 +13,8 @@ public interface CategoryThirdService {
 
     ResponseEntity<String> postCategory(RequestCategoryThird request/*, int requesterAdminCode*/);
 
-    ResponseEntity<String> updateCategory(int categoryThirdCode, RequestCategoryThird request, int requesterAdminCode);
+    ResponseEntity<String> updateCategory(int categoryThirdCode, RequestCategoryThird request/*, int requesterAdminCode*/);
 
-    ResponseEntity<String> deleteCategoryThird(int categoryThirdCode, int requesterAdminCode);
+    ResponseEntity<String> deleteCategoryThird(int categoryThirdCode/*, int requesterAdminCode*/);
 
 }

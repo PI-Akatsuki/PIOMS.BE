@@ -1,5 +1,6 @@
 package com.akatsuki.pioms.invoice.service;
 
+
 import com.akatsuki.pioms.franchise.aggregate.DELIVERY_DATE;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import com.akatsuki.pioms.franchise.dto.FranchiseDTO;
@@ -15,17 +16,19 @@ import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 @Service
 @Log4j2
 public class InvoiceServiceImpl implements InvoiceService {
+
     final private InvoiceRepository invoiceRepository;
     final private FranchiseService franchiseService;
+
 
     @Autowired
     public InvoiceServiceImpl(InvoiceRepository invoiceRepository, FranchiseService franchiseService) {
@@ -180,11 +183,13 @@ public class InvoiceServiceImpl implements InvoiceService {
         return true;
     }
 
-    // 배송상태조회 - 배송기사코드로 담당 지역의 배송상태 전체조회
+    // 배송상태조회 - 배송기사코드로 담당지역의 배송상태 전체조회
     @Override
+    @Transactional(readOnly = true)
     public List<ResponseDriverInvoice> getAllDriverInvoiceList(int driverCode) {
 
         // 배송기사가 담당하고 있는 지역에 배송목록이 있는지 여부 확인
+
         List<FranchiseDTO> franchise = franchiseService.findFranchiseListByDriverCode(driverCode);
         // 배송기사 송장 목록
         List<Invoice> driverInvoiceList = new ArrayList<>();
@@ -209,5 +214,21 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 //        return responseDriverInvoices;
         return null;
+    }
+
+    // 배송상태조회 - 배송기사코드와 담당지역의 배송상태에 따른 상세조회
+    @Override
+    @Transactional(readOnly = true)
+    public List<ResponseDriverInvoice> getStatusDeliveryDriverInvoiceList(int driverCode) {
+
+        List<ResponseDriverInvoice> responseDriverInvoices = getAllDriverInvoiceList(driverCode);
+        List<ResponseDriverInvoice> returnList = new ArrayList<>();
+        for (int i = 0; i < responseDriverInvoices.size(); i++) {
+            ResponseDriverInvoice responseDriverInvoice = responseDriverInvoices.get(i);
+            if (responseDriverInvoice.getDeliveryStatus() == DELIVERY_STATUS.배송전)
+                returnList.add(responseDriverInvoice);
+        }
+
+        return returnList;
     }
 }
