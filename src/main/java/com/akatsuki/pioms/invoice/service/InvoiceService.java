@@ -1,10 +1,10 @@
 package com.akatsuki.pioms.invoice.service;
 
-import com.akatsuki.pioms.invoice.aggregate.Invoice;
 import com.akatsuki.pioms.invoice.aggregate.ResponseDriverInvoice;
 import com.akatsuki.pioms.invoice.dto.InvoiceDTO;
 import com.akatsuki.pioms.invoice.aggregate.DELIVERY_STATUS;
 import com.akatsuki.pioms.order.dto.OrderDTO;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -50,5 +50,13 @@ public interface InvoiceService {
     List<ResponseDriverInvoice> getAllDriverInvoiceList(int driverCode);
 
     // 배송상태조회 - 배송기사코드와 담당지역의 배송상태에 따른 상세조회
-    List<ResponseDriverInvoice> getStatusDeliveryDriverInvoiceList(int driverCode);
+    List<ResponseDriverInvoice> getStatusBeforeDeliveryDriverInvoiceList(int driverCode);
+
+    // 배송상태조회 - 배송기사코드와 담당지역의 배송상태에 따른 상세조회 (배송중)
+    @Transactional(readOnly = true)
+    List<ResponseDriverInvoice> getStatusIngDeliveryDriverInvoiceList(int driverCode);
+
+    // 배송상태조회 - 배송기사코드와 담당지역의 배송상태에 따른 상세조회 (배송완료)
+    @Transactional(readOnly = true)
+    List<ResponseDriverInvoice> getStatusCompleteDeliveryDriverInvoiceList(int driverCode);
 }
