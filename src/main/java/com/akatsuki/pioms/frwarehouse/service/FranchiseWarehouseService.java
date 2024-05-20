@@ -22,6 +22,10 @@ public interface FranchiseWarehouseService {
 
     ResponseEntity<String> updateWarehouseCount(int franchiseWarehouseCode, RequestFranchiseWarehouseUpdate request, int requesterAdminCode);
 
+    void toggleFavorite(int franchiseWarehouseCode);
+
+    List<FranchiseWarehouse> findAllFavorites();
+
     List<FranchiseWarehouseDTO> getFrWarehouseList(int franchiseOwnerCode);
 
     void saveProductWhenDeleteExchange(int productCode, int exchangeProductCount, int franchiseCode);
