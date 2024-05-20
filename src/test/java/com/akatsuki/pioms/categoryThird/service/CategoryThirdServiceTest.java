@@ -89,4 +89,10 @@ class CategoryThirdServiceTest {
         assertNotNull(updateCategory);
         assertEquals("카테고리(소) 수정 완료!", updateCategory.getBody());
     }
+
+    @Test
+    void deleteCategoryThird() {
+        int categoryThirdCode = 172;
+
+    }
 }

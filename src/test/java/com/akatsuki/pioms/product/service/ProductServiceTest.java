@@ -9,6 +9,7 @@ import com.akatsuki.pioms.product.etc.PRODUCT_GENDER;
 import com.akatsuki.pioms.product.etc.PRODUCT_STATUS;
 import com.akatsuki.pioms.product.repository.ProductRepository;
 import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -74,6 +75,31 @@ class ProductServiceTest {
 
     }
 
+    @Test
+    @DisplayName("상품 수정")
+    void updateProduct() {
+        RequestProduct requestProduct = new RequestProduct();
+        requestProduct.setProductCode(1);
+        requestProduct.setProductName("testxx");
+        requestProduct.setProductPrice(100000000);
+        requestProduct.setProductContent("tttttttt");
+        requestProduct.setProductColor(PRODUCT_COLOR.valueOf("노란색"));
+        requestProduct.setProductSize(144);
+        requestProduct.setProductGender(PRODUCT_GENDER.valueOf("여성의류"));
+        requestProduct.setProductTotalCount(12123);
+        requestProduct.setProductStatus(PRODUCT_STATUS.valueOf("공급가능"));
+        requestProduct.setProductExposureStatus(true);
+        requestProduct.setProductNoticeCount(222);
+        requestProduct.setProductDisCount(1512);
+        requestProduct.setProductCount(214);
+        requestProduct.setCategoryThirdCode(1);
+
+        ResponseEntity<String> updateProduct = productService.updateProduct(1,requestProduct,1);
+        System.out.println("updateProduct = " + updateProduct);
+
+        assertNotNull(updateProduct);
+        assertEquals("상품 수정 완료!",updateProduct.getBody());
+    }
 
 
     @Test
