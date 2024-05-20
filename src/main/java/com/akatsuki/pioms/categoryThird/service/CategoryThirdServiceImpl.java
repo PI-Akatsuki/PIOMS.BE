@@ -68,27 +68,30 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
 
     @Override
     @Transactional
-    public ResponseEntity<String> postCategory(RequestCategoryThird request/*, int requesterAdminCode*/) {
-//        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
-//        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
-//            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
-//        }
+    public ResponseEntity<String> postCategory(RequestCategoryThird request, int requesterAdminCode) {
+        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
+        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
+            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
+        }
 
         CategoryThird categoryThird = new CategoryThird();
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formattedDateTime = LocalDateTime.now().format(formatter);
 
-        List<CategorySecond> categorySecond = categorySecondRepository.findByCategorySecondCode(request.getCategorySecondCode());
+        List<CategorySecond> categorySecondList = categorySecondRepository.findByCategorySecondCode(request.getCategorySecondCode());
 
-        if(categorySecond == null) {
+        if(categorySecondList == null) {
             return ResponseEntity.badRequest().body("해당 카테고리(중)이 존재하지 않습니다. 다시 확인해주세요.");
         }
 
-        categoryThird.setCategorySecondCode(request.getCategorySecondCode());
+        CategorySecond categorySecond = new CategorySecond();
+        categorySecond.setCategorySecondCode(request.getCategorySecondCode());
+        categoryThird.setCategorySecond(categorySecond);
 
         categoryThird.setCategoryThirdName(request.getCategoryThirdName());
         categoryThird.setCategoryThirdEnrollDate(formattedDateTime);
+        categoryThird.setCategoryThirdUpdateDate(formattedDateTime);
 
         CategoryThird savedCategoryThird = categoryThirdRepository.save(categoryThird);
         System.out.println("savedCategoryThird = " + savedCategoryThird);
@@ -137,7 +140,6 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
             return ResponseEntity.badRequest().body(categoryThirdCode + "번 카테고리(소) 카테고리가 없습니다!");
         }
 
-        // Check if there are any products associated with this categoryThirdCode
         List<Product> products = productRepository.findByCategoryThird_CategoryThirdCode(categoryThirdCode);
         if (!products.isEmpty()) {
             return ResponseEntity.badRequest().body("상품이 존재하는 해당 " + categoryThirdCode + "번 카테고리(소) 카테고리는 삭제할 수 없습니다!");
@@ -146,7 +148,17 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
         categoryThird.setCategoryThirdDeleteDate(formattedDateTime);
         categoryThirdRepository.delete(categoryThird);
         logService.saveLog("root", LogStatus.삭제,categoryThird.getCategoryThirdName(),"CategoryThird");
-        return ResponseEntity.badRequest().body(categoryThirdCode + "번의 해당 카테고리(소) 카테고리가 성공적으로 삭제되었습니다!");
+        return ResponseEntity.badRequest().body("해당 카테고리(소) 카테고리가 성공적으로 삭제되었습니다!");
+    }
+
+    @Override
+    public List<ResponseCategoryThird> getCategoryThirdInSecond(int categorySecondCode) {
+        List<CategoryThird> categoryThirdList = categoryThirdRepository.findAllByCategorySecondCategorySecondCode(categorySecondCode);
+        List<ResponseCategoryThird> responseCategoryThirds = new ArrayList<>();
+        categoryThirdList.forEach(categoryThird -> {
+            responseCategoryThirds.add(new ResponseCategoryThird(categoryThird));
+        });
+        return responseCategoryThirds;
     }
 
 }

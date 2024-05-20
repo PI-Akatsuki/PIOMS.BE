@@ -6,8 +6,6 @@ import com.akatsuki.pioms.product.etc.PRODUCT_GENDER;
 import com.akatsuki.pioms.product.etc.PRODUCT_STATUS;
 import lombok.*;
 
-import java.util.Date;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
@@ -66,7 +64,7 @@ public class ResponseProduct {
         this.productNoticeCount = productDTO.getProductNoticeCount();
         this.productDisCount = productDTO.getProductDiscount();
         this.productCount = productDTO.getProductCount();
-        this.categoryThirdCode = productDTO.getCategoryThird().getCategoryThirdCode();
+        this.categoryThirdCode = productDTO.getCategoryThirdCode();
     }
 
     public ResponseProduct(int productCode, String productName, int productPrice, String productEnrollDate, String productContent, PRODUCT_COLOR productColor, int productSize, PRODUCT_GENDER productGender, int productTotalCount, PRODUCT_STATUS productStatus, boolean productExposureStatus, int productNoticeCount, int productDiscount, int productCount) {

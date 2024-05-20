@@ -12,6 +12,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,11 +29,21 @@ class CategoryFirstServiceTest {
     @Autowired
     private CategoryFirstRepository categoryFirstRepository;
 
+    private CategoryFirst categoryFirst;
+    private Admin admin;
+
     static RequestCategoryFirst request;
+
 
     @BeforeEach
     void init() {
-        request = new RequestCategoryFirst("테스트");
+        categoryFirst = new CategoryFirst();
+        categoryFirst.setCategoryFirstCode(10);
+        categoryFirst.setCategoryFirstName("test");
+        categoryFirst.setCategoryFirstEnrollDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        categoryFirst.setCategoryFirstUpdateDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+
+        categoryFirstRepository.save(categoryFirst);
     }
 
     @Test
@@ -40,7 +53,7 @@ class CategoryFirstServiceTest {
         List<CategoryFirstDTO> categoryFirstDTOS = categoryFirstService.getAllCategoryFirst();
 
         assertEquals(categoryFirstList.size(), categoryFirstDTOS.size());
-
+        System.out.println();
     }
 
     @Test
@@ -52,4 +65,32 @@ class CategoryFirstServiceTest {
         assertEquals(categoryFirstList.size(), categoryFirstDTOS.size());
     }
 
+    @Test
+    @DisplayName("카테고리(대) 신규 등록")
+    void postCategoryFirst() {
+        RequestCategoryFirst requestCategory = new RequestCategoryFirst();
+        requestCategory.setCategoryFirstCode(20);
+        requestCategory.setCategoryFirstName("test");
+
+        ResponseEntity<String> postCategory = categoryFirstService.postCategoryFirst(requestCategory, 1);
+        System.out.println("postCategory = " + postCategory);
+
+        assertNotNull(postCategory);
+        assertEquals("카테고리(대) 생성 완료!", postCategory.getBody());
+    }
+
+    @Test
+    @DisplayName("카테고리(대) 수정")
+    void updateCategoryFirst() {
+
+        RequestCategoryFirst requestCategory = new RequestCategoryFirst();
+        requestCategory.setCategoryFirstName("test22");
+
+        ResponseEntity<String> updateCategory = categoryFirstService.updateCategoryFirst(1, requestCategory,1);
+        System.out.println("updateCategory = " + updateCategory);
+
+        assertNotNull(updateCategory);
+        assertEquals("카테고리(대) 수정 완료!", updateCategory.getBody());
+
+    }
 }

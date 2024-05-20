@@ -4,9 +4,11 @@ import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import com.akatsuki.pioms.exchange.service.ExchangeService;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import com.akatsuki.pioms.franchise.service.FranchiseService;
+import com.akatsuki.pioms.frwarehouse.service.FranchiseWarehouseService;
 import com.akatsuki.pioms.invoice.service.InvoiceService;
 import com.akatsuki.pioms.order.aggregate.Order;
 import com.akatsuki.pioms.order.aggregate.RequestOrderVO;
+import com.akatsuki.pioms.order.aggregate.RequestPutOrderCheck;
 import com.akatsuki.pioms.order.dto.OrderDTO;
 import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
 import com.akatsuki.pioms.product.service.ProductService;
@@ -19,25 +21,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class OrderFacade {
+public class AdminOrderFacade {
     OrderService orderService;
     InvoiceService invoiceService;
     SpecsService specsService;
     ExchangeService exchangeService;
     ProductService productService;
     FranchiseService franchiseService;
-
-    ApplicationEventPublisher publisher;
+    FranchiseWarehouseService franchiseWarehouseService;
 
     @Autowired
-    public OrderFacade(OrderService orderService, InvoiceService invoiceService, SpecsService specsService, ExchangeService exchangeService, ProductService productService, FranchiseService franchiseService, ApplicationEventPublisher publisher) {
+    public AdminOrderFacade(OrderService orderService, InvoiceService invoiceService, SpecsService specsService, ExchangeService exchangeService, ProductService productService, FranchiseService franchiseService, FranchiseWarehouseService franchiseWarehouseService) {
         this.orderService = orderService;
         this.invoiceService = invoiceService;
         this.specsService = specsService;
         this.exchangeService = exchangeService;
         this.productService = productService;
         this.franchiseService = franchiseService;
-        this.publisher = publisher;
+        this.franchiseWarehouseService =franchiseWarehouseService;
     }
 
     public List<OrderDTO> getOrderListByAdminCode(int adminCode){
@@ -48,23 +49,24 @@ public class OrderFacade {
         });
         return orderDTOS;
     }
-
     public List<OrderDTO> getAdminUncheckedOrders(int adminCode){
         return orderService.getAdminUncheckesOrders(adminCode);
     }
-
     public OrderDTO getAdminOrder(int adminCode, int orderCode){
         return orderService.getAdminOrder(adminCode,orderCode);
     }
 
     public OrderDTO acceptOrder(int adminCode, int orderCode){
         OrderDTO order = orderService.getAdminOrder(adminCode,orderCode);
+
         if (order==null || order.getOrderCondition() != ORDER_CONDITION.승인대기 ||!orderService.checkProductCnt(order)){
             // null인지 검사
             // 주문 상태가 승인 대기인지 검사
             // 해당 상품의 수량이 본사 재고를 초과하는지 검사
             return null;
         }
+
+
 
         ExchangeDTO exchange =  exchangeService.findExchangeToSend(order.getFranchiseCode());
 
@@ -76,12 +78,13 @@ public class OrderFacade {
             }
         }
         productService.exportProducts(order);
-        Order orderEntity = orderService.acceptOrder(adminCode,orderCode, exchange);
 
+        order = orderService.acceptOrder(adminCode,orderCode, exchange);
+        System.out.println("order = " + order);
         specsService.afterAcceptOrder(orderCode, order.getFranchiseCode(), order.getDeliveryDate());
         invoiceService.afterAcceptOrder(order);
 
-        return new OrderDTO(orderEntity);
+        return order;
     }
 
     public OrderDTO denyOrder(int adminCode,int orderId, String denyMessage){
@@ -89,12 +92,4 @@ public class OrderFacade {
 
     }
 
-    public OrderDTO postFranchiseOrder(int franchiseCode, RequestOrderVO orders) {
-        Franchise franchise = franchiseService.findFranchiseById(franchiseCode).orElseThrow();
-        return orderService.postFranchiseOrder(franchise,orders);
-    }
-
-    public List<OrderDTO> getOrderListByFranchiseCode(int franchiseCode) {
-        return orderService.getOrderList(franchiseCode);
-    }
 }

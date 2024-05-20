@@ -40,8 +40,6 @@ public class Order {
     @Column(name = "request_reason")
     private String orderReason;
 
-    @Column(name = "request_status")
-    private boolean orderStatus;
 
     @JoinColumn(name = "franchise_code")
     @ManyToOne
@@ -51,14 +49,12 @@ public class Order {
     @OneToOne
     private Exchange exchange;
 
-    @OneToMany(mappedBy = "order")
-    @ToString.Exclude
+    @OneToMany(mappedBy = "order" , cascade = CascadeType.PERSIST)
     private List<OrderProduct> orderProductList;
 
     public Order(ORDER_CONDITION orderCondition, boolean orderStatus, Franchise franchise) {
         this.orderDate = LocalDateTime.now();
         this.orderCondition = orderCondition;
-        this.orderStatus = orderStatus;
         this.franchise = franchise;
     }
 
@@ -69,7 +65,6 @@ public class Order {
         this.orderTotalPrice= orderDTO.getOrderTotalPrice();
         this.orderCondition= orderDTO.getOrderCondition();
         this.orderReason= orderDTO.getOrderReason();
-        this.orderStatus= orderDTO.isOrderStatus();
         Franchise franchise1 = new Franchise();
         franchise1.setFranchiseCode(orderDTO.getFranchiseCode());
         franchise1.setFranchiseName(orderDTO.getFranchiseName());
@@ -87,6 +82,6 @@ public class Order {
             exchange1.setExchangeCode(orderDTO.getExchange().getExchangeCode());
             this.exchange = exchange1;
         }
-//        this.orderProductList= orderDTO.;
+
     }
 }

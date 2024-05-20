@@ -14,7 +14,6 @@ import java.util.Date;
 @Table(name="product")
 @Setter
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
 @ToString
 public class Product {
@@ -89,6 +88,15 @@ public class Product {
         this.productNoticeCount= product.getProductNoticeCount();
         this.productDiscount= product.getProductDiscount();
         this.productCount= product.getProductCount();
-        this.categoryThird= product.getCategoryThird();
     }
+
+    public Product(int categoryThirdCode) {
+        this.categoryThird = new CategoryThird(categoryThirdCode);
+    }
+
+    public Product() {
+        this.categoryThird = new CategoryThird();
+    }
+
+
 }

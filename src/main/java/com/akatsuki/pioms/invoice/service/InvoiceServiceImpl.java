@@ -1,8 +1,10 @@
 package com.akatsuki.pioms.invoice.service;
 
-import com.akatsuki.pioms.driver.aggregate.DeliveryRegion;
-import com.akatsuki.pioms.driver.service.DeliveryService;
+
 import com.akatsuki.pioms.franchise.aggregate.DELIVERY_DATE;
+import com.akatsuki.pioms.franchise.aggregate.Franchise;
+import com.akatsuki.pioms.franchise.dto.FranchiseDTO;
+import com.akatsuki.pioms.franchise.service.FranchiseService;
 import com.akatsuki.pioms.invoice.aggregate.Invoice;
 import com.akatsuki.pioms.invoice.aggregate.ResponseDriverInvoice;
 import com.akatsuki.pioms.invoice.dto.InvoiceDTO;
@@ -10,6 +12,7 @@ import com.akatsuki.pioms.invoice.aggregate.DELIVERY_STATUS;
 import com.akatsuki.pioms.invoice.repository.InvoiceRepository;
 import com.akatsuki.pioms.order.aggregate.Order;
 import com.akatsuki.pioms.order.dto.OrderDTO;
+import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,15 +25,15 @@ import java.util.List;
 @Service
 @Log4j2
 public class InvoiceServiceImpl implements InvoiceService {
-    private final InvoiceRepository invoiceRepository;
-    private final DeliveryService deliveryService;
-    private final DeliveryService deliveryRegionService;
+
+    final private InvoiceRepository invoiceRepository;
+    final private FranchiseService franchiseService;
+
 
     @Autowired
-    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, DeliveryService deliveryService, DeliveryService deliveryRegionService) {
+    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, FranchiseService franchiseService) {
         this.invoiceRepository = invoiceRepository;
-        this.deliveryService = deliveryService;
-        this.deliveryRegionService = deliveryRegionService;
+        this.franchiseService = franchiseService;
     }
 
 
@@ -73,8 +76,6 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoice.setOrder(order);
         invoice.setDeliveryStatus(DELIVERY_STATUS.배송전);
 
-        int deliveryRegionCode = deliveryService.getDeliveryRegionCodeByFranchiseCode(orderDTO.getFranchiseCode());
-        invoice.setDeliveryRegion(deliveryRegionCode);
         invoice.setInvoiceDate(setDeliveryTime(order.getOrderDate(), orderDTO.getDeliveryDate()));
         invoiceRepository.save(invoice);
     }
@@ -148,10 +149,8 @@ public class InvoiceServiceImpl implements InvoiceService {
         if ( invoice.getOrder().getFranchise().getAdmin().getAdminCode() != adminCode && adminCode!=1){
             return null;
         }
-
         invoice.setDeliveryStatus(invoiceStatus);
         invoiceRepository.save(invoice);
-
         return new InvoiceDTO(invoice);
     }
 
@@ -159,7 +158,6 @@ public class InvoiceServiceImpl implements InvoiceService {
     public Boolean checkInvoiceStatus(int orderCode){
         Invoice invoice = invoiceRepository.findByOrderOrderCode(orderCode);
         if (invoice.getDeliveryStatus() == DELIVERY_STATUS.배송완료){
-            System.out.println("invoice = " + invoice.getDeliveryStatus());
             return true;
         }
         return false;
@@ -191,19 +189,17 @@ public class InvoiceServiceImpl implements InvoiceService {
     public List<ResponseDriverInvoice> getAllDriverInvoiceList(int driverCode) {
 
         // 배송기사가 담당하고 있는 지역에 배송목록이 있는지 여부 확인
-        List<DeliveryRegion> deliveryRegion = deliveryRegionService.findAllByDeliveryDriverDriverCode(driverCode);
-        if (deliveryRegion == null || deliveryRegion.isEmpty())
-            return null;
 
-        // 배송기사 송장 목록 담을 리스트
+        List<FranchiseDTO> franchise = franchiseService.findFranchiseListByDriverCode(driverCode);
+        // 배송기사 송장 목록
         List<Invoice> driverInvoiceList = new ArrayList<>();
 
         // 배송기사 코드로 송장 목록을 가져와 그 갯수만큼 추가
-        for (int i = 0; i < deliveryRegion.size(); i++) {
-            List<Invoice> invoices = invoiceRepository.findByDeliveryRegion(deliveryRegion.get(i).getDeliveryRegionCode());
-            if (invoices != null && !invoices.isEmpty())
-                driverInvoiceList.addAll(invoices);
-        }
+//        for (int i = 0; i < deliveryRegion.size(); i++) {
+//            List<Invoice> invoices = invoiceRepository.findByDeliveryRegion(deliveryRegion.get(i).getDeliveryRegionCode());
+//            if (invoices != null && !invoices.isEmpty())
+//                driverInvoiceList.addAll(invoices);
+//        }
 
         // 배송기사의 배송(송장) 리스트 조회
         List<ResponseDriverInvoice> responseDriverInvoices = new ArrayList<>();
@@ -216,7 +212,8 @@ public class InvoiceServiceImpl implements InvoiceService {
                 }
         );
 
-        return responseDriverInvoices;
+//        return responseDriverInvoices;
+        return null;
     }
 
     // 배송상태조회 - 배송기사코드와 담당지역의 배송상태에 따른 상세조회 (배송전)

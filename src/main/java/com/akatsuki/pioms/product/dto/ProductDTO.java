@@ -6,14 +6,13 @@ import com.akatsuki.pioms.product.aggregate.Product;
 import com.akatsuki.pioms.product.etc.PRODUCT_COLOR;
 import com.akatsuki.pioms.product.etc.PRODUCT_GENDER;
 import com.akatsuki.pioms.product.etc.PRODUCT_STATUS;
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
+@Setter
 public class ProductDTO {
     private int productCode;
     private String productName;
@@ -30,7 +29,7 @@ public class ProductDTO {
     private int productNoticeCount;
     private int productDiscount;
     private int productCount;
-    private CategoryThird categoryThird;
+    private int categoryThirdCode;
 
 
     public ProductDTO(Product product) {
@@ -50,6 +49,7 @@ public class ProductDTO {
         this.productNoticeCount = product.getProductNoticeCount();
         this.productDiscount = product.getProductDiscount();
         this.productCount = product.getProductCount();
+        this.categoryThirdCode = product.getCategoryThird().getCategoryThirdCode();
         //
     }
 }

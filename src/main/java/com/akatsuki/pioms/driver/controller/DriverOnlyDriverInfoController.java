@@ -1,9 +1,7 @@
 package com.akatsuki.pioms.driver.controller;
 
 import com.akatsuki.pioms.driver.aggregate.DeliveryDriver;
-import com.akatsuki.pioms.driver.aggregate.DeliveryRegion;
 import com.akatsuki.pioms.driver.service.DeliveryDriverService;
-import com.akatsuki.pioms.driver.service.DeliveryService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,12 +15,10 @@ import java.util.Optional;
 public class DriverOnlyDriverInfoController {
 
     private final DeliveryDriverService deliveryDriverService;
-    private final   DeliveryService deliveryService;
 
     @Autowired
-    public DriverOnlyDriverInfoController(DeliveryDriverService deliveryDriverService, DeliveryService deliveryService) {
+    public DriverOnlyDriverInfoController(DeliveryDriverService deliveryDriverService) {
         this.deliveryDriverService = deliveryDriverService;
-        this.deliveryService = deliveryService;
     }
 
 

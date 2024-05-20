@@ -2,6 +2,7 @@ package com.akatsuki.pioms.franchise.aggregate;
 
 import com.akatsuki.pioms.admin.aggregate.Admin;
 
+import com.akatsuki.pioms.driver.aggregate.DeliveryDriver;
 import com.akatsuki.pioms.franchise.dto.FranchiseDTO;
 import com.akatsuki.pioms.frowner.aggregate.FranchiseOwner;
 import jakarta.persistence.*;
@@ -49,6 +50,10 @@ public class Franchise {
     @JoinColumn(name = "franchise_owner_code")
     @OneToOne
     private FranchiseOwner franchiseOwner;
+
+    @JoinColumn(name = "delivery_man_code")
+    @ManyToOne
+    private DeliveryDriver deliveryDriver;
 
     @ManyToOne
     @JoinColumn(name = "admin_code", referencedColumnName = "admin_code")

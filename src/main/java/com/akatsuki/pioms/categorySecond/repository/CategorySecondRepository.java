@@ -10,4 +10,6 @@ import java.util.List;
 public interface CategorySecondRepository extends JpaRepository<CategorySecond, Integer> {
 
     List<CategorySecond> findByCategorySecondCode(int categorySecondCode);
+
+    List<CategorySecond> findAllByCategoryFirstCategoryFirstCode(int categoryFirstCode);
 }
