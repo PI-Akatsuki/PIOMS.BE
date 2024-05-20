@@ -1,12 +1,10 @@
 package com.akatsuki.pioms.categoryThird.service;
 
-import com.akatsuki.pioms.categorySecond.aggregate.CategorySecond;
 import com.akatsuki.pioms.categoryThird.aggregate.CategoryThird;
 import com.akatsuki.pioms.categoryThird.aggregate.RequestCategoryThird;
 import com.akatsuki.pioms.categoryThird.aggregate.ResponseCategoryThird;
 import com.akatsuki.pioms.categoryThird.dto.CategoryThirdDTO;
 import com.akatsuki.pioms.categoryThird.repository.CategoryThirdRepository;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @Transactional

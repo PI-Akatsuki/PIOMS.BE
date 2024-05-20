@@ -14,4 +14,6 @@ public interface FranchiseWarehouseRepository extends JpaRepository<FranchiseWar
     FranchiseWarehouse findByProductProductCode(int productCode);
 
     List<FranchiseWarehouse> findAllByFranchiseCode(int franchiseCode);
+
+    List<FranchiseWarehouse> findByFranchiseWarehouseCode(int franchiseWarehouseCode);
 }
