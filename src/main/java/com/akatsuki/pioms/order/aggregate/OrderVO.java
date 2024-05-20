@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Getter
 @ToString
@@ -34,9 +35,13 @@ public class OrderVO {
 
     public OrderVO(OrderDTO order) {
         this.orderCode= order.getOrderCode();
-        this.orderDate = order.getOrderDate();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String formattedDateTime = order.getOrderDate().format(formatter);
+        this.orderDate = LocalDateTime.parse(formattedDateTime, formatter);
+
         this.orderTotalPrice = order.getOrderTotalPrice();
         this.orderCondition = order.getOrderCondition();
+
         this.orderReason = order.getOrderReason();
         this.franchiseCode = order.getFranchiseCode();
         this.franchiseName = order.getFranchiseName();
