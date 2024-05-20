@@ -139,6 +139,7 @@ public class AdminInfoServiceImpl implements AdminInfoService {
     @Transactional
     public ResponseEntity<String> updateAdminInfo(int adminCode, AdminDTO updatedAdminDTO) {
         Admin admin = adminRepository.findById(adminCode).orElse(null);
+
         if (admin != null) {
             if (admin.getFranchise() != null && admin.getFranchise().size() > 6) {
                 return ResponseEntity.badRequest().body("관리자는 최대 6개의 가맹점만 등록할 수 있습니다.");
@@ -150,6 +151,7 @@ public class AdminInfoServiceImpl implements AdminInfoService {
                     .adminRole(admin.getAdminRole())
                     .adminStatus(admin.isAdminStatus())
                     .enrollDate(admin.getEnrollDate())
+                    .accessNumber(admin.getAccessNumber())
                     .deleteDate(admin.getDeleteDate());
 
             StringBuilder changes = new StringBuilder();

@@ -2,6 +2,7 @@ package com.akatsuki.pioms.franchise.dto;
 
 import com.akatsuki.pioms.admin.aggregate.Admin;
 import com.akatsuki.pioms.admin.dto.AdminDTO;
+import com.akatsuki.pioms.driver.aggregate.DeliveryDriver;
 import com.akatsuki.pioms.franchise.aggregate.DELIVERY_DATE;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import com.akatsuki.pioms.frowner.aggregate.FranchiseOwner;
@@ -27,6 +28,7 @@ public class FranchiseDTO {
     private String franchiseBusinessNum;
     private DELIVERY_DATE franchiseDeliveryDate;
     private FranchiseOwnerDTO franchiseOwner;
+    private DeliveryDriver deliveryDriver;
 
     private int adminCode;
     private String adminName;
@@ -46,5 +48,6 @@ public class FranchiseDTO {
 //        this.admin = new AdminDTO(franchise.getAdmin());
         this.adminCode = franchise.getAdmin().getAdminCode();
         this.adminName = franchise.getAdmin().getAdminName();
+        this.deliveryDriver = franchise.getDeliveryDriver();
     }
 }

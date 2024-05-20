@@ -1,6 +1,5 @@
 package com.akatsuki.pioms.invoice.dto;
 
-import com.akatsuki.pioms.driver.dto.DeliveryRegionDTO;
 import com.akatsuki.pioms.invoice.aggregate.Invoice;
 import com.akatsuki.pioms.invoice.aggregate.DELIVERY_STATUS;
 import com.akatsuki.pioms.order.dto.OrderDTO;
@@ -26,7 +25,6 @@ public class InvoiceDTO {
         this.invoiceCode = invoice.getInvoiceCode();
         this.deliveryStatus = invoice.getDeliveryStatus();
         this.invoiceDate = invoice.getInvoiceDate();
-        this.deliveryRegionCode = invoice.getDeliveryRegion();
 //        this.deliveryRegionDTO = new DeliveryRegionDTO(invoice.getDeliveryRegion());
         this.order = new OrderDTO(invoice.getOrder());
 

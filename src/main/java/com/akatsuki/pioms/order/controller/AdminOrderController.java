@@ -1,7 +1,8 @@
 package com.akatsuki.pioms.order.controller;
 
+import com.akatsuki.pioms.config.Pagination;
 import com.akatsuki.pioms.order.dto.OrderDTO;
-import com.akatsuki.pioms.order.service.OrderFacade;
+import com.akatsuki.pioms.order.service.AdminOrderFacade;
 import com.akatsuki.pioms.order.aggregate.OrderListVO;
 import com.akatsuki.pioms.order.aggregate.OrderVO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,34 +39,42 @@ import java.util.List;
 @RequestMapping("/admin")
 @Tag(name = "Admin Order API" ,description = "관리자 관련 API 명세서입니다.")
 public class AdminOrderController {
-    OrderFacade orderFacade;
+    AdminOrderFacade orderFacade;
 
     @Autowired
-    public AdminOrderController(OrderFacade orderFacade) {
+    public AdminOrderController(AdminOrderFacade orderFacade) {
         this.orderFacade = orderFacade;
     }
 
     @GetMapping("/{adminCode}/orders")
     @Operation(summary = "관리자가 관리하고 있는 모든 가맹점들의 발주 리스트를 조회합니다.")
-    public ResponseEntity<List<OrderDTO>> getFranchisesOrderList(@PathVariable int adminCode){
-        List<OrderDTO> orderListVO = orderFacade.getOrderListByAdminCode(adminCode);
+    public ResponseEntity<List<OrderDTO>> getFranchisesOrderList(@PathVariable int adminCode ,
+                                                                 @RequestParam(defaultValue = "0") int page,
+                                                                 @RequestParam(defaultValue = "3") int size ){
+        List<OrderDTO> orderDTOS = orderFacade.getOrderListByAdminCode(adminCode);
 
-        if (orderListVO.isEmpty())
+        if (orderDTOS.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
 
-        return ResponseEntity.ok().body(orderListVO);
+        orderDTOS = Pagination.splitPage(orderDTOS, page, size);
+
+        return ResponseEntity.ok().body(orderDTOS);
     }
     /**
      * <h2>모든 가맹점 승인대기 발주 목록 조회</h2>
      * */
     @GetMapping("/{adminCode}/unchecked-orders")
     @Operation(summary = "관리자가 관리하는 모든 가맹점들 중 승인 하지 않은 발주 리스틀 조회합니다.")
-    public ResponseEntity<OrderListVO> getFranchisesUncheckedOrderList(@PathVariable int adminCode){
+    public ResponseEntity<OrderListVO> getFranchisesUncheckedOrderList(@PathVariable int adminCode,
+                                                                       @RequestParam(defaultValue = "0") int page,
+                                                                       @RequestParam(defaultValue = "3") int size ){
         List<OrderDTO> orderDTO = orderFacade.getAdminUncheckedOrders(adminCode);
 
         if (orderDTO == null)
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 
+        orderDTO = Pagination.splitPage(orderDTO,page,size);
         return ResponseEntity.ok().body(new OrderListVO(orderDTO));
     }
 
@@ -98,4 +107,7 @@ public class AdminOrderController {
         }
         return ResponseEntity.ok(new OrderVO(orderDTO));
     }
+
+
+
 }
