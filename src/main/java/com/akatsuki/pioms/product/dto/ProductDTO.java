@@ -33,7 +33,6 @@ public class ProductDTO {
 
 
     public ProductDTO(Product product) {
-        System.out.println("product = " + product);
         this.productCode = product.getProductCode();
         this.productName = product.getProductName();
         this.productPrice = product.getProductPrice();

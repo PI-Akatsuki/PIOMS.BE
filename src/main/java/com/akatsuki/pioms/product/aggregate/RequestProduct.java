@@ -30,7 +30,4 @@ public class RequestProduct {
     private int productCount;
     private int categoryThirdCode;
 
-    public RequestProduct(List<ResponseProduct> responseProductList) {
-
-    }
 }

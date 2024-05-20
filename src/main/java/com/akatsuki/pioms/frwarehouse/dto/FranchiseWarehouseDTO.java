@@ -1,4 +1,4 @@
-package com.akatsuki.pioms.frwarehouse.service;
+package com.akatsuki.pioms.frwarehouse.dto;
 
 import com.akatsuki.pioms.frwarehouse.aggregate.FranchiseWarehouse;
 import com.akatsuki.pioms.product.aggregate.Product;
@@ -6,13 +6,12 @@ import com.akatsuki.pioms.product.dto.ProductDTO;
 import jakarta.persistence.Column;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 
 @Getter
+@Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class FranchiseWarehouseDTO {
@@ -25,6 +24,7 @@ public class FranchiseWarehouseDTO {
     private ProductDTO product;
 
     public FranchiseWarehouseDTO(FranchiseWarehouse franchiseWarehouse) {
+        System.out.println("franchiseWarehouse = " + franchiseWarehouse);
         this.franchiseWarehouseCode = franchiseWarehouse.getFranchiseWarehouseCode();
         this.franchiseWarehouseTotal = franchiseWarehouse.getFranchiseWarehouseTotal();
         this.franchiseWarehouseCount = franchiseWarehouse.getFranchiseWarehouseCount();
