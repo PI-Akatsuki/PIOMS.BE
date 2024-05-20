@@ -104,7 +104,28 @@ class ProductServiceTest {
 
     @Test
     void deleteProduct() {
-        assertEquals(true, true);
+        RequestProduct requestProduct = new RequestProduct();
+        requestProduct.setProductCode(200);
+        requestProduct.setProductName("test");
+        requestProduct.setProductPrice(41142124);
+        requestProduct.setProductContent("asdmogse");
+        requestProduct.setProductColor(PRODUCT_COLOR.valueOf("노란색"));
+        requestProduct.setProductSize(124);
+        requestProduct.setProductGender(PRODUCT_GENDER.valueOf("남성의류"));
+        requestProduct.setProductTotalCount(124);
+        requestProduct.setProductStatus(PRODUCT_STATUS.valueOf("공급가능"));
+        requestProduct.setProductExposureStatus(true);
+        requestProduct.setProductNoticeCount(312);
+        requestProduct.setProductDisCount(123);
+        requestProduct.setProductCount(412);
+        requestProduct.setCategoryThirdCode(100);
+
+        ResponseEntity<String> postProduct = productService.postProduct(requestProduct,1);
+
+        List<ResponseProduct> productList = productService.getCategoryProductList(requestProduct.getCategoryThirdCode());
+        boolean productExists = productList.stream()
+                .anyMatch(product -> product.getProductCode() == requestProduct.getProductCode());
+        assertFalse(productExists, "삭 성");
     }
 
 
