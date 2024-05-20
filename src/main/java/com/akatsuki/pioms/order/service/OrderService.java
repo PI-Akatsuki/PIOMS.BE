@@ -4,6 +4,7 @@ import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import com.akatsuki.pioms.order.aggregate.*;
 import com.akatsuki.pioms.order.dto.OrderDTO;
+import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
 
 import java.util.List;
 
@@ -56,7 +57,7 @@ public interface OrderService {
     // 2. 명세서 생성
     // 3. 송장 생성
     // 4. 가맹점의 반품신청 리스트 중 상태의 반품신청 추가
-    Order acceptOrder(int adminCOde,int orderId, ExchangeDTO exchange);
+    OrderDTO acceptOrder(int adminCOde,int orderId, ExchangeDTO exchange);
 
     // 관리자가 승인대기 중인 발주를 거절하여 결과를 String으로 반환합니다.
     // 정상적으로 이루어진 경우: 관리자 코드와 주문코드의 관리자 코드가 일치. OrderCondition이 승인대기인 경우
@@ -108,4 +109,6 @@ public interface OrderService {
     boolean findOrderByExchangeCode(int exchangeCode);
 
     OrderDTO addExchangeToOrder(ExchangeDTO exchange, int orderCode);
+
+    OrderDTO putOrderCondition(int orderCode, ORDER_CONDITION orderCondition);
 }

@@ -25,4 +25,6 @@ public interface FranchiseService {
     ResponseEntity<String> deleteFranchise(int franchiseCode, int requestorAdminCode);
 
     FranchiseDTO findFranchiseByFranchiseOwnerCode(int franchiseOwnerCode);
+
+    List<FranchiseDTO> findFranchiseListByDriverCode(int driverCode);
 }

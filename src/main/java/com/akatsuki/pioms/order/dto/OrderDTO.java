@@ -24,16 +24,11 @@ import java.util.List;
 public class OrderDTO {
 
     private int orderCode;
-
     private LocalDateTime orderDate;
-
     private int orderTotalPrice;
-
     private ORDER_CONDITION orderCondition;
-
     private String orderReason;
 
-    private boolean orderStatus;
 
     private int franchiseCode;
     private String franchiseName;
@@ -57,7 +52,6 @@ public class OrderDTO {
         this.orderTotalPrice= order.getOrderTotalPrice();
         this.orderCondition= order.getOrderCondition();
         this.orderReason= order.getOrderReason();
-        this.orderStatus= order.isOrderStatus();
         this.franchiseCode= order.getFranchise().getFranchiseCode();
         this.franchiseName= order.getFranchise().getFranchiseName();
         this.deliveryDate= order.getFranchise().getFranchiseDeliveryDate();
