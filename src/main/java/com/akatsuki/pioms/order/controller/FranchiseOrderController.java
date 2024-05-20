@@ -2,7 +2,8 @@ package com.akatsuki.pioms.order.controller;
 
 import com.akatsuki.pioms.order.aggregate.*;
 import com.akatsuki.pioms.order.dto.OrderDTO;
-import com.akatsuki.pioms.order.service.OrderFacade;
+import com.akatsuki.pioms.order.service.AdminOrderFacade;
+import com.akatsuki.pioms.order.service.FranchiseOrderFacade;
 import com.akatsuki.pioms.order.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,12 +15,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/franchise")
 public class FranchiseOrderController {
     OrderService orderService;
-    OrderFacade orderFacade;
+    FranchiseOrderFacade franchiseOrderFacade;
 
     @Autowired
-    public FranchiseOrderController(OrderService orderService,OrderFacade orderFacade) {
+    public FranchiseOrderController(OrderService orderService, FranchiseOrderFacade franchiseOrderFacade) {
         this.orderService = orderService;
-        this.orderFacade = orderFacade;
+        this.franchiseOrderFacade = franchiseOrderFacade;
     }
 
     /**
@@ -27,7 +28,7 @@ public class FranchiseOrderController {
      * */
     @PostMapping("/{franchiseCode}")
     public ResponseEntity<OrderDTO> postFranchiseOrder(@PathVariable int franchiseCode, @RequestBody RequestOrderVO orders){
-        OrderDTO result = orderFacade.postFranchiseOrder(franchiseCode,orders);
+        OrderDTO result = franchiseOrderFacade.postFranchiseOrder(franchiseCode,orders);
         if(result == null)
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         return ResponseEntity.ok().body(result);
@@ -41,7 +42,7 @@ public class FranchiseOrderController {
     }
     @PutMapping("/{franchiseCode}/check")
     public ResponseEntity<String> putFranchiseOrder(@PathVariable int franchiseCode, @RequestBody RequestPutOrderCheck requestPutOrder){
-        boolean result = orderFacade.putFranchiseOrderCheck(franchiseCode,requestPutOrder);
+        boolean result = franchiseOrderFacade.putFranchiseOrderCheck(franchiseCode,requestPutOrder);
         if(!result)
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("put failed");
         return ResponseEntity.ok("put finished");
@@ -49,7 +50,7 @@ public class FranchiseOrderController {
 
     @GetMapping("/{franchiseCode}/orders")
     public ResponseEntity<OrderListVO> getFranchiseOrderList(@PathVariable int franchiseCode){
-        return ResponseEntity.ok(new OrderListVO(orderFacade.getOrderListByFranchiseCode(franchiseCode)));
+        return ResponseEntity.ok(new OrderListVO(franchiseOrderFacade.getOrderListByFranchiseCode(franchiseCode)));
     }
 
     @GetMapping("/{franchiseCode}/order/{orderCode}")

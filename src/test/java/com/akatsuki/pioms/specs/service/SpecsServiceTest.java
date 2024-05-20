@@ -2,7 +2,8 @@ package com.akatsuki.pioms.specs.service;
 
 import com.akatsuki.pioms.order.aggregate.RequestOrderVO;
 import com.akatsuki.pioms.order.dto.OrderDTO;
-import com.akatsuki.pioms.order.service.OrderFacade;
+import com.akatsuki.pioms.order.service.AdminOrderFacade;
+import com.akatsuki.pioms.order.service.FranchiseOrderFacade;
 import com.akatsuki.pioms.specs.aggregate.Specs;
 import com.akatsuki.pioms.specs.dto.SpecsDTO;
 import com.akatsuki.pioms.specs.repository.SpecsRepository;
@@ -20,11 +21,14 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @Transactional
 class SpecsServiceTest {
-    OrderFacade orderFacade;
+    AdminOrderFacade orderFacade;
     SpecsRepository specsRepository;
     SpecsService specsService;
+
     @Autowired
-    public SpecsServiceTest(SpecsRepository specsRepository, SpecsService specsService, OrderFacade orderFacade) {
+    FranchiseOrderFacade franchiseOrderFacade;
+    @Autowired
+    public SpecsServiceTest(SpecsRepository specsRepository, SpecsService specsService, AdminOrderFacade orderFacade) {
         this.specsRepository = specsRepository;
         this.specsService = specsService;
         this.orderFacade = orderFacade;
@@ -44,7 +48,7 @@ class SpecsServiceTest {
         int franchiseCode = 2;
         Map<Integer,Integer> requestProducts =  new HashMap<Integer,Integer>(){{ put(1, 1); put(2,2); put(3,3);}};
         RequestOrderVO requestOrderVO = new RequestOrderVO(requestProducts,franchiseCode);
-        OrderDTO orderDTO = orderFacade.postFranchiseOrder(franchiseCode,requestOrderVO);
+        OrderDTO orderDTO = franchiseOrderFacade.postFranchiseOrder(franchiseCode,requestOrderVO);
         if (orderDTO==null) {
             System.out.println("이미 존재하여 생성 안합니다.");
             assertEquals(true, true);
@@ -75,7 +79,7 @@ class SpecsServiceTest {
         int franchiseCode = 2;
         Map<Integer,Integer> requestProducts =  new HashMap<Integer,Integer>(){{ put(1, 1); put(2,2); put(3,3);}};
         RequestOrderVO requestOrderVO = new RequestOrderVO(requestProducts,franchiseCode);
-        OrderDTO orderDTO = orderFacade.postFranchiseOrder(franchiseCode,requestOrderVO);
+        OrderDTO orderDTO = franchiseOrderFacade.postFranchiseOrder(franchiseCode,requestOrderVO);
         if (orderDTO==null) {
             System.out.println("이미 존재하여 생성 안합니다.");
             assertEquals(true, true);

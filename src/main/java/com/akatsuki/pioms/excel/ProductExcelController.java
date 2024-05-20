@@ -7,15 +7,17 @@
 //import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 //import org.springframework.context.annotation.ComponentScan;
 //import org.springframework.web.bind.annotation.GetMapping;
+//import org.springframework.web.bind.annotation.RequestMapping;
 //import org.springframework.web.bind.annotation.RestController;
 //
 //import java.util.List;
 //
 //@RestController
+//@RequestMapping("/exceldownload")
 //@ComponentScan
 //public class ProductExcelController {
 //
-//    private final ProductService productService;
+//    private ProductService productService;
 //    private List<ProductDTO> productList;
 //
 //    public ProductExcelController(ProductService productService) {
@@ -125,7 +127,7 @@
 //            cell.setCellValue(dto.getProductCount());
 //            cell = row.createCell(15);
 //            cell.setCellStyle(bodyStyle);
-//            cell.setCellValue(dto.getCategoryThird());
+//            cell.setCellValue(dto.getCategoryThirdCode());
 //        }
 //
 //        // Column width auto-sizing

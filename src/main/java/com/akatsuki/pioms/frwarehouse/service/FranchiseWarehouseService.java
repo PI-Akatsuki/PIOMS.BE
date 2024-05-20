@@ -14,8 +14,6 @@ import java.util.Optional;
 public interface FranchiseWarehouseService {
     void saveProduct(int productCode, int changeVal, int franchiseCode);
 
-    void saveExchangeProduct(ExchangeDTO exchange, int franchiseCode);
-
     boolean checkEnableToAddExchange(RequestExchange requestExchange);
 
     List<FranchiseWarehouse> getAllWarehouse();

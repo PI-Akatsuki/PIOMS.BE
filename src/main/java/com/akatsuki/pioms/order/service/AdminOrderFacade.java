@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class OrderFacade {
+public class AdminOrderFacade {
     OrderService orderService;
     InvoiceService invoiceService;
     SpecsService specsService;
@@ -30,10 +30,8 @@ public class OrderFacade {
     FranchiseService franchiseService;
     FranchiseWarehouseService franchiseWarehouseService;
 
-    ApplicationEventPublisher publisher;
-
     @Autowired
-    public OrderFacade(OrderService orderService, InvoiceService invoiceService, SpecsService specsService, ExchangeService exchangeService, ProductService productService, FranchiseService franchiseService, FranchiseWarehouseService franchiseWarehouseService) {
+    public AdminOrderFacade(OrderService orderService, InvoiceService invoiceService, SpecsService specsService, ExchangeService exchangeService, ProductService productService, FranchiseService franchiseService, FranchiseWarehouseService franchiseWarehouseService) {
         this.orderService = orderService;
         this.invoiceService = invoiceService;
         this.specsService = specsService;
@@ -51,17 +49,16 @@ public class OrderFacade {
         });
         return orderDTOS;
     }
-
     public List<OrderDTO> getAdminUncheckedOrders(int adminCode){
         return orderService.getAdminUncheckesOrders(adminCode);
     }
-
     public OrderDTO getAdminOrder(int adminCode, int orderCode){
         return orderService.getAdminOrder(adminCode,orderCode);
     }
 
     public OrderDTO acceptOrder(int adminCode, int orderCode){
         OrderDTO order = orderService.getAdminOrder(adminCode,orderCode);
+
         if (order==null || order.getOrderCondition() != ORDER_CONDITION.승인대기 ||!orderService.checkProductCnt(order)){
             // null인지 검사
             // 주문 상태가 승인 대기인지 검사
@@ -69,8 +66,10 @@ public class OrderFacade {
             return null;
         }
 
+
+
         ExchangeDTO exchange =  exchangeService.findExchangeToSend(order.getFranchiseCode());
-        System.out.println("exchange = " + exchange);
+
         if(exchange!=null) {
             // 교환 가능 여부 검사
             if(productService.checkExchangeProduct(order,exchange) ){
@@ -79,12 +78,13 @@ public class OrderFacade {
             }
         }
         productService.exportProducts(order);
-        Order orderEntity = orderService.acceptOrder(adminCode,orderCode, exchange);
 
+        order = orderService.acceptOrder(adminCode,orderCode, exchange);
+        System.out.println("order = " + order);
         specsService.afterAcceptOrder(orderCode, order.getFranchiseCode(), order.getDeliveryDate());
         invoiceService.afterAcceptOrder(order);
 
-        return new OrderDTO(orderEntity);
+        return order;
     }
 
     public OrderDTO denyOrder(int adminCode,int orderId, String denyMessage){
@@ -92,41 +92,4 @@ public class OrderFacade {
 
     }
 
-    public OrderDTO postFranchiseOrder(int franchiseCode, RequestOrderVO orders) {
-        Franchise franchise = franchiseService.findFranchiseById(franchiseCode).orElseThrow();
-        return orderService.postFranchiseOrder(franchise,orders);
-    }
-
-    public List<OrderDTO> getOrderListByFranchiseCode(int franchiseCode) {
-        return orderService.getOrderList(franchiseCode);
-    }
-
-    public boolean putFranchiseOrderCheck(int franchiseCode, RequestPutOrderCheck requestPutOrder){
-        System.out.println("requestPutOrder = " + requestPutOrder);
-        OrderDTO order = orderService.getOrder(franchiseCode,requestPutOrder.getOrderCode());
-        System.out.println("order.getOrderProductList() = " + order.getOrderProductList());
-        if (order==null){
-            return false;
-        }
-        if(franchiseCode != order.getFranchiseCode() || order.isOrderStatus()
-                || !invoiceService.checkInvoiceStatus(order.getOrderCode())){
-            return false;
-        }
-
-        order.getOrderProductList().forEach(orderProduct->{
-            if(requestPutOrder.getRequestProduct().get(orderProduct.getProductCode())!=null) {
-                int changeVal = requestPutOrder.getRequestProduct().get(orderProduct.getProductCode());
-                int requestVal = orderProduct.getRequestProductCount();
-//                //검수 결과 가맹 창고에 저장
-                franchiseWarehouseService.saveProduct(orderProduct.getProductCode(), changeVal, order.getFranchiseCode());
-                if(changeVal != requestVal){
-                    // 검수 수량 이상 있을 시 본사 창고에 잘못된 수량 업데이트~
-                    productService.editIncorrectCount(orderProduct.getProductCode(), requestVal-changeVal);
-                }
-            }
-        });
-//        // 가맹 창고 업데이트
-        franchiseWarehouseService.saveExchangeProduct(order.getExchange(), franchiseCode);
-        return true;
-    }
 }

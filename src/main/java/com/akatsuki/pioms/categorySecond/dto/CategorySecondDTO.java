@@ -23,6 +23,6 @@ public class CategorySecondDTO {
         this.categorySecondName = categorySecond.getCategorySecondName();
         this.categorySecondEnrollDate = categorySecond.getCategorySecondEnrollDate();
         this.categorySecondUpdateDate = categorySecond.getCategorySecondUpdateDate();
-        this.categoryFirstCode = categorySecond.getCategoryFirstCode();
+        this.categoryFirstCode = categorySecond.getCategoryFirst().getCategoryFirstCode();
     }
 }

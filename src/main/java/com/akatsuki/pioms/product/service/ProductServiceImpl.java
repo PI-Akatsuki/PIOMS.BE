@@ -72,11 +72,11 @@ public class ProductServiceImpl implements ProductService{
 
     @Override
     @Transactional
-    public ResponseEntity<String> postProduct(RequestProduct request/*, int requesterAdminCode*/) {
-//        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
-//        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
-//            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
-//        }
+    public ResponseEntity<String> postProduct(RequestProduct request, int requesterAdminCode) {
+        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
+        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
+            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
+        }
 
         Product product = new Product();
 
@@ -88,14 +88,16 @@ public class ProductServiceImpl implements ProductService{
         if(categoryThirdList == null) {
             return ResponseEntity.badRequest().body("해당 카테고리가 존재하지 않습니다. 다시 확인해주세요.");
         }
-        CategoryThird categoryThird = categoryThirdList.get(0);
 
+        CategoryThird categoryThird = new CategoryThird();
+        categoryThird.setCategoryThirdCode(request.getCategoryThirdCode());
         product.setCategoryThird(categoryThird);
 
         product.setProductName(request.getProductName());
         product.setProductPrice(request.getProductPrice());
         product.setProductContent(request.getProductContent());
         product.setProductEnrollDate(formattedDateTime);
+        product.setProductUpdateDate(formattedDateTime);
         product.setProductColor(request.getProductColor());
         product.setProductSize(request.getProductSize());
         product.setProductGender(request.getProductGender());
@@ -115,11 +117,11 @@ public class ProductServiceImpl implements ProductService{
 
     @Override
     @Transactional
-    public ResponseEntity<String> deleteProduct(int productCode/*, int requesterAdminCode*/) {
-//        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
-//        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
-//            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
-//        }
+    public ResponseEntity<String> deleteProduct(int productCode, int requesterAdminCode) {
+        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
+        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
+            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
+        }
         Product product = productRepository.findById(productCode).orElseThrow(()-> new EntityNotFoundException("그런거 없다."));
         if(product == null) {
             return ResponseEntity.badRequest().body("해당 상품이 없습니다.");
@@ -137,12 +139,23 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
+    public List<ProductDTO> getAllExposureProduct() {
+        List<Product> productList = productRepository.findAllByProductExposureStatusTrue();
+        List<ProductDTO> responseProduct = new ArrayList<>();
+
+        productList.forEach(product -> {
+            responseProduct.add(new ProductDTO(product));
+        });
+        return responseProduct;
+    }
+
+    @Override
     @Transactional
-    public ResponseEntity<String> updateProduct(int productCode, RequestProduct request/*, int requesterAdminCode*/) {
-//        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
-//        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
-//            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
-//        }
+    public ResponseEntity<String> updateProduct(int productCode, RequestProduct request, int requesterAdminCode) {
+        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
+        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
+            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
+        }
         Product product = productRepository.findById(productCode)
                 .orElseThrow(() -> new EntityNotFoundException("해당 상품이 존재하지 않습니다."));
 
@@ -166,7 +179,6 @@ public class ProductServiceImpl implements ProductService{
         product.setProductNoticeCount(request.getProductNoticeCount());
         product.setProductDiscount(request.getProductDisCount());
         product.setProductCount(request.getProductCount());
-        Product savedProduct = productRepository.save(product);
         Product updatedProduct = productRepository.save(product);
         logService.saveLog("root", LogStatus.수정, updatedProduct.getProductName(), "Product");
 
@@ -243,6 +255,5 @@ public class ProductServiceImpl implements ProductService{
             productRepository.save(product);
         }
     }
-
 
 }

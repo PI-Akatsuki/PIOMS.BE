@@ -1,16 +1,15 @@
 package com.akatsuki.pioms.categorySecond.aggregate;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
 public class RequestCategorySecond {
     private int categoryFirstCode;
     private String categorySecondName;
+    private int categorySecondCode;
 
 }

@@ -1,7 +1,6 @@
 package com.akatsuki.pioms.invoice.aggregate;
 
 
-import com.akatsuki.pioms.driver.aggregate.DeliveryRegion;
 import com.akatsuki.pioms.order.aggregate.Order;
 import jakarta.persistence.*;
 import lombok.*;
@@ -28,12 +27,6 @@ public class Invoice {
 
     @Column(name = "delivery_date")
     private LocalDateTime invoiceDate;
-
-//    @JoinColumn(name = "delivery_region_code")
-//    @ManyToOne
-    @Column(name = "delivery_region_code")
-//    @ToString.Exclude
-    private int deliveryRegion;
 
     @JoinColumn(name = "request_code")
     @OneToOne

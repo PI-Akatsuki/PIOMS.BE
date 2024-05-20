@@ -82,12 +82,13 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     @Transactional(readOnly = false)
-    public Order acceptOrder(int adminCode,int orderId, ExchangeDTO exchange) {
-        System.out.println("acceptOrder");
-        Order order = orderRepository.findById(orderId).orElseThrow();
+    public OrderDTO acceptOrder(int adminCode,int orderCode, ExchangeDTO exchange) {
+        Order order = orderRepository.findById(orderCode).orElseThrow();
 
-        if (!checkOrderCondition(order))
+        if (!checkOrderCondition(order)) {
+            System.out.println("order is null in checkOrderCondition");
             return null;
+        }
         order.setOrderCondition(ORDER_CONDITION.승인완료);
 
         if (exchange!=null) {
@@ -95,9 +96,10 @@ public class OrderServiceImpl implements OrderService{
             exchange1.setExchangeCode(exchange.getExchangeCode());
             order.setExchange(exchange1);
         }
-
+        order.setOrderCondition(ORDER_CONDITION.검수대기);
         order=orderRepository.save(order);
-        return order;
+
+        return new OrderDTO(order);
     }
 
     @Override
@@ -111,12 +113,11 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     @Transactional
-    public OrderDTO denyOrder(int adminCode,int orderId, String denyMessage){
-        Order order = orderRepository.findById(orderId).orElse(null);
+    public OrderDTO denyOrder(int adminCode,int orderCode, String denyMessage){
+        Order order = orderRepository.findById(orderCode).orElse(null);
         if(order==null||order.getFranchise().getAdmin().getAdminCode() != adminCode || !checkOrderCondition(order)){
             return null;
         }
-
         order.setOrderCondition(ORDER_CONDITION.승인거부);
         order.setOrderReason(denyMessage);
         order = orderRepository.save(order);
@@ -149,8 +150,9 @@ public class OrderServiceImpl implements OrderService{
     }
 
     private static boolean checkOrderCondition(Order order) {
-        if (order == null)
+        if (order == null) {
             return false;
+        }
         if(order.getOrderCondition() == ORDER_CONDITION.승인대기)
             return true;
         return false;
@@ -203,7 +205,6 @@ public class OrderServiceImpl implements OrderService{
         if (order.getOrderCondition() == ORDER_CONDITION.승인완료) {
             return false;
         }
-
         // 기존 주문서의 상품 리스트 삭제
         orderProductRepository.deleteAllByOrderOrderCode(order.getOrderCode());
 
@@ -219,41 +220,9 @@ public class OrderServiceImpl implements OrderService{
         return true;
     }
 
-
     @Override
-    @Transactional
     public boolean putFranchiseOrderCheck(int franchiseCode, RequestPutOrderCheck requestPutOrder) {
-//        if(franchiseCode != order.getFranchise().getFranchiseCode() || order.isOrderStatus()
-//                || !invoiceService.checkInvoiceStatus(order.getOrderCode())
-//        ){
-//            System.out.println("franchiseCode is not equal or this order's status is true or delivery's status is not \"배송완료\" ");
-//            return false;
-//        }
-
-        // 인수 완료 표시
-        Order order = orderRepository.findById(requestPutOrder.getOrderCode()).orElse(null);
-        if ( order == null ||order.getOrderProductList() == null) {
-            return false;
-        }
-        order.setOrderStatus(true);
-        for (int i = 0; i < order.getOrderProductList().size(); i++) {
-            OrderProduct orderProduct = order.getOrderProductList().get(i);
-            if(requestPutOrder.getRequestProduct().get(orderProduct.getProduct().getProductCode())!=null) {
-                int changeVal = requestPutOrder.getRequestProduct().get(orderProduct.getProduct().getProductCode());
-                int requestVal = orderProduct.getRequestProductCount();
-                orderProduct.setRequestProductGetCount(changeVal);
-//                //검수 결과 가맹 창고에 저장
-////                franchiseWarehouseService.saveProduct(orderProduct.getProduct().getProductCode(), changeVal, orderProduct.getOrder().getFranchise().getFranchiseCode());
-//                if(changeVal != requestVal){
-////                    productService.editIncorrectCount(orderProduct.getProduct(), requestVal-changeVal);
-//                }
-                orderProductRepository.save(orderProduct);
-            }
-        }
-
-//        franchiseWarehouseService.saveExchangeProduct(order.getExchange(), franchiseCode);
-
-        return true;
+        return false;
     }
 
     @Override
@@ -271,6 +240,13 @@ public class OrderServiceImpl implements OrderService{
         
         order = orderRepository.save(order);
         return new OrderDTO(order);
+    }
+
+    @Override
+    public OrderDTO putOrderCondition(int orderCode, ORDER_CONDITION orderCondition) {
+        Order order = orderRepository.findById(orderCode).orElseThrow();
+        order.setOrderCondition(orderCondition);
+        return new OrderDTO(orderRepository.save(order));
     }
 
 }
