@@ -67,6 +67,4 @@ public class ResponseProduct {
         this.categoryThirdCode = productDTO.getCategoryThirdCode();
     }
 
-    public ResponseProduct(int productCode, String productName, int productPrice, String productEnrollDate, String productContent, PRODUCT_COLOR productColor, int productSize, PRODUCT_GENDER productGender, int productTotalCount, PRODUCT_STATUS productStatus, boolean productExposureStatus, int productNoticeCount, int productDiscount, int productCount) {
-    }
 }

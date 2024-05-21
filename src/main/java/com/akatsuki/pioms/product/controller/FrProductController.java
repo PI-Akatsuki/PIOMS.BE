@@ -33,7 +33,7 @@ public class FrProductController {
         return ResponseEntity.ok().body(productService.getAllExposureProduct());
     }
 
-    @GetMapping("/{productCode}")
+    @GetMapping("/list/detail/{productCode}")
     @Operation(summary = "상품코드로 상품 조회", description = "상품 코드로 상품 하나 단순 조회")
     public ResponseEntity<List<ResponseProduct>> getProductByCode(@PathVariable int productCode) {
         List<ProductDTO> productDTOS = productService.findProductByCode(productCode);

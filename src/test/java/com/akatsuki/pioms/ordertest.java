@@ -6,7 +6,7 @@ import com.akatsuki.pioms.exchange.repository.ExchangeRepository;
 import com.akatsuki.pioms.exchange.service.ExchangeService;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import com.akatsuki.pioms.franchise.service.FranchiseService;
-import com.akatsuki.pioms.frwarehouse.service.FranchiseWarehouseDTO;
+import com.akatsuki.pioms.frwarehouse.dto.FranchiseWarehouseDTO;
 import com.akatsuki.pioms.frwarehouse.service.FranchiseWarehouseService;
 import com.akatsuki.pioms.invoice.aggregate.DELIVERY_STATUS;
 import com.akatsuki.pioms.invoice.aggregate.Invoice;

@@ -9,6 +9,7 @@ import com.akatsuki.pioms.product.etc.PRODUCT_GENDER;
 import com.akatsuki.pioms.product.etc.PRODUCT_STATUS;
 import com.akatsuki.pioms.product.repository.ProductRepository;
 import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -74,11 +75,57 @@ class ProductServiceTest {
 
     }
 
+    @Test
+    @DisplayName("상품 수정")
+    void updateProduct() {
+        RequestProduct requestProduct = new RequestProduct();
+        requestProduct.setProductCode(1);
+        requestProduct.setProductName("testxx");
+        requestProduct.setProductPrice(100000000);
+        requestProduct.setProductContent("tttttttt");
+        requestProduct.setProductColor(PRODUCT_COLOR.valueOf("노란색"));
+        requestProduct.setProductSize(144);
+        requestProduct.setProductGender(PRODUCT_GENDER.valueOf("여성의류"));
+        requestProduct.setProductTotalCount(12123);
+        requestProduct.setProductStatus(PRODUCT_STATUS.valueOf("공급가능"));
+        requestProduct.setProductExposureStatus(true);
+        requestProduct.setProductNoticeCount(222);
+        requestProduct.setProductDisCount(1512);
+        requestProduct.setProductCount(214);
+        requestProduct.setCategoryThirdCode(1);
+
+        ResponseEntity<String> updateProduct = productService.updateProduct(1,requestProduct,1);
+        System.out.println("updateProduct = " + updateProduct);
+
+        assertNotNull(updateProduct);
+        assertEquals("상품 수정 완료!",updateProduct.getBody());
+    }
 
 
     @Test
     void deleteProduct() {
-        assertEquals(true, true);
+        RequestProduct requestProduct = new RequestProduct();
+        requestProduct.setProductCode(200);
+        requestProduct.setProductName("test");
+        requestProduct.setProductPrice(41142124);
+        requestProduct.setProductContent("asdmogse");
+        requestProduct.setProductColor(PRODUCT_COLOR.valueOf("노란색"));
+        requestProduct.setProductSize(124);
+        requestProduct.setProductGender(PRODUCT_GENDER.valueOf("남성의류"));
+        requestProduct.setProductTotalCount(124);
+        requestProduct.setProductStatus(PRODUCT_STATUS.valueOf("공급가능"));
+        requestProduct.setProductExposureStatus(true);
+        requestProduct.setProductNoticeCount(312);
+        requestProduct.setProductDisCount(123);
+        requestProduct.setProductCount(412);
+        requestProduct.setCategoryThirdCode(100);
+
+        ResponseEntity<String> postProduct = productService.postProduct(requestProduct,1);
+
+        List<ResponseProduct> productList = productService.getCategoryProductList(requestProduct.getCategoryThirdCode());
+        boolean productExists = productList.stream()
+                .anyMatch(product -> product.getProductCode() == requestProduct.getProductCode());
+        assertFalse(productExists, "삭 성");
     }
 
 

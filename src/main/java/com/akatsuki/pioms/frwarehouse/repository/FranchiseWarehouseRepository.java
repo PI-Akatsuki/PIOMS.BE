@@ -11,10 +11,9 @@ import java.util.List;
 public interface FranchiseWarehouseRepository extends JpaRepository<FranchiseWarehouse,Integer> {
     FranchiseWarehouse findByProductProductCodeAndFranchiseCode(int productCode, int franchiseCode);
 
-    FranchiseWarehouse findByProductProductCode(int productCode);
-
-    List<FranchiseWarehouse> findByFranchiseWarehouseFavoriteTrue();
-
     List<FranchiseWarehouse> findAllByFranchiseCode(int franchiseCode);
 
+    List<FranchiseWarehouse> findByFranchiseWarehouseCode(int franchiseWarehouseCode);
+
+    List<FranchiseWarehouse> findByFranchiseWarehouseFavoriteTrue();
 }

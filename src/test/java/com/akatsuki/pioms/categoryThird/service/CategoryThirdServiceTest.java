@@ -1,20 +1,18 @@
 package com.akatsuki.pioms.categoryThird.service;
 
-import com.akatsuki.pioms.categorySecond.aggregate.CategorySecond;
 import com.akatsuki.pioms.categoryThird.aggregate.CategoryThird;
 import com.akatsuki.pioms.categoryThird.aggregate.RequestCategoryThird;
 import com.akatsuki.pioms.categoryThird.aggregate.ResponseCategoryThird;
 import com.akatsuki.pioms.categoryThird.dto.CategoryThirdDTO;
 import com.akatsuki.pioms.categoryThird.repository.CategoryThirdRepository;
-import com.akatsuki.pioms.product.aggregate.Product;
-import com.akatsuki.pioms.product.repository.ProductRepository;
-import jakarta.persistence.EntityManager;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -31,7 +29,11 @@ class CategoryThirdServiceTest {
     @Autowired
     private CategoryThirdRepository categoryThirdRepository;
 
+    @MockBean
+    private MockMvc mvc;
+
     static RequestCategoryThird request;
+    private RequestBuilder delete;
 
 
     @Test
@@ -88,5 +90,26 @@ class CategoryThirdServiceTest {
 
         assertNotNull(updateCategory);
         assertEquals("카테고리(소) 수정 완료!", updateCategory.getBody());
+    }
+
+    @Test
+    void deleteCategory() {
+        // Given: 새로운 카테고리를 생성합니다.
+        RequestCategoryThird requestCategory = new RequestCategoryThird();
+        requestCategory.setCategoryThirdCode(20);
+        requestCategory.setCategoryThirdName("test");
+        requestCategory.setCategorySecondCode(1);
+
+        ResponseEntity<String> postCategory = categoryThirdService.postCategory(requestCategory, 1);
+
+        // When: 해당 카테고리를 삭제합니다.
+        categoryThirdService.deleteCategoryThird(20, 1);
+
+        // Then: 삭제된 카테고리가 데이터베이스에 없는지 확인합니다.
+        List<ResponseCategoryThird> categoryThirdList = categoryThirdService.getCategoryThirdInSecond(requestCategory.getCategorySecondCode());
+        boolean categoryExists = categoryThirdList.stream()
+                .anyMatch(category -> category.getCategoryThirdCode() == requestCategory.getCategoryThirdCode());
+        assertFalse(categoryExists, "삭 성");
+
     }
 }
