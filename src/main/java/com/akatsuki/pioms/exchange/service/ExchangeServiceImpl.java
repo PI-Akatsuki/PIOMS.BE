@@ -210,8 +210,12 @@ public class ExchangeServiceImpl implements ExchangeService{
     private boolean checkValidationExchangeProducts(List<ExchangeProductVO> products) {
         for (int i = 0; i < products.size(); i++) {
             ExchangeProductVO product = products.get(i);
+
             int productCode = product.getExchangeProductCode();
+            System.out.println("productCode = " + productCode);
+
             ExchangeProduct exchangeProduct = exchangeProductRepository.findById(productCode).orElseThrow();
+
             if (exchangeProduct.getExchangeProductCount() != product.getExchangeProductCount()) {
                 System.out.println(productCode + " 번 반송상품 코드 문제 발생! ExchangeProductCount 불일치!");
                 return false;

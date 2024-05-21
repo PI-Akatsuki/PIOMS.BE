@@ -1,5 +1,6 @@
 package com.akatsuki.pioms.order.service;
 
+import com.akatsuki.pioms.exchange.aggregate.RequestExchange;
 import com.akatsuki.pioms.exchange.service.ExchangeService;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import com.akatsuki.pioms.franchise.service.FranchiseService;
@@ -71,8 +72,10 @@ public class FranchiseOrderFacade {
                 }
             }
         });
+        orderService.putOrderCondition(order.getOrderCode(),ORDER_CONDITION.검수완료);
 //        // 가맹 창고 업데이트
 //        franchiseWarehouseService.saveExchangeProduct(order.getExchange(), franchiseCode);
+
         return true;
     }
 }
