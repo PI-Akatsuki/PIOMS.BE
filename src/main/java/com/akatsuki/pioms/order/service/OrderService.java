@@ -102,7 +102,6 @@ public interface OrderService {
     // 2. 만약 검수 온 상품이 본사와 불일치 하는 경우
         // 2-1. 적게 온 경우, 본사의 재고 +
         // 2-2. 많이 온  경우, 본사의 재고 -
-    boolean putFranchiseOrderCheck(int franchiseCode, RequestPutOrderCheck requestPutOrder);
 
     boolean checkProductCnt(OrderDTO order);
 

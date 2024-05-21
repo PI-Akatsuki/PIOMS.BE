@@ -26,22 +26,22 @@ public class FranchiseOrderController {
     /**
      * <h2>발주 생성</h2>
      * */
-    @PostMapping("/{franchiseCode}")
+    @PostMapping("/{franchiseCode}/order")
     public ResponseEntity<OrderDTO> postFranchiseOrder(@PathVariable int franchiseCode, @RequestBody RequestOrderVO orders){
         OrderDTO result = franchiseOrderFacade.postFranchiseOrder(franchiseCode,orders);
         if(result == null)
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         return ResponseEntity.ok().body(result);
     }
-    @PutMapping("/{franchiseCode}")
+    @PutMapping("/{franchiseCode}/order")
     public ResponseEntity<String> putFranchiseOrder(@PathVariable int franchiseCode, @RequestBody RequestPutOrder order){
         boolean result = orderService.putFranchiseOrder(franchiseCode, order);
         if(!result)
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("put failed. check again");
         return ResponseEntity.ok("put finished");
     }
-    @PutMapping("/{franchiseCode}/check")
-    public ResponseEntity<String> putFranchiseOrder(@PathVariable int franchiseCode, @RequestBody RequestPutOrderCheck requestPutOrder){
+    @PutMapping("/{franchiseCode}/order/check")
+    public ResponseEntity<String> putFranchiseOrderCheck(@PathVariable int franchiseCode, @RequestBody RequestPutOrderCheck requestPutOrder){
         boolean result = franchiseOrderFacade.putFranchiseOrderCheck(franchiseCode,requestPutOrder);
         if(!result)
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("put failed");

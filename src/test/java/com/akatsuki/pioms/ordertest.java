@@ -64,81 +64,6 @@ public class ordertest {
     static List<ExchangeProductVO> exchangeProductVOS;
     static RequestExchange exchange;
 
-//    @Test
-//    @DisplayName("주문 통합 테스트")
-//    void Test(){
-//        // 1. 교환 등록
-//        int adminCode=1;
-//        int franchiseCode=1;
-//        Franchise franchise = franchiseService.findFranchiseById(franchiseCode).orElseThrow();
-//
-//        exchangeProductVOS = Stream.of(
-//                new ExchangeProductVO(1, 1,EXCHANGE_PRODUCT_STATUS.교환),
-//                new ExchangeProductVO(2, 1,EXCHANGE_PRODUCT_STATUS.폐기),
-//                new ExchangeProductVO(3, 1,EXCHANGE_PRODUCT_STATUS.교환),
-//                new ExchangeProductVO(4, 1,EXCHANGE_PRODUCT_STATUS.폐기)
-//        ).toList();
-//
-//        exchange = new RequestExchange(1,EXCHANGE_STATUS.반송신청,exchangeProductVOS);
-//        // 1-1. 교환 생성
-//        System.out.println("교환 생성 전 창고: " + franchiseWarehouseService.getFrWarehouseList(franchiseCode));
-//        ExchangeDTO exchangeDTO = exchangeService.postExchange(1,exchange);
-//        System.out.println("교환 생성 후 창고: " + franchiseWarehouseService.getFrWarehouseList(franchiseCode));
-//        // 1-2. 교환 삭제
-//        exchangeService.deleteExchange(1, exchangeDTO.getExchangeCode());
-//        System.out.println("교환 삭제 후 창고: " + franchiseWarehouseService.getFrWarehouseList(franchiseCode));
-//        // 1-3. 교환 생성
-//        exchangeDTO = exchangeService.postExchange(1,exchange);
-//        System.out.println("교환 재생성 후 창고: " + franchiseWarehouseService.getFrWarehouseList(franchiseCode));
-//
-//        // 2. 발주 등록
-//        Map<Integer,Integer> requestProducts =  new HashMap<Integer,Integer>(){{ put(1, 1); put(2,2); put(3,3);}};
-//        RequestOrderVO requestOrderVO = new RequestOrderVO(requestProducts,franchise.getFranchiseCode());
-//        // 2-1. 발주 생성
-//        System.out.println("requestOrderVO = " + requestOrderVO);
-//        OrderDTO orderDTO = orderFacade.postFranchiseOrder(franchise.getFranchiseCode(),requestOrderVO);
-//        Order order = orderRepository.findById(orderDTO.getOrderCode()).orElseThrow();
-//        // 2-2. 발주 수정
-//        RequestPutOrder requestPutOrder = new RequestPutOrder(orderDTO.getOrderCode(),requestProducts,franchiseCode);
-//        boolean result = orderService.putFranchiseOrder(franchiseCode,requestPutOrder);
-//        // 2-3. 발주 거절
-//        orderFacade.denyOrder(adminCode, orderDTO.getOrderCode(), "안녕 하이 헬로우");
-//        // 2-4. 발주 수정
-//        result = orderService.putFranchiseOrder(franchiseCode,requestPutOrder);
-//        orderDTO = orderFacade.getAdminOrder(adminCode, orderDTO.getOrderCode());
-//        // 2-5 발주 승인
-//        orderDTO =  orderFacade.acceptOrder(adminCode, orderDTO.getOrderCode());
-//        order = orderRepository.findById(orderDTO.getOrderCode()).orElseThrow();
-//
-//        Exchange exchange1 = exchangeRepository.findById(exchangeDTO.getExchangeCode()).orElseThrow();
-//        Invoice invoice = invoiceRepository.findByOrderOrderCode(order.getOrderCode());
-//        Specs specs = specsRepository.findByOrderOrderCode(order.getOrderCode());
-//
-//        System.out.println("발주 승인 후 order = " + order);
-//        // then
-//        assertEquals(exchange1.getExchangeCode(), order.getExchange().getExchangeCode());
-//        assertEquals(invoice.getOrder().getOrderCode(), order.getOrderCode());
-//        assertEquals(specs.getOrder().getOrderCode(), order.getOrderCode());
-//
-//        // 배송중 -> 배송완료
-////      (1,1)(2,2)(3,3)
-//        RequestPutOrderCheck requestPutOrderCheck = new RequestPutOrderCheck(order.getOrderCode(),requestProducts);
-//        invoiceService.putInvoice(adminCode,invoice.getInvoiceCode(), DELIVERY_STATUS.배송완료);
-//        System.out.println("requestPutOrderCheck = " + requestPutOrderCheck);
-//
-//        // 점주 배송 온 발주 검수 -> 검수 후 교환 상품도 상품 재고에 추가
-//        List<FranchiseWarehouseDTO> warehouse1 = franchiseWarehouseService.getFrWarehouseList(franchiseCode);
-//        System.out.println("검수 전 창고 = " + warehouse1);
-//        System.out.println(orderFacade.putFranchiseOrderCheck(franchiseCode,requestPutOrderCheck));
-//        List<FranchiseWarehouseDTO> warehouse2 = franchiseWarehouseService.getFrWarehouseList(franchiseCode);
-//        System.out.println("검수 후 창고 = " + warehouse2);
-//        assertNotEquals(warehouse1,warehouse2);
-//
-//        // 교환 처리
-//
-//
-//    }
-
     @Test
     void testExchangeAndOrderProcesses() {
         // 1. 초기 설정
@@ -216,7 +141,14 @@ public class ordertest {
         System.out.println("검수 후 창고 = " + warehouseAfterCheck);
 
         assertNotEquals(warehouseBeforeCheck, warehouseAfterCheck);
+
         // 교환 처리 관련 코드 (추가 필요 시)
+        exchangeDTO = exchangeService.getAdminExchange(adminCode,exchangeDTO.getExchangeCode());
+
+//        System.out.println("exchangeDTO = " + exchangeDTO);
+//        RequestExchange exchangeForProcess = new RequestExchange(EXCHANGE_STATUS.처리완료,exchangeDTO);
+//        exchangeDTO =exchangeService.putExchange(adminCode,exchangeDTO.getExchangeCode(),exchangeForProcess);
+//        assertEquals(exchangeDTO.getExchangeStatus(),EXCHANGE_STATUS.처리완료);
 
     }
 
