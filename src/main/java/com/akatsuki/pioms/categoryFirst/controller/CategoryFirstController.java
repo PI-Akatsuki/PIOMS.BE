@@ -37,7 +37,7 @@ public class CategoryFirstController {
         return ResponseEntity.ok(responseCategory);
     }
 
-    @GetMapping("/{categoryFirstCode}")
+    @GetMapping("/list/detail/{categoryFirstCode}")
     @Operation(summary = "카테고리(대) 상세 조회")
     public ResponseEntity<List<ResponseCategoryFirst>> getCategoryFirstByCode(@PathVariable int categoryFirstCode) {
         List<CategoryFirstDTO> categoryFirstDTOS = categoryFirstService.findCategoryFirstByCode(categoryFirstCode);

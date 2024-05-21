@@ -3,16 +3,12 @@ package com.akatsuki.pioms.frwarehouse.service;
 
 import com.akatsuki.pioms.admin.aggregate.Admin;
 import com.akatsuki.pioms.admin.repository.AdminRepository;
-import com.akatsuki.pioms.exchange.aggregate.Exchange;
-import com.akatsuki.pioms.exchange.aggregate.ExchangeProduct;
 import com.akatsuki.pioms.exchange.aggregate.RequestExchange;
 import com.akatsuki.pioms.exchange.aggregate.ExchangeProductVO;
-import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
-import com.akatsuki.pioms.franchise.dto.FranchiseDTO;
 import com.akatsuki.pioms.franchise.service.FranchiseService;
 import com.akatsuki.pioms.frwarehouse.aggregate.FranchiseWarehouse;
-import com.akatsuki.pioms.frwarehouse.aggregate.RequestFranchiseWarehouseUpdate;
-import com.akatsuki.pioms.frwarehouse.aggregate.ResponseFranchiseWarehouseUpdate;
+import com.akatsuki.pioms.frwarehouse.aggregate.RequestFranchiseWarehouse;
+import com.akatsuki.pioms.frwarehouse.dto.FranchiseWarehouseDTO;
 import com.akatsuki.pioms.frwarehouse.repository.FranchiseWarehouseRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +17,6 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -93,19 +87,30 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
 
     @Override
     @Transactional
-    public List<FranchiseWarehouse> getAllWarehouse() {
-        return franchiseWarehouseRepository.findAll();
+    public List<FranchiseWarehouseDTO> getAllWarehouse() {
+        List<FranchiseWarehouse> franchiseWarehouseList = franchiseWarehouseRepository.findAll();
+        List<FranchiseWarehouseDTO> responseFrWarehouse = new ArrayList<>();
+
+        franchiseWarehouseList.forEach(franchiseWarehouse -> {
+            responseFrWarehouse.add(new FranchiseWarehouseDTO(franchiseWarehouse));
+        });
+        return responseFrWarehouse;
     }
 
     @Override
     @Transactional
-    public FranchiseWarehouse getWarehouseByWarehouseCode(int franchiseWarehouseCode) {
-        return franchiseWarehouseRepository.findById(franchiseWarehouseCode).orElseThrow(null);
+    public List<FranchiseWarehouseDTO> getWarehouseByWarehouseCode(int franchiseWarehouseCode) {
+        List<FranchiseWarehouse> franchiseWarehouseList = franchiseWarehouseRepository.findByFranchiseWarehouseCode(franchiseWarehouseCode);
+        List<FranchiseWarehouseDTO> franchiseWarehouseDTOS = new ArrayList<>();
+        franchiseWarehouseList.forEach(franchiseWarehouse -> {
+            franchiseWarehouseDTOS.add(new FranchiseWarehouseDTO(franchiseWarehouse));
+        });
+        return franchiseWarehouseDTOS;
     }
 
     @Override
     @Transactional
-    public ResponseEntity<String> updateWarehouseCount(int franchiseWarehouseCode, RequestFranchiseWarehouseUpdate request, int requesterAdminCode) {
+    public ResponseEntity<String> updateWarehouseCount(int franchiseWarehouseCode, RequestFranchiseWarehouse request, int requesterAdminCode) {
         Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
         if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
             return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
@@ -148,5 +153,19 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
                 franchiseWarehouseRepository.save(franchiseWarehouse);
             }
         }
+    }
+
+    @Override
+    @Transactional
+    public void toggleFavorite(int franchiseWarehouseCode) {
+        FranchiseWarehouse favorite = franchiseWarehouseRepository.findById(franchiseWarehouseCode)
+                .orElseThrow(() -> new RuntimeException("Warehouse not found"));
+        favorite.setFranchiseWarehouseFavorite(!favorite.isFranchiseWarehouseFavorite());
+        franchiseWarehouseRepository.save(favorite);
+    }
+
+    @Override
+    public List<FranchiseWarehouse> findAllFavorites() {
+        return franchiseWarehouseRepository.findByFranchiseWarehouseFavoriteTrue();
     }
 }

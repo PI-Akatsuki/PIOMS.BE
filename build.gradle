@@ -56,8 +56,10 @@ dependencies {
 //    implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
 //    implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
-    compileOnly group: 'org.apache.poi', name: 'poi', version: '4.1.2'        // HSSFWorkbook 사용가능
-    compileOnly group: 'org.apache.poi', name: 'poi-ooxml', version: '4.1.2'  // XSSFWorkbook 사용가능
+    // excel POI
+    // https://mvnrepository.com/artifact/org.apache.poi/poi
+    implementation group: 'org.apache.poi', name: 'poi', version: '5.2.3'
+    compileOnly group: 'org.apache.poi', name: 'poi-ooxml', version: '5.2.3'  // XSSFWorkbook 사용가능
 
     testImplementation("org.junit.vintage:junit-vintage-engine") {
         exclude group: "org.hamcrest", module: "hamcrest-core"

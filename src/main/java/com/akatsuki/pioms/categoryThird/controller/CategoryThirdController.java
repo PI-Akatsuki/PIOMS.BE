@@ -42,7 +42,7 @@ public class CategoryThirdController {
         return ResponseEntity.ok(responseCategory);
     }
 
-    @GetMapping("/categorysecond/{categorySecondCode}")
+    @GetMapping("/list/detail/categorysecond/{categorySecondCode}")
     @Operation(summary = "카테고리(중)에 속한 카테고리(소) 목록 조회")
     public ResponseEntity<List<ResponseCategoryThird>> getCategoryThirdInCategorySecond(@PathVariable int categorySecondCode) {
         return ResponseEntity.ok(categoryThirdService.getCategoryThirdInSecond(categorySecondCode));

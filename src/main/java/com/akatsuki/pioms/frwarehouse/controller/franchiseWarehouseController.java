@@ -1,17 +1,17 @@
 package com.akatsuki.pioms.frwarehouse.controller;
 
 import com.akatsuki.pioms.frwarehouse.aggregate.FranchiseWarehouse;
-import com.akatsuki.pioms.frwarehouse.aggregate.RequestFranchiseWarehouseUpdate;
-import com.akatsuki.pioms.frwarehouse.aggregate.ResponseFranchiseWarehouseUpdate;
-import com.akatsuki.pioms.frwarehouse.service.FranchiseWarehouseDTO;
+import com.akatsuki.pioms.frwarehouse.aggregate.RequestFranchiseWarehouse;
+import com.akatsuki.pioms.frwarehouse.aggregate.ResponseFranchiseWarehouse;
+import com.akatsuki.pioms.frwarehouse.dto.FranchiseWarehouseDTO;
 import com.akatsuki.pioms.frwarehouse.service.FranchiseWarehouseService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/warehouse")
@@ -25,22 +25,40 @@ public class franchiseWarehouseController {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<FranchiseWarehouse>> getAllWarehous() {
+    public ResponseEntity<List<FranchiseWarehouseDTO>> getAllWarehous() {
         return ResponseEntity.ok().body(franchiseWarehouseService.getAllWarehouse());
     }
 
-    @GetMapping("/{franchiseWarehouseCode}")
+    @GetMapping("/list/detail/{franchiseWarehouseCode}")
     @Operation(summary = "franchiseWarehouseCode로 franchiseWarehouse 조회")
-    public ResponseEntity<FranchiseWarehouse> getWarehouseByWarehouseCode(@PathVariable int franchiseWarehouseCode) {
-        return ResponseEntity.ok().body(franchiseWarehouseService.getWarehouseByWarehouseCode(franchiseWarehouseCode));
+    public ResponseEntity<List<ResponseFranchiseWarehouse>> getWarehouseByWarehouseCode(@PathVariable int franchiseWarehouseCode) {
+        List<FranchiseWarehouseDTO> franchiseWarehouseDTOS = franchiseWarehouseService.getWarehouseByWarehouseCode(franchiseWarehouseCode);
+        List<ResponseFranchiseWarehouse> responseWarehouse = new ArrayList<>();
+        franchiseWarehouseDTOS.forEach(franchiseWarehouseDTO -> {
+            responseWarehouse.add(new ResponseFranchiseWarehouse(franchiseWarehouseDTO));
+        });
+        return ResponseEntity.ok(responseWarehouse);
     }
 
     @PostMapping("/update/{franchiseWarehouseCode}")
     @Operation(summary = "사라졌을 상품을 위한 재고 수정 기능")
-    public ResponseEntity<String> updateWarehouseCount(@PathVariable int franchiseWarehouseCode, @RequestBody RequestFranchiseWarehouseUpdate request, int requesterAdminCode) {
+    public ResponseEntity<String> updateWarehouseCount(@PathVariable int franchiseWarehouseCode, @RequestBody RequestFranchiseWarehouse request, int requesterAdminCode) {
         return franchiseWarehouseService.updateWarehouseCount(franchiseWarehouseCode,request, requesterAdminCode);
     }
 
+    @PutMapping("/toggleFavorite/{franchiseWarehouseCode}")
+    @Operation(summary = "즐겨찾기 추가,삭제 기능")
+    public ResponseEntity<?> toggleFavorite(@PathVariable int franchiseWarehouseCode){
+        franchiseWarehouseService.toggleFavorite(franchiseWarehouseCode);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/favorites")
+    @Operation(summary = "즐겨찾기 상품 조회")
+    public ResponseEntity<List<FranchiseWarehouse>> findAllFavorites() {
+        List<FranchiseWarehouse> favorites = franchiseWarehouseService.findAllFavorites();
+        return ResponseEntity.ok(favorites);
+    }
 
     @GetMapping("/{franchiseOwnerCode}/list")
     public ResponseEntity<List<FranchiseWarehouseDTO>> getFrWarehouseList(@PathVariable int franchiseOwnerCode){
