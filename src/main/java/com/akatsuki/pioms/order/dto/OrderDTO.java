@@ -46,6 +46,7 @@ public class OrderDTO {
     private List<OrderProductDTO> orderProductList;
 
 
+
     public OrderDTO(Order order) {
         this.orderCode= order.getOrderCode();
         this.orderDate= order.getOrderDate();
@@ -61,10 +62,10 @@ public class OrderDTO {
         this.AdminCode= order.getFranchise().getAdmin().getAdminCode();
         this.AdminName= order.getFranchise().getAdmin().getAdminName();
 
-        if (exchange!=null)
-            this.exchange= new ExchangeDTO(order.getExchange());
-//        this.orderProductList= order.getOrderProductList();
-
+        if (order.getExchange()!=null) {
+            this.exchange = new ExchangeDTO(order.getExchange());
+            System.out.println("exchange = " + exchange);
+        }
         orderProductList = new ArrayList<>();
         if(order.getOrderProductList()!=null)
             for (int i = 0; i < order.getOrderProductList().size(); i++) {
