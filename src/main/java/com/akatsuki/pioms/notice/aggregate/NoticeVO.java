@@ -27,4 +27,7 @@ public class NoticeVO {
         this.adminName = notice.getAdmin().getAdminName();
     }
 
+    public Notice toDto() {
+        return null;
+    }
 }

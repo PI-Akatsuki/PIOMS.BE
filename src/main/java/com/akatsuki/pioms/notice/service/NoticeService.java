@@ -37,4 +37,5 @@ public interface NoticeService {
     // root 관리자가 공지사항 삭제
     @Transactional
     ResponseEntity<String> deleteNotice(int noticeCode, int requesterAdminCode);
+
 }

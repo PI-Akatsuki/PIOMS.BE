@@ -4,12 +4,14 @@ import com.akatsuki.pioms.admin.aggregate.Admin;
 import com.akatsuki.pioms.notice.aggregate.Notice;
 import com.akatsuki.pioms.notice.aggregate.NoticeVO;
 import com.akatsuki.pioms.notice.repository.NoticeRepository;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.LinkedList;
@@ -31,6 +33,7 @@ public class NoticeServiceTest {
     private NoticeRepository noticeRepository;
 
     Admin admin;
+    int noticeCode = 1;
 
     @BeforeEach
     void init() {
@@ -89,26 +92,32 @@ public class NoticeServiceTest {
 //        assertThat(thrown).isInstanceOf(RuntimeException.class).hasMessageContaning("해당 코드의 공지사항을 찾을 수 없습니다.");
 //    }
 
+    // 공지사항 등록
     @Test
+    @DisplayName(value = "Root 관리자 권한으로 공지사항 등록 성공")
     void postNotice() {
 
         // given
+        NoticeVO noticeVO = new NoticeVO(noticeCode, "공지사항을 새롭게 등록합니다.", "2024-01-11 12:34:45", "공지사항 등록에 대한 내용입니다.", "2024-01-11 12:34:45", "root");
+        Notice notice = noticeVO.toDto();
 
         // when
+        ResponseEntity<String> saveNoticeCode = noticeService.saveNotice(notice,1);
 
         // then
+        Assertions.assertThat(notice.getNoticeCode()).isEqualTo(saveNoticeCode);
     }
-
     // 공지사항 수정
-    @Test
-    void updateNoticeByCode() {
+//    @Test
+//    @DisplayName()
+//    void updateNoticeByCode() {
 
         // given
 
         // when
 
         // then
-    }
+//    }
 
     // 공지사항 삭제
     @Test
