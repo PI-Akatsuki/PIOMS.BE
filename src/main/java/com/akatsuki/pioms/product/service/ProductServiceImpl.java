@@ -3,6 +3,7 @@ package com.akatsuki.pioms.product.service;
 import com.akatsuki.pioms.admin.aggregate.Admin;
 import com.akatsuki.pioms.admin.repository.AdminRepository;
 import com.akatsuki.pioms.categoryThird.repository.CategoryThirdRepository;
+import com.akatsuki.pioms.config.ImageService;
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import com.akatsuki.pioms.exchange.aggregate.EXCHANGE_PRODUCT_STATUS;
 import com.akatsuki.pioms.exchange.dto.ExchangeProductDTO;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -38,14 +40,16 @@ public class ProductServiceImpl implements ProductService{
     private final ExchangeService exchangeService;
     private final AdminRepository adminRepository;
     private final LogService logService;
+    private final ImageService googleImage;
 
     @Autowired
-    public ProductServiceImpl(ProductRepository productRepository, CategoryThirdRepository categoryThirdRepository, ExchangeService exchangeService, AdminRepository adminRepository, LogService logService) {
+    public ProductServiceImpl(ProductRepository productRepository, CategoryThirdRepository categoryThirdRepository, ExchangeService exchangeService, AdminRepository adminRepository, LogService logService, ImageService googleImage) {
         this.productRepository = productRepository;
         this.categoryThirdRepository = categoryThirdRepository;
         this.exchangeService = exchangeService;
         this.adminRepository = adminRepository;
         this.logService = logService;
+        this.googleImage = googleImage;
     }
 
     @Override
@@ -256,15 +260,12 @@ public class ProductServiceImpl implements ProductService{
         }
     }
 
-
-
     @Override
-    public Boolean postProductWithImage(RequestProduct request, MultipartFile image) {
+    public Boolean postProductWithImage(RequestProduct request, MultipartFile image)throws IOException {
         Product product = new Product(request);
-
-        productRepository.save(product);
-
-        return null;
+        product = productRepository.save(product);
+        return googleImage.uploadImage(product.getProductCode(),image);
     }
+
 
 }
