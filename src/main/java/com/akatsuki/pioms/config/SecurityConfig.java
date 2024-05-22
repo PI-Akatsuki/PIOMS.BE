@@ -13,8 +13,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-import static org.springframework.security.config.Customizer.withDefaults;
-
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -41,16 +39,42 @@ public class SecurityConfig {
                                 "/admin/invoice/**",
                                 "/admin/exchange/**",
                                 "/admin/notice/list/**",
-                                "/admin/login/**",
                                 "/admin/ask/**",
                                 "/admin/exceldownload/**").hasAnyRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
-                        .loginPage("/login")
+                        .loginPage("/admin/login")
+                        .defaultSuccessUrl("/admin/home", true)
+                        .failureUrl("/admin/login?error=true")
                         .permitAll()
                 )
-                .httpBasic(withDefaults());
+                .formLogin(form -> form
+                        .loginPage("/franchise/login")
+                        .defaultSuccessUrl("/franchise/home", true)
+                        .failureUrl("/franchise/login?error=true")
+                        .permitAll()
+                )
+                .formLogin(form -> form
+                        .loginPage("/driver/login")
+                        .defaultSuccessUrl("/driver/home", true)
+                        .failureUrl("/driver/login?error=true")
+                        .permitAll()
+                );
+
+        http
+                .sessionManagement((auth) -> auth
+                        .maximumSessions(1)
+                        .maxSessionsPreventsLogin(true));
+
+        http
+                .sessionManagement((auth) -> auth
+                        .sessionFixation().changeSessionId());
+
+        http
+                .logout((auth) -> auth
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login?logout=true"));
 
         return http.build();
     }

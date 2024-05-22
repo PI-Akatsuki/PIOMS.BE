@@ -10,7 +10,7 @@ import com.akatsuki.pioms.log.service.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,7 +35,11 @@ public class AdminInfoServiceImpl implements AdminInfoService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    // Admin 엔티티를 AdminDTO로 변환
+    private String getCurrentUser() {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return user.getUsername();
+    }
+
     private AdminDTO convertToDTO(Admin admin) {
         return AdminDTO.builder()
                 .adminCode(admin.getAdminCode())
@@ -58,7 +62,6 @@ public class AdminInfoServiceImpl implements AdminInfoService {
                 .build();
     }
 
-    // 전체 조회
     @Transactional(readOnly = true)
     @Override
     public List<AdminDTO> findAdminList() {
@@ -67,7 +70,6 @@ public class AdminInfoServiceImpl implements AdminInfoService {
                 .collect(Collectors.toList());
     }
 
-    // 상세 조회
     @Transactional(readOnly = true)
     @Override
     public ResponseEntity<AdminDTO> findAdminById(int adminCode) {
@@ -79,23 +81,21 @@ public class AdminInfoServiceImpl implements AdminInfoService {
         }
     }
 
-    // 관리자 등록
     @Override
     @Transactional
     public ResponseEntity<String> registerAdmin(AdminDTO adminDTO) {
-        Admin requestorAdmin = getCurrentUser();
+        String currentUsername = getCurrentUser();
+        Admin requestorAdmin = adminRepository.findByAdminId(currentUsername).orElse(null);
         if (requestorAdmin == null || !requestorAdmin.getAdminRole().equals("ROLE_ROOT")) {
             return ResponseEntity.status(403).body("신규 관리자 등록은 루트 관리자만 가능합니다.");
         }
 
-        if (adminDTO.getFranchiseList() != null && adminDTO.getFranchiseList().size() > 6) {
-            return ResponseEntity.badRequest().body("관리자는 최대 6개의 가맹점만 등록할 수 있습니다.");
+        if (adminRepository.findByAdminId(adminDTO.getAdminId()).isPresent()) {
+            return ResponseEntity.status(400).body("중복된 아이디가 존재합니다.");
         }
 
-        // 아이디 중복 체크
-        boolean exists = adminRepository.findByAdminId(adminDTO.getAdminId()).isPresent();
-        if (exists) {
-            return ResponseEntity.badRequest().body("중복된 아이디가 존재합니다.");
+        if (adminDTO.getFranchiseList() != null && adminDTO.getFranchiseList().size() > 6) {
+            return ResponseEntity.badRequest().body("관리자는 최대 6개의 가맹점만 등록할 수 있습니다.");
         }
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -141,8 +141,6 @@ public class AdminInfoServiceImpl implements AdminInfoService {
         return ResponseEntity.ok("신규 관리자 등록이 완료되었습니다.");
     }
 
-
-    // 관리자 수정
     @Override
     @Transactional
     public ResponseEntity<String> updateAdminInfo(int adminCode, AdminDTO updatedAdminDTO) {
@@ -194,15 +192,15 @@ public class AdminInfoServiceImpl implements AdminInfoService {
         }
     }
 
-    // 관리자 삭제
     @Override
     @Transactional
     public ResponseEntity<String> deleteAdmin(int adminCode) {
+        String currentUsername = getCurrentUser();
+        Admin requestorAdmin = adminRepository.findByAdminId(currentUsername).orElse(null);
         if (adminCode == 1) {
             return ResponseEntity.badRequest().body("adminCode 1번은 비활성화(삭제)할 수 없습니다.");
         }
 
-        Admin requestorAdmin = getCurrentUser();
         if (requestorAdmin == null || !requestorAdmin.getAdminRole().equals("ROLE_ROOT")) {
             return ResponseEntity.status(403).body("관리자 비활성화(삭제)는 루트 관리자만 가능합니다.");
         }
@@ -239,14 +237,5 @@ public class AdminInfoServiceImpl implements AdminInfoService {
         } else {
             return ResponseEntity.notFound().build();
         }
-    }
-
-    private Admin getCurrentUser() {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (principal instanceof UserDetails) {
-            String username = ((UserDetails) principal).getUsername();
-            return adminRepository.findByAdminId(username).orElse(null);
-        }
-        return null;
     }
 }
