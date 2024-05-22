@@ -41,9 +41,9 @@ public class NoticeServiceTest {
     void init() {
         admin = new Admin();
         admin.setAdminCode(1);
-        Notice notice = new Notice();
-        notice.setNoticeTitle("공지사항 제목입니다.");
-        notice.setNoticeContent("공지사항 내용입니다.");
+//        Notice notice = new Notice();
+//        notice.setNoticeTitle("공지사항 제목입니다.");
+//        notice.setNoticeContent("공지사항 내용입니다.");
     }
 
     @Test
