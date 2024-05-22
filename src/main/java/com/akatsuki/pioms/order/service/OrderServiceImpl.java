@@ -88,7 +88,7 @@ public class OrderServiceImpl implements OrderService{
             exchange1.setExchangeCode(exchange.getExchangeCode());
             order.setExchange(exchange1);
         }
-        order.setOrderCondition(ORDER_CONDITION.검수대기);
+//        order.setOrderCondition(ORDER_CONDITION.검수대기);
         order=orderRepository.save(order);
 
         return new OrderDTO(order);

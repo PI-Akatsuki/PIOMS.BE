@@ -133,6 +133,8 @@ public class ordertest {
         invoiceService.putInvoice(adminCode, invoice.getInvoiceCode(), DELIVERY_STATUS.배송완료);
         System.out.println("requestPutOrderCheck = " + requestPutOrderCheck);
 
+//        assertEquals();
+
         // 검수 전/후 창고 상태 확인
         List<FranchiseWarehouseDTO> warehouseBeforeCheck = franchiseWarehouseService.getFrWarehouseList(franchiseCode);
         System.out.println("검수 전 창고 = " + warehouseBeforeCheck);
