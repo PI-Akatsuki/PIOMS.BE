@@ -4,13 +4,13 @@ import com.akatsuki.pioms.admin.aggregate.Admin;
 import com.akatsuki.pioms.notice.aggregate.Notice;
 import com.akatsuki.pioms.notice.aggregate.NoticeVO;
 import com.akatsuki.pioms.notice.repository.NoticeRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,7 +18,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.BDDMockito.given;
 
 
@@ -39,6 +41,9 @@ public class NoticeServiceTest {
     void init() {
         admin = new Admin();
         admin.setAdminCode(1);
+        Notice notice = new Notice();
+        notice.setNoticeTitle("공지사항 제목입니다.");
+        notice.setNoticeContent("공지사항 내용입니다.");
     }
 
     @Test
@@ -97,27 +102,32 @@ public class NoticeServiceTest {
     @DisplayName(value = "Root 관리자 권한으로 공지사항 등록 성공")
     void postNotice() {
 
-        // given
-        NoticeVO noticeVO = new NoticeVO(noticeCode, "공지사항을 새롭게 등록합니다.", "2024-01-11 12:34:45", "공지사항 등록에 대한 내용입니다.", "2024-01-11 12:34:45", "root");
-        Notice notice = noticeVO.toDto();
+//        // given
+        Notice notice = new Notice();
+        notice.setNoticeTitle("공지사항 제목입니다.");
+        notice.setNoticeContent("공지사항 내용입니다.");
 
         // when
-        ResponseEntity<String> saveNoticeCode = noticeService.saveNotice(notice,1);
+        // root 관리자로 공지 등록
+        ResponseEntity<String> responseRoot = noticeService.saveNotice(notice,1);
 
         // then
-        Assertions.assertThat(notice.getNoticeCode()).isEqualTo(saveNoticeCode);
+        assertNotNull(responseRoot);
+        assertEquals(200, responseRoot.getStatusCodeValue());
+        assertEquals("공지사항 등록이 완료되었습니다.", responseRoot.getBody());
     }
+
     // 공지사항 수정
-//    @Test
-//    @DisplayName()
-//    void updateNoticeByCode() {
+    @Test
+    @DisplayName(value = "Root 관리자 권한으로 공지사항 수정 성공")
+    void updateNoticeByCode() {
 
         // given
 
         // when
 
         // then
-//    }
+    }
 
     // 공지사항 삭제
     @Test
