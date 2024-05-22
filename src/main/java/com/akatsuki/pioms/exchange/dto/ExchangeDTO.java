@@ -31,7 +31,6 @@ public class ExchangeDTO {
 
     public ExchangeDTO(Exchange exchange) {
         if (exchange !=null) {
-            System.out.println(exchange);
             this.exchangeCode = exchange.getExchangeCode();
             this.exchangeDate = exchange.getExchangeDate();
             this.exchangeStatus = exchange.getExchangeStatus();

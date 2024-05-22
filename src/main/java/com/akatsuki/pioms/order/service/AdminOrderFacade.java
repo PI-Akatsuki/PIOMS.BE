@@ -45,10 +45,6 @@ public class AdminOrderFacade {
         List<Order> orders =  orderService.getOrderListByAdminCode(adminCode);
         List<OrderDTO> orderDTOS = new ArrayList<>();
         orders.forEach(order -> {
-            if (order.getExchange()!=null) {
-                System.out.println("order = " + order.getOrderCode());
-                System.out.println("order.getExchange().getProducts() = " + order.getExchange().getProducts());
-            }
             orderDTOS.add(new OrderDTO(order));
         });
 

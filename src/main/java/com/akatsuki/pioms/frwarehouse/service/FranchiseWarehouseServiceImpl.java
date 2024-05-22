@@ -143,7 +143,6 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
         int cnt = requestExchange.getProducts().size();
         for (int i = 0; i < cnt; i++) {
             ExchangeProductVO exchange = requestExchange.getProducts().get(i);
-            System.out.println(exchange);
             FranchiseWarehouse franchiseWarehouse =
                     franchiseWarehouseRepository.findByProductProductCodeAndFranchiseCode(exchange.getProductCode(),requestExchange.getFranchiseCode());
             System.out.println(franchiseWarehouse);

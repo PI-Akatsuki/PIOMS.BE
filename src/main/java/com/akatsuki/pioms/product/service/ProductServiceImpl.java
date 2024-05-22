@@ -202,7 +202,6 @@ public class ProductServiceImpl implements ProductService{
             System.out.println("Exchange Products not found!!");
             return;
         }
-        System.out.println("exchangeProductList = " + exchangeProductList);
         for (int i = 0; i < exchangeProductList.size(); i++) {
             productMinusCnt(exchangeProductList.get(i).getExchangeProductNormalCount(), exchangeProductList.get(i).getProductCode());
         }

@@ -60,7 +60,6 @@ public class OrderVO {
         this.orderProductList = order.getOrderProductList();
         if (order.getExchange()!=null) {
             this.exchangeProductList = order.getExchange().getExchangeProducts();
-            System.out.println("exchangeProductList = " + exchangeProductList);
         }
     }
 }
