@@ -64,7 +64,6 @@ public class OrderDTO {
 
         if (order.getExchange()!=null) {
             this.exchange = new ExchangeDTO(order.getExchange());
-            System.out.println("exchange = " + exchange);
         }
         orderProductList = new ArrayList<>();
         if(order.getOrderProductList()!=null)

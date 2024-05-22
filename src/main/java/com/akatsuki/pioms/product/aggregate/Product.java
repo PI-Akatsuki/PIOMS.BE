@@ -99,4 +99,21 @@ public class Product {
     }
 
 
+    public Product(RequestProduct request) {
+        this.productName  = request.getProductName();
+        this.productPrice  = request.getProductPrice();
+        this.productContent  = request.getProductContent();
+        this.productColor  = request.getProductColor();
+        this.productSize  = request.getProductSize();
+        this.productGender = request.getProductGender();
+        this.productTotalCount  = request.getProductTotalCount();
+        this.productStatus  = request.getProductStatus();
+        this.productExposureStatus  = request.isProductExposureStatus();
+        this.productNoticeCount  = request.getProductNoticeCount();
+        this.productDiscount  = request.getProductDisCount();
+        this.productCount  = request.getProductCount();
+        CategoryThird categoryThird1 = new CategoryThird();
+        categoryThird1.setCategoryThirdCode(request.getCategoryThirdCode());
+        this.categoryThird  = categoryThird1;
+    }
 }
