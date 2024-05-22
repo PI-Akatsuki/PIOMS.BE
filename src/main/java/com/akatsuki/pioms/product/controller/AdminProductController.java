@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -83,7 +84,12 @@ public class AdminProductController {
 
     @PostMapping("/image")
     public ResponseEntity<Boolean> postImage(@RequestBody RequestProduct request, @RequestParam("file")MultipartFile image){
-        Boolean result =  productService.postProductWithImage(request,image);
+        Boolean result = null;
+        try {
+            result = productService.postProductWithImage(request,image);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         return ResponseEntity.ok(result);
     }
 

@@ -1,5 +1,7 @@
-package com.akatsuki.pioms.config;
+package com.akatsuki.pioms.image.service;
 
+import com.akatsuki.pioms.image.aggregate.Image;
+import com.akatsuki.pioms.image.repository.ImageRepository;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.storage.*;
 import org.springframework.beans.factory.annotation.Value;

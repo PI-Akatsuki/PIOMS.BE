@@ -3,7 +3,7 @@ package com.akatsuki.pioms.product.service;
 import com.akatsuki.pioms.admin.aggregate.Admin;
 import com.akatsuki.pioms.admin.repository.AdminRepository;
 import com.akatsuki.pioms.categoryThird.repository.CategoryThirdRepository;
-import com.akatsuki.pioms.config.ImageService;
+import com.akatsuki.pioms.image.service.ImageService;
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import com.akatsuki.pioms.exchange.aggregate.EXCHANGE_PRODUCT_STATUS;
 import com.akatsuki.pioms.exchange.dto.ExchangeProductDTO;

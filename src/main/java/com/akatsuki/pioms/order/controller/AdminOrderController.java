@@ -87,6 +87,7 @@ public class AdminOrderController {
     public ResponseEntity<OrderVO> acceptOrder(@PathVariable int adminCode, @PathVariable int orderCode){
         OrderDTO orderDTO = orderFacade.acceptOrder(adminCode, orderCode);
         System.out.println("승인 완료");
+        System.out.println("orderDTO = " + orderDTO);
         if (orderDTO == null){
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         }

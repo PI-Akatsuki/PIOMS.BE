@@ -17,6 +17,7 @@ import com.akatsuki.pioms.order.aggregate.RequestOrderVO;
 import com.akatsuki.pioms.order.aggregate.RequestPutOrder;
 import com.akatsuki.pioms.order.aggregate.RequestPutOrderCheck;
 import com.akatsuki.pioms.order.dto.OrderDTO;
+import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
 import com.akatsuki.pioms.order.repository.OrderRepository;
 import com.akatsuki.pioms.order.service.AdminOrderFacade;
 import com.akatsuki.pioms.order.service.FranchiseOrderFacade;
@@ -100,7 +101,11 @@ public class ordertest {
         // 2-1. 발주 생성
         System.out.println("requestOrderVO = " + requestOrderVO);
         OrderDTO orderDTO = franchiseOrderFacade.postFranchiseOrder(franchiseCode, requestOrderVO);
-        Order order = orderRepository.findById(orderDTO.getOrderCode()).orElseThrow();
+        Order order = orderRepository.findById(orderDTO.getOrderCode()).orElse(null);
+        if (order==null){
+            order = orderRepository.findByFranchiseFranchiseCodeAndOrderCondition(adminCode, ORDER_CONDITION.승인대기);
+            orderDTO = new OrderDTO(order);
+        }
 
         // 2-2. 발주 수정
         RequestPutOrder requestPutOrder = new RequestPutOrder(orderDTO.getOrderCode(), requestProducts, franchiseCode);

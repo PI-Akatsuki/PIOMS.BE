@@ -25,4 +25,6 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
     boolean existsByExchangeExchangeCode(int exchangeCode);
 
     List<Order> findAllByOrderConditionOrderByOrderDateDesc(ORDER_CONDITION orderCondition);
+
+    Order findByFranchiseFranchiseCodeAndOrderCondition(int adminCode, ORDER_CONDITION orderCondition);
 }

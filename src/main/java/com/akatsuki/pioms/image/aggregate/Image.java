@@ -1,4 +1,4 @@
-package com.akatsuki.pioms.config;
+package com.akatsuki.pioms.image.aggregate;
 
 
 import jakarta.persistence.*;

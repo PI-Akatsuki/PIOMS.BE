@@ -1,5 +1,6 @@
-package com.akatsuki.pioms.config;
+package com.akatsuki.pioms.image.repository;
 
+import com.akatsuki.pioms.image.aggregate.Image;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
