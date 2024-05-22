@@ -1,5 +1,6 @@
 package com.akatsuki.pioms.config;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
@@ -12,6 +13,12 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
@@ -21,7 +28,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests((authorize) -> authorize
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/login", "/admin/login", "/franchise/login", "/driver/login").permitAll()
                         .requestMatchers("/admin/**").hasRole("ROOT")
                         .requestMatchers(
                                 "/admin/info",
@@ -45,20 +53,57 @@ public class SecurityConfig {
                         .requestMatchers("/driver/**").hasRole("DRIVER")
                         .anyRequest().authenticated()
                 )
-                .httpBasic() // Basic Authentication 활성화
-                .and()
-                .sessionManagement((auth) -> auth
-                        .maximumSessions(1)
-                        .maxSessionsPreventsLogin(true))
-                .sessionManagement((auth) -> auth
-                        .sessionFixation().changeSessionId());
-
-        http
-                .logout((auth) -> auth
+                .formLogin(form -> form
+                        .loginPage("/admin/login")
+                        .loginProcessingUrl("/admin/login")
+                        .defaultSuccessUrl("/admin/home", true)
+                        .failureUrl("/admin/login?error=true")
+                        .permitAll()
+                )
+                .formLogin(form -> form
+                        .loginPage("/franchise/login")
+                        .loginProcessingUrl("/franchise/login")
+                        .defaultSuccessUrl("/franchise/home", true)
+                        .failureUrl("/franchise/login?error=true")
+                        .permitAll()
+                )
+                .formLogin(form -> form
+                        .loginPage("/driver/login")
+                        .loginProcessingUrl("/driver/login")
+                        .defaultSuccessUrl("/driver/home", true)
+                        .failureUrl("/driver/login?error=true")
+                        .permitAll()
+                )
+                .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login?logout=true"));
+                        .logoutSuccessUrl("/login?logout=true")
+                        .permitAll()
+                )
+                .sessionManagement(session -> session
+                        .maximumSessions(1)
+                        .maxSessionsPreventsLogin(true)
+                )
+                .sessionManagement(session -> session
+                        .sessionFixation().changeSessionId()
+                )
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()));
 
         return http.build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowCredentials(true);
+        configuration.setAllowedHeaders(Collections.singletonList("*"));
+        configuration.setExposedHeaders(Arrays.asList("Authorization", "Set-Cookie"));
+        configuration.setMaxAge(3600L);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
     @Bean
