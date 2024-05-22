@@ -1,5 +1,6 @@
 package com.akatsuki.pioms.invoice.controller;
 
+import com.akatsuki.pioms.invoice.aggregate.DELIVERY_STATUS;
 import com.akatsuki.pioms.invoice.aggregate.ResponseDriverInvoice;
 import com.akatsuki.pioms.invoice.service.InvoiceService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -7,14 +8,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "배송상태조회 API", description = "배송기사별 배송상태조회관련 전체 및 상세조회 API")
+@Tag(name = "배송상태조회 및  API", description = "배송기사별 배송상태조회관련 전체 및 상세조회 API")
 @RestController
 @RequestMapping("driver")
 public class DriverInvoiceController {
@@ -55,5 +53,11 @@ public class DriverInvoiceController {
     public ResponseEntity<List<ResponseDriverInvoice>> getStatusCompleteDeliveryDriverInvoiceList(@PathVariable int driverCode) {
         List<ResponseDriverInvoice> responseDriverInvoice = invoiceService.getStatusCompleteDeliveryDriverInvoiceList(driverCode);
         return ResponseEntity.ok().body(responseDriverInvoice);
+    }
+
+    @PutMapping("/invoice/{invoiceCode}/delivery_status/{deliveryStatus}")
+    public ResponseEntity<Boolean> modifyInvoiceStatusByDriver(@PathVariable int invoiceCode, @PathVariable DELIVERY_STATUS deliveryStatus) {
+        boolean result = invoiceService.modifyInvoiceStatusByDriver(invoiceCode, 0, deliveryStatus);
+        return ResponseEntity.ok(result);
     }
 }

@@ -11,6 +11,8 @@ import com.akatsuki.pioms.invoice.aggregate.DELIVERY_STATUS;
 import com.akatsuki.pioms.invoice.repository.InvoiceRepository;
 import com.akatsuki.pioms.order.aggregate.Order;
 import com.akatsuki.pioms.order.dto.OrderDTO;
+import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
+import com.akatsuki.pioms.order.service.OrderService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,14 +28,15 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     final private InvoiceRepository invoiceRepository;
     final private FranchiseService franchiseService;
+    final private OrderService orderService;
 
 
     @Autowired
-    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, FranchiseService franchiseService) {
+    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, FranchiseService franchiseService, OrderService orderService) {
         this.invoiceRepository = invoiceRepository;
         this.franchiseService = franchiseService;
+        this.orderService = orderService;
     }
-
 
     public LocalDateTime setDeliveryTime(LocalDateTime orderTime, DELIVERY_DATE deliveryDate){
 
@@ -264,5 +267,29 @@ public class InvoiceServiceImpl implements InvoiceService {
         }
 
         return returnList;
+    }
+
+    // 배송기사가 상태변경 시 수정
+    @Override
+    @Transactional
+    public boolean modifyInvoiceStatusByDriver(int invoiceCode, int driverCode, DELIVERY_STATUS deliveryStatus) {
+
+        // 송장이 있는지 여부
+        Invoice invoice = invoiceRepository.findById(invoiceCode).orElse(null);
+        if (invoice == null) {
+            return false;
+        }
+
+        // 배송 상태 변경 후 레포에 저장
+        invoice.setDeliveryStatus(deliveryStatus);
+        invoiceRepository.save(invoice);
+
+        // 배송기사 배송완료 시 배송중 -> 배송완료
+        if(deliveryStatus == DELIVERY_STATUS.배송완료) {
+
+            // 점주가 확인 전까지 '검수대기'
+            orderService.putOrderCondition(invoice.getOrder().getOrderCode(), ORDER_CONDITION.검수대기);
+        }
+        return true;
     }
 }

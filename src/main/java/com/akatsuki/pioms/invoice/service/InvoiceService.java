@@ -59,4 +59,8 @@ public interface InvoiceService {
     // 배송상태조회 - 배송기사코드와 담당지역의 배송상태에 따른 상세조회 (배송완료)
     @Transactional(readOnly = true)
     List<ResponseDriverInvoice> getStatusCompleteDeliveryDriverInvoiceList(int driverCode);
+
+    // 배송상태수정 시 상태 변경
+    @Transactional
+    boolean modifyInvoiceStatusByDriver(int invoiceCode, int driverCode, DELIVERY_STATUS deliveryStatus);
 }
