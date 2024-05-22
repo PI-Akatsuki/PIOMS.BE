@@ -35,11 +35,13 @@ public class ExchangeDTO {
             this.exchangeCode = exchange.getExchangeCode();
             this.exchangeDate = exchange.getExchangeDate();
             this.exchangeStatus = exchange.getExchangeStatus();
-            this.franchise = new FranchiseDTO(exchange.getFranchise());
-            this.exchangeProducts = new ArrayList<>();
-            exchange.getProducts().forEach(exchangeProductEntity -> {
-                exchangeProducts.add(new ExchangeProductDTO(exchangeProductEntity));
-            });
+            if (exchange.getFranchise()!=null) {
+                this.franchise = new FranchiseDTO(exchange.getFranchise());
+                this.exchangeProducts = new ArrayList<>();
+                exchange.getProducts().forEach(exchangeProductEntity -> {
+                    exchangeProducts.add(new ExchangeProductDTO(exchangeProductEntity));
+                });
+            }
         }
     }
 }
