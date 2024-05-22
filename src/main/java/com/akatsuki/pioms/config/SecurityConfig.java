@@ -29,29 +29,30 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/login", "/admin/login", "/franchise/login", "/driver/login").permitAll()
-                        .requestMatchers("/admin/**").hasRole("ROOT")
-                        .requestMatchers(
-                                "/admin/info",
-                                "/admin/list/**",
-                                "/admin/category/first/list/**",
-                                "/admin/category/second/list/**",
-                                "/admin/category/third/list/**",
-                                "/admin/driver/list/**",
-                                "/admin/franchise/list/**",
-                                "/admin/franchise/owner/list/**",
-                                "/admin/franchise/owner/update/**",
-                                "/admin/product/list/**",
-                                "/admin/specs/**",
-                                "/admin/order/**",
-                                "/admin/invoice/**",
-                                "/admin/exchange/**",
-                                "/admin/notice/list/**",
-                                "/admin/ask/**",
-                                "/admin/exceldownload/**").hasRole("ADMIN")
-                        .requestMatchers("/franchise/**").hasRole("OWNER")
-                        .requestMatchers("/driver/**").hasRole("DRIVER")
-                        .anyRequest().authenticated()
+                                .anyRequest().permitAll()
+//                        .requestMatchers("/login", "/admin/login", "/franchise/login", "/driver/login").permitAll()
+//                        .requestMatchers("/admin/**").hasRole("ROOT")
+//                        .requestMatchers(
+//                                "/admin/info",
+//                                "/admin/list/**",
+//                                "/admin/category/first/list/**",
+//                                "/admin/category/second/list/**",
+//                                "/admin/category/third/list/**",
+//                                "/admin/driver/list/**",
+//                                "/admin/franchise/list/**",
+//                                "/admin/franchise/owner/list/**",
+//                                "/admin/franchise/owner/update/**",
+//                                "/admin/product/list/**",
+//                                "/admin/specs/**",
+//                                "/admin/order/**",
+//                                "/admin/invoice/**",
+//                                "/admin/exchange/**",
+//                                "/admin/notice/list/**",
+//                                "/admin/ask/**",
+//                                "/admin/exceldownload/**").hasRole("ADMIN")
+//                        .requestMatchers("/franchise/**").hasRole("OWNER")
+//                        .requestMatchers("/driver/**").hasRole("DRIVER")
+//                        .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/admin/login")
