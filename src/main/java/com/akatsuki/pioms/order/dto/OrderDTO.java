@@ -37,6 +37,7 @@ public class OrderDTO {
     private int franchiseOwnerCode;
     private String franchiseOwnerName;
     private String franchiseAddress;
+    private String franchiseOwnerPhone;
 
     private int AdminCode;
     private String AdminName;
@@ -59,12 +60,12 @@ public class OrderDTO {
         this.franchiseOwnerCode = order.getFranchise().getFranchiseOwner().getFranchiseOwnerCode();
         this.franchiseOwnerName = order.getFranchise().getFranchiseOwner().getFranchiseOwnerName();
         this.franchiseAddress = order.getFranchise().getFranchiseAddress();
+        this.franchiseOwnerPhone = order.getFranchise().getFranchiseOwner().getFranchiseOwnerPhone();
         this.AdminCode= order.getFranchise().getAdmin().getAdminCode();
         this.AdminName= order.getFranchise().getAdmin().getAdminName();
 
         if (order.getExchange()!=null) {
             this.exchange = new ExchangeDTO(order.getExchange());
-            System.out.println("exchange = " + exchange);
         }
         orderProductList = new ArrayList<>();
         if(order.getOrderProductList()!=null)

@@ -7,6 +7,8 @@ import com.akatsuki.pioms.ask.dto.AskDTO;
 import com.akatsuki.pioms.ask.dto.AskListDTO;
 import com.akatsuki.pioms.ask.dto.AskUpdateDTO;
 import com.akatsuki.pioms.ask.repository.AskRepository;
+import com.akatsuki.pioms.franchise.aggregate.Franchise;
+import com.akatsuki.pioms.franchise.repository.FranchiseRepository;
 import com.akatsuki.pioms.frowner.aggregate.FranchiseOwner;
 import com.akatsuki.pioms.frowner.repository.FranchiseOwnerRepository;
 import com.akatsuki.pioms.log.service.LogService;
@@ -34,24 +36,29 @@ class AskServiceTests {
     private final AskRepository askRepository;
     private final FranchiseOwnerRepository franchiseOwnerRepository;
     private final AdminRepository adminRepository;
+
+    private final FranchiseRepository franchiseRepository;
     private final LogService logService;
 
     @Autowired
     public AskServiceTests(AskServiceImpl askService,
                            AskRepository askRepository,
                            FranchiseOwnerRepository franchiseOwnerRepository,
-                           AdminRepository adminRepository,
+                           AdminRepository adminRepository, FranchiseRepository franchiseRepository,
                            LogService logService) {
         this.askService = askService;
         this.askRepository = askRepository;
         this.franchiseOwnerRepository = franchiseOwnerRepository;
         this.adminRepository = adminRepository;
+        this.franchiseRepository = franchiseRepository;
         this.logService = logService;
     }
     private Ask ask1;
 
     @BeforeEach
     void setUp() {
+        Franchise franchise = franchiseRepository.findById(5).orElseThrow();
+
         FranchiseOwner franchiseOwner = new FranchiseOwner();
         franchiseOwner.setFranchiseOwnerCode(1);
         franchiseOwner.setFranchiseOwnerId("가맹점주");
@@ -61,8 +68,12 @@ class AskServiceTests {
         franchiseOwner.setFranchiseOwnerPhone("0105656565");
         franchiseOwner.setFranchiseOwnerEnrollDate("20210506");
         franchiseOwner.setFranchiseOwnerUpdateDate("20210506");
+        franchiseOwner.setFranchiseRole("ROLE_OWNER");
 
-        franchiseOwnerRepository.save(franchiseOwner);
+        franchiseOwner = franchiseOwnerRepository.save(franchiseOwner);
+
+        franchise.setFranchiseOwner(franchiseOwner);
+        franchiseOwner.setFranchise(franchise);
 
         Admin admin = new Admin();
         admin.setAdminCode(1);

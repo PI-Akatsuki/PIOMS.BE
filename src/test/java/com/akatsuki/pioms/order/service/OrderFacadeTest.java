@@ -53,14 +53,14 @@ class OrderFacadeTest {
 
     @Test
     void getOrderListByAdminCode() {
-        List<Order> orders = orderRepository.findAllByFranchiseAdminAdminCode(order.getFranchise().getAdmin().getAdminCode());
+        List<Order> orders = orderRepository.findAllByFranchiseAdminAdminCodeOrderByOrderDateDesc(order.getFranchise().getAdmin().getAdminCode());
         List<OrderDTO> orderDTOS = orderFacade.getOrderListByAdminCode(order.getFranchise().getAdmin().getAdminCode());
         assertEquals(orders.size(), orderDTOS.size());
     }
 
     @Test
     void getAdminUncheckesOrders() {
-        List<Order> orders = orderRepository.findAllByFranchiseAdminAdminCodeAndOrderCondition(order.getFranchise().getAdmin().getAdminCode(), ORDER_CONDITION.승인대기);
+        List<Order> orders = orderRepository.findAllByFranchiseAdminAdminCodeAndOrderConditionOrderByOrderDateDesc(order.getFranchise().getAdmin().getAdminCode(), ORDER_CONDITION.승인대기);
         List<OrderDTO> orderDTOS = orderFacade.getAdminUncheckedOrders(order.getFranchise().getAdmin().getAdminCode());
         assertEquals(orders.size(), orderDTOS.size());
         for (int i = 0; i < orderDTOS.size(); i++) {
@@ -115,7 +115,7 @@ class OrderFacadeTest {
 
     @Test
     void getOrderListByFranchiseCode() {
-        List<Order> orders = orderRepository.findByFranchiseFranchiseCode(franchise.getFranchiseCode());
+        List<Order> orders = orderRepository.findByFranchiseFranchiseCodeOrderByOrderDateDesc(franchise.getFranchiseCode());
         List<OrderDTO>orderDTOS = orderService.getOrderList(franchise.getFranchiseCode());
         assertEquals(orders.size(), orderDTOS.size());
     }
