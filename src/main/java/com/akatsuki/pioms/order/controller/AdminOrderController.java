@@ -53,11 +53,9 @@ public class AdminOrderController {
                                                                  @RequestParam(defaultValue = "0") int page,
                                                                  @RequestParam(defaultValue = "20") int size ){
         List<OrderDTO> orderDTOS = orderFacade.getOrderListByAdminCode(adminCode);
-
         if (orderDTOS.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
-
         orderDTOS = Pagination.splitPage(orderDTOS, page, size);
         List<OrderVO> orderVOS = new ArrayList<>();
         for (int i = 0; i < orderDTOS.size(); i++) {

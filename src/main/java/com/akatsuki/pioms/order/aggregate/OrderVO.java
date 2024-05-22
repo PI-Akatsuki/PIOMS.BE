@@ -33,8 +33,11 @@ public class OrderVO {
 
     private int franchiseCode;
     private String franchiseName;
+
     private int franchiseOwnerCode;
     private String franchiseOwnerName;
+    private String franchiseOwnerPhone;
+
     private DELIVERY_DATE franchiseDeliveryDate;
     private int adminCode;
     private String adminName;
@@ -54,9 +57,13 @@ public class OrderVO {
         this.orderReason = order.getOrderReason();
         this.franchiseCode = order.getFranchiseCode();
         this.franchiseName = order.getFranchiseName();
+
         this.franchiseOwnerCode = order.getFranchiseOwnerCode();
         this.franchiseOwnerName = order.getFranchiseOwnerName();
+        this.franchiseOwnerPhone = order.getFranchiseOwnerPhone();
         this.franchiseDeliveryDate = order.getDeliveryDate();
+
+
         this.adminCode = order.getAdminCode();
         this.adminName = order.getAdminName();
         this.orderProductList = order.getOrderProductList();
