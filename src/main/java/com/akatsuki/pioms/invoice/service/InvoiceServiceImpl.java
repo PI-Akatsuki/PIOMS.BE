@@ -11,6 +11,8 @@ import com.akatsuki.pioms.invoice.aggregate.DELIVERY_STATUS;
 import com.akatsuki.pioms.invoice.repository.InvoiceRepository;
 import com.akatsuki.pioms.order.aggregate.Order;
 import com.akatsuki.pioms.order.dto.OrderDTO;
+import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
+import com.akatsuki.pioms.order.service.OrderService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,12 +28,14 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     final private InvoiceRepository invoiceRepository;
     final private FranchiseService franchiseService;
+    final private OrderService orderService;
 
 
     @Autowired
-    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, FranchiseService franchiseService) {
+    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, FranchiseService franchiseService, OrderService orderService) {
         this.invoiceRepository = invoiceRepository;
         this.franchiseService = franchiseService;
+        this.orderService = orderService;
     }
 
 
@@ -148,7 +152,10 @@ public class InvoiceServiceImpl implements InvoiceService {
             return null;
         }
         invoice.setDeliveryStatus(invoiceStatus);
-        invoiceRepository.save(invoice);
+        invoice = invoiceRepository.save(invoice);
+        if (invoiceStatus == DELIVERY_STATUS.배송완료){
+            orderService.putOrderCondition(invoice.getOrder().getOrderCode(), ORDER_CONDITION.검수대기);
+        }
         return new InvoiceDTO(invoice);
     }
 

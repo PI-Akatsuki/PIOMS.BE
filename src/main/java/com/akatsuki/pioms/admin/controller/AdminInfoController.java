@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("admin")
-@Tag(name = "본사 관리자", description = "Company admin")
+@Tag(name = "관리자 정보", description = "Admin Info")
 public class AdminInfoController {
 
     private final AdminInfoService adminService;
@@ -40,12 +40,8 @@ public class AdminInfoController {
     // 관리자 등록
     @Operation(summary = "본사 관리자 등록", description = "본사 관리자를 등록합니다.")
     @PostMapping("/register")
-    public ResponseEntity<String> registerAdmin(
-            // Root관리자만 등록이 가능
-            @RequestBody AdminDTO adminDTO,
-            @RequestParam int requestorAdminCode
-    ) {
-        return adminService.registerAdmin(adminDTO, requestorAdminCode);
+    public ResponseEntity<String> registerAdmin(@RequestBody AdminDTO adminDTO) {
+        return adminService.registerAdmin(adminDTO);
     }
 
     // 관리자 정보 수정
@@ -61,10 +57,7 @@ public class AdminInfoController {
     // 관리자 비활성화(삭제)
     @Operation(summary = "본사 관리자 삭제", description = "본사 관리자를 삭제합니다.")
     @DeleteMapping("/delete/{adminCode}")
-    public ResponseEntity<String> deleteAdmin(
-            @PathVariable int adminCode,
-            @RequestParam int requestorAdminCode
-    ) {
-        return adminService.deleteAdmin(adminCode, requestorAdminCode);
+    public ResponseEntity<String> deleteAdmin(@PathVariable int adminCode) {
+        return adminService.deleteAdmin(adminCode);
     }
 }

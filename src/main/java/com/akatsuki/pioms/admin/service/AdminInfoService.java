@@ -15,13 +15,12 @@ public interface AdminInfoService {
     ResponseEntity<AdminDTO> findAdminById(int adminCode);
 
     // 관리자 등록
-    ResponseEntity<String> registerAdmin(AdminDTO adminDTO, int requestorAdminCode);
+    ResponseEntity<String> registerAdmin(AdminDTO adminDTO);
 
     // 관리자 수정
     ResponseEntity<String> updateAdminInfo(int adminCode, AdminDTO updatedAdminDTO);
 
     // 비활성화(삭제)
-    ResponseEntity<String> deleteAdmin(int adminCode, int requestorAdminCode);
-
+    ResponseEntity<String> deleteAdmin(int adminCode);
 
 }

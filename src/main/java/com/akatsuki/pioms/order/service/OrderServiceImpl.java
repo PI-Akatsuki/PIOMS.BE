@@ -88,7 +88,7 @@ public class OrderServiceImpl implements OrderService{
             exchange1.setExchangeCode(exchange.getExchangeCode());
             order.setExchange(exchange1);
         }
-        order.setOrderCondition(ORDER_CONDITION.검수대기);
+//        order.setOrderCondition(ORDER_CONDITION.검수대기);
         order=orderRepository.save(order);
 
         return new OrderDTO(order);
@@ -176,8 +176,9 @@ public class OrderServiceImpl implements OrderService{
     @Override
     public OrderDTO getAdminOrder(int adminCode, int orderCode) {
         Order order = orderRepository.findById(orderCode).orElse(null);
-
+        System.out.println("order = " + order);
         if(order==null || adminCode != order.getFranchise().getAdmin().getAdminCode()){
+            System.out.println("adminCode = " + adminCode);
             return null;
         }
 
