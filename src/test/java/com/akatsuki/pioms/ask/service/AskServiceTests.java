@@ -60,6 +60,7 @@ class AskServiceTests {
         franchiseOwner.setFranchiseOwnerEmail("test@Test.com");
         franchiseOwner.setFranchiseOwnerPhone("0105656565");
         franchiseOwner.setFranchiseOwnerEnrollDate("20210506");
+        franchiseOwner.setFranchiseOwnerUpdateDate("20210506");
 
         franchiseOwnerRepository.save(franchiseOwner);
 
