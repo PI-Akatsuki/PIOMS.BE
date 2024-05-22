@@ -67,7 +67,7 @@ public class ordertest {
     @Test
     void testExchangeAndOrderProcesses() {
         // 1. 초기 설정
-        int adminCode = 1;
+        int adminCode = 2;
         int franchiseCode = 1;
         Franchise franchise = franchiseService.findFranchiseById(franchiseCode).orElseThrow();
 
@@ -111,8 +111,9 @@ public class ordertest {
 
         // 2-4. 발주 수정
         result = orderService.putFranchiseOrder(franchiseCode, requestPutOrder);
+        System.out.println("orderDTO = " + orderDTO);
         orderDTO = orderFacade.getAdminOrder(adminCode, orderDTO.getOrderCode());
-
+        System.out.println("orderDTO = " + orderDTO);
         // 2-5. 발주 승인
         orderDTO = orderFacade.acceptOrder(adminCode, orderDTO.getOrderCode());
         order = orderRepository.findById(orderDTO.getOrderCode()).orElseThrow();

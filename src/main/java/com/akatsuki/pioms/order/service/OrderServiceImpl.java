@@ -176,8 +176,9 @@ public class OrderServiceImpl implements OrderService{
     @Override
     public OrderDTO getAdminOrder(int adminCode, int orderCode) {
         Order order = orderRepository.findById(orderCode).orElse(null);
-
+        System.out.println("order = " + order);
         if(order==null || adminCode != order.getFranchise().getAdmin().getAdminCode()){
+            System.out.println("adminCode = " + adminCode);
             return null;
         }
 

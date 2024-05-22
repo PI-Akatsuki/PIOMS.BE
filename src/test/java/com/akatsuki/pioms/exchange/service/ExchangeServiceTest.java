@@ -87,7 +87,7 @@ class ExchangeServiceTest {
     @Test
     void putExchange() {
         //given
-        int adminCode=1;
+        int adminCode=2;
         int franchiseCode=1;
         ExchangeDTO exchangeDTO = exchangeService.postExchange(franchiseCode,exchange);
         List<ExchangeProductVO> exchangeProductVOS1 = new ArrayList<>();
@@ -144,7 +144,7 @@ class ExchangeServiceTest {
     @Test
     void getAdminExchange() {
         //given
-        int adminCode=1;
+        int adminCode=2;
         int franchiseCode=1;
         ExchangeDTO exchangeDTO = exchangeService.postExchange(franchiseCode,exchange);
 

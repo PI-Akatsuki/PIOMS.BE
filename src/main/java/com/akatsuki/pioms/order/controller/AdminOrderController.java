@@ -95,6 +95,7 @@ public class AdminOrderController {
     @PutMapping("/{adminCode}/order/{orderId}/deny")
     @Operation(summary = "승인 대기 중인 발주를 거절합니다.")
     public ResponseEntity<OrderVO> denyOrder(@PathVariable int adminCode,@PathVariable int orderId, @RequestParam String denyMessage){
+        System.out.println("denyMessage = " + denyMessage);
         OrderDTO orderDTO = orderFacade.denyOrder(adminCode,orderId,denyMessage);
         if (orderDTO == null){
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
