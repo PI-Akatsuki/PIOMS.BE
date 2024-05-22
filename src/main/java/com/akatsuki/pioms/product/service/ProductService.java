@@ -8,6 +8,8 @@ import com.akatsuki.pioms.product.aggregate.ResponseProduct;
 import com.akatsuki.pioms.product.dto.ProductDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 
 @Service
@@ -27,4 +29,6 @@ public interface ProductService {
 
     // 노출된 상품들만 조회 (가맹점)
     List<ProductDTO> getAllExposureProduct();
+
+    Boolean postProductWithImage(RequestProduct request, MultipartFile image);
 }

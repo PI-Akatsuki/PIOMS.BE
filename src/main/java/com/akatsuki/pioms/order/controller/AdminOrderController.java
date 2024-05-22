@@ -86,10 +86,11 @@ public class AdminOrderController {
     @Operation(summary = "승인 대기 중인 발주를 승인합니다.")
     public ResponseEntity<OrderVO> acceptOrder(@PathVariable int adminCode, @PathVariable int orderCode){
         OrderDTO orderDTO = orderFacade.acceptOrder(adminCode, orderCode);
+        System.out.println("승인 완료");
         if (orderDTO == null){
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         }
-        return ResponseEntity.ok(new OrderVO(orderDTO));
+        return ResponseEntity.ok().body(new OrderVO(orderDTO));
     }
 
     @PutMapping("/{adminCode}/order/{orderId}/deny")

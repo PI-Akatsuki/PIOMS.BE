@@ -64,6 +64,7 @@ public class AdminOrderFacade {
             // null인지 검사
             // 주문 상태가 승인 대기인지 검사
             // 해당 상품의 수량이 본사 재고를 초과하는지 검사
+            System.out.println("error");
             return null;
         }
 

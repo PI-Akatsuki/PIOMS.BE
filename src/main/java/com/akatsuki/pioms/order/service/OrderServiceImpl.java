@@ -1,5 +1,6 @@
 package com.akatsuki.pioms.order.service;
 
+import com.akatsuki.pioms.config.GoogleImage;
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import com.akatsuki.pioms.exchange.aggregate.Exchange;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
@@ -17,8 +18,8 @@ import java.util.List;
 
 @Service
 public class OrderServiceImpl implements OrderService{
-    OrderRepository orderRepository;
-    OrderProductRepository orderProductRepository;
+    private final OrderRepository orderRepository;
+    private final OrderProductRepository orderProductRepository;
 
     @Autowired
     public OrderServiceImpl(OrderRepository orderRepository, OrderProductRepository orderProductRepository) {

@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +49,7 @@ public class AdminProductController {
         return productService.postProduct(request, requesterAdminCode);
     }
 
+
     @DeleteMapping("/delete/{productCode}")
     @Operation(summary = "상품 삭제", description = "상품 코드로 상품 삭제")
     public ResponseEntity<String> deleteProduct(@PathVariable int productCode, int requesterAdminCode) {
@@ -64,4 +66,25 @@ public class AdminProductController {
     public ResponseEntity<List<ResponseProduct>> getCategoryProductList(@PathVariable int categoryThirdCode) {
         return ResponseEntity.ok(productService.getCategoryProductList(categoryThirdCode));
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @PostMapping("/image")
+    public ResponseEntity<Boolean> postImage(@RequestBody RequestProduct request, @RequestParam("file")MultipartFile image){
+        Boolean result =  productService.postProductWithImage(request,image);
+        return ResponseEntity.ok(result);
+    }
+
 }
