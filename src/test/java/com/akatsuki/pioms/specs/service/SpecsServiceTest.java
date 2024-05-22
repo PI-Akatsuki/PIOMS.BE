@@ -97,7 +97,7 @@ class SpecsServiceTest {
 
     @Test
     void getSpecsListByAdminCode() {
-        int adminCode = 1;
+        int adminCode = 2;
         List<Specs> specsList = specsRepository.findAllByOrderFranchiseAdminAdminCode(adminCode);
         List<SpecsDTO> specsDTOS = specsService.getSpecsListByAdminCode(adminCode);
         assertEquals(specsList.size(), specsDTOS.size());

@@ -151,7 +151,10 @@ public class InvoiceServiceImpl implements InvoiceService {
             return null;
         }
         invoice.setDeliveryStatus(invoiceStatus);
-        invoiceRepository.save(invoice);
+        invoice = invoiceRepository.save(invoice);
+        if (invoiceStatus == DELIVERY_STATUS.배송완료){
+            orderService.putOrderCondition(invoice.getOrder().getOrderCode(), ORDER_CONDITION.검수대기);
+        }
         return new InvoiceDTO(invoice);
     }
 
