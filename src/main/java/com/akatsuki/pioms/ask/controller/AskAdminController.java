@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 /**
  * <h1>문의사항 API</h1>
  * <br>
@@ -78,7 +80,8 @@ public class AskAdminController {
      * 답변작성후 상태 '답변완료'변경
      * */
     @PostMapping("/ask/answer/{askId}")
-    public ResponseEntity<AskDTO> answerAsk(@PathVariable Integer askId, @RequestBody String answer) {
+    public ResponseEntity<AskDTO> answerAsk(@PathVariable Integer askId, @RequestBody Map<String, String> payload) {
+        String answer = payload.get("answer");
         AskDTO askDTO = askService.answerAsk(askId, answer);
         return ResponseEntity.ok(askDTO);
     }
