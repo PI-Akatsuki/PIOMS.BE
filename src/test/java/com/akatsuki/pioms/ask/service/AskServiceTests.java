@@ -61,6 +61,7 @@ class AskServiceTests {
         franchiseOwner.setFranchiseOwnerPhone("0105656565");
         franchiseOwner.setFranchiseOwnerEnrollDate("20210506");
         franchiseOwner.setFranchiseOwnerUpdateDate("20210506");
+        franchiseOwner.setFranchiseRole("ROLE_OWNER");
 
         franchiseOwnerRepository.save(franchiseOwner);
 
