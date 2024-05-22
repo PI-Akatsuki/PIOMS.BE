@@ -40,34 +40,16 @@ public class SecurityConfig {
                                 "/admin/exchange/**",
                                 "/admin/notice/list/**",
                                 "/admin/ask/**",
-                                "/admin/exceldownload/**").hasAnyRole("ADMIN")
+                                "/admin/exceldownload/**").hasRole("ADMIN")
+                        .requestMatchers("/franchise/**").hasRole("OWNER")
+                        .requestMatchers("/driver/**").hasRole("DRIVER")
                         .anyRequest().authenticated()
                 )
-                .formLogin(form -> form
-                        .loginPage("/admin/login")
-                        .defaultSuccessUrl("/admin/home", true)
-                        .failureUrl("/admin/login?error=true")
-                        .permitAll()
-                )
-                .formLogin(form -> form
-                        .loginPage("/franchise/login")
-                        .defaultSuccessUrl("/franchise/home", true)
-                        .failureUrl("/franchise/login?error=true")
-                        .permitAll()
-                )
-                .formLogin(form -> form
-                        .loginPage("/driver/login")
-                        .defaultSuccessUrl("/driver/home", true)
-                        .failureUrl("/driver/login?error=true")
-                        .permitAll()
-                );
-
-        http
+                .httpBasic() // Basic Authentication 활성화
+                .and()
                 .sessionManagement((auth) -> auth
                         .maximumSessions(1)
-                        .maxSessionsPreventsLogin(true));
-
-        http
+                        .maxSessionsPreventsLogin(true))
                 .sessionManagement((auth) -> auth
                         .sessionFixation().changeSessionId());
 
@@ -94,19 +76,23 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
-        manager.createUser(User.withUsername("root")
+        InMemoryUserDetailsManager user = new InMemoryUserDetailsManager();
+        user.createUser(User.withUsername("root")
                 .password(passwordEncoder().encode("password"))
                 .roles("ROOT")
                 .build());
-        manager.createUser(User.withUsername("admin")
+        user.createUser(User.withUsername("admin")
                 .password(passwordEncoder().encode("password"))
                 .roles("ADMIN")
                 .build());
-        manager.createUser(User.withUsername("owner")
+        user.createUser(User.withUsername("owner")
                 .password(passwordEncoder().encode("password"))
                 .roles("OWNER")
                 .build());
-        return manager;
+        user.createUser(User.withUsername("driver")
+                .password(passwordEncoder().encode("password"))
+                .roles("DRIVER")
+                .build());
+        return user;
     }
 }

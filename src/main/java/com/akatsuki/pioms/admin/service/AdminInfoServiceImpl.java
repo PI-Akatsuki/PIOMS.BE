@@ -9,6 +9,7 @@ import com.akatsuki.pioms.log.etc.LogStatus;
 import com.akatsuki.pioms.log.service.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,16 +29,16 @@ public class AdminInfoServiceImpl implements AdminInfoService {
     private final LogService logService;
     private final PasswordEncoder passwordEncoder;
 
+    private String getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getName();
+    }
+
     @Autowired
     public AdminInfoServiceImpl(AdminRepository adminRepository, LogService logService, PasswordEncoder passwordEncoder) {
         this.adminRepository = adminRepository;
         this.logService = logService;
         this.passwordEncoder = passwordEncoder;
-    }
-
-    private String getCurrentUser() {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return user.getUsername();
     }
 
     private AdminDTO convertToDTO(Admin admin) {
@@ -207,35 +208,24 @@ public class AdminInfoServiceImpl implements AdminInfoService {
 
         Admin admin = adminRepository.findById(adminCode).orElse(null);
         if (admin != null) {
-            boolean hasFranchises = admin.getFranchise() != null && !admin.getFranchise().isEmpty();
+            if (!admin.isAdminStatus()) {
+                return ResponseEntity.badRequest().body("이미 비활성화(삭제)된 관리자입니다.");
+            }
 
+            boolean hasFranchises = admin.getFranchise() != null && !admin.getFranchise().isEmpty();
             if (hasFranchises) {
                 return ResponseEntity.badRequest().body("관리자가 관리하는 점포가 있어 비활성화(삭제)할 수 없습니다.");
             }
 
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            String formattedDateTime = LocalDateTime.now().format(formatter);
+            admin.setDeleteDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+            admin.setAdminStatus(false);
 
-            Admin updatedAdmin = Admin.builder()
-                    .adminCode(admin.getAdminCode())
-                    .adminName(admin.getAdminName())
-                    .adminId(admin.getAdminId())
-                    .adminPwd(admin.getAdminPwd())
-                    .enrollDate(admin.getEnrollDate())
-                    .updateDate(admin.getUpdateDate())
-                    .deleteDate(formattedDateTime)
-                    .adminEmail(admin.getAdminEmail())
-                    .adminPhone(admin.getAdminPhone())
-                    .accessNumber(admin.getAccessNumber())
-                    .adminRole(admin.getAdminRole())
-                    .adminStatus(false)
-                    .build();
-
-            adminRepository.save(updatedAdmin);
+            adminRepository.save(admin);
             logService.saveLog("root", LogStatus.삭제, admin.getAdminName(), "Admin");
             return ResponseEntity.ok("관리자 비활성화(삭제)가 완료됨.");
         } else {
             return ResponseEntity.notFound().build();
         }
     }
+
 }
