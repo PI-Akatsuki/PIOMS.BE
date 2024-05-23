@@ -25,7 +25,7 @@ public class DriverInvoiceController {
     }
 
     @Operation(summary = "배송상태조회", description = "배송기사코드로 담당지역의 배송상태 전체조회")
-    @GetMapping("/invoice/list/{driverCode}")
+    @GetMapping("/invoice/status/{driverCode}")
     public ResponseEntity<List<ResponseDriverInvoice>> getAllDriverInvoiceList(@PathVariable int driverCode) {
         List<ResponseDriverInvoice> invoiceDTOList = invoiceService.getAllDriverInvoiceList(driverCode);
         if (invoiceDTOList == null || invoiceDTOList.isEmpty()) {
@@ -55,7 +55,8 @@ public class DriverInvoiceController {
         return ResponseEntity.ok().body(responseDriverInvoice);
     }
 
-    @PutMapping("/invoice/{invoiceCode}/delivery_status/{deliveryStatus}")
+    @Operation(summary = "배송상태변경", description = "배송기사가 배송상태 수정")
+    @PutMapping("/invoice/status/{invoiceCode}/delivery/{deliveryStatus}")
     public ResponseEntity<Boolean> modifyInvoiceStatusByDriver(@PathVariable int invoiceCode, @PathVariable DELIVERY_STATUS deliveryStatus) {
         boolean result = invoiceService.modifyInvoiceStatusByDriver(invoiceCode, 0, deliveryStatus);
         return ResponseEntity.ok(result);

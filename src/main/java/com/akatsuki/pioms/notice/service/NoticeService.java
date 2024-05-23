@@ -3,7 +3,6 @@ package com.akatsuki.pioms.notice.service;
 import com.akatsuki.pioms.notice.aggregate.Notice;
 import com.akatsuki.pioms.notice.aggregate.NoticeVO;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -35,7 +34,5 @@ public interface NoticeService {
 
 
     // root 관리자가 공지사항 삭제
-    @Transactional
     ResponseEntity<String> deleteNotice(int noticeCode, int requesterAdminCode);
-
 }
