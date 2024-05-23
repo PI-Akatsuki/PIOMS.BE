@@ -113,7 +113,6 @@ jobs:
           region: ap-northeast-2
           deployment_package: deploy/deploy.zip
 
-
   check-comments:
     runs-on: ubuntu-latest
     needs: build
