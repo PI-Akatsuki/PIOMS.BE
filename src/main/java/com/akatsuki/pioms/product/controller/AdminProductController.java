@@ -68,20 +68,6 @@ public class AdminProductController {
         return ResponseEntity.ok(productService.getCategoryProductList(categoryThirdCode));
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @PostMapping("/image")
     public ResponseEntity<Boolean> postImage(@RequestBody RequestProduct request, @RequestParam("file")MultipartFile image){
         Boolean result = null;

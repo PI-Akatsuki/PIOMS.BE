@@ -267,5 +267,4 @@ public class ProductServiceImpl implements ProductService{
         return googleImage.uploadImage(product.getProductCode(),image);
     }
 
-
 }
