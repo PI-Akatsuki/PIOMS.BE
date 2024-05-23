@@ -1,6 +1,7 @@
 package com.akatsuki.pioms.invoice.aggregate;
 
 import com.akatsuki.pioms.invoice.dto.InvoiceDTO;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,6 +18,7 @@ import java.util.List;
 public class ResponseInvoice {
     private int invoiceCode;
     private DELIVERY_STATUS deliveryStatus;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime invoiceDate;
     private int deliveryRegionCode;
     private int orderCode;
