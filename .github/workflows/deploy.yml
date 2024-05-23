@@ -35,7 +35,7 @@ jobs:
           mkdir -p src/main/resources
           cat > src/main/resources/application.yml.template <<EOL
           server:
-            port: 9000
+            port: 5000
             tomcat:
               uri-encoding: UTF-8
           spring:
@@ -50,10 +50,9 @@ jobs:
               database-platform: org.hibernate.dialect.MySQL8Dialect
               generate-ddl: false
             datasource:
-              driver-class-name: org.mariadb.jdbc.Driver
-              url: \${DB_URL}
-              username: \${DB_USERNAME}
-              password: \${DB_PASSWORD}
+              url: jdbc:mariadb://\${RDS_HOSTNAME}:\${RDS_PORT}/\${RDS_DB_NAME}
+              username: \${RDS_USERNAME}
+              password: \${RDS_PASSWORD}
           EOL
 
       - name: Set Yaml
@@ -61,9 +60,11 @@ jobs:
           envsubst < src/main/resources/application.yml.template > src/main/resources/application.yml
           cat src/main/resources/application.yml
         env:
-          DB_URL: ${{ secrets.DB_URL }}
-          DB_USERNAME: ${{ secrets.DB_USERNAME }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          RDS_HOSTNAME: ${{ secrets.RDS_HOSTNAME }}
+          RDS_PORT: ${{ secrets.RDS_PORT }}
+          RDS_DB_NAME: ${{ secrets.RDS_DB_NAME }}
+          RDS_USERNAME: ${{ secrets.RDS_USERNAME }}
+          RDS_PASSWORD: ${{ secrets.RDS_PASSWORD }}
 
       - name: Check for Tests
         run: |
@@ -80,9 +81,9 @@ jobs:
         run: ./gradlew clean build
         shell: bash
 
-      - name: Run Service Tests
-        run: ./gradlew test --tests "*ServiceTest" --stacktrace --info
-        shell: bash
+#      - name: Run Service Tests
+#        run: ./gradlew test --tests "*ServiceTest" --stacktrace --info
+#        shell: bash
 
       - name: Get current time
         uses: 1466587594/get-current-time@v2
@@ -94,20 +95,6 @@ jobs:
       - name: Show Current Time
         run: echo "CurrentTime=${{steps.current-time.outputs.formattedTime}}"
         shell: bash
-
-#      - name: ChatGPT codeReviewer
-#        uses: anc95/ChatGPT-CodeReview@v1.0.13
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-#          LANGUAGE: Korean
-#          OPENAI_API_ENDPOINT: https://api.openai.com/v1
-#          MODEL: gpt-3.5-turbo
-#          PROMPT: 코드를 검토하고 문제가 있는 부분이나 개선할 점을 알려주세요.
-#          top_p: 1
-#          temperature: 1
-#          max_tokens: 10000
-#          MAX_PATCH_LENGTH: 10000
 
   check-comments:
     runs-on: ubuntu-latest
@@ -124,7 +111,7 @@ jobs:
 
       - name: Check Pull Request Comments
         id: pr-comments
-        run: | 
+        run: |
           PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
           COMMENTS=$(gh pr view $PR_NUMBER --json comments --jq '.comments')
           
@@ -139,3 +126,23 @@ jobs:
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate deployment package
+        run: |
+          mkdir -p deploy
+          cp build/libs/*.jar deploy/application.jar
+          cp Procfile deploy/Procfile
+          cp -r .ebextensions deploy/.ebextensions
+          cp -r .platform deploy/.platform
+          cd deploy && zip -r deploy.zip .  
+
+      - name: Beanstalk Deploy
+        uses: einaregilsson/beanstalk-deploy@v22
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: PIOMSBE
+          environment_name: PIOMSBE-env
+          version_label: github-action-${{steps.current-time.outputs.formattedTime}}
+          region: ap-northeast-2
+          deployment_package: deploy/deploy.zip
