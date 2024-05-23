@@ -30,6 +30,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -152,6 +153,19 @@ public class ProductServiceImpl implements ProductService{
             responseProduct.add(new ProductDTO(product));
         });
         return responseProduct;
+    }
+
+    @Override
+    public boolean checkPostOrderEnable(Map<Integer, Integer> orderProductMap) {
+        // 상품 주문 가능 여부 판단하기 위한 로직
+        if(orderProductMap==null)
+            return false;
+        for( int key : orderProductMap.keySet() ){
+            Product product = productRepository.findById(key).orElse(null);
+            if (product==null || product.getProductCount()<orderProductMap.get(key) )
+                return false;
+        }
+        return true;
     }
 
     @Override

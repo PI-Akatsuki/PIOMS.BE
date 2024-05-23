@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public interface ProductService {
@@ -30,6 +31,9 @@ public interface ProductService {
 
     // 노출된 상품들만 조회 (가맹점)
     List<ProductDTO> getAllExposureProduct();
+
+    // 발주 신청 가능 여부 확인
+    boolean checkPostOrderEnable(Map<Integer,Integer> orderProductMap);
 
     Boolean postProductWithImage(RequestProduct request, MultipartFile image) throws IOException;
 }
