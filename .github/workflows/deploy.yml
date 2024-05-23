@@ -50,9 +50,9 @@ jobs:
               database-platform: org.hibernate.dialect.MySQL8Dialect
               generate-ddl: false
             datasource:
-              url: jdbc:mariadb://\${rds.hostname}:\${rds.port}/\${rds.db.name}
-              username: \${rds.username}
-              password: \${rds.password}
+              url: jdbc:mariadb://\${RDS_HOSTNAME}:\${RDS_PORT}/\${RDS_DB_NAME}
+              username: \${RDS_USERNAME}
+              password: \${RDS_PASSWORD}
           EOL
 
       - name: Set Yaml
@@ -60,9 +60,11 @@ jobs:
           envsubst < src/main/resources/application.yml.template > src/main/resources/application.yml
           cat src/main/resources/application.yml
         env:
-          DB_URL: ${{ secrets.DB_URL }}
-          DB_USERNAME: ${{ secrets.DB_USERNAME }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          RDS_HOSTNAME: ${{ secrets.RDS_HOSTNAME }}
+          RDS_PORT: ${{ secrets.RDS_PORT }}
+          RDS_DB_NAME: ${{ secrets.RDS_DB_NAME }}
+          RDS_USERNAME: ${{ secrets.RDS_USERNAME }}
+          RDS_PASSWORD: ${{ secrets.RDS_PASSWORD }}
 
       - name: Check for Tests
         run: |
@@ -109,7 +111,7 @@ jobs:
 
       - name: Check Pull Request Comments
         id: pr-comments
-        run: | 
+        run: |
           PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
           COMMENTS=$(gh pr view $PR_NUMBER --json comments --jq '.comments')
           
@@ -124,10 +126,6 @@ jobs:
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-
-      - name: Show Current Time
-        run: echo "CurrentTime=$"
 
       - name: Generate deployment package
         run: |
