@@ -10,13 +10,17 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.BDDMockito.given;
 
 
@@ -31,11 +35,15 @@ public class NoticeServiceTest {
     private NoticeRepository noticeRepository;
 
     Admin admin;
+    int noticeCode = 1;
 
     @BeforeEach
     void init() {
         admin = new Admin();
         admin.setAdminCode(1);
+//        Notice notice = new Notice();
+//        notice.setNoticeTitle("공지사항 제목입니다.");
+//        notice.setNoticeContent("공지사항 내용입니다.");
     }
 
     @Test
@@ -89,18 +97,29 @@ public class NoticeServiceTest {
 //        assertThat(thrown).isInstanceOf(RuntimeException.class).hasMessageContaning("해당 코드의 공지사항을 찾을 수 없습니다.");
 //    }
 
+    // 공지사항 등록
     @Test
+    @DisplayName(value = "Root 관리자 권한으로 공지사항 등록 성공")
     void postNotice() {
 
-        // given
+//        // given
+        Notice notice = new Notice();
+        notice.setNoticeTitle("공지사항 제목입니다.");
+        notice.setNoticeContent("공지사항 내용입니다.");
 
         // when
+        // root 관리자로 공지 등록
+        ResponseEntity<String> responseRoot = noticeService.saveNotice(notice,1);
 
         // then
+        assertNotNull(responseRoot);
+        assertEquals(200, responseRoot.getStatusCodeValue());
+        assertEquals("공지사항 등록이 완료되었습니다.", responseRoot.getBody());
     }
 
     // 공지사항 수정
     @Test
+    @DisplayName(value = "Root 관리자 권한으로 공지사항 수정 성공")
     void updateNoticeByCode() {
 
         // given
