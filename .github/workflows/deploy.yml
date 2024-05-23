@@ -50,9 +50,9 @@ jobs:
               database-platform: org.hibernate.dialect.MySQL8Dialect
               generate-ddl: false
             datasource:
-              url: jdbc:mariadb://${rds.hostname}:${rds.port}/${rds.db.name}
-              username: ${rds.username}
-              password: ${rds.password}
+              url: jdbc:mariadb://\${rds.hostname}:\${rds.port}/\${rds.db.name}
+              username: \${rds.username}
+              password: \${rds.password}
           EOL
 
       - name: Set Yaml
@@ -143,8 +143,8 @@ jobs:
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application_name: PIOMS-prac
-          environment_name: PIOMS-env
+          application_name: PIOMSBE
+          environment_name: PIOMSBE-env
           version_label: github-action-${{steps.current-time.outputs.formattedTime}}
           region: ap-northeast-2
           deployment_package: deploy/deploy.zip
