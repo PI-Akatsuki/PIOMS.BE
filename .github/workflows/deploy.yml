@@ -81,10 +81,6 @@ jobs:
         run: ./gradlew clean build
         shell: bash
 
-#      - name: Run Service Tests
-#        run: ./gradlew test --tests "*ServiceTest" --stacktrace --info
-#        shell: bash
-
       - name: Get current time
         uses: 1466587594/get-current-time@v2
         id: current-time
@@ -99,11 +95,12 @@ jobs:
       - name: Generate deployment package
         run: |
           mkdir -p deploy
-          cp build/libs/*.jar deploy/application.jar
-          cp Procfile deploy/Procfile
-          cp -r .ebextensions deploy/.ebextensions
-          cp -r .platform deploy/.platform
-          cd deploy && zip -r deploy.zip .  
+          cp build/libs/*.jar deploy/application.jar || echo "No JAR file to copy"
+          cp Procfile deploy/Procfile || echo "No Procfile to copy"
+          cp -r .ebextensions deploy/.ebextensions || echo "No .ebextensions directory to copy"
+          cp -r .platform deploy/.platform || echo "No .platform directory to copy"
+          cd deploy && zip -r deploy.zip .
+        shell: bash
 
       - name: Beanstalk Deploy
         uses: einaregilsson/beanstalk-deploy@v22
