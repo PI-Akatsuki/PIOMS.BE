@@ -111,13 +111,3 @@
 //    }
 //
 //    // 공지사항 삭제
-//    @Test
-//    void deleteNoticeByCode() {
-//
-//        // given
-//
-//        // when
-//
-//        // then
-//    }
-//}

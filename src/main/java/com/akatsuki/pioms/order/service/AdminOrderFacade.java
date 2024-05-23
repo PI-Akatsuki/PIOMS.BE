@@ -45,10 +45,6 @@ public class AdminOrderFacade {
         List<Order> orders =  orderService.getOrderListByAdminCode(adminCode);
         List<OrderDTO> orderDTOS = new ArrayList<>();
         orders.forEach(order -> {
-            if (order.getExchange()!=null) {
-                System.out.println("order = " + order.getOrderCode());
-                System.out.println("order.getExchange().getProducts() = " + order.getExchange().getProducts());
-            }
             orderDTOS.add(new OrderDTO(order));
         });
 
@@ -64,10 +60,15 @@ public class AdminOrderFacade {
     public OrderDTO acceptOrder(int adminCode, int orderCode){
         OrderDTO order = orderService.getAdminOrder(adminCode,orderCode);
 
-        if (order==null || order.getOrderCondition() != ORDER_CONDITION.승인대기 ||!orderService.checkProductCnt(order)){
+        if (order==null || order.getOrderCondition() != ORDER_CONDITION.승인대기 ){
             // null인지 검사
             // 주문 상태가 승인 대기인지 검사
             // 해당 상품의 수량이 본사 재고를 초과하는지 검사
+            System.out.println("error");
+            return null;
+        }
+        if(!orderService.checkProductCnt(order)){
+            System.out.println("count invalid");
             return null;
         }
 

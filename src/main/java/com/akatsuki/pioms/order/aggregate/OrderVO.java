@@ -7,6 +7,7 @@ import com.akatsuki.pioms.order.aggregate.Order;
 import com.akatsuki.pioms.order.dto.OrderDTO;
 import com.akatsuki.pioms.order.dto.OrderProductDTO;
 import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,15 +24,20 @@ import java.util.List;
 @AllArgsConstructor
 public class OrderVO {
     private int orderCode;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime orderDate;
     private int orderTotalPrice;
+
     private ORDER_CONDITION orderCondition;
     private String orderReason;
 
     private int franchiseCode;
     private String franchiseName;
+
     private int franchiseOwnerCode;
     private String franchiseOwnerName;
+    private String franchiseOwnerPhone;
+
     private DELIVERY_DATE franchiseDeliveryDate;
     private int adminCode;
     private String adminName;
@@ -42,9 +48,8 @@ public class OrderVO {
 
     public OrderVO(OrderDTO order) {
         this.orderCode= order.getOrderCode();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        String formattedDateTime = order.getOrderDate().format(formatter);
-        this.orderDate = LocalDateTime.parse(formattedDateTime, formatter);
+        this.orderDate = order.getOrderDate();
+        System.out.println("orderDate = " + orderDate);
 
         this.orderTotalPrice = order.getOrderTotalPrice();
         this.orderCondition = order.getOrderCondition();
@@ -52,15 +57,18 @@ public class OrderVO {
         this.orderReason = order.getOrderReason();
         this.franchiseCode = order.getFranchiseCode();
         this.franchiseName = order.getFranchiseName();
+
         this.franchiseOwnerCode = order.getFranchiseOwnerCode();
         this.franchiseOwnerName = order.getFranchiseOwnerName();
+        this.franchiseOwnerPhone = order.getFranchiseOwnerPhone();
         this.franchiseDeliveryDate = order.getDeliveryDate();
+
+
         this.adminCode = order.getAdminCode();
         this.adminName = order.getAdminName();
         this.orderProductList = order.getOrderProductList();
         if (order.getExchange()!=null) {
             this.exchangeProductList = order.getExchange().getExchangeProducts();
-            System.out.println("exchangeProductList = " + exchangeProductList);
         }
     }
 }

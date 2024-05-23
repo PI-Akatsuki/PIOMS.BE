@@ -3,6 +3,7 @@ package com.akatsuki.pioms.product.service;
 import com.akatsuki.pioms.admin.aggregate.Admin;
 import com.akatsuki.pioms.admin.repository.AdminRepository;
 import com.akatsuki.pioms.categoryThird.repository.CategoryThirdRepository;
+import com.akatsuki.pioms.image.service.ImageService;
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import com.akatsuki.pioms.exchange.aggregate.EXCHANGE_PRODUCT_STATUS;
 import com.akatsuki.pioms.exchange.dto.ExchangeProductDTO;
@@ -22,11 +23,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -37,14 +41,16 @@ public class ProductServiceImpl implements ProductService{
     private final ExchangeService exchangeService;
     private final AdminRepository adminRepository;
     private final LogService logService;
+    private final ImageService googleImage;
 
     @Autowired
-    public ProductServiceImpl(ProductRepository productRepository, CategoryThirdRepository categoryThirdRepository, ExchangeService exchangeService, AdminRepository adminRepository, LogService logService) {
+    public ProductServiceImpl(ProductRepository productRepository, CategoryThirdRepository categoryThirdRepository, ExchangeService exchangeService, AdminRepository adminRepository, LogService logService, ImageService googleImage) {
         this.productRepository = productRepository;
         this.categoryThirdRepository = categoryThirdRepository;
         this.exchangeService = exchangeService;
         this.adminRepository = adminRepository;
         this.logService = logService;
+        this.googleImage = googleImage;
     }
 
     @Override
@@ -150,6 +156,19 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
+    public boolean checkPostOrderEnable(Map<Integer, Integer> orderProductMap) {
+        // 상품 주문 가능 여부 판단하기 위한 로직
+        if(orderProductMap==null)
+            return false;
+        for( int key : orderProductMap.keySet() ){
+            Product product = productRepository.findById(key).orElse(null);
+            if (product==null || product.getProductCount()<orderProductMap.get(key) )
+                return false;
+        }
+        return true;
+    }
+
+    @Override
     @Transactional
     public ResponseEntity<String> updateProduct(int productCode, RequestProduct request, int requesterAdminCode) {
         Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
@@ -202,7 +221,6 @@ public class ProductServiceImpl implements ProductService{
             System.out.println("Exchange Products not found!!");
             return;
         }
-        System.out.println("exchangeProductList = " + exchangeProductList);
         for (int i = 0; i < exchangeProductList.size(); i++) {
             productMinusCnt(exchangeProductList.get(i).getExchangeProductNormalCount(), exchangeProductList.get(i).getProductCode());
         }
@@ -255,5 +273,13 @@ public class ProductServiceImpl implements ProductService{
             productRepository.save(product);
         }
     }
+
+    @Override
+    public Boolean postProductWithImage(RequestProduct request, MultipartFile image)throws IOException {
+        Product product = new Product(request);
+        product = productRepository.save(product);
+        return googleImage.uploadImage(product.getProductCode(),image);
+    }
+
 
 }

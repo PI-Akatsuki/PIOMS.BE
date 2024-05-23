@@ -26,6 +26,8 @@ public class AskDTO {
     private LocalDateTime askCommentDate;
     private String askTitle;
     private int franchiseOwnerCode;
+    private String franchiseOwnerName;
+    private String franchiseName;
     private int adminCode;
 
     public AskDTO(Ask ask) {
@@ -38,6 +40,8 @@ public class AskDTO {
         this.askCommentDate = ask.getAskCommentDate();
         this.askTitle = ask.getAskTitle();
         this.franchiseOwnerCode = ask.getFranchiseOwner().getFranchiseOwnerCode();
+        this.franchiseOwnerName = ask.getFranchiseOwner().getFranchiseOwnerName();
+        this.franchiseName = ask.getFranchiseOwner().getFranchise().getFranchiseName();
         this.adminCode = ask.getAdmin().getAdminCode();
     }
 }

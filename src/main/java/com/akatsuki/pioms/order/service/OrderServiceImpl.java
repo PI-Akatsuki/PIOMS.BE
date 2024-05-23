@@ -2,19 +2,13 @@ package com.akatsuki.pioms.order.service;
 
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import com.akatsuki.pioms.exchange.aggregate.Exchange;
-import com.akatsuki.pioms.exchange.service.ExchangeService;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
-import com.akatsuki.pioms.frwarehouse.service.FranchiseWarehouseService;
-import com.akatsuki.pioms.invoice.service.InvoiceService;
 import com.akatsuki.pioms.order.aggregate.*;
 import com.akatsuki.pioms.order.dto.OrderDTO;
 import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
 import com.akatsuki.pioms.order.repository.OrderProductRepository;
 import com.akatsuki.pioms.order.repository.OrderRepository;
-import com.akatsuki.pioms.product.aggregate.Product;
-import com.akatsuki.pioms.product.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,8 +17,8 @@ import java.util.List;
 
 @Service
 public class OrderServiceImpl implements OrderService{
-    OrderRepository orderRepository;
-    OrderProductRepository orderProductRepository;
+    private final OrderRepository orderRepository;
+    private final OrderProductRepository orderProductRepository;
 
     @Autowired
     public OrderServiceImpl(OrderRepository orderRepository, OrderProductRepository orderProductRepository) {
@@ -41,7 +35,7 @@ public class OrderServiceImpl implements OrderService{
             // 루트 관리자는 전부
             orderList = orderRepository.findAll();
         }else
-            orderList = orderRepository.findAllByFranchiseAdminAdminCode(adminCode);
+            orderList = orderRepository.findAllByFranchiseAdminAdminCodeOrderByOrderDateDesc(adminCode);
         if (orderList == null || orderList.isEmpty())
             return null;
         List<Order> orderDTOList = new ArrayList<>();
@@ -57,9 +51,9 @@ public class OrderServiceImpl implements OrderService{
         List<Order> orderList;
 
         if (adminCode == 1){
-            orderList = orderRepository.findAllByOrderCondition(ORDER_CONDITION.승인대기);
+            orderList = orderRepository.findAllByOrderConditionOrderByOrderDateDesc(ORDER_CONDITION.승인대기);
         }else
-            orderList = orderRepository.findAllByFranchiseAdminAdminCodeAndOrderCondition(adminCode, ORDER_CONDITION.승인대기);
+            orderList = orderRepository.findAllByFranchiseAdminAdminCodeAndOrderConditionOrderByOrderDateDesc(adminCode, ORDER_CONDITION.승인대기);
         if (orderList == null || orderList.isEmpty())
             return null;
 
@@ -88,7 +82,7 @@ public class OrderServiceImpl implements OrderService{
             exchange1.setExchangeCode(exchange.getExchangeCode());
             order.setExchange(exchange1);
         }
-        order.setOrderCondition(ORDER_CONDITION.검수대기);
+//        order.setOrderCondition(ORDER_CONDITION.검수대기);
         order=orderRepository.save(order);
 
         return new OrderDTO(order);
@@ -123,6 +117,7 @@ public class OrderServiceImpl implements OrderService{
             System.out.println("가맹점 코드, 주문의 가맹점 코드 불일치! ");
             return null;
         }
+
         // 이미 존재하는 발주 있는지 확인
         if (orderRepository.existsByFranchiseFranchiseCodeAndOrderCondition(franchise.getFranchiseCode(), ORDER_CONDITION.승인대기)
                 || orderRepository.existsByFranchiseFranchiseCodeAndOrderCondition(franchise.getFranchiseCode(),ORDER_CONDITION.승인거부)){
@@ -154,7 +149,7 @@ public class OrderServiceImpl implements OrderService{
     @Override
     @Transactional(readOnly = true)
     public List<OrderDTO> getOrderList(int franchiseCode){
-        List<Order> orderList= orderRepository.findByFranchiseFranchiseCode(franchiseCode);
+        List<Order> orderList= orderRepository.findByFranchiseFranchiseCodeOrderByOrderDateDesc(franchiseCode);
         List<OrderDTO> orderDTOList = new ArrayList<>();
         orderList.forEach(order-> {
             orderDTOList.add(new OrderDTO(order));
@@ -176,8 +171,9 @@ public class OrderServiceImpl implements OrderService{
     @Override
     public OrderDTO getAdminOrder(int adminCode, int orderCode) {
         Order order = orderRepository.findById(orderCode).orElse(null);
-
+        System.out.println("order = " + order);
         if(order==null || adminCode != order.getFranchise().getAdmin().getAdminCode()){
+            System.out.println("adminCode = " + adminCode);
             return null;
         }
 
