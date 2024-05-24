@@ -27,9 +27,9 @@ public class AdminInvoiceController {
         this.invoiceService = invoiceService;
     }
 
-    @GetMapping("{adminCode}/invoice/list")
+    @GetMapping("/invoice/list")
     @Operation(summary = "모든 가맹점의 송장 조회",description = "관리자가 관리하는 모든 가맹점의 송장들을 조회합니다.")
-    public ResponseEntity<ResponseInvoiceList> getInvoiceList(@PathVariable int adminCode){
+    public ResponseEntity<ResponseInvoiceList> getInvoiceList(@RequestParam int adminCode){
         List<InvoiceDTO> invoiceList = invoiceService.getAdminInvoiceList(adminCode);
         if (invoiceList.isEmpty()){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
@@ -38,16 +38,16 @@ public class AdminInvoiceController {
         return ResponseEntity.ok(responseInvoiceList);
     }
 
-    @GetMapping("/{adminCode}/invoice/{invoiceCode}")
-    public ResponseEntity<ResponseInvoice> getInvoice(@PathVariable int adminCode ,@PathVariable int invoiceCode){
+    @GetMapping("/invoice/{invoiceCode}")
+    public ResponseEntity<ResponseInvoice> getInvoice(@RequestParam int adminCode ,@PathVariable int invoiceCode){
         InvoiceDTO invoiceDTO = invoiceService.getInvoiceByAdminCode(adminCode,invoiceCode);
         if (invoiceDTO==null)
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         return ResponseEntity.ok(new ResponseInvoice(invoiceDTO));
     }
 
-    @PutMapping("/{adminCode}/invoice/{invoiceCode}/{invoiceStatus}")
-    public ResponseEntity<ResponseInvoice> putInvoice(@PathVariable int adminCode, @PathVariable int invoiceCode, @PathVariable DELIVERY_STATUS invoiceStatus){
+    @PutMapping("/invoice/{invoiceCode}/{invoiceStatus}")
+    public ResponseEntity<ResponseInvoice> putInvoice(@RequestParam int adminCode, @PathVariable int invoiceCode, @PathVariable DELIVERY_STATUS invoiceStatus){
         InvoiceDTO invoice = invoiceService.putInvoice(adminCode,invoiceCode, invoiceStatus);
 
         if (invoice==null){

@@ -23,16 +23,16 @@ public class FranchiseInvoiceController {
         this.invoiceService = invoiceService;
     }
     // 가맹점은 조회만 가능하다.
-    @GetMapping("/{franchiseOwnerCode}/invoice/list")
-    public ResponseEntity<ResponseInvoiceList> getInvoiceList(@PathVariable int franchiseOwnerCode){
+    @GetMapping("/invoice/list")
+    public ResponseEntity<ResponseInvoiceList> getInvoiceList(@RequestParam int franchiseOwnerCode){
         List<InvoiceDTO> invoiceList = invoiceService.getFranchiseInvoiceList(franchiseOwnerCode);
         if (invoiceList.isEmpty())
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ResponseInvoiceList(invoiceList));
         return ResponseEntity.ok(new ResponseInvoiceList(invoiceList));
     }
 
-    @GetMapping("/{franchiseOwnerCode}/invoice/{invoiceCode}")
-    public ResponseEntity<ResponseInvoice> getInvoice(@PathVariable int franchiseOwnerCode,@PathVariable int invoiceCode){
+    @GetMapping("/invoice/{invoiceCode}")
+    public ResponseEntity<ResponseInvoice> getInvoice(@RequestParam int franchiseOwnerCode,@PathVariable int invoiceCode){
         InvoiceDTO invoiceDTO = invoiceService.getInvoiceByFranchiseOwnerCode(franchiseOwnerCode,invoiceCode);
         if (invoiceDTO==null)
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
@@ -41,7 +41,7 @@ public class FranchiseInvoiceController {
 
 
     // 🥸dummy🥸
-//    @DeleteMapping("/{franchiseOwnerCode}/invoice/{invoiceCode}")
+//    @DeleteMapping("/invoice/{invoiceCode}")
 //    public ResponseEntity<ResponseInvoice> deleteInvoice(@PathVariable int franchiseOwnerCode,@PathVariable int invoiceCode){
 //
 //        boolean flag = invoiceService.deleteInvoice(franchiseOwnerCode,invoiceCode);

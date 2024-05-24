@@ -26,38 +26,39 @@ public class FranchiseOrderController {
     /**
      * <h2>발주 생성</h2>
      * */
-    @PostMapping("/{franchiseCode}/order")
-    public ResponseEntity<OrderDTO> postFranchiseOrder(@PathVariable int franchiseCode, @RequestBody RequestOrderVO orders){
+    @PostMapping("/order")
+    public ResponseEntity<OrderDTO> postFranchiseOrder(@RequestParam int franchiseCode, @RequestBody RequestOrderVO orders){
         OrderDTO result = franchiseOrderFacade.postFranchiseOrder(franchiseCode,orders);
         if(result == null)
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         return ResponseEntity.ok().body(result);
     }
-    @PutMapping("/{franchiseCode}/order")
-    public ResponseEntity<String> putFranchiseOrder(@PathVariable int franchiseCode, @RequestBody RequestPutOrder order){
+    @PutMapping("/order")
+    public ResponseEntity<String> putFranchiseOrder(@RequestParam int franchiseCode, @RequestBody RequestPutOrder order){
         boolean result = orderService.putFranchiseOrder(franchiseCode, order);
         if(!result)
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("put failed. check again");
         return ResponseEntity.ok("put finished");
     }
-    @PutMapping("/{franchiseCode}/order/check")
-    public ResponseEntity<String> putFranchiseOrderCheck(@PathVariable int franchiseCode, @RequestBody RequestPutOrderCheck requestPutOrder){
+    @PutMapping("/order/check")
+    public ResponseEntity<String> putFranchiseOrderCheck(@RequestParam int franchiseCode, @RequestBody RequestPutOrderCheck requestPutOrder){
         boolean result = franchiseOrderFacade.putFranchiseOrderCheck(franchiseCode,requestPutOrder);
         if(!result)
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("put failed");
         return ResponseEntity.ok("put finished");
     }
 
-    @GetMapping("/{franchiseCode}/orders")
-    public ResponseEntity<OrderListVO> getFranchiseOrderList(@PathVariable int franchiseCode){
+    @GetMapping("/orders")
+    public ResponseEntity<OrderListVO> getFranchiseOrderList(@RequestParam int franchiseCode){
         return ResponseEntity.ok(new OrderListVO(franchiseOrderFacade.getOrderListByFranchiseCode(franchiseCode)));
     }
 
-    @GetMapping("/{franchiseCode}/order/{orderCode}")
-    public ResponseEntity<OrderVO> getOrder(@PathVariable int franchiseCode, @PathVariable int orderCode){
-        OrderVO orderVO = new OrderVO(orderService.getOrder(franchiseCode,orderCode));
-        if(orderVO==null)
+    @GetMapping("/order/{orderCode}")
+    public ResponseEntity<OrderVO> getOrder(@RequestParam int franchiseCode, @PathVariable int orderCode){
+        OrderDTO orderDTO = orderService.getOrder(franchiseCode,orderCode);
+        if(orderDTO==null)
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+        OrderVO orderVO = new OrderVO(orderDTO);
         return ResponseEntity.ok(orderVO);
     }
 }

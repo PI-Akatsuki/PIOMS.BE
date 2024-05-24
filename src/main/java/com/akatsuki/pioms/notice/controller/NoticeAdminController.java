@@ -30,7 +30,7 @@ public class NoticeAdminController {
 
     // 관리자 공지사항 상세 목록 조회
     @Operation(summary = "공지사항 상세 목록 조회", description = "공지사항 코드로 공지사항 상세 목록 조회")
-    @GetMapping("/notice/details/{noticeCode}")
+    @GetMapping("/notice/list/details/{noticeCode}")
     public ResponseEntity<NoticeVO> getNoticeDetails(@PathVariable int noticeCode) {
         NoticeVO noticeVO = noticeService.getNoticeDetails(noticeCode);
         return ResponseEntity.ok(noticeVO);
@@ -38,7 +38,7 @@ public class NoticeAdminController {
 
     // root 관리자가 공지사항 등록
     @Operation(summary = "공지사항 등록", description = "root 관리자 권한으로 공지사항 등록")
-    @PostMapping("/notice/register")
+    @PostMapping("/notice/list/register")
     public ResponseEntity<String> registerNotice (
             @RequestBody Notice notice,
             @RequestParam int requesterAdminCode
@@ -48,7 +48,7 @@ public class NoticeAdminController {
 
     // root 관리자가 공지사항 수정
     @Operation(summary = "공지사항 수정", description = "공지사항 코드로 root 관리자가 공지사항 수정")
-    @PutMapping("/notice/update/{noticeCode}")
+    @PutMapping("/notice/list/update/{noticeCode}")
     public ResponseEntity<String> updateNotice(
             @PathVariable int noticeCode,
             @RequestBody Notice updatedNotice,
@@ -58,7 +58,7 @@ public class NoticeAdminController {
 
     // root 관리자가 공지사항 삭제
     @Operation(summary = "공지사항 삭제", description = "공지사항 코드로 root 관리자가 공지사항 삭제")
-    @DeleteMapping("/notice/delete/{noticeCode}")
+    @DeleteMapping("/notice/list/delete/{noticeCode}")
     public ResponseEntity<String> deleteNotice(@PathVariable int noticeCode, int requesterAdminCode){
         return noticeService.deleteNotice(noticeCode, requesterAdminCode);
     }
