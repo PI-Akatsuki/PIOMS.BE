@@ -83,14 +83,17 @@ public class AdminProductController {
 
 
     @PostMapping("/image")
-    public ResponseEntity<Boolean> postImage(@RequestBody RequestProduct request, @RequestParam("file")MultipartFile image){
+    public ResponseEntity<Boolean> postImage(@ModelAttribute RequestProduct request) {
         Boolean result = null;
+        System.out.println("request = " + request);
+
         try {
-            result = productService.postProductWithImage(request,image);
+            result = productService.postProductWithImage(request, request.getFile());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         return ResponseEntity.ok(result);
     }
+
 
 }

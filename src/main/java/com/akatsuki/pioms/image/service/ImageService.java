@@ -15,7 +15,8 @@ import java.util.UUID;
 
 
 @Service
-public class ImageService {
+public class
+ImageService {
     @Value("${spring.cloud.gcp.storage.bucket}") // application.yml에 써둔 bucket 이름
     private  String bucketName;
     @Value("${spring.cloud.gcp.storage.project-id}")
@@ -45,7 +46,8 @@ public class ImageService {
 
         byte[] bytes = file.getBytes();
         Blob blob = storage.create(blobInfo, bytes);
-        imageRepository.save(new Image(blob.getMediaLink(),productCode));
+        Image image = imageRepository.save(new Image(blob.getMediaLink(),productCode));
+        System.out.println(image);
 
         return true;
     }
