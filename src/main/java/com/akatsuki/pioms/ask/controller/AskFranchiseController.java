@@ -6,6 +6,7 @@ import com.akatsuki.pioms.ask.dto.AskListDTO;
 import com.akatsuki.pioms.ask.dto.AskUpdateDTO;
 import com.akatsuki.pioms.ask.aggregate.Ask;
 import com.akatsuki.pioms.ask.service.AskService;
+import com.akatsuki.pioms.frowner.dto.FranchiseOwnerDTO;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -63,6 +64,24 @@ public class AskFranchiseController {
             return ResponseEntity.ok(askDTO);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/asklist/{franchiseOwnerId}")
+    public ResponseEntity<AskListDTO> getAsksByFranchiseOwnerId(@PathVariable Integer franchiseOwnerId) {
+        AskListDTO askListDTO = askService.getAsksByFranchiseOwnerId(franchiseOwnerId);
+        return ResponseEntity.ok().body(askListDTO);
+    }
+
+    @GetMapping("/owner/{franchiseOwnerCode}")
+    public ResponseEntity<FranchiseOwnerDTO> getFranchiseOwnerDetails(@PathVariable int franchiseOwnerCode) {
+        try {
+            FranchiseOwnerDTO franchiseOwnerDTO = askService.getFranchiseOwnerDetails(franchiseOwnerCode);
+            return ResponseEntity.ok(franchiseOwnerDTO);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 
