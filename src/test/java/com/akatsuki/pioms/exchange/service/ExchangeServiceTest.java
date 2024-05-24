@@ -130,7 +130,7 @@ class ExchangeServiceTest {
     @Test
     void getExchangeProductsWithStatus() {
         //given
-        int adminCode=1;
+        int adminCode=2;
         int franchiseCode=1;
         ExchangeDTO exchangeDTO = exchangeService.postExchange(franchiseCode,exchange);
         //when

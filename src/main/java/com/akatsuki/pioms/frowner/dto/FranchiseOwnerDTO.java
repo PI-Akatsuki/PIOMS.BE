@@ -1,5 +1,6 @@
 package com.akatsuki.pioms.frowner.dto;
 
+import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import com.akatsuki.pioms.frowner.aggregate.FranchiseOwner;
 import lombok.*;
 
@@ -33,6 +34,19 @@ public class FranchiseOwnerDTO {
         this.franchiseOwnerUpdateDate = franchiseOwner.getFranchiseOwnerUpdateDate();
         this.franchiseOwnerDeleteDate = franchiseOwner.getFranchiseOwnerDeleteDate();
         this.franchiseName = franchiseOwner.getFranchise().getFranchiseName();
+    }
+
+    public FranchiseOwnerDTO(FranchiseOwner franchiseOwner, Franchise franchise) {
+        this.franchiseOwnerCode = franchiseOwner.getFranchiseOwnerCode();
+        this.franchiseOwnerName = franchiseOwner.getFranchiseOwnerName();
+        this.franchiseOwnerId = franchiseOwner.getFranchiseOwnerId();
+        this.franchiseOwnerPwd = franchiseOwner.getFranchiseOwnerPwd();
+        this.franchiseOwnerEmail = franchiseOwner.getFranchiseOwnerEmail();
+        this.franchiseOwnerPhone = franchiseOwner.getFranchiseOwnerPhone();
+        this.franchiseOwnerEnrollDate = franchiseOwner.getFranchiseOwnerEnrollDate();
+        this.franchiseOwnerUpdateDate = franchiseOwner.getFranchiseOwnerUpdateDate();
+        this.franchiseOwnerDeleteDate = franchiseOwner.getFranchiseOwnerDeleteDate();
+        this.franchiseName = franchise.getFranchiseName();
     }
 
     // FranchiseOwnerDTO를 FranchiseOwner 엔티티로 변환
