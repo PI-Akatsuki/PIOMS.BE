@@ -9,4 +9,6 @@ public interface FranchiseOwnerRepository extends JpaRepository<FranchiseOwner, 
     boolean existsByFranchiseOwnerId(String franchiseOwnerId);
 
     Optional<FranchiseOwner> findByFranchiseOwnerId(String frOwnerId);
+
+    FranchiseOwner findByFranchiseOwnerCode(int franchiseOwnerCode);
 }

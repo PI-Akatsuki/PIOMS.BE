@@ -7,6 +7,7 @@ import com.akatsuki.pioms.frowner.dto.FranchiseOwnerDTO;
 import com.akatsuki.pioms.frowner.repository.FranchiseOwnerRepository;
 import com.akatsuki.pioms.log.etc.LogStatus;
 import com.akatsuki.pioms.log.service.LogService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -205,5 +206,15 @@ public class FranchiseOwnerServiceImpl implements FranchiseOwnerService {
                 .franchiseOwnerUpdateDate(franchiseOwner.getFranchiseOwnerUpdateDate())
                 .franchiseOwnerDeleteDate(franchiseOwner.getFranchiseOwnerDeleteDate())
                 .build();
+    }
+
+    @Override
+    public FranchiseOwnerDTO getFranchiseOwnerWithFranchiseName(int franchiseOwnerCode) {
+        FranchiseOwner franchiseOwner = franchiseOwnerRepository.findByFranchiseOwnerCode(franchiseOwnerCode);
+        if (franchiseOwner != null) {
+            return new FranchiseOwnerDTO(franchiseOwner);
+        } else {
+            throw new EntityNotFoundException("Franchise owner not found with code: " + franchiseOwnerCode);
+        }
     }
 }
