@@ -95,10 +95,35 @@ jobs:
       - name: Generate deployment package
         run: |
           mkdir -p deploy
-          cp build/libs/*.jar deploy/application.jar || echo "No JAR file to copy"
-          cp Procfile deploy/Procfile || echo "No Procfile to copy"
-          cp -r .ebextensions deploy/.ebextensions || echo "No .ebextensions directory to copy"
-          cp -r .platform deploy/.platform || echo "No .platform directory to copy"
+          JAR_FILE=$(ls build/libs/*.jar | head -n 1)
+          if [ -f "$JAR_FILE" ]; then
+            cp "$JAR_FILE" deploy/application.jar
+          else
+            echo "JAR file not found!"
+            exit 1
+          fi
+          
+          if [ -f Procfile ]; then
+            cp Procfile deploy/Procfile
+          else
+            echo "Procfile not found!"
+            exit 1
+          fi
+          
+          if [ -d .ebextensions ]; then
+            cp -r .ebextensions deploy/.ebextensions
+          else
+            echo ".ebextensions directory not found!"
+            exit 1
+          fi
+          
+          if [ -d .platform ]; then
+            cp -r .platform deploy/.platform
+          else
+            echo ".platform directory not found!"
+            exit 1
+          fi
+          
           cd deploy && zip -r deploy.zip .
         shell: bash
 
@@ -107,11 +132,12 @@ jobs:
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application_name: PIOMSBE
-          environment_name: PIOMSBE-env
+          application_name: PIOMSB2
+          environment_name: PIOMSB2-env
           version_label: github-action-${{steps.current-time.outputs.formattedTime}}
           region: ap-northeast-2
           deployment_package: deploy/deploy.zip
+          wait_for_environment_recovery: 180
 
   check-comments:
     runs-on: ubuntu-latest
