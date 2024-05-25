@@ -32,17 +32,19 @@ public class ExchangeServiceImpl implements ExchangeService{
     private final FranchiseWarehouseService franchiseWarehouseService;
     private final OrderService orderService ;
     private final FranchiseService franchiseService;
-    private final ProductService productService;
+//    private final ProductService productService;
 
     @Autowired
     public ExchangeServiceImpl(ExchangeRepository exchangeRepository,ExchangeProductRepository exchangeProductRepository,FranchiseWarehouseService franchiseWarehouseService
-    , OrderService orderService, FranchiseService franchiseService, ProductService productService) {
+    , OrderService orderService, FranchiseService franchiseService
+//            , ProductService productService
+    ) {
         this.exchangeRepository = exchangeRepository;
         this.exchangeProductRepository = exchangeProductRepository;
         this.franchiseWarehouseService = franchiseWarehouseService;
         this.orderService = orderService;
         this.franchiseService = franchiseService;
-        this.productService = productService;
+//        this.productService = productService;
     }
 
 
@@ -270,12 +272,12 @@ public class ExchangeServiceImpl implements ExchangeService{
     public void updateExchangeStartDelivery(int franchiseCode) {
         // 발주가 배송중으로 상태 변경 시 해당 가맹점에 보내야 할 교환서 반환중으로 처리
         List<Exchange> exchanges = exchangeRepository.findAllByFranchiseFranchiseCodeAndExchangeStatus(franchiseCode,EXCHANGE_STATUS.반환대기);
-        for (int i = 0; i < exchanges.size(); i++) {
-            for (int j = 0; j < exchanges.get(i).getProducts().size(); j++) {
-                    productService.exportExchangeProducts(exchanges.get(i).getExchangeCode());
-            }
-            exchanges.get(i).setExchangeStatus(EXCHANGE_STATUS.반환중);
-            exchangeRepository.save(exchanges.get(i));
-        }
+//        for (int i = 0; i < exchanges.size(); i++) {
+//            for (int j = 0; j < exchanges.get(i).getProducts().size(); j++) {
+//                    productService.exportExchangeProducts(exchanges.get(i).getExchangeCode());
+//            }
+//            exchanges.get(i).setExchangeStatus(EXCHANGE_STATUS.반환중);
+//            exchangeRepository.save(exchanges.get(i));
+//        }
     }
 }
