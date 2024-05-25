@@ -87,17 +87,21 @@ public class NoticeServiceTest {
     }
 
 //    @Test
-//    @DisplayName(value = "공지사항 코드로 상세조회 실패 - 공지사항 없음")
-//    void getNoticeByCode_NotFound() {
+//    @DisplayName(value = "공지사항 코드로 상세조회 성공")
+//    void getFindNoticeByCode() {
 //
 //        // given
-//        given(noticeRepository.findById(noticeCode)).willReturn(Optional.empty());
+//        int noticeCode = 2;
+//        Notice savedNotice =new Notice(noticeCode, "발주 관련 공지 입니다.", "2024-03-11 14:55:02", "발주 하실 때 교환항목까지 담아주세요.", "2024-05-11 15:55:48", admin);
+//        given(noticeRepository.findById(noticeCode)).willReturn(Optional.of(savedNotice));
 //
-//        //when
-//        Throwable thrown = catchThrowable(() -> noticeService.getNoticeDetails(noticeCode));
+//        // when
+//        NoticeVO findNotice = noticeService.getNoticeDetails(noticeCode);
 //
-//        //then
-//        assertThat(thrown).isInstanceOf(RuntimeException.class).hasMessageContaning("해당 코드의 공지사항을 찾을 수 없습니다.");
+//        // then
+//        assertEquals(savedNotice.getNoticeTitle(), findNotice.getNoticeTitle());
+//        assertEquals(savedNotice.getNoticeContent(), findNotice.getNoticeContent());
+//        assertEquals(savedNotice.getNoticeEnrollDate(), findNotice.getNoticeEnrollDate());
 //    }
 
     // 공지사항 등록

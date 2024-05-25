@@ -4,6 +4,7 @@ import com.akatsuki.pioms.product.etc.PRODUCT_COLOR;
 import com.akatsuki.pioms.product.etc.PRODUCT_GENDER;
 import com.akatsuki.pioms.product.etc.PRODUCT_STATUS;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 import java.util.List;
@@ -29,5 +30,7 @@ public class RequestProduct {
     private int productDisCount;
     private int productCount;
     private int categoryThirdCode;
+
+    private MultipartFile file;
 
 }

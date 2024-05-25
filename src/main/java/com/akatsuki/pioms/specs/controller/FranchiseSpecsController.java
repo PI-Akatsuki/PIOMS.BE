@@ -33,9 +33,9 @@ public class FranchiseSpecsController {
     }
 
 
-    @GetMapping("/{franchiseOwnerCode}/specs/list")
+    @GetMapping("/specs/list")
     @Operation(summary = "점주의 명세서 전체 조회")
-    public ResponseEntity<List<ResponseSpecs>> getFranchiseSpecsList(@PathVariable int franchiseOwnerCode){
+    public ResponseEntity<List<ResponseSpecs>> getFranchiseSpecsList(@RequestParam int franchiseOwnerCode){
         List<SpecsDTO> specsDTOS = specsService.getSpecsListByFrOwnerCode(franchiseOwnerCode);
         if (specsDTOS.isEmpty())
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
@@ -46,9 +46,9 @@ public class FranchiseSpecsController {
         return ResponseEntity.ok(responseSpecs);
     }
 
-    @GetMapping("/{franchiseOwnerCode}/specs/{specsId}")
+    @GetMapping("/specs/{specsId}")
     @Operation(summary = "점주의 명세서 상세 조회")
-    public ResponseEntity<ResponseSpecs> getFranchiseSpecs(@PathVariable int franchiseOwnerCode, @PathVariable int specsId){
+    public ResponseEntity<ResponseSpecs> getFranchiseSpecs(@RequestParam int franchiseOwnerCode, @PathVariable int specsId){
         SpecsDTO specsDTO = specsService.getSpecsByFranchiseCode(franchiseOwnerCode, specsId);
 
         if (specsDTO == null){

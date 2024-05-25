@@ -10,6 +10,7 @@ import com.akatsuki.pioms.ask.aggregate.Ask;
 import com.akatsuki.pioms.ask.aggregate.ASK_STATUS;
 import com.akatsuki.pioms.ask.repository.AskRepository;
 import com.akatsuki.pioms.frowner.aggregate.FranchiseOwner;
+import com.akatsuki.pioms.frowner.dto.FranchiseOwnerDTO;
 import com.akatsuki.pioms.frowner.repository.FranchiseOwnerRepository;
 import com.akatsuki.pioms.log.etc.LogStatus;
 import com.akatsuki.pioms.log.service.LogService;
@@ -140,6 +141,14 @@ public class AskServiceImpl implements AskService{
 
     }
 
+    @Override
+    public FranchiseOwnerDTO getFranchiseOwnerDetails(int franchiseOwnerCode) {
+        FranchiseOwner franchiseOwner = franchiseOwnerRepository.findByFranchiseOwnerCode(franchiseOwnerCode);
+        if (franchiseOwner == null) {
+            throw new EntityNotFoundException("Franchise owner not found");
+        }
+        return new FranchiseOwnerDTO(franchiseOwner);
+    }
 
 
 }

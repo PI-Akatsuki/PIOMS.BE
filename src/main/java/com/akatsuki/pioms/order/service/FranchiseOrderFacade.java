@@ -41,6 +41,9 @@ public class FranchiseOrderFacade {
 
     public OrderDTO postFranchiseOrder(int franchiseCode, RequestOrderVO orders) {
         Franchise franchise = franchiseService.findFranchiseById(franchiseCode).orElseThrow();
+        if(!productService.checkPostOrderEnable(orders.getProducts()))
+            return null;
+
         return orderService.postFranchiseOrder(franchise,orders);
     }
 
