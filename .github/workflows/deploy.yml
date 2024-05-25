@@ -66,6 +66,17 @@ jobs:
           RDS_USERNAME: ${{ secrets.RDS_USERNAME }}
           RDS_PASSWORD: ${{ secrets.RDS_PASSWORD }}
 
+      - name: Check for Tests
+        run: |
+          if git diff --name-only HEAD^ HEAD | grep -qvE '(\.xml$|\.yml$|config/)'; then
+            if [ -z "$(find src/test -name '*ServiceTest.java')" ]; then
+              echo "No ServiceTest found, failing the build."
+              exit 1
+            fi
+          else
+            echo "Only configuration files changed, skipping test check."
+          fi
+
       - name: Build with Gradle
         run: ./gradlew clean build
         shell: bash
@@ -84,26 +95,9 @@ jobs:
       - name: Generate deployment package
         run: |
           mkdir -p deploy
-          JAR_FILE=$(ls -t build/libs/*.jar | head -n 1)
-          if [ -z "$JAR_FILE" ]; then
-            echo "JAR file not found!"
-            exit 1
-          fi
-          cp "$JAR_FILE" deploy/application.jar
-          if [ ! -f Procfile ]; then
-            echo "Procfile not found!"
-            exit 1
-          fi
+          cp build/libs/*.jar deploy/application.jar
           cp Procfile deploy/Procfile
-          if [ ! -d .ebextensions ]; then
-            echo ".ebextensions directory not found!"
-            exit 1
-          fi
           cp -r .ebextensions deploy/.ebextensions
-          if [ ! -d .platform ]; then
-            echo ".platform directory not found!"
-            exit 1
-          fi
           cp -r .platform deploy/.platform
           cd deploy && zip -r deploy.zip .
         shell: bash
@@ -138,10 +132,10 @@ jobs:
         run: |
           PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
           COMMENTS=$(gh pr view $PR_NUMBER --json comments --jq '.comments')
-
+          
           # Extract unique user logins from comments
           UNIQUE_USERS=$(echo "$COMMENTS" | jq -r 'map(.author.login) | unique | length')
-
+          
           if [ $UNIQUE_USERS -lt 2 ]; then
             echo "Not enough unique users ($UNIQUE_USERS) in the pull request comments. At least 2 unique users are required."
             exit 1
