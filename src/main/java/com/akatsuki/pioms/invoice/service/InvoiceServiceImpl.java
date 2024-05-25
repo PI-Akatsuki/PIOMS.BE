@@ -272,7 +272,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         return returnList;
     }
 
-    // 배송기사가 상태변경 시 수정
+    // 배송기사가 상태변경 수정
     @Override
     @Transactional
     public boolean modifyInvoiceStatusByDriver(int invoiceCode, int driverCode, DELIVERY_STATUS deliveryStatus) {

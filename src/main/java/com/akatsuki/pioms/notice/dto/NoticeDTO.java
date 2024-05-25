@@ -10,6 +10,7 @@ import lombok.*;
 public class NoticeDTO {
     private String noticeCode;
     private String noticeTitle;
+    private String noticeEnrollDate;
     private String noticeContent;
     private int adminCode;
 
