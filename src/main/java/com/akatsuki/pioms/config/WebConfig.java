@@ -20,9 +20,9 @@ public class WebConfig implements WebMvcConfigurer {
                         "http://localhost:5173",   // Vue 개발 서버
                         "http://localhost:3000"   // Vue 배포 서버
                 )
-                .allowedMethods("*")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
-                .exposedHeaders("Authorization")
+//                .exposedHeaders("Authorization")
                 .allowCredentials(true)
                 .maxAge(3600);
     }
