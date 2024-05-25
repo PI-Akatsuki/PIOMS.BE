@@ -37,4 +37,10 @@ public class FrOwnerOnlyFrOwnerController {
         return franchiseOwnerService.updateFranchiseOwner(franchiseOwnerCode, updatedFranchiseOwner, requestorAdminCode);
     }
 
+    @GetMapping("/owner/{franchiseOwnerCode}")
+    public ResponseEntity<FranchiseOwnerDTO> getFranchiseOwnerWithFranchiseName(@PathVariable int franchiseOwnerCode) {
+        FranchiseOwnerDTO franchiseOwnerDTO = franchiseOwnerService.getFranchiseOwnerWithFranchiseName(franchiseOwnerCode);
+        return ResponseEntity.ok(franchiseOwnerDTO);
+    }
+
 }

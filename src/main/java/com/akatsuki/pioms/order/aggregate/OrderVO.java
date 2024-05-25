@@ -45,6 +45,9 @@ public class OrderVO {
     private List<OrderProductDTO> orderProductList  = new ArrayList<>();
     private List<ExchangeProductDTO> exchangeProductList  = new ArrayList<>();
 
+    private int invoiceCode;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime invoiceDate;
 
     public OrderVO(OrderDTO order) {
         this.orderCode= order.getOrderCode();
@@ -69,6 +72,10 @@ public class OrderVO {
         this.orderProductList = order.getOrderProductList();
         if (order.getExchange()!=null) {
             this.exchangeProductList = order.getExchange().getExchangeProducts();
+        }
+        if (order.getInvoiceCode()!=0) {
+            invoiceCode = order.getInvoiceCode();
+            invoiceDate = order.getInvoiceDate();
         }
     }
 }

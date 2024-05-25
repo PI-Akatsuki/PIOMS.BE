@@ -5,6 +5,7 @@ import com.akatsuki.pioms.ask.dto.AskDTO;
 import com.akatsuki.pioms.ask.dto.AskListDTO;
 import com.akatsuki.pioms.ask.dto.AskUpdateDTO;
 import com.akatsuki.pioms.ask.aggregate.Ask;
+import com.akatsuki.pioms.frowner.dto.FranchiseOwnerDTO;
 import jakarta.persistence.EntityNotFoundException;
 
 public interface AskService {
@@ -18,4 +19,6 @@ public interface AskService {
     AskDTO createAsk(AskCreateDTO askDTO);
 
     Ask updateAsk(int askCode, AskUpdateDTO askUpdateDTO) throws Exception;
+
+    FranchiseOwnerDTO getFranchiseOwnerDetails(int franchiseOwnerCode);
 }
