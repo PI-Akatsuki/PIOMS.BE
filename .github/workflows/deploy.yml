@@ -97,6 +97,7 @@ jobs:
           mkdir -p deploy
           cp build/libs/*.jar deploy/application.jar || echo "No JAR file to copy"
           cp Procfile deploy/Procfile || echo "No Procfile to copy"
+          cp nginx/nginx.conf deploy/nginx.conf || echo "No nginx.conf to copy"
           cp -r .ebextensions deploy/.ebextensions || echo "No .ebextensions directory to copy"
           cp -r .platform deploy/.platform || echo "No .platform directory to copy"
           cd deploy && zip -r deploy.zip .
