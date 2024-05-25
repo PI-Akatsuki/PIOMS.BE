@@ -95,8 +95,10 @@ jobs:
       - name: Generate deployment package
         run: |
           mkdir -p deploy
-          if [ -f build/libs/*.jar ]; then
-            cp build/libs/*.jar deploy/application.jar
+          
+          JAR_FILE=$(find build/libs -name "*.jar" | head -n 1)
+          if [ -f "$JAR_FILE" ]; then
+            cp "$JAR_FILE" deploy/application.jar
           else
             echo "JAR file not found!"
             exit 1
@@ -116,15 +118,19 @@ jobs:
             exit 1
           fi
           
-          if [ -d .platform ]; then
-            cp -r .platform deploy/.platform
+          if [ -f .platform/nginx.conf ]; then
+            mkdir -p deploy/.platform
+            cp .platform/nginx.conf deploy/.platform/nginx.conf
           else
-            echo ".platform directory not found!"
+            echo "nginx.conf not found in .platform directory!"
             exit 1
           fi
           
           cd deploy && zip -r deploy.zip .
-        shell: bash
+        shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+        env:
+          JAVA_HOME: /opt/hostedtoolcache/Java_Corretto_jdk/17.0.11-9.1/x64
+          JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Corretto_jdk/17.0.11-9.1/x64
 
       - name: Retrieve EB Engine Log
         run: |
