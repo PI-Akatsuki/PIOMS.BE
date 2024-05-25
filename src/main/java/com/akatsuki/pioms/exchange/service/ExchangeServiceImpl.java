@@ -15,6 +15,7 @@ import com.akatsuki.pioms.frwarehouse.service.FranchiseWarehouseService;
 import com.akatsuki.pioms.order.aggregate.Order;
 import com.akatsuki.pioms.order.service.OrderService;
 import com.akatsuki.pioms.product.aggregate.Product;
+import com.akatsuki.pioms.product.service.ProductService;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,19 +27,22 @@ import java.util.List;
 
 @Service
 public class ExchangeServiceImpl implements ExchangeService{
-    ExchangeRepository exchangeRepository;
-    ExchangeProductRepository exchangeProductRepository;
-    FranchiseWarehouseService franchiseWarehouseService;
-    OrderService orderService ;
-    FranchiseService franchiseService;
+    private final ExchangeRepository exchangeRepository;
+    private final ExchangeProductRepository exchangeProductRepository;
+    private final FranchiseWarehouseService franchiseWarehouseService;
+    private final OrderService orderService ;
+    private final FranchiseService franchiseService;
+    private final ProductService productService;
+
     @Autowired
     public ExchangeServiceImpl(ExchangeRepository exchangeRepository,ExchangeProductRepository exchangeProductRepository,FranchiseWarehouseService franchiseWarehouseService
-    , OrderService orderService, FranchiseService franchiseService) {
+    , OrderService orderService, FranchiseService franchiseService, ProductService productService) {
         this.exchangeRepository = exchangeRepository;
         this.exchangeProductRepository = exchangeProductRepository;
         this.franchiseWarehouseService = franchiseWarehouseService;
         this.orderService = orderService;
         this.franchiseService = franchiseService;
+        this.productService = productService;
     }
 
 
@@ -204,7 +208,7 @@ public class ExchangeServiceImpl implements ExchangeService{
         }
         System.out.println("exchangeEntity = " + exchangeEntity);
         requestExchange.getProducts().forEach(this::updateExchangeProduct);
-        exchangeEntity.setExchangeStatus(requestExchange.getExchangeStatus());
+        exchangeEntity.setExchangeStatus(EXCHANGE_STATUS.반환대기);
         exchangeRepository.save(exchangeEntity);
         return new ExchangeDTO(exchangeRepository.findById(exchangeCode).orElseThrow());
     }
@@ -227,7 +231,6 @@ public class ExchangeServiceImpl implements ExchangeService{
                 return false;
             }
         }
-
         return true;
     }
 
@@ -251,5 +254,28 @@ public class ExchangeServiceImpl implements ExchangeService{
         exchangeProductRepository.save(exchangeProductEntity);
     }
 
+    public ExchangeDTO updateExchangeEndDelivery(int exchangeCode){
+        Exchange exchange = exchangeRepository.findById(exchangeCode).orElse(null);
 
+        if (exchange==null){
+            return null;
+        }
+
+        exchange.setExchangeStatus(EXCHANGE_STATUS.반환완료);
+
+        return new ExchangeDTO(exchangeRepository.save(exchange));
+    }
+
+    @Override
+    public void updateExchangeStartDelivery(int franchiseCode) {
+        // 발주가 배송중으로 상태 변경 시 해당 가맹점에 보내야 할 교환서 반환중으로 처리
+        List<Exchange> exchanges = exchangeRepository.findAllByFranchiseFranchiseCodeAndExchangeStatus(franchiseCode,EXCHANGE_STATUS.반환대기);
+        for (int i = 0; i < exchanges.size(); i++) {
+            for (int j = 0; j < exchanges.get(i).getProducts().size(); j++) {
+                    productService.exportExchangeProducts(exchanges.get(i).getExchangeCode());
+            }
+            exchanges.get(i).setExchangeStatus(EXCHANGE_STATUS.반환중);
+            exchangeRepository.save(exchanges.get(i));
+        }
+    }
 }

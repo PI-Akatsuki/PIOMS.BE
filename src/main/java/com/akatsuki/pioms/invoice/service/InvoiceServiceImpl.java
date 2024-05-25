@@ -1,6 +1,7 @@
 package com.akatsuki.pioms.invoice.service;
 
 
+import com.akatsuki.pioms.exchange.service.ExchangeService;
 import com.akatsuki.pioms.franchise.aggregate.DELIVERY_DATE;
 import com.akatsuki.pioms.franchise.dto.FranchiseDTO;
 import com.akatsuki.pioms.franchise.service.FranchiseService;
@@ -29,13 +30,15 @@ public class InvoiceServiceImpl implements InvoiceService {
     final private InvoiceRepository invoiceRepository;
     final private FranchiseService franchiseService;
     final private OrderService orderService;
+    final private ExchangeService exchangeService;
 
 
     @Autowired
-    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, FranchiseService franchiseService, OrderService orderService) {
+    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, FranchiseService franchiseService, OrderService orderService, ExchangeService exchangeService) {
         this.invoiceRepository = invoiceRepository;
         this.franchiseService = franchiseService;
         this.orderService = orderService;
+        this.exchangeService = exchangeService;
     }
 
     public LocalDateTime setDeliveryTime(LocalDateTime orderTime, DELIVERY_DATE deliveryDate){
@@ -152,6 +155,12 @@ public class InvoiceServiceImpl implements InvoiceService {
         }
         invoice.setDeliveryStatus(invoiceStatus);
         invoice = invoiceRepository.save(invoice);
+
+        if (invoiceStatus == DELIVERY_STATUS.배송중 ){
+            // 반환 대기중인 반품품목 추가하기
+            exchangeService.updateExchangeStartDelivery(invoice.getOrder().getFranchise().getFranchiseCode());
+        }
+
         if (invoiceStatus == DELIVERY_STATUS.배송완료){
             orderService.putOrderCondition(invoice.getOrder().getOrderCode(), ORDER_CONDITION.검수대기);
         }
