@@ -49,7 +49,7 @@ public interface InvoiceService {
     // 배송상태조회 - 전체조회
     List<ResponseDriverInvoice> getAllDriverInvoiceList(int driverCode);
 
-    // 배송상태조회 - 배송기사코드와 담당지역의 배송상태에 따른 상세조회
+    // 배송상태조회 - 배송기사코드와 담당지역의 배송상태에 따른 상세조회 (배송전)
     List<ResponseDriverInvoice> getStatusBeforeDeliveryDriverInvoiceList(int driverCode);
 
     // 배송상태조회 - 배송기사코드와 담당지역의 배송상태에 따른 상세조회 (배송중)

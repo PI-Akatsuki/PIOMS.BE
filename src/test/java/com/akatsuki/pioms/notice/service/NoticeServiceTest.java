@@ -3,7 +3,6 @@ package com.akatsuki.pioms.notice.service;
 import com.akatsuki.pioms.admin.aggregate.Admin;
 import com.akatsuki.pioms.notice.aggregate.Notice;
 import com.akatsuki.pioms.notice.aggregate.NoticeVO;
-import com.akatsuki.pioms.notice.dto.NoticeDTO;
 import com.akatsuki.pioms.notice.repository.NoticeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -23,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 
-
 @SpringBootTest
 @Transactional
 public class NoticeServiceTest {
@@ -35,9 +33,7 @@ public class NoticeServiceTest {
     private NoticeRepository noticeRepository;
 
     Admin admin;
-    int noticeCode = 1;
 
-    NoticeVO noticeVO;
 
     @BeforeEach
     void init() {
