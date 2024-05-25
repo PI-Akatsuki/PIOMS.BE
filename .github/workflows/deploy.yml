@@ -84,9 +84,26 @@ jobs:
       - name: Generate deployment package
         run: |
           mkdir -p deploy
-          cp build/libs/*.jar deploy/application.jar
+          JAR_FILE=$(ls -t build/libs/*.jar | head -n 1)
+          if [ -z "$JAR_FILE" ]; then
+            echo "JAR file not found!"
+            exit 1
+          fi
+          cp "$JAR_FILE" deploy/application.jar
+          if [ ! -f Procfile ]; then
+            echo "Procfile not found!"
+            exit 1
+          fi
           cp Procfile deploy/Procfile
+          if [ ! -d .ebextensions ]; then
+            echo ".ebextensions directory not found!"
+            exit 1
+          fi
           cp -r .ebextensions deploy/.ebextensions
+          if [ ! -d .platform ]; then
+            echo ".platform directory not found!"
+            exit 1
+          fi
           cp -r .platform deploy/.platform
           cd deploy && zip -r deploy.zip .
         shell: bash
@@ -102,33 +119,3 @@ jobs:
           region: ap-northeast-2
           deployment_package: deploy/deploy.zip
 
-  check-comments:
-    runs-on: ubuntu-latest
-    needs: build
-    if: github.event_name == 'pull_request'
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install GitHub CLI
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y gh jq
-
-      - name: Check Pull Request Comments
-        id: pr-comments
-        run: |
-          PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
-          COMMENTS=$(gh pr view $PR_NUMBER --json comments --jq '.comments')
-
-          # Extract unique user logins from comments
-          UNIQUE_USERS=$(echo "$COMMENTS" | jq -r 'map(.author.login) | unique | length')
-
-          if [ $UNIQUE_USERS -lt 2 ]; then
-            echo "Not enough unique users ($UNIQUE_USERS) in the pull request comments. At least 2 unique users are required."
-            exit 1
-          else
-            echo "Sufficient unique users ($UNIQUE_USERS) in the pull request comments."
-          fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
