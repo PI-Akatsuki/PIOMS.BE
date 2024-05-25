@@ -3,6 +3,7 @@ package com.akatsuki.pioms.notice.service;
 import com.akatsuki.pioms.admin.aggregate.Admin;
 import com.akatsuki.pioms.notice.aggregate.Notice;
 import com.akatsuki.pioms.notice.aggregate.NoticeVO;
+import com.akatsuki.pioms.notice.dto.NoticeDTO;
 import com.akatsuki.pioms.notice.repository.NoticeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -18,10 +19,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.when;
 
 
 @SpringBootTest
@@ -37,14 +37,17 @@ public class NoticeServiceTest {
     Admin admin;
     int noticeCode = 1;
 
+    NoticeVO noticeVO;
+
     @BeforeEach
     void init() {
         admin = new Admin();
         admin.setAdminCode(1);
-//        Notice notice = new Notice();
-//        notice.setNoticeTitle("공지사항 제목입니다.");
-//        notice.setNoticeContent("공지사항 내용입니다.");
+        Notice notice = new Notice();
+        notice.setNoticeTitle("공지사항 제목입니다.");
+        notice.setNoticeContent("공지사항 내용입니다.");
     }
+
 
     @Test
     @DisplayName(value = "공지사항 전체조회 성공")
@@ -102,7 +105,7 @@ public class NoticeServiceTest {
     @DisplayName(value = "Root 관리자 권한으로 공지사항 등록 성공")
     void postNotice() {
 
-//        // given
+        // given
         Notice notice = new Notice();
         notice.setNoticeTitle("공지사항 제목입니다.");
         notice.setNoticeContent("공지사항 내용입니다.");
@@ -117,26 +120,54 @@ public class NoticeServiceTest {
         assertEquals("공지사항 등록이 완료되었습니다.", responseRoot.getBody());
     }
 
-    // 공지사항 수정
     @Test
     @DisplayName(value = "Root 관리자 권한으로 공지사항 수정 성공")
-    void updateNoticeByCode() {
-
+    void updateNotice() {
         // given
+        Notice notice1 = new Notice();
+        notice1.setNoticeCode(1);
+        notice1.setNoticeTitle("공지사항 제목입니다.");
+        notice1.setNoticeEnrollDate("2024-03-11 14:55:02");
+        notice1.setNoticeContent("공지사항 내용입니다.");
+        notice1.setNoticeUpdateDate("2024-03-11 14:55:02");
+        when(noticeRepository.findById(1)).thenReturn(Optional.of(notice1));
 
         // when
+        notice1.setNoticeTitle("공지사항 제목을 수정합니다.");
+        notice1.setNoticeUpdateDate("2024-03-12 14:22:02");
+        notice1.setNoticeContent("공지사항 내용을 수정합니다.");
+
+        ResponseEntity<String> result = noticeService.updateNotice(notice1, notice1.getNoticeCode(), 1);
 
         // then
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertEquals("공지사항이 수정되었습니다.", result.getBody());
     }
+
+
+
 
     // 공지사항 삭제
     @Test
+    @DisplayName(value = "Root 관리자 권한으로 공지사항 삭제 성공")
     void deleteNoticeByCode() {
 
         // given
+        Notice notice = new Notice();
+        notice.setNoticeCode(1);
+        notice.setNoticeTitle("공지사항 제목");
+        notice.setNoticeEnrollDate("2024-05-21 11:23:45");
+        notice.setNoticeContent("공지사항 내요오오오오오옹");
+        notice.setNoticeUpdateDate("2024-05-21 11:23:45");
+        when(noticeRepository.findById(1)).thenReturn(Optional.of(notice));
 
         // when
+        noticeService.deleteNotice(1, 1);
+
+        ResponseEntity<String> result = noticeService.deleteNotice(1, 1);
 
         // then
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertEquals("공지사항이 삭제되었습니다.", result.getBody());
     }
 }
