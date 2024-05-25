@@ -38,7 +38,6 @@ public class InvoiceServiceImpl implements InvoiceService {
         this.orderService = orderService;
     }
 
-
     public LocalDateTime setDeliveryTime(LocalDateTime orderTime, DELIVERY_DATE deliveryDate){
 
         int day = orderTime.getDayOfWeek().getValue();
@@ -271,5 +270,29 @@ public class InvoiceServiceImpl implements InvoiceService {
         }
 
         return returnList;
+    }
+
+    // 배송기사가 상태변경 수정
+    @Override
+    @Transactional
+    public boolean modifyInvoiceStatusByDriver(int invoiceCode, int driverCode, DELIVERY_STATUS deliveryStatus) {
+
+        // 송장이 있는지 여부
+        Invoice invoice = invoiceRepository.findById(invoiceCode).orElse(null);
+        if (invoice == null) {
+            return false;
+        }
+
+        // 배송 상태 변경 후 레포에 저장
+        invoice.setDeliveryStatus(deliveryStatus);
+        invoiceRepository.save(invoice);
+
+        // 배송기사 배송완료 시 배송중 -> 배송완료
+        if(deliveryStatus == DELIVERY_STATUS.배송완료) {
+
+            // 점주가 확인 전까지 '검수대기'
+            orderService.putOrderCondition(invoice.getOrder().getOrderCode(), ORDER_CONDITION.검수대기);
+        }
+        return true;
     }
 }

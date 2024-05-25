@@ -22,8 +22,8 @@ public class AdminExchangeController {
         this.exchangeService = exchangeService;
     }
 
-    @GetMapping("/{adminCode}/exchanges")
-    public ResponseEntity<List<ResponseExchange>> getExchanges(@PathVariable int adminCode){
+    @GetMapping("/exchanges")
+    public ResponseEntity<List<ResponseExchange>> getExchanges(@RequestParam int adminCode){
         List<ExchangeDTO> exchangeDTOS = exchangeService.getExchangesByAdminCode(adminCode);
         List<ResponseExchange> responseExchanges = new ArrayList<>();
         exchangeDTOS.forEach(exchangeDTO -> {
@@ -32,8 +32,8 @@ public class AdminExchangeController {
         return ResponseEntity.ok(responseExchanges);
     }
 
-    @GetMapping("/{adminCode}/exchange/{exchangeCode}")
-    public ResponseEntity<ResponseExchange> getExchange(@PathVariable int adminCode,@PathVariable int exchangeCode){
+    @GetMapping("/exchange/{exchangeCode}")
+    public ResponseEntity<ResponseExchange> getExchange(@RequestParam int adminCode,@PathVariable int exchangeCode){
         ExchangeDTO exchangeDTO = exchangeService.getAdminExchange(adminCode,exchangeCode);
 
         if (exchangeDTO == null)
@@ -42,8 +42,8 @@ public class AdminExchangeController {
     }
 
     // admin이 반송 수정시킴
-    @PutMapping("{AdminCode}/exchange/{exchangeCode}")
-    public ResponseEntity<ResponseExchange> putExchange(@PathVariable int AdminCode,@PathVariable int exchangeCode,@RequestBody RequestExchange requestExchange){
-        return ResponseEntity.ok(new ResponseExchange(exchangeService.putExchange(AdminCode,exchangeCode,requestExchange)));
+    @PutMapping("/exchange/{exchangeCode}")
+    public ResponseEntity<ResponseExchange> putExchange(@RequestParam int adminCode,@PathVariable int exchangeCode,@RequestBody RequestExchange requestExchange){
+        return ResponseEntity.ok(new ResponseExchange(exchangeService.putExchange(adminCode,exchangeCode,requestExchange)));
     }
 }

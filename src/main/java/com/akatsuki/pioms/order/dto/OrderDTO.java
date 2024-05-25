@@ -4,9 +4,11 @@ import com.akatsuki.pioms.exchange.aggregate.Exchange;
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import com.akatsuki.pioms.franchise.aggregate.DELIVERY_DATE;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
+import com.akatsuki.pioms.invoice.dto.InvoiceDTO;
 import com.akatsuki.pioms.order.aggregate.Order;
 import com.akatsuki.pioms.order.aggregate.OrderProduct;
 import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -46,6 +48,8 @@ public class OrderDTO {
 
     private List<OrderProductDTO> orderProductList;
 
+    private int invoiceCode;
+    private LocalDateTime invoiceDate;
 
 
     public OrderDTO(Order order) {
@@ -72,6 +76,12 @@ public class OrderDTO {
             for (int i = 0; i < order.getOrderProductList().size(); i++) {
                 orderProductList.add(new OrderProductDTO(order.getOrderProductList().get(i)));
             }
+
+        if (order.getInvoice()!=null){
+            invoiceCode = order.getInvoice().getInvoiceCode();
+            invoiceDate = order.getInvoice().getInvoiceDate();
+        }
+
 
     }
 }

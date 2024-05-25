@@ -117,6 +117,7 @@ public class OrderServiceImpl implements OrderService{
             System.out.println("가맹점 코드, 주문의 가맹점 코드 불일치! ");
             return null;
         }
+
         // 이미 존재하는 발주 있는지 확인
         if (orderRepository.existsByFranchiseFranchiseCodeAndOrderCondition(franchise.getFranchiseCode(), ORDER_CONDITION.승인대기)
                 || orderRepository.existsByFranchiseFranchiseCodeAndOrderCondition(franchise.getFranchiseCode(),ORDER_CONDITION.승인거부)){

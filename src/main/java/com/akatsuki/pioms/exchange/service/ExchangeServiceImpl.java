@@ -120,7 +120,9 @@ public class ExchangeServiceImpl implements ExchangeService{
             exchange1.getProducts().add(exchangeProduct);
         });
 
-        return new ExchangeDTO(exchange1);
+        Exchange exchange2 = exchangeRepository.findById(exchange1.getExchangeCode()).orElseThrow();
+        System.out.println("exchange2 = " + exchange2);
+        return new ExchangeDTO(exchange2);
     }
 
     @Override
