@@ -276,10 +276,49 @@ public class ProductServiceImpl implements ProductService{
 
     @Override
     public Boolean postProductWithImage(RequestProduct request, MultipartFile image)throws IOException {
-        Product product = new Product(request);
-        product = productRepository.save(product);
-        return googleImage.uploadImage(product.getProductCode(),image);
+//        Product product = new Product(request);
+//        product = productRepository.save(product);
+        ProductDTO productDTO = postProduct2(request,1);
+        return googleImage.uploadImage(productDTO.getProductCode(),image);
     }
 
+
+
+    @Transactional
+    public ProductDTO postProduct2(RequestProduct request, int requesterAdminCode) {
+        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
+
+        Product product = new Product();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String formattedDateTime = LocalDateTime.now().format(formatter);
+
+        List<CategoryThird> categoryThirdList = categoryThirdRepository.findByCategoryThirdCode(request.getCategoryThirdCode());
+
+        CategoryThird categoryThird = new CategoryThird();
+        categoryThird.setCategoryThirdCode(request.getCategoryThirdCode());
+        product.setCategoryThird(categoryThird);
+
+        product.setProductName(request.getProductName());
+        product.setProductPrice(request.getProductPrice());
+        product.setProductContent(request.getProductContent());
+        product.setProductEnrollDate(formattedDateTime);
+        product.setProductUpdateDate(formattedDateTime);
+        product.setProductColor(request.getProductColor());
+        product.setProductSize(request.getProductSize());
+        product.setProductGender(request.getProductGender());
+        product.setProductTotalCount(request.getProductTotalCount());
+        product.setProductStatus(request.getProductStatus());
+        product.setProductExposureStatus(request.isProductExposureStatus());
+        product.setProductNoticeCount(request.getProductNoticeCount());
+        product.setProductDiscount(request.getProductDisCount());
+        product.setProductCount(request.getProductCount());
+
+        Product updatedProduct = productRepository.save(product);
+
+        logService.saveLog("root", LogStatus.등록, updatedProduct.getProductName(), "Product");
+
+        return new ProductDTO(updatedProduct);
+    }
 
 }

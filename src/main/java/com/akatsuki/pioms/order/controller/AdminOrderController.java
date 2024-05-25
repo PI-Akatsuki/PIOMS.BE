@@ -56,6 +56,7 @@ public class AdminOrderController {
         if (orderDTOS.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
+
         orderDTOS = Pagination.splitPage(orderDTOS, page, size);
         List<OrderVO> orderVOS = new ArrayList<>();
         for (int i = 0; i < orderDTOS.size(); i++) {

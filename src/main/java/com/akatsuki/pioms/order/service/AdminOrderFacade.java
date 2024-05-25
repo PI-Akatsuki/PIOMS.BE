@@ -5,6 +5,7 @@ import com.akatsuki.pioms.exchange.service.ExchangeService;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import com.akatsuki.pioms.franchise.service.FranchiseService;
 import com.akatsuki.pioms.frwarehouse.service.FranchiseWarehouseService;
+import com.akatsuki.pioms.invoice.dto.InvoiceDTO;
 import com.akatsuki.pioms.invoice.service.InvoiceService;
 import com.akatsuki.pioms.order.aggregate.Order;
 import com.akatsuki.pioms.order.aggregate.RequestOrderVO;
@@ -43,6 +44,7 @@ public class AdminOrderFacade {
 
     public List<OrderDTO> getOrderListByAdminCode(int adminCode){
         List<Order> orders =  orderService.getOrderListByAdminCode(adminCode);
+
         List<OrderDTO> orderDTOS = new ArrayList<>();
         orders.forEach(order -> {
             orderDTOS.add(new OrderDTO(order));
