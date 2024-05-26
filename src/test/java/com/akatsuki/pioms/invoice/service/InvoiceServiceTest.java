@@ -108,6 +108,7 @@ class InvoiceServiceTest {
 
         // when
         List<ResponseDriverInvoice> result = invoiceService.getStatusBeforeDeliveryDriverInvoiceList(driverCode);
+        System.out.println("result1 = " + result);
 
         // then
         long expectedCount = invoiceAllList.stream()
@@ -120,60 +121,51 @@ class InvoiceServiceTest {
         }
     }
 
-    // @Test
-    //@DisplayName("배송 상태 상세조회(배송전) 테스트 성공")
-    //void getStatusBeforeDeliveryDriverInvoiceList() {
-    //
-    //    // given
-    //    int driverCode = 1;
-    //    List<ResponseDriverInvoice> invoiceAllList = invoiceService.getAllDriverInvoiceList(driverCode);
-    //
-    //    // when
-    //    List<ResponseDriverInvoice> result = invoiceService.getStatusBeforeDeliveryDriverInvoiceList(driverCode);
-    //
-    //    // then
-    //    long expectedCount = invoiceAllList.stream()
-    //                                       .filter(invoice -> invoice.getDeliveryStatus() == DELIVERY_STATUS.배송전)
-    //                                       .count();
-    //    assertEquals(expectedCount, result.size());
-    //    for(ResponseDriverInvoice invoice : result) {
-    //        assertEquals(DELIVERY_STATUS.배송전, invoice.getDeliveryStatus());
-    //    }
-    //}
+    @Test
+    @DisplayName(value = "배송 상태 상세조회(배송중) 테스트 성공")
+    void getStatusIngDeliveryDriverInvoiceList() {
 
-//    @Test
-//    @DisplayName(value = "배송 상태 상세조회(배송중) 테스트 성공")
-//    void getStatusIngDeliveryDriverInvoiceList() {
-//
-//        // given
-//
-//        // when
-//
-//        // then
-//
-//    }
-//
-//    @Test
-//    @DisplayName(value = "배송 상태 상세조회(배송완료) 테스트 성공")
-//    void getStatusCompleteDeliveryDriverInvoiceList() {
-//
-//        // given
-//
-//        // when
-//
-//        // then
-//
-//    }
-//
-//    @Test
-//    @DisplayName(value = "배송기사가 배송 상태 수정 테스트 성공")
-//    void modifyInvoiceStatusByDriver() {
-//
-//        //given
-//
-//        // when
-//
-//        //then
-//
-//    }
+        // given
+        int driverCode = 1;
+        List<ResponseDriverInvoice> invoiceAllList = invoiceService.getAllDriverInvoiceList(driverCode);
+
+        // when
+        List<ResponseDriverInvoice> result = invoiceService.getStatusIngDeliveryDriverInvoiceList(driverCode);
+        System.out.println("result2 = " + result);
+
+        // then
+        long expectedCount = invoiceAllList.stream()
+                                            .filter(invoiceDTO -> invoiceDTO.getDeliveryStatus() == DELIVERY_STATUS.배송중)
+                                            .count();
+
+        assertEquals(expectedCount, result.size());
+        for (ResponseDriverInvoice invoiceDTO : result) {
+            assertEquals(DELIVERY_STATUS.배송중, invoiceDTO.getDeliveryStatus());
+        }
+
+    }
+
+    @Test
+    @DisplayName(value = "배송 상태 상세조회(배송완료) 테스트 성공")
+    void getStatusCompleteDeliveryDriverInvoiceList() {
+
+        // given
+
+        // when
+
+        // then
+
+    }
+
+    @Test
+    @DisplayName(value = "배송기사가 배송 상태 수정 테스트 성공")
+    void modifyInvoiceStatusByDriver() {
+
+        //given
+
+        // when
+
+        //then
+
+    }
 }
