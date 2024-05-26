@@ -168,6 +168,10 @@ jobs:
             if [ "$STATUS" == "Ready" ]; then
               echo "Environment is ready"
               exit 0
+            elif [ "$STATUS" == "Terminated" ]; then
+              echo "Environment was terminated"
+              aws elasticbeanstalk describe-events --environment-name PIOMSB2-env-green --max-items 10
+              exit 1
             else
               echo "Environment status: $STATUS"
               sleep 30
@@ -221,7 +225,7 @@ jobs:
           # Extract unique user logins from comments
           UNIQUE_USERS=$(echo "$COMMENTS" | jq -r 'map(.author.login) | unique | length')
           
-          if [ $UNIQUE_USERS -lt 2 ]; then
+          if [ $UNIQUE_USERS -lt 2]; then
             echo "Not enough unique users ($UNIQUE_USERS) in the pull request comments. At least 2 unique users are required."
             exit 1
           else
