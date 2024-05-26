@@ -2,6 +2,7 @@
 application.yml
 appiication-private.yml
 *.json
+!options.json
 .idea/
 out/
 
