@@ -47,6 +47,7 @@ public class Product {
 
     @Column(name = "product_gender")
     @Enumerated(EnumType.STRING)
+    @ToString.Exclude
     private PRODUCT_GENDER productGender;
 
     @Column(name = "product_total_count")

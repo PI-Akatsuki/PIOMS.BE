@@ -53,4 +53,7 @@ public interface ExchangeService {
     // 만약 가맹점의 발주 신청 상태의 발주 리스트가 중복되어 여러개가 있는 경우 에러로 인식하여 해당 반품신청들을 삭제한다.
     ExchangeDTO findExchangeToSend(int franchiseCode);
 
+    ExchangeDTO updateExchangeEndDelivery(int exchangeCode);
+
+    void updateExchangeStartDelivery(int franchiseCode);
 }

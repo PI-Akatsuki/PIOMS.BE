@@ -28,20 +28,20 @@ import static org.junit.jupiter.api.Assertions.*;
 @Transactional
 class InvoiceServiceTest {
 
-    InvoiceService invoiceService;
-    InvoiceRepository invoiceRepository;
-    AdminOrderFacade orderFacade;
-    FranchiseOrderFacade franchiseOrderFacade;
+   InvoiceService invoiceService;
+   InvoiceRepository invoiceRepository;
+   AdminOrderFacade orderFacade;
+   FranchiseOrderFacade franchiseOrderFacade;
 
-    static int adminCode = 1;
-    static int franchiseCode = 1;
+   static int adminCode = 1;
+   static int franchiseCode = 1;
 
-    @Autowired
-    public InvoiceServiceTest(InvoiceService invoiceService, InvoiceRepository invoiceRepository, AdminOrderFacade orderFacade) {
-        this.invoiceService = invoiceService;
-        this.invoiceRepository = invoiceRepository;
-        this.orderFacade = orderFacade;
-    }
+   @Autowired
+   public InvoiceServiceTest(InvoiceService invoiceService, InvoiceRepository invoiceRepository, AdminOrderFacade orderFacade) {
+       this.invoiceService = invoiceService;
+       this.invoiceRepository = invoiceRepository;
+       this.orderFacade = orderFacade;
+   }
 
 //    @Test
 //    void postInvoiceAndPut() {

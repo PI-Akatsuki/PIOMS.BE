@@ -1,5 +1,6 @@
 package com.akatsuki.pioms.exchange.controller;
 
+import com.akatsuki.pioms.exchange.aggregate.EXCHANGE_STATUS;
 import com.akatsuki.pioms.exchange.aggregate.RequestExchange;
 import com.akatsuki.pioms.exchange.aggregate.ResponseExchange;
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
@@ -46,4 +47,15 @@ public class AdminExchangeController {
     public ResponseEntity<ResponseExchange> putExchange(@RequestParam int adminCode,@PathVariable int exchangeCode,@RequestBody RequestExchange requestExchange){
         return ResponseEntity.ok(new ResponseExchange(exchangeService.putExchange(adminCode,exchangeCode,requestExchange)));
     }
+
+
+    @PutMapping("/exchange/{exchangeCode}/{exchangeStatus}")
+    public ResponseEntity<ResponseExchange> updateExchangeEndDelivery(@PathVariable int exchangeCode, EXCHANGE_STATUS exchangeStatus){
+        ExchangeDTO exchangeDTO = exchangeService.updateExchangeEndDelivery(exchangeCode);
+        if (exchangeDTO == null){
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+        }
+        return ResponseEntity.ok(new ResponseExchange(exchangeDTO));
+    }
+
 }

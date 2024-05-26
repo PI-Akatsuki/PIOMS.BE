@@ -80,6 +80,7 @@ public class AdminOrderFacade {
             // 교환 가능 여부 검사
             if(productService.checkExchangeProduct(order,exchange) ){
                 order = orderService.addExchangeToOrder(exchange, order.getOrderCode());
+                // 이건 본사에서 되돌려 줄 때 처리해야 된다.!
                 productService.exportExchangeProducts(exchange.getExchangeCode());
             }
         }
