@@ -1,4 +1,4 @@
-name: pioms
+name: piomsbe
 
 permissions:
   contents: read
@@ -40,7 +40,7 @@ jobs:
               uri-encoding: UTF-8
           spring:
             application:
-              name: pioms
+              name: piomsbe
             jpa:
               show-sql: false
               database: mysql
@@ -146,6 +146,32 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ap-northeast-2
 
+      - name: Terminate existing green environment if it exists
+        run: |
+          echo "Checking if green environment exists..."
+          ENV_STATUS=$(aws elasticbeanstalk describe-environments --environment-names PIOMSBE-env-green --query 'Environments[0].Status' --output text || echo "NoSuchEnvironment")
+          if [ "$ENV_STATUS" != "NoSuchEnvironment" ]; then
+            echo "Terminating existing green environment..."
+            aws elasticbeanstalk terminate-environment --environment-name PIOMSBE-env-green
+            echo "Waiting for green environment to be terminated..."
+            for i in {1..30}; do
+              STATUS=$(aws elasticbeanstalk describe-environments --environment-names PIOMSBE-env-green --query 'Environments[0].Status' --output text)
+              if [ "$STATUS" == "Terminated" ]; then
+                echo "Green environment terminated"
+                break
+              else
+                echo "Green environment status: $STATUS"
+                sleep 30
+              fi
+            done
+          else
+            echo "No existing green environment found"
+          fi
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ap-northeast-2
+
       - name: Create new Elastic Beanstalk environment for blue-green deployment
         run: |
           aws elasticbeanstalk create-environment \
@@ -189,26 +215,6 @@ jobs:
           aws elasticbeanstalk swap-environment-cnames \
             --source-environment-name PIOMSBE-env \
             --destination-environment-name PIOMSBE-env-green
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ap-northeast-2
-
-      - name: Wait for source environment to be terminated
-        run: |
-          echo "Waiting for source environment to be terminated..."
-          for i in {1..30}; do
-            STATUS=$(aws elasticbeanstalk describe-environments --environment-names PIOMSBE-env --query 'Environments[0].Status' --output text)
-            if [ "$STATUS" == "Terminated" ]; then
-              echo "Source environment terminated"
-              exit 0
-            else
-              echo "Source environment status: $STATUS"
-              sleep 30
-            fi
-          done
-          echo "Source environment did not terminate in time"
-          exit 1
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
