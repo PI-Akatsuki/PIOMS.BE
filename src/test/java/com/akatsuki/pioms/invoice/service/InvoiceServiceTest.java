@@ -150,11 +150,22 @@ class InvoiceServiceTest {
     void getStatusCompleteDeliveryDriverInvoiceList() {
 
         // given
+        int driverCode = 1;
+        List<ResponseDriverInvoice> invoiceAllList = invoiceService.getAllDriverInvoiceList(driverCode);
 
         // when
+        List<ResponseDriverInvoice> result = invoiceService.getStatusCompleteDeliveryDriverInvoiceList(driverCode);
+        System.out.println("result3 = " + result);
 
         // then
+        long expectedCount = invoiceAllList.stream()
+                .filter(invoiceDTO -> invoiceDTO.getDeliveryStatus() == DELIVERY_STATUS.배송완료)
+                .count();
 
+        assertEquals(expectedCount, result.size());
+        for (ResponseDriverInvoice invoiceDTO : result) {
+            assertEquals(DELIVERY_STATUS.배송완료, invoiceDTO.getDeliveryStatus());
+        }
     }
 
     @Test
