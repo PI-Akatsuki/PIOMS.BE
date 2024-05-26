@@ -124,6 +124,8 @@ jobs:
             exit 1
           fi
           
+          echo "${{ secrets.OPTIONS_JSON }}" > deploy/options.json
+          
           cd deploy && zip -r deploy.zip .
         shell: bash
 
