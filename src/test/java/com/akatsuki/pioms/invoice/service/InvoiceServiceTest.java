@@ -32,10 +32,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @Transactional
 class InvoiceServiceTest {
 
-    InvoiceService invoiceService;
-    InvoiceRepository invoiceRepository;
-    AdminOrderFacade orderFacade;
-    FranchiseOrderFacade franchiseOrderFacade;
+   InvoiceService invoiceService;
+   InvoiceRepository invoiceRepository;
+   AdminOrderFacade orderFacade;
+   FranchiseOrderFacade franchiseOrderFacade;
 
     @Autowired
     private OrderRepository orderRepository;
