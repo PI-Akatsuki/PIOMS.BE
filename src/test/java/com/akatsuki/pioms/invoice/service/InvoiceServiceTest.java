@@ -3,16 +3,20 @@ package com.akatsuki.pioms.invoice.service;
 import com.akatsuki.pioms.invoice.aggregate.DELIVERY_STATUS;
 import com.akatsuki.pioms.invoice.aggregate.Invoice;
 import com.akatsuki.pioms.invoice.aggregate.ResponseDriverInvoice;
+import com.akatsuki.pioms.invoice.dto.InvoiceDTO;
 import com.akatsuki.pioms.invoice.repository.InvoiceRepository;
+import com.akatsuki.pioms.order.aggregate.Order;
 import com.akatsuki.pioms.order.aggregate.RequestOrderVO;
 import com.akatsuki.pioms.order.dto.OrderDTO;
 import com.akatsuki.pioms.order.dto.OrderProductDTO;
+import com.akatsuki.pioms.order.repository.OrderRepository;
 import com.akatsuki.pioms.order.service.AdminOrderFacade;
 import com.akatsuki.pioms.order.service.FranchiseOrderFacade;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 
 
@@ -33,14 +37,19 @@ class InvoiceServiceTest {
     AdminOrderFacade orderFacade;
     FranchiseOrderFacade franchiseOrderFacade;
 
+    @Autowired
+    private OrderRepository orderRepository;
+
     static int adminCode = 1;
     static int franchiseCode = 1;
 
+
     @Autowired
-    public InvoiceServiceTest(InvoiceService invoiceService, InvoiceRepository invoiceRepository, AdminOrderFacade orderFacade) {
+    public InvoiceServiceTest(InvoiceService invoiceService, InvoiceRepository invoiceRepository, AdminOrderFacade orderFacade, OrderRepository orderRepository) {
         this.invoiceService = invoiceService;
         this.invoiceRepository = invoiceRepository;
         this.orderFacade = orderFacade;
+        this.orderRepository = orderRepository;
     }
 
 //    @Test
@@ -172,11 +181,43 @@ class InvoiceServiceTest {
     @DisplayName(value = "배송기사가 배송 상태 수정 테스트 성공")
     void modifyInvoiceStatusByDriver() {
 
-        //given
+            // given
+            int invoiceCode = 25;
+            int driverCode = 1;
+            int requestCode = 17;
+            DELIVERY_STATUS initialStatus = DELIVERY_STATUS.배송전;
+            DELIVERY_STATUS updatedStatus = DELIVERY_STATUS.배송중;
+            LocalDateTime initialDate = LocalDateTime.parse("2024-05-12T11:23:45"); // ISO 8601 형식으로 변경
 
-        // when
+            // Order 엔티티 생성 및 설정
+            Order order = new Order();
+            order.setOrderCode(requestCode);
 
-        //then
+            orderRepository.save(order);
+
+            Invoice invoice = new Invoice();
+            invoice.setInvoiceCode(invoiceCode);
+            invoice.setDeliveryStatus(initialStatus);
+            invoice.setInvoiceDate(initialDate);
+            invoice.setOrder(order); // request_code 설정
+
+            // 미리 저장소에 초기 상태의 인보이스를 저장 (실제 테스트 환경에 따라 달라질 수 있음)
+            invoiceRepository.save(invoice);
+
+            // 저장된 송장이 DB에 존재하는지 확인
+            Invoice savedInvoice = invoiceRepository.findById(invoiceCode).orElse(null);
+            assertNotNull(savedInvoice, "저장된 송장은 null이어서는 안됩니다.");
+
+            // when
+            boolean modifyInvoice = invoiceService.modifyInvoiceStatusByDriver(invoiceCode, driverCode, updatedStatus);
+            System.out.println("modifyInvoice = " + modifyInvoice);
+
+            // 변경된 인보이스를 다시 조회
+            Invoice updatedInvoice = invoiceRepository.findById(invoiceCode).orElse(null);
+
+            // then
+            assertNotNull(updatedInvoice, "수정된 송장은 null이어서는 안됩니다.");
+            assertEquals(updatedStatus, updatedInvoice.getDeliveryStatus());
 
     }
 }
