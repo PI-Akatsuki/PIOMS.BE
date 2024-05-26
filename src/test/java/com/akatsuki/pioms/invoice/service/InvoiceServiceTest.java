@@ -98,21 +98,49 @@ class InvoiceServiceTest {
     }
 
 
-//    @Test
-//    @DisplayName("배송 상태 상세조회(배송전) 테스트 성공")
-//    void getStatusBeforeDeliveryDriverInvoiceList() {
-//
-//        // given
-//        List<Invoice> invoiceList = invoiceRepository.findByDeliveryStatus(DELIVERY_STATUS.배송전);
-//
-//        // when
-//        List<ResponseDriverInvoice> responseDriverInvoices = invoiceService.getStatusBeforeDeliveryDriverInvoiceList(1);
-//
-//        // then
-//        assertEquals(invoiceList.size(), responseDriverInvoices.size());
-//    }
-//
-//
+    @Test
+    @DisplayName("배송 상태 상세조회(배송전) 테스트 성공")
+    void getStatusBeforeDeliveryDriverInvoiceList() {
+
+        // given
+        int driverCode = 1;
+        List<ResponseDriverInvoice> invoiceAllList = invoiceService.getAllDriverInvoiceList(driverCode);
+
+        // when
+        List<ResponseDriverInvoice> result = invoiceService.getStatusBeforeDeliveryDriverInvoiceList(driverCode);
+
+        // then
+        long expectedCount = invoiceAllList.stream()
+                                            .filter(invoiceDTO -> invoiceDTO.getDeliveryStatus() == DELIVERY_STATUS.배송전)
+                                            .count();
+
+        assertEquals(expectedCount, result.size());
+        for(ResponseDriverInvoice invoiceDTO : result) {
+            assertEquals(DELIVERY_STATUS.배송전, invoiceDTO.getDeliveryStatus());
+        }
+    }
+
+    // @Test
+    //@DisplayName("배송 상태 상세조회(배송전) 테스트 성공")
+    //void getStatusBeforeDeliveryDriverInvoiceList() {
+    //
+    //    // given
+    //    int driverCode = 1;
+    //    List<ResponseDriverInvoice> invoiceAllList = invoiceService.getAllDriverInvoiceList(driverCode);
+    //
+    //    // when
+    //    List<ResponseDriverInvoice> result = invoiceService.getStatusBeforeDeliveryDriverInvoiceList(driverCode);
+    //
+    //    // then
+    //    long expectedCount = invoiceAllList.stream()
+    //                                       .filter(invoice -> invoice.getDeliveryStatus() == DELIVERY_STATUS.배송전)
+    //                                       .count();
+    //    assertEquals(expectedCount, result.size());
+    //    for(ResponseDriverInvoice invoice : result) {
+    //        assertEquals(DELIVERY_STATUS.배송전, invoice.getDeliveryStatus());
+    //    }
+    //}
+
 //    @Test
 //    @DisplayName(value = "배송 상태 상세조회(배송중) 테스트 성공")
 //    void getStatusIngDeliveryDriverInvoiceList() {
