@@ -138,40 +138,9 @@ jobs:
       - name: Create new Elastic Beanstalk application version
         run: |
           aws elasticbeanstalk create-application-version \
-            --application-name PIOMSB2 \
+            --application-name PIOMSBE \
             --version-label github-action-${{steps.current-time.outputs.formattedTime}} \
             --source-bundle S3Bucket=elasticbeanstalk-ap-northeast-2-730335325274,S3Key=deploy/deploy.zip
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ap-northeast-2
-
-      - name: Terminate existing green environment if it exists
-        run: |
-          aws elasticbeanstalk describe-environments --application-name PIOMSB2 --environment-names PIOMSB2-env-green --query 'Environments[0].Status' --output text || exit 0
-          if [ "$(aws elasticbeanstalk describe-environments --application-name PIOMSB2 --environment-names PIOMSB2-env-green --query 'Environments[0].Status' --output text)" == "Terminated" ]; then
-            echo "Environment already terminated"
-          else
-            aws elasticbeanstalk terminate-environment --environment-name PIOMSB2-env-green
-          fi
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ap-northeast-2
-
-      - name: Wait for termination of existing green environment
-        run: |
-          echo "Waiting for existing green environment to terminate..."
-          for i in {1..30}; do
-            STATUS=$(aws elasticbeanstalk describe-environments --application-name PIOMSB2 --environment-names PIOMSB2-env-green --query 'Environments[0].Status' --output text)
-            if [ "$STATUS" == "Terminated" ]; then
-              echo "Environment terminated"
-              break
-            else
-              echo "Environment status: $STATUS"
-              sleep 30
-            fi
-          done
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -180,9 +149,9 @@ jobs:
       - name: Create new Elastic Beanstalk environment for blue-green deployment
         run: |
           aws elasticbeanstalk create-environment \
-            --application-name PIOMSB2 \
-            --environment-name PIOMSB2-env-green \
-            --cname-prefix piomsb2-green-${{steps.current-time.outputs.formattedTime}} \
+            --application-name PIOMSBE \
+            --environment-name PIOMSBE-env-green \
+            --cname-prefix piomsbe-green \
             --version-label github-action-${{steps.current-time.outputs.formattedTime}} \
             --solution-stack-name "64bit Amazon Linux 2023 v4.2.4 running Corretto 17" \
             --option-settings file://options.json
@@ -195,13 +164,13 @@ jobs:
         run: |
           echo "Waiting for new environment to become ready..."
           for i in {1..30}; do
-            STATUS=$(aws elasticbeanstalk describe-environments --environment-names PIOMSB2-env-green --query 'Environments[0].Status' --output text)
+            STATUS=$(aws elasticbeanstalk describe-environments --environment-names PIOMSBE-env-green --query 'Environments[0].Status' --output text)
             if [ "$STATUS" == "Ready" ]; then
               echo "Environment is ready"
               exit 0
             elif [ "$STATUS" == "Terminated" ]; then
               echo "Environment was terminated"
-              aws elasticbeanstalk describe-events --environment-name PIOMSB2-env-green --max-items 10
+              aws elasticbeanstalk describe-events --environment-name PIOMSBE-env-green --max-items 10
               exit 1
             else
               echo "Environment status: $STATUS"
@@ -218,28 +187,8 @@ jobs:
       - name: Swap CNAMEs to switch traffic to the new environment
         run: |
           aws elasticbeanstalk swap-environment-cnames \
-            --source-environment-name PIOMSB2-env \
-            --destination-environment-name PIOMSB2-env-green
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ap-northeast-2
-
-      - name: Wait for source environment to be terminated
-        run: |
-          echo "Waiting for source environment to be terminated..."
-          for i in {1..30}; do
-            STATUS=$(aws elasticbeanstalk describe-environments --environment-names PIOMSB2-env --query 'Environments[0].Status' --output text)
-            if [ "$STATUS" == "Terminated" ]; then
-              echo "Source environment terminated"
-              exit 0
-            else
-              echo "Source environment status: $STATUS"
-              sleep 30
-            fi
-          done
-          echo "Source environment did not terminate in time"
-          exit 1
+            --source-environment-name PIOMSBE-env \
+            --destination-environment-name PIOMSBE-env-green
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -247,11 +196,12 @@ jobs:
 
       - name: Terminate the old environment
         run: |
-          aws elasticbeanstalk terminate-environment --environment-name PIOMSB2-env
+          aws elasticbeanstalk terminate-environment --environment-name PIOMSBE-env
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ap-northeast-2
+
 
   check-comments:
     runs-on: ubuntu-latest
@@ -275,7 +225,7 @@ jobs:
           # Extract unique user logins from comments
           UNIQUE_USERS=$(echo "$COMMENTS" | jq -r 'map(.author.login) | unique | length')
           
-          if [ $UNIQUE_USERS -lt 2]; then
+          if [ $UNIQUE_USERS -lt 2 ]; then
             echo "Not enough unique users ($UNIQUE_USERS) in the pull request comments. At least 2 unique users are required."
             exit 1
           else
