@@ -81,7 +81,7 @@ public class Product {
         this.productContent= product.getProductContent();
         this.productColor= product.getProductColor();
         this.productSize= product.getProductSize();
-        this.productGender= product.getProductGender();
+        this.productGender= PRODUCT_GENDER.valueOf(product.getProductGender());
         this.productTotalCount= product.getProductTotalCount();
         this.productStatus= product.getProductStatus();
         this.productExposureStatus= product.isProductExposureStatus();
