@@ -172,7 +172,7 @@ public class ExchangeServiceImpl implements ExchangeService{
     public boolean deleteExchange(int franchiseOwnerCode, int exchangeCode) {
         //FIN
         Exchange exchange = exchangeRepository.findById(exchangeCode).orElse(null);
-
+        System.out.println("exchange = " + exchange);
         if (exchange==null || exchange.getFranchise().getFranchiseOwner().getFranchiseOwnerCode() != franchiseOwnerCode
         || orderService.findOrderByExchangeCode(exchangeCode)/*있으면 true로 삭제 불가*/)
             return false;
