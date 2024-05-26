@@ -95,23 +95,79 @@ jobs:
       - name: Generate deployment package
         run: |
           mkdir -p deploy
-          cp build/libs/*.jar deploy/application.jar
-          cp Procfile deploy/Procfile
-          cp -r .ebextensions deploy/.ebextensions
-          cp -r .platform deploy/.platform
-          cd deploy && zip -r deploy.zip .  
+          JAR_FILE=$(ls build/libs/*.jar | head -n 1)
+          if [ -f "$JAR_FILE" ]; then
+            cp "$JAR_FILE" deploy/application.jar
+          else
+            echo "JAR file not found!"
+            exit 1
+          fi
+          
+          if [ -f Procfile ]; then
+            cp Procfile deploy/Procfile
+          else
+            echo "Procfile not found!"
+            exit 1
+          fi
+          
+          if [ -d .ebextensions ]; then
+            cp -r .ebextensions deploy/.ebextensions
+          else
+            echo ".ebextensions directory not found!"
+            exit 1
+          fi
+          
+          if [ -d .platform ]; then
+            cp -r .platform deploy/.platform
+          else
+            echo ".platform directory not found!"
+            exit 1
+          fi
+          
+          cd deploy && zip -r deploy.zip .
+        shell: bash
 
-      - name: Beanstalk Deploy
-        uses: einaregilsson/beanstalk-deploy@v22
-        with:
-          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application_name: PIOMSB2
-          environment_name: PIOMSB2-env
-          version_label: github-action-${{steps.current-time.outputs.formattedTime}}
-          region: ap-northeast-2
-          deployment_package: deploy/deploy.zip
-          wait_for_environment_recovery: 180
+      - name: Create new Elastic Beanstalk environment for blue-green deployment
+        run: |
+          aws elasticbeanstalk create-environment \
+            --application-name PIOMSB2 \
+            --environment-name PIOMSB2-env-green \
+            --cname-prefix piomsb2-green \
+            --version-label github-action-${{steps.current-time.outputs.formattedTime}} \
+            --solution-stack-name "64bit Amazon Linux 2 v3.1.6 running Corretto 17" \
+            --option-settings file://options.json
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ap-northeast-2
+
+      - name: Wait for new environment to become ready
+        run: |
+          echo "Waiting for new environment to become ready..."
+          aws elasticbeanstalk wait environment-ready --environment-name PIOMSB2-env-green
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ap-northeast-2
+
+      - name: Swap CNAMEs to switch traffic to the new environment
+        run: |
+          aws elasticbeanstalk swap-environment-cnames \
+            --source-environment-name PIOMSB2-env \
+            --destination-environment-name PIOMSB2-env-green
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ap-northeast-2
+
+      - name: Terminate the old environment
+        run: |
+          aws elasticbeanstalk terminate-environment --environment-name PIOMSB2-env
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ap-northeast-2
+
 
   check-comments:
     runs-on: ubuntu-latest
