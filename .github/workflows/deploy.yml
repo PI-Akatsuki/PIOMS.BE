@@ -161,7 +161,7 @@ jobs:
             echo "Terminating existing green environment..."
             aws elasticbeanstalk terminate-environment --environment-name PIOMSBE-env-green || true
             echo "Waiting for green environment to be terminated..."
-            for i in {1..30}; do
+            for i in {1..60}; do
               STATUS=$(aws elasticbeanstalk describe-environments --environment-names PIOMSBE-env-green --query 'Environments[0].Status' --output text || echo "NoSuchEnvironment")
               if [ "$STATUS" == "Terminated" ] || [ "$STATUS" == "NoSuchEnvironment" ]; then
                 echo "Green environment terminated"
@@ -196,7 +196,7 @@ jobs:
       - name: Wait for new environment to become ready
         run: |
           echo "Waiting for new environment to become ready..."
-          for i in {1..30}; do
+          for i in {1..60}; do
             STATUS=$(aws elasticbeanstalk describe-environments --environment-names PIOMSBE-env-green --query 'Environments[0].Status' --output text)
             if [ "$STATUS" == "Ready" ]; then
               echo "Environment is ready"
@@ -230,7 +230,7 @@ jobs:
       - name: Wait for source environment to be terminated
         run: |
           echo "Waiting for source environment to be terminated..."
-          for i in {1..30}; do
+          for i in {1..60}; do
             STATUS=$(aws elasticbeanstalk describe-environments --environment-names PIOMSBE-env --query 'Environments[0].Status' --output text)
             if [ "$STATUS" == "Terminated" ]; then
               echo "Source environment terminated"
@@ -277,7 +277,7 @@ jobs:
           # Extract unique user logins from comments
           UNIQUE_USERS=$(echo "$COMMENTS" | jq -r 'map(.author.login) | unique | length')
           
-          if [ $UNIQUE_USERS -lt 2]; then
+          if [ $UNIQUE_USERS -lt 2 ]; then
             echo "Not enough unique users ($UNIQUE_USERS) in the pull request comments. At least 2 unique users are required."
             exit 1
           else
