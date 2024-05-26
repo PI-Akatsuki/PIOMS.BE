@@ -163,6 +163,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         if (invoiceStatus == DELIVERY_STATUS.배송완료){
             orderService.putOrderCondition(invoice.getOrder().getOrderCode(), ORDER_CONDITION.검수대기);
+            exchangeService.updateExchangeEndDelivery(invoice.getOrder().getFranchise().getFranchiseCode());
         }
         return new InvoiceDTO(invoice);
     }
@@ -296,12 +297,18 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoice.setDeliveryStatus(deliveryStatus);
         invoiceRepository.save(invoice);
 
+
+        if (deliveryStatus == DELIVERY_STATUS.배송중 ){
+            // 반환 대기중인 반품품목 추가하기
+            exchangeService.updateExchangeStartDelivery(invoice.getOrder().getFranchise().getFranchiseCode());
+        }
         // 배송기사 배송완료 시 배송중 -> 배송완료
         if(deliveryStatus == DELIVERY_STATUS.배송완료) {
-
             // 점주가 확인 전까지 '검수대기'
             orderService.putOrderCondition(invoice.getOrder().getOrderCode(), ORDER_CONDITION.검수대기);
+            exchangeService.updateExchangeEndDelivery(invoice.getOrder().getFranchise().getFranchiseCode());
         }
+
         return true;
     }
 }
