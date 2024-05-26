@@ -163,7 +163,7 @@ jobs:
       - name: Wait for new environment to become ready
         run: |
           echo "Waiting for new environment to become ready..."
-          aws elasticbeanstalk wait environment-ready --environment-name PIOMSB2-env-green
+          aws elasticbeanstalk wait environment-updated --environment-name PIOMSB2-env-green
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
