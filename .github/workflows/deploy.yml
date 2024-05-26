@@ -146,6 +146,37 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ap-northeast-2
 
+      - name: Terminate existing green environment if it exists
+        run: |
+          aws elasticbeanstalk describe-environments --application-name PIOMSB2 --environment-names PIOMSB2-env-green --query 'Environments[0].Status' --output text || exit 0
+          if [ "$(aws elasticbeanstalk describe-environments --application-name PIOMSB2 --environment-names PIOMSB2-env-green --query 'Environments[0].Status' --output text)" == "Terminated" ]; then
+            echo "Environment already terminated"
+          else
+            aws elasticbeanstalk terminate-environment --environment-name PIOMSB2-env-green
+          fi
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ap-northeast-2
+
+      - name: Wait for termination of existing green environment
+        run: |
+          echo "Waiting for existing green environment to terminate..."
+          for i in {1..30}; do
+            STATUS=$(aws elasticbeanstalk describe-environments --application-name PIOMSB2 --environment-names PIOMSB2-env-green --query 'Environments[0].Status' --output text)
+            if [ "$STATUS" == "Terminated" ]; then
+              echo "Environment terminated"
+              break
+            else
+              echo "Environment status: $STATUS"
+              sleep 30
+            fi
+          done
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ap-northeast-2
+
       - name: Create new Elastic Beanstalk environment for blue-green deployment
         run: |
           aws elasticbeanstalk create-environment \
@@ -196,18 +227,18 @@ jobs:
 
       - name: Wait for source environment to be terminated
         run: |
-          echo "Waiting for source environment to finish termination..."
+          echo "Waiting for source environment to be terminated..."
           for i in {1..30}; do
             STATUS=$(aws elasticbeanstalk describe-environments --environment-names PIOMSB2-env --query 'Environments[0].Status' --output text)
             if [ "$STATUS" == "Terminated" ]; then
-              echo "Environment is terminated"
+              echo "Source environment terminated"
               exit 0
             else
-              echo "Environment status: $STATUS"
+              echo "Source environment status: $STATUS"
               sleep 30
             fi
           done
-          echo "Environment did not terminate in time"
+          echo "Source environment did not terminate in time"
           exit 1
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
