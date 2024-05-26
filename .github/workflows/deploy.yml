@@ -143,6 +143,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ap-northeast-2
 
+
       - name: Wait for new environment to become ready
         run: |
           echo "Waiting for new environment to become ready..."
