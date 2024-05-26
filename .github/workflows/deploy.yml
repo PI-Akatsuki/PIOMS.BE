@@ -194,6 +194,26 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ap-northeast-2
 
+      - name: Wait for source environment to be terminated
+        run: |
+          echo "Waiting for source environment to finish termination..."
+          for i in {1..30}; do
+            STATUS=$(aws elasticbeanstalk describe-environments --environment-names PIOMSB2-env --query 'Environments[0].Status' --output text)
+            if [ "$STATUS" == "Terminated" ]; then
+              echo "Environment is terminated"
+              exit 0
+            else
+              echo "Environment status: $STATUS"
+              sleep 30
+            fi
+          done
+          echo "Environment did not terminate in time"
+          exit 1
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ap-northeast-2
+
       - name: Terminate the old environment
         run: |
           aws elasticbeanstalk terminate-environment --environment-name PIOMSB2-env
@@ -201,7 +221,6 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ap-northeast-2
-
 
   check-comments:
     runs-on: ubuntu-latest
