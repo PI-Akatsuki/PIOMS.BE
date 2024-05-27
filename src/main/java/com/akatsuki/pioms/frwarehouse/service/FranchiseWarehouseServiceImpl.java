@@ -159,7 +159,25 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
     public void toggleFavorite(int franchiseWarehouseCode) {
         FranchiseWarehouse favorite = franchiseWarehouseRepository.findById(franchiseWarehouseCode)
                 .orElseThrow(() -> new RuntimeException("Warehouse not found"));
-        favorite.setFranchiseWarehouseFavorite(!favorite.isFranchiseWarehouseFavorite());
+
+        if (favorite.isFranchiseWarehouseFavorite()) {
+            throw new RuntimeException("이미 즐겨찾기 추가된 상품입니다");
+        }
+
+        favorite.setFranchiseWarehouseFavorite(true);
+        franchiseWarehouseRepository.save(favorite);
+    }
+
+    @Transactional
+    public void removeFavorite(int franchiseWarehouseCode) {
+        FranchiseWarehouse favorite = franchiseWarehouseRepository.findById(franchiseWarehouseCode)
+                .orElseThrow(() -> new RuntimeException("Warehouse not found"));
+
+        if (!favorite.isFranchiseWarehouseFavorite()) {
+            throw new RuntimeException("즐겨찾기 추가되지 않은 상품입니다");
+        }
+
+        favorite.setFranchiseWarehouseFavorite(false);
         franchiseWarehouseRepository.save(favorite);
     }
 
