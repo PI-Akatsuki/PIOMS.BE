@@ -1,1 +1,1 @@
-web: appstart
+web: /sbin/appstart
