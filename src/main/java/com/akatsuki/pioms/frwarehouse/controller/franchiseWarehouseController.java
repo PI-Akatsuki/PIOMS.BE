@@ -25,7 +25,7 @@ public class franchiseWarehouseController {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<FranchiseWarehouseDTO>> getAllWarehous() {
+    public ResponseEntity<List<FranchiseWarehouseDTO>> getAllWarehouse() {
         return ResponseEntity.ok().body(franchiseWarehouseService.getAllWarehouse());
     }
 
@@ -47,10 +47,25 @@ public class franchiseWarehouseController {
     }
 
     @PutMapping("/toggleFavorite/{franchiseWarehouseCode}")
-    @Operation(summary = "즐겨찾기 추가,삭제 기능")
-    public ResponseEntity<?> toggleFavorite(@PathVariable int franchiseWarehouseCode){
-        franchiseWarehouseService.toggleFavorite(franchiseWarehouseCode);
-        return ResponseEntity.ok().build();
+    @Operation(summary = "즐겨찾기 추가")
+    public ResponseEntity<?> toggleFavorite(@PathVariable int franchiseWarehouseCode) {
+        try {
+            franchiseWarehouseService.toggleFavorite(franchiseWarehouseCode);
+            return ResponseEntity.ok().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/removeFavorite/{franchiseWarehouseCode}")
+    @Operation(summary = "즐겨찾기 제거 기능")
+    public ResponseEntity<?> removeFavorite(@PathVariable int franchiseWarehouseCode) {
+        try {
+            franchiseWarehouseService.removeFavorite(franchiseWarehouseCode);
+            return ResponseEntity.ok().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @GetMapping("/favorites")
@@ -60,8 +75,8 @@ public class franchiseWarehouseController {
         return ResponseEntity.ok(favorites);
     }
 
-    @GetMapping("/{franchiseOwnerCode}/list")
-    public ResponseEntity<List<FranchiseWarehouseDTO>> getFrWarehouseList(@PathVariable int franchiseOwnerCode){
+    @GetMapping("/list")
+    public ResponseEntity<List<FranchiseWarehouseDTO>> getFrWarehouseList(@RequestParam int franchiseOwnerCode){
         return ResponseEntity.ok(franchiseWarehouseService.getFrWarehouseList(franchiseOwnerCode));
     }
 }

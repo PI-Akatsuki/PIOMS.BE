@@ -15,10 +15,10 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 public class RequestExchange {
+
     private int franchiseCode;
     private EXCHANGE_STATUS exchangeStatus;
     List<ExchangeProductVO> products= new ArrayList<>();
-
     public RequestExchange(EXCHANGE_STATUS exchangeStatus, ExchangeDTO exchangeDTO) {
         this.franchiseCode = exchangeDTO.getFranchise().getFranchiseCode();
         this.exchangeStatus = exchangeStatus;

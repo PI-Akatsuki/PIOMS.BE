@@ -21,6 +21,8 @@ public interface FranchiseWarehouseService {
 
     void toggleFavorite(int franchiseWarehouseCode);
 
+    void removeFavorite(int franchiseWarehouseCode);
+
     List<FranchiseWarehouse> findAllFavorites();
 
     List<FranchiseWarehouseDTO> getFrWarehouseList(int franchiseOwnerCode);
