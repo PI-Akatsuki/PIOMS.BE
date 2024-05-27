@@ -13,6 +13,7 @@ import com.akatsuki.pioms.franchise.service.FranchiseService;
 import com.akatsuki.pioms.frowner.aggregate.FranchiseOwner;
 import com.akatsuki.pioms.frwarehouse.service.FranchiseWarehouseService;
 import com.akatsuki.pioms.order.aggregate.Order;
+import com.akatsuki.pioms.order.dto.OrderDTO;
 import com.akatsuki.pioms.order.service.OrderService;
 import com.akatsuki.pioms.product.aggregate.Product;
 import com.akatsuki.pioms.product.service.ProductService;
@@ -189,6 +190,97 @@ public class ExchangeServiceImpl implements ExchangeService{
         return true;
     }
 
+    private boolean checkValidationExchangeProducts(List<ExchangeProductVO> products) {
+        for (int i = 0; i < products.size(); i++) {
+            ExchangeProductVO product = products.get(i);
+            int productCode = product.getExchangeProductCode();
+            System.out.println("productCode = " + productCode);
+            ExchangeProduct exchangeProduct = exchangeProductRepository.findById(productCode).orElseThrow();
+            if (exchangeProduct.getExchangeProductCount() != product.getExchangeProductCount()) {
+                System.out.println(productCode + " 번 반송상품 코드 문제 발생! ExchangeProductCount 불일치!");
+                return false;
+            }
+            if (product.getExchangeProductNormalCount() + product.getExchangeProductDiscount() != exchangeProduct.getExchangeProductCount()) {
+                System.out.println(productCode + " 번 반송상품 코드 문제 발생! 반품 검수 합 불일치!");
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Transactional
+    public void updateExchangeProduct(ExchangeProductVO product) {
+        //FIN
+        ExchangeProduct exchangeProductEntity =
+                exchangeProductRepository.findById(product.getExchangeProductCode()).orElseThrow();
+
+        //해당 상품 처리
+        exchangeProductEntity.setExchangeProductNormalCount(product.getExchangeProductNormalCount());
+        exchangeProductEntity.setExchangeProductDiscount(product.getExchangeProductDiscount());
+
+        //본사 창고 저장
+        exchangeProductEntity.getProduct().setProductDiscount(
+                exchangeProductEntity.getProduct().getProductDiscount()+ product.getExchangeProductDiscount()
+        );
+        exchangeProductEntity.getProduct().setProductCount(
+                exchangeProductEntity.getProduct().getProductCount()+ product.getExchangeProductNormalCount()
+        );
+        exchangeProductRepository.save(exchangeProductEntity);
+    }
+
+    @Transactional
+    public boolean updateExchangeEndDelivery(int franchiseCode){
+        List<Exchange> exchanges = exchangeRepository.findAllByFranchiseFranchiseCodeAndExchangeStatus(franchiseCode,EXCHANGE_STATUS.반환중);
+        if (exchanges.isEmpty()){
+            return false;
+        }
+        exchanges.forEach(exchange -> {
+            exchange.setExchangeStatus(EXCHANGE_STATUS.반환완료);
+            exchangeRepository.save(exchange);
+            for (int i = 0; i < exchange.getProducts().size(); i++) {
+                if (exchange.getProducts().get(i).getExchangeProductStatus()== EXCHANGE_PRODUCT_STATUS.교환){
+                    franchiseWarehouseService.saveProduct(exchange.getProducts().get(i).getProduct().getProductCode(),
+                            exchange.getProducts().get(i).getExchangeProductCount(),franchiseCode);
+                }
+            }
+        });
+
+        return true;
+    }
+
+    @Override
+    @Transactional
+    public void updateExchangeStartDelivery(int franchiseCode) {
+        // 배송 시작하게 되면 이 떄 반환대기로 있는 교환품목 같이 배송
+        List<Exchange> exchanges = exchangeRepository.findAllByFranchiseFranchiseCodeAndExchangeStatus(franchiseCode,EXCHANGE_STATUS.반환대기);
+
+        if (exchanges.isEmpty())
+            return;
+        exchanges.forEach(exchange -> {
+            exchange.setExchangeStatus(EXCHANGE_STATUS.반환중);
+            exchange.getProducts().forEach( exchangeProduct -> {
+                if(exchangeProduct.getExchangeProductStatus() == EXCHANGE_PRODUCT_STATUS.교환)
+                    franchiseWarehouseService.saveProduct(
+                            exchangeProduct.getProduct().getProductCode(),
+                            exchangeProduct.getExchangeProductCount(),
+                            franchiseCode);
+                }
+            );
+            exchangeRepository.save(exchange);
+        });
+    }
+
+    @Override
+    @Transactional
+    public void updateExchangeToCompany(int exchangeCode) {
+        Exchange exchange = exchangeRepository.findById(exchangeCode).orElse(null);
+        if (exchange==null){
+            return;
+        }
+        exchange.setExchangeStatus(EXCHANGE_STATUS.처리대기);
+        exchangeRepository.save(exchange);
+    }
+
     @Override
     @Transactional
     public ExchangeDTO processArrivedExchange(int adminCode, int exchangeCode, RequestExchange requestExchange) {
@@ -215,81 +307,18 @@ public class ExchangeServiceImpl implements ExchangeService{
         return new ExchangeDTO(exchangeRepository.findById(exchangeCode).orElseThrow());
     }
 
-    private boolean checkValidationExchangeProducts(List<ExchangeProductVO> products) {
-        for (int i = 0; i < products.size(); i++) {
-            ExchangeProductVO product = products.get(i);
-            int productCode = product.getExchangeProductCode();
-            System.out.println("productCode = " + productCode);
-            ExchangeProduct exchangeProduct = exchangeProductRepository.findById(productCode).orElseThrow();
-            if (exchangeProduct.getExchangeProductCount() != product.getExchangeProductCount()) {
-                System.out.println(productCode + " 번 반송상품 코드 문제 발생! ExchangeProductCount 불일치!");
-                return false;
-            }
-            if (product.getExchangeProductNormalCount() + product.getExchangeProductDiscount() != exchangeProduct.getExchangeProductCount()) {
-                System.out.println(productCode + " 번 반송상품 코드 문제 발생! 반품 검수 합 불일치!");
-                return false;
-            }
-        }
-        return true;
-    }
-
-
-    private void updateExchangeProduct(ExchangeProductVO product) {
-        //FIN
-        ExchangeProduct exchangeProductEntity =
-                exchangeProductRepository.findById(product.getExchangeProductCode()).orElseThrow();
-
-        //해당 상품 처리
-        exchangeProductEntity.setExchangeProductNormalCount(product.getExchangeProductNormalCount());
-        exchangeProductEntity.setExchangeProductDiscount(product.getExchangeProductDiscount());
-
-        //본사 창고 저장
-        exchangeProductEntity.getProduct().setProductDiscount(
-                exchangeProductEntity.getProduct().getProductDiscount()+ product.getExchangeProductDiscount()
-        );
-        exchangeProductEntity.getProduct().setProductCount(
-                exchangeProductEntity.getProduct().getProductCount()+ product.getExchangeProductNormalCount()
-        );
-        exchangeProductRepository.save(exchangeProductEntity);
-    }
-
-    public boolean updateExchangeEndDelivery(int franchiseCode){
-        List<Exchange> exchanges = exchangeRepository.findAllByFranchiseFranchiseCodeAndExchangeStatus(franchiseCode,EXCHANGE_STATUS.반환중);
-        if (exchanges.isEmpty()){
-            return false;
-        }
-        exchanges.forEach(exchange -> {
-            exchange.setExchangeStatus(EXCHANGE_STATUS.반환완료);
-            exchangeRepository.save(exchange);
-            for (int i = 0; i < exchange.getProducts().size(); i++) {
-                if (exchange.getProducts().get(i).getExchangeProductStatus()== EXCHANGE_PRODUCT_STATUS.교환){
-                    franchiseWarehouseService.saveProduct(exchange.getProducts().get(i).getProduct().getProductCode(),
-                            exchange.getProducts().get(i).getExchangeProductCount(),franchiseCode);
-                }
-            }
-        });
-
-        return true;
-    }
-
     @Override
-    public void updateExchangeStartDelivery(int franchiseCode) {
+    @Transactional
+    public void afterAcceptOrder(OrderDTO order) {
 
-        // 배송 시작하게 되면 이 떄 처리완료되어 있는 교환품목 같이 배송
-        List<Exchange> exchanges = exchangeRepository.findAllByFranchiseFranchiseCodeAndExchangeStatus(franchiseCode,EXCHANGE_STATUS.처리완료);
-
+        // 주문 후 처리 되어 있는 교환들 반환대기로 변경
+        // 수량은 배송 출발시 변경 될 예정
+        List<Exchange> exchanges = exchangeRepository.findAllByFranchiseFranchiseCodeAndExchangeStatus(order.getFranchiseCode(),EXCHANGE_STATUS.처리완료);
         if (exchanges.isEmpty())
             return;
         exchanges.forEach(exchange -> {
-            exchange.setExchangeStatus(EXCHANGE_STATUS.반환중);
-            exchange.getProducts().forEach( exchangeProduct -> {
-                if(exchangeProduct.getExchangeProductStatus() == EXCHANGE_PRODUCT_STATUS.교환)
-                    franchiseWarehouseService.saveProduct(
-                            exchangeProduct.getProduct().getProductCode(),
-                            exchangeProduct.getExchangeProductCount(),
-                            franchiseCode);
-                }
-            );
+            exchange.setExchangeStatus(EXCHANGE_STATUS.반환대기);
+
             exchangeRepository.save(exchange);
         });
     }

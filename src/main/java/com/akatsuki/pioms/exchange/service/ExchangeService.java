@@ -3,6 +3,7 @@ package com.akatsuki.pioms.exchange.service;
 import com.akatsuki.pioms.exchange.aggregate.*;
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import com.akatsuki.pioms.exchange.dto.ExchangeProductDTO;
+import com.akatsuki.pioms.order.dto.OrderDTO;
 
 import java.util.List;
 
@@ -56,4 +57,8 @@ public interface ExchangeService {
     boolean updateExchangeEndDelivery(int franchiseCode);
 
     void updateExchangeStartDelivery(int franchiseCode);
+
+    void updateExchangeToCompany(int exchangeCode);
+
+    void afterAcceptOrder(OrderDTO order);
 }

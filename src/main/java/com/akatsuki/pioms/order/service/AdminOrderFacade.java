@@ -90,7 +90,7 @@ public class AdminOrderFacade {
         System.out.println("order = " + order);
         specsService.afterAcceptOrder(orderCode, order.getFranchiseCode(), order.getDeliveryDate());
         invoiceService.afterAcceptOrder(order);
-
+        exchangeService.afterAcceptOrder(order);
         return order;
     }
 

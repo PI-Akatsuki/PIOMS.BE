@@ -7,6 +7,7 @@ import com.akatsuki.pioms.franchise.service.FranchiseService;
 import com.akatsuki.pioms.frwarehouse.service.FranchiseWarehouseService;
 import com.akatsuki.pioms.invoice.service.InvoiceService;
 import com.akatsuki.pioms.order.aggregate.RequestOrderVO;
+import com.akatsuki.pioms.order.aggregate.RequestPutOrder;
 import com.akatsuki.pioms.order.aggregate.RequestPutOrderCheck;
 import com.akatsuki.pioms.order.dto.OrderDTO;
 import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
@@ -85,5 +86,13 @@ public class FranchiseOrderFacade {
 //        franchiseWarehouseService.saveExchangeProduct(order.getExchange(), franchiseCode);
 
         return true;
+    }
+
+    public boolean putFranchiseOrder(int franchiseCode, RequestPutOrder order) {
+        return orderService.putFranchiseOrder(franchiseCode,order);
+    }
+
+    public OrderDTO getOrderByFranchiseCode(int franchiseCode, int orderCode) {
+        return orderService.getOrder(franchiseCode,orderCode);
     }
 }

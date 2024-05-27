@@ -162,6 +162,8 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         if (invoiceStatus == DELIVERY_STATUS.배송완료){
             orderService.putOrderCondition(invoice.getOrder().getOrderCode(), ORDER_CONDITION.검수대기);
+            if (invoice.getOrder().getExchange() !=null)
+                exchangeService.updateExchangeToCompany(invoice.getOrder().getExchange().getExchangeCode());
             exchangeService.updateExchangeEndDelivery(invoice.getOrder().getFranchise().getFranchiseCode());
         }
         return new InvoiceDTO(invoice);
