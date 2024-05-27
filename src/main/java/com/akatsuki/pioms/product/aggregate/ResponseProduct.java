@@ -27,7 +27,14 @@ public class ResponseProduct {
     private int productNoticeCount;
     private int productDisCount;
     private int productCount;
+
     private int categoryThirdCode;
+    private String getCategoryThirdName;
+    private int categorySecondCode;
+    private String getCategorySecondName;
+    private int categoryFirstCode;
+    private String getCategoryFirstName;
+
 
     public ResponseProduct(Product product) {
         this.productCode = product.getProductCode();
@@ -45,7 +52,14 @@ public class ResponseProduct {
         this.productNoticeCount = product.getProductNoticeCount();
         this.productDisCount = product.getProductDiscount();
         this.productCount = product.getProductCount();
+
         this.categoryThirdCode = product.getCategoryThird().getCategoryThirdCode();
+        this.getCategoryThirdName = product.getCategoryThird().getCategoryThirdName();
+        this.categorySecondCode = product.getCategoryThird().getCategorySecond().getCategorySecondCode();
+        this.getCategorySecondName = product.getCategoryThird().getCategorySecond().getCategorySecondName();
+        this.categoryFirstCode = product.getCategoryThird().getCategorySecond().getCategoryFirst().getCategoryFirstCode();
+        this.getCategoryFirstName = product.getCategoryThird().getCategorySecond().getCategoryFirst().getCategoryFirstName();
+
     }
 
     public ResponseProduct(ProductDTO productDTO) {
@@ -65,6 +79,11 @@ public class ResponseProduct {
         this.productDisCount = productDTO.getProductDiscount();
         this.productCount = productDTO.getProductCount();
         this.categoryThirdCode = productDTO.getCategoryThirdCode();
+        this.getCategoryThirdName = productDTO.getCategoryThirdName();
+        this.categorySecondCode = productDTO.getCategorySecondCode();
+        this.getCategorySecondName = productDTO.getCategorySecondName();
+        this.categoryFirstCode = productDTO.getCategoryFirstCode();
+        this.getCategoryFirstName = productDTO.getCategoryFirstName();
     }
 
 }
