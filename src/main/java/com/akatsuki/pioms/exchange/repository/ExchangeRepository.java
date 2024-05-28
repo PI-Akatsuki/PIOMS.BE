@@ -24,4 +24,9 @@ public interface ExchangeRepository extends JpaRepository<Exchange, Integer> {
     List<Exchange> findAllByFranchiseFranchiseOwnerFranchiseOwnerCode(int franchiseOwnerCode);
 
     boolean existsByFranchiseFranchiseCodeAndExchangeStatus(int franchiseCode, EXCHANGE_STATUS exchangeStatus);
+
+
+    List<Exchange> findAllByFranchiseAdminAdminCodeOrderByExchangeDateDesc(int adminCode);
+
+    List<Exchange> findAllByFranchiseFranchiseOwnerFranchiseOwnerCodeOrderByExchangeDateDesc(int franchiseOwnerCode);
 }

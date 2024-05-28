@@ -3,6 +3,8 @@ package com.akatsuki.pioms.product.service;
 import com.akatsuki.pioms.admin.aggregate.Admin;
 import com.akatsuki.pioms.admin.repository.AdminRepository;
 import com.akatsuki.pioms.categoryThird.repository.CategoryThirdRepository;
+import com.akatsuki.pioms.exchange.aggregate.RequestExchange;
+import com.akatsuki.pioms.image.aggregate.Image;
 import com.akatsuki.pioms.image.service.ImageService;
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import com.akatsuki.pioms.exchange.aggregate.EXCHANGE_PRODUCT_STATUS;
@@ -13,6 +15,7 @@ import com.akatsuki.pioms.log.etc.LogStatus;
 import com.akatsuki.pioms.log.service.LogService;
 import com.akatsuki.pioms.order.dto.OrderDTO;
 import com.akatsuki.pioms.product.aggregate.ResponseProduct;
+import com.akatsuki.pioms.product.aggregate.ResponseProductWithImage;
 import com.akatsuki.pioms.product.dto.ProductDTO;
 import com.akatsuki.pioms.product.repository.ProductRepository;
 import com.akatsuki.pioms.categoryThird.aggregate.CategoryThird;
@@ -38,23 +41,21 @@ public class ProductServiceImpl implements ProductService{
 
     private final ProductRepository productRepository;
     private final CategoryThirdRepository categoryThirdRepository;
-    private final ExchangeService exchangeService;
     private final AdminRepository adminRepository;
     private final LogService logService;
     private final ImageService googleImage;
 
     @Autowired
-    public ProductServiceImpl(ProductRepository productRepository, CategoryThirdRepository categoryThirdRepository, ExchangeService exchangeService, AdminRepository adminRepository, LogService logService, ImageService googleImage) {
+    public ProductServiceImpl(ProductRepository productRepository, CategoryThirdRepository categoryThirdRepository, AdminRepository adminRepository, LogService logService, ImageService googleImage) {
         this.productRepository = productRepository;
         this.categoryThirdRepository = categoryThirdRepository;
-        this.exchangeService = exchangeService;
         this.adminRepository = adminRepository;
         this.logService = logService;
         this.googleImage = googleImage;
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<ProductDTO> getAllProduct() {
         List<Product> productList = productRepository.findAll();
         List<ProductDTO> responseProduct = new ArrayList<>();
@@ -200,20 +201,27 @@ public class ProductServiceImpl implements ProductService{
         });
     }
 
-    @Override
-    public void exportExchangeProducts(int exchangeCode) {
-        // 교환 상품에 대해서만 처리해야한다.
-        List<ExchangeProductDTO> exchangeProductList = exchangeService.getExchangeProductsWithStatus(exchangeCode, EXCHANGE_PRODUCT_STATUS.교환);
 
-        if (exchangeProductList == null) {
-            System.out.println("Exchange Products not found!!");
+    @Override
+    @Transactional
+    public void importExchangeProducts(RequestExchange requestExchange) {
+        if(requestExchange.getProducts() == null || requestExchange.getProducts().isEmpty()){
             return;
         }
-        for (int i = 0; i < exchangeProductList.size(); i++) {
-            productMinusCnt(exchangeProductList.get(i).getExchangeProductNormalCount(), exchangeProductList.get(i).getProductCode());
-        }
+        requestExchange.getProducts().forEach(exchangeProductVO -> {
+            int productCode = exchangeProductVO.getProductCode();
+            int count = exchangeProductVO.getExchangeProductNormalCount();
+            productPlusCnt(productCode,count);
+        });
 
     }
+
+    private void productPlusCnt(int productCode, int count) {
+        Product product = productRepository.findById(productCode).orElseThrow();
+        product.setProductCount(product.getProductCount()+count);
+        productRepository.save(product);
+    }
+
 
     @Override
     public boolean checkExchangeProduct(OrderDTO order, ExchangeDTO exchange) {
@@ -234,7 +242,8 @@ public class ProductServiceImpl implements ProductService{
         return true;
     }
 
-    private void productMinusCnt(int requestProduct, int orderProductCode) {
+    @Override
+    public void productMinusCnt(int requestProduct, int orderProductCode) {
         Product product = productRepository.findById(orderProductCode).orElseThrow();
         System.out.println("product = " + product);
         product.setProductCount(product.getProductCount() - requestProduct);
@@ -269,8 +278,6 @@ public class ProductServiceImpl implements ProductService{
         ProductDTO productDTO = postProduct2(request,1);
         return googleImage.uploadImage(productDTO.getProductCode(),image);
     }
-
-
 
     @Transactional
     public ProductDTO postProduct2(RequestProduct request, int requesterAdminCode) {
@@ -307,6 +314,27 @@ public class ProductServiceImpl implements ProductService{
         logService.saveLog("root", LogStatus.등록, updatedProduct.getProductName(), "Product");
 
         return new ProductDTO(updatedProduct);
+    }
+
+
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ResponseProductWithImage> getAllProductWithImage() {
+        List<ProductDTO> productDTOS = getAllProduct();
+        List<ResponseProductWithImage> responseProductWithImages = new ArrayList<>();
+        for (int i = 0; i < productDTOS.size(); i++) {
+            ProductDTO product = productDTOS.get(i);
+            Image image = googleImage.getImageByProductCode(product.getProductCode());
+            if (image!=null){
+                responseProductWithImages.add(new ResponseProductWithImage(product,image));
+                continue;
+            }
+            responseProductWithImages.add(new ResponseProductWithImage(product));
+        }
+
+        return responseProductWithImages;
     }
 
 }

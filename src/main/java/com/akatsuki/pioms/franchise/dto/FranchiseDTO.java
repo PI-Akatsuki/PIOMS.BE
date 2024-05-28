@@ -45,7 +45,6 @@ public class FranchiseDTO {
         this.franchiseBusinessNum = franchise.getFranchiseBusinessNum();
         this.franchiseDeliveryDate = franchise.getFranchiseDeliveryDate();
         this.franchiseOwner = new FranchiseOwnerDTO(franchise.getFranchiseOwner(), franchise);
-//        this.admin = new AdminDTO(franchise.getAdmin());
         this.adminCode = franchise.getAdmin().getAdminCode();
         this.adminName = franchise.getAdmin().getAdminName();
         this.deliveryDriver = franchise.getDeliveryDriver();

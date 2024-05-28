@@ -1,7 +1,11 @@
 package com.akatsuki.pioms.product.dto;
 
 
+import com.akatsuki.pioms.categoryFirst.aggregate.CategoryFirst;
+import com.akatsuki.pioms.categoryFirst.dto.CategoryFirstDTO;
+import com.akatsuki.pioms.categorySecond.dto.CategorySecondDTO;
 import com.akatsuki.pioms.categoryThird.aggregate.CategoryThird;
+import com.akatsuki.pioms.categoryThird.dto.CategoryThirdDTO;
 import com.akatsuki.pioms.product.aggregate.Product;
 import com.akatsuki.pioms.product.etc.PRODUCT_COLOR;
 import com.akatsuki.pioms.product.etc.PRODUCT_GENDER;
@@ -29,8 +33,14 @@ public class ProductDTO {
     private int productNoticeCount;
     private int productDiscount;
     private int productCount;
-    private int categoryThirdCode;
 
+
+    private int categoryThirdCode;
+    private String CategoryThirdName;
+    private int categorySecondCode;
+    private String CategorySecondName;
+    private int categoryFirstCode;
+    private String CategoryFirstName;
 
     public ProductDTO(Product product) {
         this.productCode = product.getProductCode();
@@ -48,8 +58,13 @@ public class ProductDTO {
         this.productNoticeCount = product.getProductNoticeCount();
         this.productDiscount = product.getProductDiscount();
         this.productCount = product.getProductCount();
+
         this.categoryThirdCode = product.getCategoryThird().getCategoryThirdCode();
-        //
+        this.CategoryThirdName = product.getCategoryThird().getCategoryThirdName();
+        this.categorySecondCode = product.getCategoryThird().getCategorySecond().getCategorySecondCode();
+        this.CategorySecondName = product.getCategoryThird().getCategorySecond().getCategorySecondName();
+        this.categoryFirstCode = product.getCategoryThird().getCategorySecond().getCategoryFirst().getCategoryFirstCode();
+        this.CategoryFirstName = product.getCategoryThird().getCategorySecond().getCategoryFirst().getCategoryFirstName();
     }
     public String getProductGender() {
         if (productGender == null) {

@@ -22,8 +22,8 @@ public class FranchiseExchangeController {
         this.exchangeService = exchangeService;
     }
 
-    @GetMapping("{franchiseOwnerCode}/exchanges")
-    public ResponseEntity<List<ResponseExchange>> getMyExchanges(@PathVariable int franchiseOwnerCode){
+    @GetMapping("/exchanges")
+    public ResponseEntity<List<ResponseExchange>> getMyExchanges(@RequestParam int franchiseOwnerCode){
         List<ExchangeDTO> exchangeDTOS = exchangeService.getFrOwnerExchanges(franchiseOwnerCode);
 
         if (exchangeDTOS ==null){
@@ -46,20 +46,25 @@ public class FranchiseExchangeController {
         return ResponseEntity.ok(new ResponseExchange(exchangeDTO));
     }
 
-    @PostMapping("{franchiseOwnerCode}/exchange")
-    public ResponseEntity<ResponseExchange> postExchange(@PathVariable int franchiseOwnerCode, @RequestBody RequestExchange requestExchange){
+    @PostMapping("exchange")
+    public ResponseEntity<ResponseExchange> postExchange(@RequestParam int franchiseOwnerCode, @RequestBody RequestExchange requestExchange){
+        System.out.println("requestExchange = " + requestExchange);
         ExchangeDTO exchange=  exchangeService.postExchange(franchiseOwnerCode, requestExchange);
+        System.out.println("exchange = " + exchange);
         if (exchange==null)
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         System.out.println("/");
         return ResponseEntity.ok(new ResponseExchange(exchange));
     }
 
-    @DeleteMapping("/{franchiseOwnerCode}/exchange/{exchangeCode}")
-    public ResponseEntity<String> deleteExchange(@PathVariable int franchiseOwnerCode, @PathVariable int exchangeCode){
+    @DeleteMapping("/exchange/{exchangeCode}")
+    public ResponseEntity<String> deleteExchange(@RequestParam int franchiseOwnerCode, @PathVariable int exchangeCode){
+
         boolean isDelete = exchangeService.deleteExchange(franchiseOwnerCode,exchangeCode);
+
         if (!isDelete)
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("삭제 -실패-");
+
         return ResponseEntity.status(HttpStatus.OK).body("삭제 -완-");
     }
 
