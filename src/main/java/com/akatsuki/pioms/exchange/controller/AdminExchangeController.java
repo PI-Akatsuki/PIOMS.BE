@@ -36,7 +36,6 @@ public class AdminExchangeController {
     @GetMapping("/exchange/{exchangeCode}")
     public ResponseEntity<ResponseExchange> getExchange(@RequestParam int adminCode,@PathVariable int exchangeCode){
         ExchangeDTO exchangeDTO = exchangeService.getAdminExchange(adminCode,exchangeCode);
-
         if (exchangeDTO == null)
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         return ResponseEntity.ok(new ResponseExchange(exchangeDTO));
@@ -45,6 +44,10 @@ public class AdminExchangeController {
     // admin이 반송 수정시킴
     @PutMapping("/exchange/{exchangeCode}")
     public ResponseEntity<ResponseExchange> processArrivedExchange(@RequestParam int adminCode,@PathVariable int exchangeCode,@RequestBody RequestExchange requestExchange){
-        return ResponseEntity.ok(new ResponseExchange(exchangeService.processArrivedExchange(adminCode,exchangeCode,requestExchange)));
+        System.out.println("requestExchange = " + requestExchange);
+        ExchangeDTO exchangeDTO= exchangeService.processArrivedExchange(adminCode,exchangeCode,requestExchange);
+        if (exchangeDTO==null)
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(null);
+        return ResponseEntity.ok(new ResponseExchange(exchangeDTO));
     }
 }

@@ -3,10 +3,12 @@ package com.akatsuki.pioms.order.service;
 import com.akatsuki.pioms.exchange.aggregate.RequestExchange;
 import com.akatsuki.pioms.exchange.service.ExchangeService;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
+import com.akatsuki.pioms.franchise.dto.FranchiseDTO;
 import com.akatsuki.pioms.franchise.service.FranchiseService;
 import com.akatsuki.pioms.frwarehouse.service.FranchiseWarehouseService;
 import com.akatsuki.pioms.invoice.service.InvoiceService;
 import com.akatsuki.pioms.order.aggregate.RequestOrderVO;
+import com.akatsuki.pioms.order.aggregate.RequestPutOrder;
 import com.akatsuki.pioms.order.aggregate.RequestPutOrderCheck;
 import com.akatsuki.pioms.order.dto.OrderDTO;
 import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
@@ -39,21 +41,23 @@ public class FranchiseOrderFacade {
         this.franchiseWarehouseService =franchiseWarehouseService;
     }
 
-    public OrderDTO postFranchiseOrder(int franchiseCode, RequestOrderVO orders) {
-        Franchise franchise = franchiseService.findFranchiseById(franchiseCode).orElseThrow();
+    public OrderDTO postFranchiseOrder(int franchiseOwnerCode, RequestOrderVO orders) {
+        FranchiseDTO franchise = franchiseService.findFranchiseByFranchiseOwnerCode(franchiseOwnerCode);
+
         if(!productService.checkPostOrderEnable(orders.getProducts()))
             return null;
-
+        System.out.println(",,");
         return orderService.postFranchiseOrder(franchise,orders);
     }
 
-    public List<OrderDTO> getOrderListByFranchiseCode(int franchiseCode) {
-        return orderService.getOrderList(franchiseCode);
+    public List<OrderDTO> getOrderListByFranchiseCode(int franchiseOwnerCode) {
+        return orderService.getOrderList(franchiseOwnerCode);
     }
+
 
     public boolean putFranchiseOrderCheck(int franchiseCode, RequestPutOrderCheck requestPutOrder){
         OrderDTO order = orderService.getOrder(franchiseCode,requestPutOrder.getOrderCode());
-        if (order==null){
+        if (order==null || requestPutOrder.getRequestProduct().size() != order.getOrderProductList().size()){
             return false;
         }
         // 검증 1. 요청한 가맹 코드와 발송 코드 일치 여부
@@ -66,9 +70,10 @@ public class FranchiseOrderFacade {
         }
 
         order.getOrderProductList().forEach(orderProduct->{
-            if(requestPutOrder.getRequestProduct().get(orderProduct.getProductCode())!=null) {
+            System.out.println("orderProduct = " + orderProduct);
+            if(requestPutOrder.getRequestProduct().get(orderProduct.getRequestProductCode())!=null) {
                 // changeVal: 받은 수량
-                int changeVal = requestPutOrder.getRequestProduct().get(orderProduct.getProductCode());
+                int changeVal = requestPutOrder.getRequestProduct().get(orderProduct.getRequestProductCode());
                 // requestVal: 해당 주문상품의 주문수량
                 int requestVal = orderProduct.getRequestProductCount();
 //                //검수 결과 가맹 창고에 저장
@@ -81,9 +86,14 @@ public class FranchiseOrderFacade {
             }
         });
         orderService.putOrderCondition(order.getOrderCode(),ORDER_CONDITION.검수완료);
-//        // 가맹 창고 업데이트
-//        franchiseWarehouseService.saveExchangeProduct(order.getExchange(), franchiseCode);
-
         return true;
+    }
+
+    public boolean putFranchiseOrder(int franchiseCode, RequestPutOrder order) {
+        return orderService.putFranchiseOrder(franchiseCode,order);
+    }
+
+    public OrderDTO getOrderByFranchiseCode(int franchiseCode, int orderCode) {
+        return orderService.getOrder(franchiseCode,orderCode);
     }
 }

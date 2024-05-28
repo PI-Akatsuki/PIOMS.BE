@@ -1,5 +1,6 @@
 package com.akatsuki.pioms.product.controller;
 
+import com.akatsuki.pioms.product.aggregate.ResponseProductWithImage;
 import com.akatsuki.pioms.product.dto.ProductDTO;
 import com.akatsuki.pioms.product.service.ProductService;
 import com.akatsuki.pioms.product.aggregate.RequestProduct;
@@ -7,7 +8,9 @@ import com.akatsuki.pioms.product.aggregate.ResponseProduct;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -93,6 +96,15 @@ public class AdminProductController {
             throw new RuntimeException(e);
         }
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/productImage")
+    public ResponseEntity<List<ResponseProductWithImage>> getProducts(){
+        List<ResponseProductWithImage> responseProductImage = productService.getAllProductWithImage();
+
+        if (responseProductImage.isEmpty())
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+        return ResponseEntity.ok(responseProductImage);
     }
 
 

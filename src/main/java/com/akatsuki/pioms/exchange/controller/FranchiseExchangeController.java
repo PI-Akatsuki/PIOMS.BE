@@ -22,8 +22,8 @@ public class FranchiseExchangeController {
         this.exchangeService = exchangeService;
     }
 
-    @GetMapping("{franchiseOwnerCode}/exchanges")
-    public ResponseEntity<List<ResponseExchange>> getMyExchanges(@PathVariable int franchiseOwnerCode){
+    @GetMapping("/exchanges")
+    public ResponseEntity<List<ResponseExchange>> getMyExchanges(@RequestParam int franchiseOwnerCode){
         List<ExchangeDTO> exchangeDTOS = exchangeService.getFrOwnerExchanges(franchiseOwnerCode);
 
         if (exchangeDTOS ==null){
