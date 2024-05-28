@@ -133,17 +133,6 @@ public class InvoiceServiceImpl implements InvoiceService {
         return new InvoiceDTO(invoice);
     }
 
-
-    public List<InvoiceDTO> getAllInvoiceList(){
-        List<Invoice> invoiceList = invoiceRepository.findAll();
-        List<InvoiceDTO> responseInvoice = new ArrayList<>();
-
-        invoiceList.forEach(invoiceEntity -> {
-            responseInvoice.add(new InvoiceDTO(invoiceEntity));
-        });
-        return responseInvoice;
-    }
-
     @Override
     public InvoiceDTO putInvoice(int adminCode, int invoiceCode, DELIVERY_STATUS invoiceStatus) {
         Invoice invoice = invoiceRepository.findById(invoiceCode).orElse(null);
@@ -215,16 +204,9 @@ public class InvoiceServiceImpl implements InvoiceService {
                 driverInvoiceList.addAll(invoices);
         }
 
-//        // 배송기사 존재 여부
-//        Invoice existingInvoice = invoiceRepository.findById(driverCode)
-//                .orElseThrow(() -> new RuntimeException("해당 코드의 배송기사를 찾을 수 없습니다!" +driverCode));
-//
-//        existingInvoice.setInvoiceCode(driverCode);
-
         // 배송기사의 배송(송장) 리스트 조회
         List<ResponseDriverInvoice> responseDriverInvoices = new ArrayList<>();
         driverInvoiceList.forEach(
-
                 // entity를 DTO로 변환
                 invoice -> {
                     InvoiceDTO invoiceDTO = new InvoiceDTO(invoice);
@@ -302,9 +284,12 @@ public class InvoiceServiceImpl implements InvoiceService {
         if (deliveryStatus == DELIVERY_STATUS.배송중 ){
             // 반환 대기중인 반품품목 추가하기
             exchangeService.updateExchangeStartDelivery(invoice.getOrder().getFranchise().getFranchiseCode());
+            
         }
         // 배송기사 배송완료 시 배송중 -> 배송완료
         if(deliveryStatus == DELIVERY_STATUS.배송완료) {
+            if (invoice.getOrder().getExchange() !=null)
+                exchangeService.updateExchangeToCompany(invoice.getOrder().getExchange().getExchangeCode());
             // 점주가 확인 전까지 '검수대기'
             orderService.putOrderCondition(invoice.getOrder().getOrderCode(), ORDER_CONDITION.검수대기);
             exchangeService.updateExchangeEndDelivery(invoice.getOrder().getFranchise().getFranchiseCode());

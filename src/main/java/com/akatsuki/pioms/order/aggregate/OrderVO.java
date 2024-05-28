@@ -52,8 +52,6 @@ public class OrderVO {
     public OrderVO(OrderDTO order) {
         this.orderCode= order.getOrderCode();
         this.orderDate = order.getOrderDate();
-        System.out.println("orderDate = " + orderDate);
-
         this.orderTotalPrice = order.getOrderTotalPrice();
         this.orderCondition = order.getOrderCondition();
 

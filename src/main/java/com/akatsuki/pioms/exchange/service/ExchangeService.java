@@ -61,4 +61,5 @@ public interface ExchangeService {
     void updateExchangeToCompany(int exchangeCode);
 
     void afterAcceptOrder(OrderDTO order);
+
 }

@@ -52,9 +52,11 @@ ImageService {
         return true;
     }
 
-    public List<Image> getImageByProductCode(int productCode){
+    public Image getImageByProductCode(int productCode){
         List<Image> images =  imageRepository.findByProductCode(productCode);
-        return images;
+        if (images == null || images.isEmpty() )
+            return null;
+        return images.get(0);
     }
 
 }

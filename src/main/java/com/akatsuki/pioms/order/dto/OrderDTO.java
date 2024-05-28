@@ -4,6 +4,7 @@ import com.akatsuki.pioms.exchange.aggregate.Exchange;
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import com.akatsuki.pioms.franchise.aggregate.DELIVERY_DATE;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
+import com.akatsuki.pioms.franchise.dto.FranchiseDTO;
 import com.akatsuki.pioms.invoice.dto.InvoiceDTO;
 import com.akatsuki.pioms.order.aggregate.Order;
 import com.akatsuki.pioms.order.aggregate.OrderProduct;
@@ -83,5 +84,38 @@ public class OrderDTO {
         }
 
 
+    }
+
+    public OrderDTO(Order order, FranchiseDTO franchiseDTO) {
+        this.orderCode= order.getOrderCode();
+        this.orderDate= order.getOrderDate();
+        this.orderTotalPrice= order.getOrderTotalPrice();
+        this.orderCondition= order.getOrderCondition();
+        this.orderReason= order.getOrderReason();
+
+        this.franchiseCode= franchiseDTO.getFranchiseCode();
+        this.franchiseName= franchiseDTO.getFranchiseName();
+        this.deliveryDate= franchiseDTO.getFranchiseDeliveryDate();
+        this.franchiseOwnerCode = franchiseDTO.getFranchiseOwner().getFranchiseOwnerCode();
+        this.franchiseOwnerName = franchiseDTO.getFranchiseOwner().getFranchiseOwnerName();
+        this.franchiseAddress = franchiseDTO.getFranchiseAddress();
+        this.franchiseOwnerPhone = franchiseDTO.getFranchiseOwner().getFranchiseOwnerPhone();
+
+        this.AdminCode= franchiseDTO.getAdminCode();
+        this.AdminName= franchiseDTO.getAdminName();
+
+        if (order.getExchange()!=null) {
+            this.exchange = new ExchangeDTO(order.getExchange());
+        }
+        orderProductList = new ArrayList<>();
+        if(order.getOrderProductList()!=null)
+            for (int i = 0; i < order.getOrderProductList().size(); i++) {
+                orderProductList.add(new OrderProductDTO(order.getOrderProductList().get(i)));
+            }
+
+        if (order.getInvoice()!=null){
+            invoiceCode = order.getInvoice().getInvoiceCode();
+            invoiceDate = order.getInvoice().getInvoiceDate();
+        }
     }
 }

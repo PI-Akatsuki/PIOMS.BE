@@ -3,6 +3,7 @@ package com.akatsuki.pioms.order.service;
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import com.akatsuki.pioms.exchange.aggregate.Exchange;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
+import com.akatsuki.pioms.franchise.dto.FranchiseDTO;
 import com.akatsuki.pioms.order.aggregate.*;
 import com.akatsuki.pioms.order.dto.OrderDTO;
 import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -112,28 +114,32 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     @Transactional
-    public OrderDTO postFranchiseOrder(Franchise franchise, RequestOrderVO requestOrder){
-        if(franchise.getFranchiseCode() != requestOrder.getFranchiseCode()){
+    public OrderDTO postFranchiseOrder(FranchiseDTO franchiseDTO, RequestOrderVO requestOrder){
+        if(franchiseDTO.getFranchiseCode() != requestOrder.getFranchiseCode()){
             System.out.println("가맹점 코드, 주문의 가맹점 코드 불일치! ");
             return null;
         }
 
         // 이미 존재하는 발주 있는지 확인
-        if (orderRepository.existsByFranchiseFranchiseCodeAndOrderCondition(franchise.getFranchiseCode(), ORDER_CONDITION.승인대기)
-                || orderRepository.existsByFranchiseFranchiseCodeAndOrderCondition(franchise.getFranchiseCode(),ORDER_CONDITION.승인거부)){
+        if (orderRepository.existsByFranchiseFranchiseCodeAndOrderCondition(franchiseDTO.getFranchiseCode(), ORDER_CONDITION.승인대기)
+                || orderRepository.existsByFranchiseFranchiseCodeAndOrderCondition(franchiseDTO.getFranchiseCode(),ORDER_CONDITION.승인거부)){
             System.out.println("이미 대기중인 발주가 존재합니다.");
             return null;
         }
+        System.out.println("22");
+
         // 발주 생성
-        Order order = new Order(ORDER_CONDITION.승인대기,false,franchise);
+        Order order = new Order(ORDER_CONDITION.승인대기,franchiseDTO);
+        order.setOrderTotalPrice(requestOrder.getOrderTotalPrice());
         Order result= orderRepository.save(order);
+        System.out.println("result = " + result);
+        // 발주 상품 저장
         result.setOrderProductList(new ArrayList<>());
         requestOrder.getProducts().forEach((productId, count)->{
             OrderProduct orderProduct = orderProductRepository.save(new OrderProduct(count,0, result, productId));
             result.getOrderProductList().add(orderProduct);
         });
-
-        return new OrderDTO(result);
+        return new OrderDTO(result,franchiseDTO);
     }
 
     private static boolean checkOrderCondition(Order order) {
@@ -148,8 +154,11 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     @Transactional(readOnly = true)
-    public List<OrderDTO> getOrderList(int franchiseCode){
-        List<Order> orderList= orderRepository.findByFranchiseFranchiseCodeOrderByOrderDateDesc(franchiseCode);
+    public List<OrderDTO> getOrderList(int franchiseOwnerCode){
+        List<Order> orderList= orderRepository.findByFranchiseFranchiseOwnerFranchiseOwnerCodeOrderByOrderDateDesc(franchiseOwnerCode);
+        if (orderList.isEmpty()){
+            return Collections.emptyList();
+        }
         List<OrderDTO> orderDTOList = new ArrayList<>();
         orderList.forEach(order-> {
             orderDTOList.add(new OrderDTO(order));

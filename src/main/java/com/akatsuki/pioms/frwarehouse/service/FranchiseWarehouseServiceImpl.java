@@ -38,6 +38,7 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
     @Transactional
     @Override
     public void saveProduct(int productCode, int changeVal, int franchiseCode){
+        System.out.println("가맹창고접근");
         FranchiseWarehouse franchiseWarehouse
                 = franchiseWarehouseRepository.findByProductProductCodeAndFranchiseCode(productCode,franchiseCode);
         System.out.println("franchiseWarehouse = " + franchiseWarehouse);
