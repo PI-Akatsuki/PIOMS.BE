@@ -33,7 +33,6 @@ public interface ExchangeService {
 
 
     // 모든 반품 신청 리스트를 조회하기 위한 로직
-    List<ExchangeDTO> getExchanges();
     List<ExchangeDTO> getExchangesByAdminCode(int adminCode);
     ExchangeDTO processArrivedExchange(int adminCode, int exchangeCode, RequestExchange requestExchange);
     ExchangeDTO getExchangeByAdminCode(int adminCode, int exchangeCode);

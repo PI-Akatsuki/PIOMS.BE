@@ -4,7 +4,6 @@ import com.akatsuki.pioms.admin.aggregate.Admin;
 import com.akatsuki.pioms.exchange.aggregate.*;
 import com.akatsuki.pioms.exchange.aggregate.ExchangeProductVO;
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
-import com.akatsuki.pioms.exchange.dto.ExchangeProductDTO;
 import com.akatsuki.pioms.exchange.repository.ExchangeProductRepository;
 import com.akatsuki.pioms.exchange.repository.ExchangeRepository;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
@@ -51,7 +50,6 @@ public class ExchangeServiceImpl implements ExchangeService{
     public ExchangeDTO findExchangeToSend(int franchiseCode) {
         Exchange returnExchange;
         try {
-
             returnExchange = exchangeRepository.findByFranchiseFranchiseCodeAndExchangeStatus(franchiseCode, EXCHANGE_STATUS.반송신청);
             if (returnExchange==null)
                 return null;
@@ -62,16 +60,6 @@ public class ExchangeServiceImpl implements ExchangeService{
                 returnExchange= null;
         }
         return new ExchangeDTO(returnExchange);
-    }
-
-    @Override
-    public List<ExchangeDTO> getExchanges() {
-        List<Exchange> exchangeEntityList = exchangeRepository.findAll();
-        List<ExchangeDTO> exchanges = new ArrayList<>();
-        exchangeEntityList.forEach(exchangeEntity -> {
-            exchanges.add(new ExchangeDTO(exchangeEntity));
-        });
-        return exchanges;
     }
 
     @Override
@@ -93,31 +81,19 @@ public class ExchangeServiceImpl implements ExchangeService{
         FranchiseDTO franchise = franchiseService.findFranchiseByFranchiseOwnerCode(franchiseOwnerCode);
         if (franchise.getFranchiseOwner().getFranchiseOwnerCode()!= franchiseOwnerCode)
             return null;
-        if(!franchiseWarehouseService.checkEnableToAddExchange(requestExchange))
+        if(!franchiseWarehouseService.checkEnableToAddExchangeAndChangeEnableCnt(requestExchange))
             return null;
 
         Exchange exchange = new Exchange();
         exchange.setExchangeDate(LocalDateTime.now());
         exchange.setExchangeStatus(EXCHANGE_STATUS.반송신청);
 
-        Franchise franchise1 = new Franchise();
-        franchise1.setFranchiseCode(franchise.getFranchiseCode());
-        franchise1.setFranchiseName(franchise.getFranchiseName());
-
-        FranchiseOwner franchiseOwner = new FranchiseOwner();
-        franchiseOwner.setFranchiseOwnerCode(franchiseOwnerCode);
-        franchiseOwner.setFranchiseOwnerName(franchise.getFranchiseOwner().getFranchiseOwnerName());
-
-        franchise1.setFranchiseOwner(franchiseOwner);
-        franchise1.setAdmin(new Admin());
-        franchise1.getAdmin().setAdminCode(franchise.getAdminCode());
+        Franchise franchise1 = getFranchise(franchiseOwnerCode, franchise);
 
         exchange.setFranchise(franchise1);
-
         Exchange exchange1 = exchangeRepository.save(exchange);
 
         exchange1.setProducts(new ArrayList<>());
-
         requestExchange.getProducts().forEach(product->{
             ExchangeProduct exchangeProduct = new ExchangeProduct(product);
             exchangeProduct.setExchange(exchange1);
@@ -127,18 +103,27 @@ public class ExchangeServiceImpl implements ExchangeService{
             exchangeProduct= exchangeProductRepository.save(exchangeProduct);
             exchange1.getProducts().add(exchangeProduct);
         });
-
         Exchange exchange2 = exchangeRepository.findById(exchange1.getExchangeCode()).orElseThrow();
-        System.out.println("exchange2 = " + exchange2);
         return new ExchangeDTO(exchange2);
+    }
+
+    private Franchise getFranchise(int franchiseOwnerCode, FranchiseDTO franchise) {
+        Franchise franchise1 = new Franchise();
+        franchise1.setFranchiseCode(franchise.getFranchiseCode());
+        franchise1.setFranchiseName(franchise.getFranchiseName());
+        FranchiseOwner franchiseOwner = new FranchiseOwner();
+        franchiseOwner.setFranchiseOwnerCode(franchiseOwnerCode);
+        franchiseOwner.setFranchiseOwnerName(franchise.getFranchiseOwner().getFranchiseOwnerName());
+        franchise1.setFranchiseOwner(franchiseOwner);
+        franchise1.setAdmin(new Admin());
+        franchise1.getAdmin().setAdminCode(franchise.getAdminCode());
+        return franchise1;
     }
 
     @Override
     public ExchangeDTO getExchangeByAdminCode(int adminCode, int exchangeCode) {
         Exchange exchange = exchangeRepository.findById(exchangeCode).orElse(null);
-        if (exchange ==null)
-            return null;
-        if (exchange.getFranchise().getAdmin().getAdminCode() != adminCode)
+        if (exchange ==null ||exchange.getFranchise().getAdmin().getAdminCode() != adminCode)
             return null;
         return new ExchangeDTO(exchange);
     }
@@ -166,11 +151,9 @@ public class ExchangeServiceImpl implements ExchangeService{
     public boolean deleteExchange(int franchiseOwnerCode, int exchangeCode) {
         //FIN
         Exchange exchange = exchangeRepository.findById(exchangeCode).orElse(null);
-        System.out.println("exchange = " + exchange);
-        if (exchange==null || exchange.getFranchise().getFranchiseOwner().getFranchiseOwnerCode() != franchiseOwnerCode
-        || orderService.findOrderByExchangeCode(exchangeCode)/*있으면 true로 삭제 불가*/)
+        if (exchange==null ||
+                orderService.findOrderByExchangeCode(exchangeCode)/*있으면 true로 삭제 불가*/)
             return false;
-        System.out.println("delete");
         for (int i = 0; i <exchange.getProducts().size(); i++) {
             franchiseWarehouseService.saveProductWhenDeleteExchange(
                     exchange.getProducts().get(i).getProduct().getProductCode(),
@@ -179,7 +162,7 @@ public class ExchangeServiceImpl implements ExchangeService{
             );
         }
         exchangeProductRepository.deleteByExchangeExchangeCode(exchangeCode);
-        exchangeRepository.delete(exchange);
+        exchangeRepository.deleteById(exchange.getExchangeCode());
         return true;
     }
 
@@ -211,13 +194,6 @@ public class ExchangeServiceImpl implements ExchangeService{
         exchangeProductEntity.setExchangeProductNormalCount(product.getExchangeProductNormalCount());
         exchangeProductEntity.setExchangeProductDiscount(product.getExchangeProductDiscount());
 
-        //본사 창고 저장
-        exchangeProductEntity.getProduct().setProductDiscount(
-                exchangeProductEntity.getProduct().getProductDiscount()+ product.getExchangeProductDiscount()
-        );
-        exchangeProductEntity.getProduct().setProductCount(
-                exchangeProductEntity.getProduct().getProductCount()+ product.getExchangeProductNormalCount()
-        );
         exchangeProductRepository.save(exchangeProductEntity);
     }
 
@@ -281,9 +257,9 @@ public class ExchangeServiceImpl implements ExchangeService{
         }
         exchange.setExchangeStatus(EXCHANGE_STATUS.처리대기);
         exchange.getProducts().forEach(exchangeProduct ->
-                franchiseWarehouseService.saveProduct(
+                franchiseWarehouseService.saveProductWhenUpdateExchangeToCompany(
                         exchangeProduct.getProduct().getProductCode(),
-                        -exchangeProduct.getExchangeProductCount(),
+                        exchangeProduct.getExchangeProductCount(),
                         exchange.getFranchise().getFranchiseCode()));
         exchangeRepository.save(exchange);
     }
@@ -315,8 +291,10 @@ public class ExchangeServiceImpl implements ExchangeService{
             System.out.println("3차 검증 실패: 반송 상품 검수 갯수 불일치" );
             return null;
         }
+        // 해당 교환에 검수 결과 저장
         requestExchange.getProducts().forEach(this::updateExchangeProduct);
         exchangeEntity.setExchangeStatus(EXCHANGE_STATUS.처리완료);
+        // 본사 창고 업데이트
         productService.importExchangeProducts(requestExchange);
         exchangeRepository.save(exchangeEntity);
         return new ExchangeDTO(exchangeRepository.findById(exchangeCode).orElseThrow());

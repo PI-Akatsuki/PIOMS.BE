@@ -60,19 +60,21 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
     public void saveProductWhenDeleteExchange(int productCode, int changeVal, int franchiseCode){
         FranchiseWarehouse franchiseWarehouse
                 = franchiseWarehouseRepository.findByProductProductCodeAndFranchiseCode(productCode,franchiseCode);
-        //없다면 새로 저장하긔
-        if(franchiseWarehouse == null ){
-            franchiseWarehouse = new FranchiseWarehouse(false,franchiseCode,productCode);
-        }
-        franchiseWarehouse.setFranchiseWarehouseCount(franchiseWarehouse.getFranchiseWarehouseCount()+changeVal);
         franchiseWarehouse.setFranchiseWarehouseEnable(franchiseWarehouse.getFranchiseWarehouseEnable()+changeVal);
         franchiseWarehouseRepository.save(franchiseWarehouse);
-        System.out.println("saved");
+    }
+
+    @Override
+    public void saveProductWhenUpdateExchangeToCompany(int productCode, int changeVal, int franchiseCode) {
+        FranchiseWarehouse franchiseWarehouse
+                = franchiseWarehouseRepository.findByProductProductCodeAndFranchiseCode(productCode,franchiseCode);
+        franchiseWarehouse.setFranchiseWarehouseCount(franchiseWarehouse.getFranchiseWarehouseEnable()-changeVal);
+        franchiseWarehouseRepository.save(franchiseWarehouse);
     }
 
     @Override
     @Transactional
-    public boolean checkEnableToAddExchange(RequestExchange requestExchange) {
+    public boolean checkEnableToAddExchangeAndChangeEnableCnt(RequestExchange requestExchange) {
 
         for (int i = 0; i < requestExchange.getProducts().size(); i++) {
             ExchangeProductVO exchange =requestExchange.getProducts().get(i);
@@ -86,6 +88,20 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
         }
         editCountByPostExchange(requestExchange);
         return true;
+    }
+    @Transactional
+    public void editCountByPostExchange(RequestExchange requestExchange) {
+        int cnt = requestExchange.getProducts().size();
+        for (int i = 0; i < cnt; i++) {
+            ExchangeProductVO exchange = requestExchange.getProducts().get(i);
+            FranchiseWarehouse franchiseWarehouse =
+                    franchiseWarehouseRepository.findByProductProductCodeAndFranchiseCode(exchange.getProductCode(),requestExchange.getFranchiseCode());
+            System.out.println(franchiseWarehouse);
+            if (franchiseWarehouse!=null) {
+                franchiseWarehouse.setFranchiseWarehouseEnable(franchiseWarehouse.getFranchiseWarehouseEnable() - exchange.getExchangeProductCount());
+                franchiseWarehouseRepository.save(franchiseWarehouse);
+            }
+        }
     }
 
     @Override
@@ -141,21 +157,7 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
         return franchiseWarehouseDTOS;
     }
 
-    @Transactional
-    public void editCountByPostExchange(RequestExchange requestExchange) {
-        int cnt = requestExchange.getProducts().size();
-        for (int i = 0; i < cnt; i++) {
-            ExchangeProductVO exchange = requestExchange.getProducts().get(i);
-            FranchiseWarehouse franchiseWarehouse =
-                    franchiseWarehouseRepository.findByProductProductCodeAndFranchiseCode(exchange.getProductCode(),requestExchange.getFranchiseCode());
-            System.out.println(franchiseWarehouse);
-            if (franchiseWarehouse!=null) {
-                franchiseWarehouse.setFranchiseWarehouseEnable(franchiseWarehouse.getFranchiseWarehouseEnable() - exchange.getExchangeProductCount());
-                franchiseWarehouse.setFranchiseWarehouseCount(franchiseWarehouse.getFranchiseWarehouseCount() - exchange.getExchangeProductCount());
-                franchiseWarehouseRepository.save(franchiseWarehouse);
-            }
-        }
-    }
+
 
     @Override
     @Transactional

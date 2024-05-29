@@ -81,8 +81,8 @@ public class AdminOrderFacade {
             return success;
         }
     }
-
-    private int afterAcceptOrder(OrderDTO order){
+    @Transactional
+    public int afterAcceptOrder(OrderDTO order){
         int success=0;
         productService.exportProducts(order);  // change product count
         success++; // 3
