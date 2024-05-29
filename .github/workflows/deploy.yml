@@ -87,6 +87,9 @@ jobs:
           REDIS_PORT: ${{ secrets.REDIS_PORT }}
           REDIS_PWD: ${{ secrets.REDIS_PWD }}
 
+      - name: Debug Environment Variables
+        run: printenv | grep 'RDS\|SPRING\|REDIS'
+
       - name: Check for Tests
         run: |
           if git diff --name-only HEAD^ HEAD | grep -qvE '(\.xml$|\.yml$|config/)'; then
