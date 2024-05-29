@@ -47,7 +47,7 @@ jobs:
                   credentials:
                     location: itability-418007-0c2a47d403c7.json
                   project-id: itability-418007
-                  bucket: \${SPRING_CLOUD_GCP_STORAGE_BUCKET}
+                  bucket: \${GCP_CREDENTIALS_JSON}
             jpa:
               show-sql: false
               database: mysql
@@ -81,7 +81,7 @@ jobs:
           RDS_DB_NAME: ${{ secrets.RDS_DB_NAME }}
           RDS_USERNAME: ${{ secrets.RDS_USERNAME }}
           RDS_PASSWORD: ${{ secrets.RDS_PASSWORD }}
-          SPRING_CLOUD_GCP_STORAGE_BUCKET: ${{ secrets.SPRING_CLOUD_GCP_STORAGE_BUCKET }}
+          GCP_CREDENTIALS_JSON: ${{ secrets.GCP_CREDENTIALS_JSON }}
           SPRING_JWT_SECRET: ${{ secrets.SPRING_JWT_SECRET }}
           REDIS_HOST: ${{ secrets.REDIS_HOST }}
           REDIS_PORT: ${{ secrets.REDIS_PORT }}
