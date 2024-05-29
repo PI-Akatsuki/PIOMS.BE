@@ -4,9 +4,12 @@ import com.akatsuki.pioms.exchange.aggregate.Exchange;
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import com.akatsuki.pioms.franchise.aggregate.DELIVERY_DATE;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
+import com.akatsuki.pioms.franchise.dto.FranchiseDTO;
+import com.akatsuki.pioms.invoice.dto.InvoiceDTO;
 import com.akatsuki.pioms.order.aggregate.Order;
 import com.akatsuki.pioms.order.aggregate.OrderProduct;
 import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -37,6 +40,7 @@ public class OrderDTO {
     private int franchiseOwnerCode;
     private String franchiseOwnerName;
     private String franchiseAddress;
+    private String franchiseOwnerPhone;
 
     private int AdminCode;
     private String AdminName;
@@ -44,6 +48,9 @@ public class OrderDTO {
     private ExchangeDTO exchange;
 
     private List<OrderProductDTO> orderProductList;
+
+    private int invoiceCode;
+    private LocalDateTime invoiceDate;
 
 
     public OrderDTO(Order order) {
@@ -58,18 +65,57 @@ public class OrderDTO {
         this.franchiseOwnerCode = order.getFranchise().getFranchiseOwner().getFranchiseOwnerCode();
         this.franchiseOwnerName = order.getFranchise().getFranchiseOwner().getFranchiseOwnerName();
         this.franchiseAddress = order.getFranchise().getFranchiseAddress();
+        this.franchiseOwnerPhone = order.getFranchise().getFranchiseOwner().getFranchiseOwnerPhone();
         this.AdminCode= order.getFranchise().getAdmin().getAdminCode();
         this.AdminName= order.getFranchise().getAdmin().getAdminName();
 
-        if (exchange!=null)
-            this.exchange= new ExchangeDTO(order.getExchange());
-//        this.orderProductList= order.getOrderProductList();
-
+        if (order.getExchange()!=null) {
+            this.exchange = new ExchangeDTO(order.getExchange());
+        }
         orderProductList = new ArrayList<>();
         if(order.getOrderProductList()!=null)
             for (int i = 0; i < order.getOrderProductList().size(); i++) {
                 orderProductList.add(new OrderProductDTO(order.getOrderProductList().get(i)));
             }
 
+        if (order.getInvoice()!=null){
+            invoiceCode = order.getInvoice().getInvoiceCode();
+            invoiceDate = order.getInvoice().getInvoiceDate();
+        }
+
+
+    }
+
+    public OrderDTO(Order order, FranchiseDTO franchiseDTO) {
+        this.orderCode= order.getOrderCode();
+        this.orderDate= order.getOrderDate();
+        this.orderTotalPrice= order.getOrderTotalPrice();
+        this.orderCondition= order.getOrderCondition();
+        this.orderReason= order.getOrderReason();
+
+        this.franchiseCode= franchiseDTO.getFranchiseCode();
+        this.franchiseName= franchiseDTO.getFranchiseName();
+        this.deliveryDate= franchiseDTO.getFranchiseDeliveryDate();
+        this.franchiseOwnerCode = franchiseDTO.getFranchiseOwner().getFranchiseOwnerCode();
+        this.franchiseOwnerName = franchiseDTO.getFranchiseOwner().getFranchiseOwnerName();
+        this.franchiseAddress = franchiseDTO.getFranchiseAddress();
+        this.franchiseOwnerPhone = franchiseDTO.getFranchiseOwner().getFranchiseOwnerPhone();
+
+        this.AdminCode= franchiseDTO.getAdminCode();
+        this.AdminName= franchiseDTO.getAdminName();
+
+        if (order.getExchange()!=null) {
+            this.exchange = new ExchangeDTO(order.getExchange());
+        }
+        orderProductList = new ArrayList<>();
+        if(order.getOrderProductList()!=null)
+            for (int i = 0; i < order.getOrderProductList().size(); i++) {
+                orderProductList.add(new OrderProductDTO(order.getOrderProductList().get(i)));
+            }
+
+        if (order.getInvoice()!=null){
+            invoiceCode = order.getInvoice().getInvoiceCode();
+            invoiceDate = order.getInvoice().getInvoiceDate();
+        }
     }
 }

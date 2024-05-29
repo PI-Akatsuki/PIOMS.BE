@@ -8,10 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,9 +23,9 @@ public class AdminSpecsController {
         this.specsService = specsService;
     }
 
-    @GetMapping("/{adminCode}/specs")
+    @GetMapping("/specs")
     @Operation(summary = "전체 명세서 조회")
-    public ResponseEntity<List<ResponseSpecs>> getSpecsList(@PathVariable int adminCode){
+    public ResponseEntity<List<ResponseSpecs>> getSpecsList(@RequestParam int adminCode){
         List<SpecsDTO> specsDTOS = specsService.getSpecsListByAdminCode(adminCode);
 
         if (specsDTOS.isEmpty()){
@@ -42,9 +39,9 @@ public class AdminSpecsController {
         return ResponseEntity.ok(responseSpecs);
     }
 
-    @GetMapping("/{adminCode}/specs/{specsCode}")
+    @GetMapping("/specs/{specsCode}")
     @Operation(summary = "명세서 상세 조회")
-    public ResponseEntity<ResponseSpecs> getSpecs(@PathVariable int adminCode,@PathVariable int specsCode){
+    public ResponseEntity<ResponseSpecs> getSpecs(@RequestParam int adminCode,@PathVariable int specsCode){
         SpecsDTO specsDTO = specsService.getSpecsByAdminCode(adminCode,specsCode);
         return ResponseEntity.ok(new ResponseSpecs(specsDTO));
     }

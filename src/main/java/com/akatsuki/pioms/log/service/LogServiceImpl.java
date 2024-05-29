@@ -6,6 +6,8 @@ import com.akatsuki.pioms.log.repository.LogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class LogServiceImpl implements LogService{
     private final LogRepository logRepository;
@@ -23,6 +25,11 @@ public class LogServiceImpl implements LogService{
     public void saveLog(String logChanger, LogStatus logStatus, String content, String target) {
         Log log = new Log(logChanger, logStatus,  content, target);
         logRepository.save(log);
+    }
+
+    @Override
+    public List<Log> getAllLogs() {
+        return logRepository.findAll();
     }
 
 }

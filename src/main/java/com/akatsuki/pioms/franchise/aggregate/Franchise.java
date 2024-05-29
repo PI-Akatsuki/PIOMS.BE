@@ -59,6 +59,4 @@ public class Franchise {
     @JoinColumn(name = "admin_code", referencedColumnName = "admin_code")
     @ToString.Exclude
     private Admin admin;
-
-
 }

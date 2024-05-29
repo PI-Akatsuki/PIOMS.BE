@@ -87,7 +87,7 @@
 //    @Test
 //    void putExchange() {
 //        //given
-//        int adminCode=1;
+//        int adminCode=2;
 //        int franchiseCode=1;
 //        ExchangeDTO exchangeDTO = exchangeService.postExchange(franchiseCode,exchange);
 //        List<ExchangeProductVO> exchangeProductVOS1 = new ArrayList<>();
@@ -130,7 +130,7 @@
 //    @Test
 //    void getExchangeProductsWithStatus() {
 //        //given
-//        int adminCode=1;
+//        int adminCode=2;
 //        int franchiseCode=1;
 //        ExchangeDTO exchangeDTO = exchangeService.postExchange(franchiseCode,exchange);
 //        //when
@@ -144,7 +144,7 @@
 //    @Test
 //    void getAdminExchange() {
 //        //given
-//        int adminCode=1;
+//        int adminCode=2;
 //        int franchiseCode=1;
 //        ExchangeDTO exchangeDTO = exchangeService.postExchange(franchiseCode,exchange);
 //

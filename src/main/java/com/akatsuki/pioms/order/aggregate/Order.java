@@ -3,7 +3,9 @@ package com.akatsuki.pioms.order.aggregate;
 import com.akatsuki.pioms.admin.aggregate.Admin;
 import com.akatsuki.pioms.exchange.aggregate.Exchange;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
+import com.akatsuki.pioms.franchise.dto.FranchiseDTO;
 import com.akatsuki.pioms.frowner.aggregate.FranchiseOwner;
+import com.akatsuki.pioms.invoice.aggregate.Invoice;
 import com.akatsuki.pioms.order.dto.OrderDTO;
 import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
 import jakarta.persistence.*;
@@ -52,10 +54,15 @@ public class Order {
     @OneToMany(mappedBy = "order" , cascade = CascadeType.PERSIST)
     private List<OrderProduct> orderProductList;
 
-    public Order(ORDER_CONDITION orderCondition, boolean orderStatus, Franchise franchise) {
+    @OneToOne(mappedBy = "order", cascade = CascadeType.PERSIST)
+    private Invoice invoice;
+
+    public Order(ORDER_CONDITION orderCondition,FranchiseDTO franchise) {
         this.orderDate = LocalDateTime.now();
         this.orderCondition = orderCondition;
-        this.franchise = franchise;
+        Franchise franchise1 = new Franchise();
+        franchise1.setFranchiseCode(franchise.getFranchiseCode());
+        this.franchise = franchise1;
     }
 
 

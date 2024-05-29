@@ -1,5 +1,6 @@
 package com.akatsuki.pioms.frowner.dto;
 
+import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import com.akatsuki.pioms.frowner.aggregate.FranchiseOwner;
 import lombok.*;
 
@@ -19,6 +20,7 @@ public class FranchiseOwnerDTO {
     private String franchiseOwnerEnrollDate;
     private String franchiseOwnerUpdateDate;
     private String franchiseOwnerDeleteDate;
+    private String franchiseName;
 
     // FranchiseOwner 엔티티에서 FranchiseOwnerDTO로 변환하는 메서드
     public FranchiseOwnerDTO(FranchiseOwner franchiseOwner) {
@@ -31,6 +33,20 @@ public class FranchiseOwnerDTO {
         this.franchiseOwnerEnrollDate = franchiseOwner.getFranchiseOwnerEnrollDate();
         this.franchiseOwnerUpdateDate = franchiseOwner.getFranchiseOwnerUpdateDate();
         this.franchiseOwnerDeleteDate = franchiseOwner.getFranchiseOwnerDeleteDate();
+        this.franchiseName = franchiseOwner.getFranchise().getFranchiseName();
+    }
+
+    public FranchiseOwnerDTO(FranchiseOwner franchiseOwner, Franchise franchise) {
+        this.franchiseOwnerCode = franchiseOwner.getFranchiseOwnerCode();
+        this.franchiseOwnerName = franchiseOwner.getFranchiseOwnerName();
+        this.franchiseOwnerId = franchiseOwner.getFranchiseOwnerId();
+        this.franchiseOwnerPwd = franchiseOwner.getFranchiseOwnerPwd();
+        this.franchiseOwnerEmail = franchiseOwner.getFranchiseOwnerEmail();
+        this.franchiseOwnerPhone = franchiseOwner.getFranchiseOwnerPhone();
+        this.franchiseOwnerEnrollDate = franchiseOwner.getFranchiseOwnerEnrollDate();
+        this.franchiseOwnerUpdateDate = franchiseOwner.getFranchiseOwnerUpdateDate();
+        this.franchiseOwnerDeleteDate = franchiseOwner.getFranchiseOwnerDeleteDate();
+        this.franchiseName = franchise.getFranchiseName();
     }
 
     // FranchiseOwnerDTO를 FranchiseOwner 엔티티로 변환

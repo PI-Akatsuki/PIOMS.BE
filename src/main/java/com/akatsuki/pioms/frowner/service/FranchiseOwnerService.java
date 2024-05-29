@@ -23,4 +23,5 @@ public interface FranchiseOwnerService {
     // 오너 삭제
     ResponseEntity<String> deleteFranchiseOwner(int franchiseOwnerCode, int requestorAdminCode);
 
+    FranchiseOwnerDTO getFranchiseOwnerWithFranchiseName(int franchiseOwnerCode);
 }

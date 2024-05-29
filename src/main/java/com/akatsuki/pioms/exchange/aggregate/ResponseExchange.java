@@ -2,6 +2,7 @@ package com.akatsuki.pioms.exchange.aggregate;
 
 
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,11 +16,14 @@ import java.util.List;
 @AllArgsConstructor
 public class ResponseExchange {
     private int exchangeCode;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime exchangeDate;
     private EXCHANGE_STATUS exchangeStatus;
 
     private int franchiseCode;
     private String franchiseName;
+    private int franchiseOwnerCode;
+    private String franchiseOwnerName;
 
     List<ExchangeProductVO> products;
 
@@ -30,6 +34,8 @@ public class ResponseExchange {
 
         this.franchiseCode = exchangeEntity.getFranchise().getFranchiseCode();
         this.franchiseName = exchangeEntity.getFranchise().getFranchiseName();
+        this.franchiseOwnerCode = exchangeEntity.getFranchise().getFranchiseOwner().getFranchiseOwnerCode();
+        this.franchiseOwnerName = exchangeEntity.getFranchise().getFranchiseOwner().getFranchiseOwnerName();
         this.products = new ArrayList<>();
         exchangeEntity.getProducts().forEach(product -> {
             products.add(new ExchangeProductVO(product));
@@ -44,6 +50,10 @@ public class ResponseExchange {
 
         this.franchiseCode = exchangeDTO.getFranchise().getFranchiseCode();
         this.franchiseName = exchangeDTO.getFranchise().getFranchiseName();
+
+
+        this.franchiseOwnerCode = exchangeDTO.getFranchise().getFranchiseOwner().getFranchiseOwnerCode();
+        this.franchiseOwnerName = exchangeDTO.getFranchise().getFranchiseOwner().getFranchiseOwnerName();
         this.products = new ArrayList<>();
         exchangeDTO.getExchangeProducts().forEach(product -> {
             products.add(new ExchangeProductVO(product));

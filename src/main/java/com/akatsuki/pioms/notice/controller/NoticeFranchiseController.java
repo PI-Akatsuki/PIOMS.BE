@@ -32,7 +32,7 @@ public class NoticeFranchiseController {
 
     // 점주 공지사항 상세 조회
     @Operation(summary = "공지사항 상세 목록 조회", description = "공지사항 상세 목록 조회")
-    @GetMapping("/notice/details/{noticeCode}")
+    @GetMapping("/notice/list/details/{noticeCode}")
     public ResponseEntity<NoticeVO> getNoticeDetails(@PathVariable int noticeCode) {
        NoticeVO noticeVO = noticeService.getNoticeDetails(noticeCode);
        return ResponseEntity.ok(noticeVO);

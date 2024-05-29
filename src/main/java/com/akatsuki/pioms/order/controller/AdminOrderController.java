@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -46,27 +47,29 @@ public class AdminOrderController {
         this.orderFacade = orderFacade;
     }
 
-    @GetMapping("/{adminCode}/orders")
+    @GetMapping("/orders")
     @Operation(summary = "관리자가 관리하고 있는 모든 가맹점들의 발주 리스트를 조회합니다.")
-    public ResponseEntity<List<OrderDTO>> getFranchisesOrderList(@PathVariable int adminCode ,
+    public ResponseEntity<List<OrderVO>> getFranchisesOrderList(@RequestParam(name = "adminCode") int adminCode ,
                                                                  @RequestParam(defaultValue = "0") int page,
-                                                                 @RequestParam(defaultValue = "3") int size ){
+                                                                 @RequestParam(defaultValue = "20") int size ){
         List<OrderDTO> orderDTOS = orderFacade.getOrderListByAdminCode(adminCode);
-
         if (orderDTOS.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
 
         orderDTOS = Pagination.splitPage(orderDTOS, page, size);
-
-        return ResponseEntity.ok().body(orderDTOS);
+        List<OrderVO> orderVOS = new ArrayList<>();
+        for (int i = 0; i < orderDTOS.size(); i++) {
+            orderVOS.add(new OrderVO(orderDTOS.get(i)));
+        }
+        return ResponseEntity.ok().body(orderVOS);
     }
     /**
      * <h2>모든 가맹점 승인대기 발주 목록 조회</h2>
      * */
-    @GetMapping("/{adminCode}/unchecked-orders")
+    @GetMapping("/unchecked-orders")
     @Operation(summary = "관리자가 관리하는 모든 가맹점들 중 승인 하지 않은 발주 리스틀 조회합니다.")
-    public ResponseEntity<OrderListVO> getFranchisesUncheckedOrderList(@PathVariable int adminCode,
+    public ResponseEntity<OrderListVO> getFranchisesUncheckedOrderList(@RequestParam(name = "adminCode") int adminCode,
                                                                        @RequestParam(defaultValue = "0") int page,
                                                                        @RequestParam(defaultValue = "3") int size ){
         List<OrderDTO> orderDTO = orderFacade.getAdminUncheckedOrders(adminCode);
@@ -78,19 +81,22 @@ public class AdminOrderController {
         return ResponseEntity.ok().body(new OrderListVO(orderDTO));
     }
 
-    @PutMapping("/{adminCode}/order/{orderCode}/accept")
+    @PutMapping("/order/{orderCode}/accept")
     @Operation(summary = "승인 대기 중인 발주를 승인합니다.")
-    public ResponseEntity<OrderVO> acceptOrder(@PathVariable int adminCode, @PathVariable int orderCode){
+    public ResponseEntity<OrderVO> acceptOrder(@RequestParam(name = "adminCode") int adminCode, @PathVariable int orderCode){
         OrderDTO orderDTO = orderFacade.acceptOrder(adminCode, orderCode);
+        System.out.println("승인 완료");
+        System.out.println("orderDTO = " + orderDTO);
         if (orderDTO == null){
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         }
-        return ResponseEntity.ok(new OrderVO(orderDTO));
+        return ResponseEntity.ok().body(new OrderVO(orderDTO));
     }
 
-    @PutMapping("/{adminCode}/order/{orderId}/deny")
+    @PutMapping("/order/{orderId}/deny")
     @Operation(summary = "승인 대기 중인 발주를 거절합니다.")
-    public ResponseEntity<OrderVO> denyOrder(@PathVariable int adminCode,@PathVariable int orderId, @RequestParam String denyMessage){
+    public ResponseEntity<OrderVO> denyOrder(@RequestParam(name = "adminCode") int adminCode,@PathVariable int orderId, @RequestParam String denyMessage){
+        System.out.println("denyMessage = " + denyMessage);
         OrderDTO orderDTO = orderFacade.denyOrder(adminCode,orderId,denyMessage);
         if (orderDTO == null){
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
@@ -98,9 +104,9 @@ public class AdminOrderController {
         return ResponseEntity.ok(new OrderVO(orderDTO));
     }
 
-    @GetMapping("/{adminCode}/order/{orderCode}")
+    @GetMapping("/order/{orderCode}")
     @Operation(summary = "발주를 상세 조회합니다.")
-    public ResponseEntity<OrderVO> getOrder(@PathVariable int adminCode, @PathVariable int orderCode){
+    public ResponseEntity<OrderVO> getOrder(@RequestParam(name = "adminCode") int adminCode, @PathVariable int orderCode){
         OrderDTO orderDTO = orderFacade.getAdminOrder(adminCode,orderCode);
         if(orderDTO == null){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);

@@ -38,6 +38,7 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
     @Transactional
     @Override
     public void saveProduct(int productCode, int changeVal, int franchiseCode){
+        System.out.println("가맹창고접근");
         FranchiseWarehouse franchiseWarehouse
                 = franchiseWarehouseRepository.findByProductProductCodeAndFranchiseCode(productCode,franchiseCode);
         System.out.println("franchiseWarehouse = " + franchiseWarehouse);
@@ -143,7 +144,6 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
         int cnt = requestExchange.getProducts().size();
         for (int i = 0; i < cnt; i++) {
             ExchangeProductVO exchange = requestExchange.getProducts().get(i);
-            System.out.println(exchange);
             FranchiseWarehouse franchiseWarehouse =
                     franchiseWarehouseRepository.findByProductProductCodeAndFranchiseCode(exchange.getProductCode(),requestExchange.getFranchiseCode());
             System.out.println(franchiseWarehouse);
@@ -160,7 +160,25 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
     public void toggleFavorite(int franchiseWarehouseCode) {
         FranchiseWarehouse favorite = franchiseWarehouseRepository.findById(franchiseWarehouseCode)
                 .orElseThrow(() -> new RuntimeException("Warehouse not found"));
-        favorite.setFranchiseWarehouseFavorite(!favorite.isFranchiseWarehouseFavorite());
+
+        if (favorite.isFranchiseWarehouseFavorite()) {
+            throw new RuntimeException("이미 즐겨찾기 추가된 상품입니다");
+        }
+
+        favorite.setFranchiseWarehouseFavorite(true);
+        franchiseWarehouseRepository.save(favorite);
+    }
+
+    @Transactional
+    public void removeFavorite(int franchiseWarehouseCode) {
+        FranchiseWarehouse favorite = franchiseWarehouseRepository.findById(franchiseWarehouseCode)
+                .orElseThrow(() -> new RuntimeException("Warehouse not found"));
+
+        if (!favorite.isFranchiseWarehouseFavorite()) {
+            throw new RuntimeException("즐겨찾기 추가되지 않은 상품입니다");
+        }
+
+        favorite.setFranchiseWarehouseFavorite(false);
         franchiseWarehouseRepository.save(favorite);
     }
 

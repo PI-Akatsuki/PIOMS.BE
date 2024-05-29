@@ -1,11 +1,13 @@
 package com.akatsuki.pioms.exchange.aggregate;
 
 
+import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -13,7 +15,16 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 public class RequestExchange {
+
     private int franchiseCode;
     private EXCHANGE_STATUS exchangeStatus;
-    List<ExchangeProductVO> products;
+    List<ExchangeProductVO> products= new ArrayList<>();
+    public RequestExchange(EXCHANGE_STATUS exchangeStatus, ExchangeDTO exchangeDTO) {
+        this.franchiseCode = exchangeDTO.getFranchise().getFranchiseCode();
+        this.exchangeStatus = exchangeStatus;
+        exchangeDTO.getExchangeProducts().forEach(
+                exchangeProductDTO ->
+                    products.add(new ExchangeProductVO(exchangeProductDTO))
+        );
+    }
 }

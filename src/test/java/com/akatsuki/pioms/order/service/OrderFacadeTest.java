@@ -76,14 +76,14 @@
 //
 //    }
 //
-////    @Test
-////    void acceptOrder() {
-////        ORDER_CONDITION pastOrderCondition = order.getOrderCondition();
-////        OrderDTO orderDTO1 = orderFacade.acceptOrder(order.getFranchise().getAdmin().getAdminCode(),
-////                order.getOrderCode());
-////        assertNotEquals(pastOrderCondition,orderDTO1.getOrderCondition());
-////        assertEquals(ORDER_CONDITION.승인완료, orderDTO1.getOrderCondition());
-////    }
+//    @Test
+//    void acceptOrder() {
+//        ORDER_CONDITION pastOrderCondition = order.getOrderCondition();
+//        OrderDTO orderDTO1 = orderFacade.acceptOrder(order.getFranchise().getAdmin().getAdminCode(),
+//                order.getOrderCode());
+//        assertNotEquals(pastOrderCondition,orderDTO1.getOrderCondition());
+//        assertEquals(ORDER_CONDITION.검수대기, orderDTO1.getOrderCondition());
+//    }
 //
 //    @Test
 //    void denyOrder() {
@@ -110,8 +110,6 @@
 //        Order order1 = orderRepository.findById(orderDTO1.getOrderCode()).orElseThrow();
 //
 //        assertEquals(order1.getFranchise().getAdmin().getAdminCode(), orderDTO1.getAdminCode());
-//        System.out.println("order1.getOrderProductList() = " + order1.getOrderProductList());
-////        assertEquals(order1.getOrderProductList().size(), orderDTO1.getOrderProductList().size());
 //        assertEquals(order1.getFranchise().getFranchiseCode(), orderDTO1.getFranchiseCode());
 //    }
 //

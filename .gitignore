@@ -1,6 +1,6 @@
 ### SETTING ###
 application.yml
-appiication-private.yml
+application-private.yml
 *.json
 !options.json
 .idea/

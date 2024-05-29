@@ -27,8 +27,20 @@ public class DeliveryDriver {
     @Column(name = "delivery_man_pwd")
     private String driverPwd;
 
+    @Column(name = "delivery_man_role")
+    private String driverRole;
+
     @Column(name = "delivery_man_phone")
     private String driverPhone;
+
+    @Column(name = "delivery_man_status")
+    private boolean driverStatus;
+
+    @Column(name = "delivery_man_pwd_check")
+    private int driverPwdCheckCount;
+
+    @Column(name = "delivery_man_dormancy")
+    private boolean driverDormancy;
 
     @Column(name = "delivery_man_enroll_date")
     private String driverEnrollDate;
@@ -38,4 +50,5 @@ public class DeliveryDriver {
 
     @Column(name = "delivery_man_delete_date")
     private String driverDeleteDate;
+
 }
