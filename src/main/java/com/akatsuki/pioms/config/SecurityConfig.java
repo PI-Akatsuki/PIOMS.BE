@@ -1,18 +1,26 @@
 package com.akatsuki.pioms.config;
 
+import com.akatsuki.pioms.jwt.JWTFilter;
+import com.akatsuki.pioms.jwt.JWTUtil;
+import com.akatsuki.pioms.jwt.LoginFilter;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -24,13 +32,35 @@ import java.util.Collections;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    private final AuthenticationConfiguration authenticationConfiguration;
+    private final JWTUtil jwtUtil;
+
+    @Autowired
+    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil) {
+        this.authenticationConfiguration = authenticationConfiguration;
+        this.jwtUtil = jwtUtil;
+    }
+
+
+    // AuthenticationManager Bean 등록
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+        return configuration.getAuthenticationManager();
+    }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
         http
                 .csrf(csrf -> csrf.disable())
+                .formLogin(formLogin -> formLogin.disable())
+                .httpBasic(httpBasic -> httpBasic.disable());
+
+
+        http
                 .authorizeHttpRequests(authorize -> authorize
                                 .anyRequest().permitAll()
-//                        .requestMatchers("/login", "/admin/login", "/franchise/login", "/driver/login").permitAll()
+//                        .requestMatchers("/reissue", "/login", "/admin/login", "/franchise/login", "/driver/login").permitAll()
 //                        .requestMatchers("/admin/**").hasRole("ROOT")
 //                        .requestMatchers(
 //                                "/admin/info",
@@ -53,40 +83,30 @@ public class SecurityConfig {
 //                        .requestMatchers("/franchise/**").hasRole("OWNER")
 //                        .requestMatchers("/driver/**").hasRole("DRIVER")
 //                        .anyRequest().authenticated()
-                )
-                .formLogin(form -> form
-                        .loginPage("/admin/login")
-                        .loginProcessingUrl("/admin/login")
-                        .defaultSuccessUrl("/admin/home", true)
-                        .failureUrl("/admin/login?error=true")
-                        .permitAll()
-                )
-                .formLogin(form -> form
-                        .loginPage("/franchise/login")
-                        .loginProcessingUrl("/franchise/login")
-                        .defaultSuccessUrl("/franchise/home", true)
-                        .failureUrl("/franchise/login?error=true")
-                        .permitAll()
-                )
-                .formLogin(form -> form
-                        .loginPage("/driver/login")
-                        .loginProcessingUrl("/driver/login")
-                        .defaultSuccessUrl("/driver/home", true)
-                        .failureUrl("/driver/login?error=true")
-                        .permitAll()
-                )
+                );
+        http
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/login?logout=true")
                         .permitAll()
-                )
-                .sessionManagement(session -> session
-                        .maximumSessions(1)
-                        .maxSessionsPreventsLogin(true)
-                )
-                .sessionManagement(session -> session
-                        .sessionFixation().changeSessionId()
                 );
+
+        http
+                .addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
+                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
+
+        // Session 설정
+        http
+                .sessionManagement((session) -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
+//                .sessionManagement(session -> session
+//                        .maximumSessions(5)
+//                        .maxSessionsPreventsLogin(true)
+//                )
+//                .sessionManagement(session -> session
+//                        .sessionFixation().changeSessionId()
+//                );
 //                .cors(cors -> cors.configurationSource(corsConfigurationSource()));
 
         return http.build();
@@ -95,8 +115,8 @@ public class SecurityConfig {
 //    @Bean
 //    public CorsConfigurationSource corsConfigurationSource() {
 //        CorsConfiguration configuration = new CorsConfiguration();
-//        configuration.setAllowedOriginPatterns(Collections.singletonList("http://localhost:5173"));
-//        configuration.setAllowedOriginPatterns(Collections.singletonList("http://localhost:3000"));
+//        configuration.setAllowedOriginPatterns(Collections.singletonList("http://localhost:8080"));
+//        configuration.setAllowedOriginPatterns(Collections.singletonList("http://api.pioms.shop"));
 //        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 //        configuration.setAllowCredentials(true);
 //        configuration.setAllowedHeaders(Collections.singletonList("*"));
@@ -121,25 +141,4 @@ public class SecurityConfig {
         return roleHierarchy;
     }
 
-    @Bean
-    public UserDetailsService userDetailsService() {
-        InMemoryUserDetailsManager user = new InMemoryUserDetailsManager();
-        user.createUser(User.withUsername("root")
-                .password(passwordEncoder().encode("password"))
-                .roles("ROOT")
-                .build());
-        user.createUser(User.withUsername("admin")
-                .password(passwordEncoder().encode("password"))
-                .roles("ADMIN")
-                .build());
-        user.createUser(User.withUsername("owner")
-                .password(passwordEncoder().encode("password"))
-                .roles("OWNER")
-                .build());
-        user.createUser(User.withUsername("driver")
-                .password(passwordEncoder().encode("password"))
-                .roles("DRIVER")
-                .build());
-        return user;
-    }
 }
