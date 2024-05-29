@@ -60,6 +60,15 @@ jobs:
               url: jdbc:mariadb://\${RDS_HOSTNAME}:\${RDS_PORT}/\${RDS_DB_NAME}
               username: \${RDS_USERNAME}
               password: \${RDS_PASSWORD}
+            jwt:
+              secret: \${SPRING_JWT_SECRET}
+          cache:
+            type: redis
+          data:
+            redis:
+              host: \${REDIS_HOST}
+              port: \${REDIS_PORT}
+              password: \${REDIS_PWD}
           EOL
 
       - name: Set Yaml
@@ -73,6 +82,10 @@ jobs:
           RDS_USERNAME: ${{ secrets.RDS_USERNAME }}
           RDS_PASSWORD: ${{ secrets.RDS_PASSWORD }}
           SPRING_CLOUD_GCP_STORAGE_BUCKET: ${{ secrets.SPRING_CLOUD_GCP_STORAGE_BUCKET }}
+          SPRING_JWT_SECRET: ${{ secrets.SPRING_JWT_SECRET }}
+          REDIS_HOST: ${{ secrets.REDIS_HOST }}
+          REDIS_PORT: ${{ secrets.REDIS_PORT }}
+          REDIS_PWD: ${{ secrets.REDIS_PWD }}
 
       - name: Check for Tests
         run: |
