@@ -26,15 +26,13 @@ public class LoginServiceImpl implements LoginService {
     private final PasswordEncoder passwordEncoder;
     private final JWTUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
-    private final RedisTokenService redisTokenService;
 
     @Autowired
-    public LoginServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, JWTUtil jwtUtil, AuthenticationManager authenticationManager, RedisTokenService redisTokenService) {
+    public LoginServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, JWTUtil jwtUtil, AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
         this.authenticationManager = authenticationManager;
-        this.redisTokenService = redisTokenService;
     }
 
     @Override
@@ -69,9 +67,6 @@ public class LoginServiceImpl implements LoginService {
 
                 String accessToken = jwtUtil.createJwt("access", authenticatedUser.getUserId(), authenticatedUser.getRole(), 600000L);
                 String refreshToken = jwtUtil.createJwt("refresh", authenticatedUser.getUserId(), authenticatedUser.getRole(), 86400000L);
-
-                // Redis에 Refresh 토큰 저장
-                redisTokenService.saveRefreshToken(authenticatedUser.getUserId(), refreshToken, 86400000L);
 
                 return ResponseEntity.ok()
                         .header("Authorization", "Bearer " + accessToken)
@@ -120,9 +115,6 @@ public class LoginServiceImpl implements LoginService {
                 String accessToken = jwtUtil.createJwt("access", authenticatedUser.getUserId(), authenticatedUser.getRole(), 600000L);
                 String refreshToken = jwtUtil.createJwt("refresh", authenticatedUser.getUserId(), authenticatedUser.getRole(), 86400000L);
 
-                // Redis에 Refresh 토큰 저장
-                redisTokenService.saveRefreshToken(authenticatedUser.getUserId(), refreshToken, 86400000L);
-
                 return ResponseEntity.ok()
                         .header("Authorization", "Bearer " + accessToken)
                         .header("Set-Cookie", "refresh=" + refreshToken + "; HttpOnly; Path=/; Max-Age=86400000;")
@@ -169,9 +161,6 @@ public class LoginServiceImpl implements LoginService {
 
                 String accessToken = jwtUtil.createJwt("access", authenticatedUser.getUserId(), authenticatedUser.getRole(), 600000L);
                 String refreshToken = jwtUtil.createJwt("refresh", authenticatedUser.getUserId(), authenticatedUser.getRole(), 86400000L);
-
-                // Redis에 Refresh 토큰 저장
-                redisTokenService.saveRefreshToken(authenticatedUser.getUserId(), refreshToken, 86400000L);
 
                 return ResponseEntity.ok()
                         .header("Authorization", "Bearer " + accessToken)

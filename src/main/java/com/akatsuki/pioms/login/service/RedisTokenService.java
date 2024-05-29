@@ -1,4 +1,4 @@
-package com.akatsuki.pioms.login.service;
+package com.akatsuki.pioms.redis;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -16,15 +16,15 @@ public class RedisTokenService {
         this.redisTemplate = redisTemplate;
     }
 
-    public void saveRefreshToken(String username, String refreshToken, long expiration) {
-        redisTemplate.opsForValue().set(username, refreshToken, expiration, TimeUnit.MILLISECONDS);
+    public void saveRefreshToken(String userId, String refreshToken) {
+        redisTemplate.opsForValue().set(userId, refreshToken, 7, TimeUnit.DAYS);
     }
 
-    public String getRefreshToken(String username) {
-        return (String) redisTemplate.opsForValue().get(username);
+    public String getRefreshToken(String userId) {
+        return (String) redisTemplate.opsForValue().get(userId);
     }
 
-    public void deleteRefreshToken(String username) {
-        redisTemplate.delete(username);
+    public void deleteRefreshToken(String userId) {
+        redisTemplate.delete(userId);
     }
 }
