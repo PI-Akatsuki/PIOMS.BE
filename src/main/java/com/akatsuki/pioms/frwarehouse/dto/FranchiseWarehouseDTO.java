@@ -24,7 +24,6 @@ public class FranchiseWarehouseDTO {
     private ProductDTO product;
 
     public FranchiseWarehouseDTO(FranchiseWarehouse franchiseWarehouse) {
-        System.out.println("franchiseWarehouse = " + franchiseWarehouse);
         this.franchiseWarehouseCode = franchiseWarehouse.getFranchiseWarehouseCode();
         this.franchiseWarehouseTotal = franchiseWarehouse.getFranchiseWarehouseTotal();
         this.franchiseWarehouseCount = franchiseWarehouse.getFranchiseWarehouseCount();

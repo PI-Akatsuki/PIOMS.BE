@@ -171,6 +171,7 @@ public class FranchiseServiceImpl implements FranchiseService {
     @Override
     public FranchiseDTO findFranchiseByFranchiseOwnerCode(int franchiseOwnerCode) {
         Franchise franchise = franchiseRepository.findByFranchiseOwnerFranchiseOwnerCode(franchiseOwnerCode);
+        System.out.println("..");
         return new FranchiseDTO(franchise);
     }
 

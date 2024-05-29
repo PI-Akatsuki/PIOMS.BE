@@ -27,4 +27,6 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
     List<Order> findAllByOrderConditionOrderByOrderDateDesc(ORDER_CONDITION orderCondition);
 
     Order findByFranchiseFranchiseCodeAndOrderCondition(int adminCode, ORDER_CONDITION orderCondition);
+
+    List<Order> findByFranchiseFranchiseOwnerFranchiseOwnerCodeOrderByOrderDateDesc(int franchiseCode);
 }

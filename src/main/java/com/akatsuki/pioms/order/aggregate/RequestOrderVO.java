@@ -17,5 +17,5 @@ public class RequestOrderVO {
 //    private List<>
     private Map<Integer,Integer> products;
     private int franchiseCode;
-
+    private int orderTotalPrice;
 }
