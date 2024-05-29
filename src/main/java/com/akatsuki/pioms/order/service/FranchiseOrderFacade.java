@@ -38,17 +38,18 @@ public class FranchiseOrderFacade {
         this.franchiseWarehouseService =franchiseWarehouseService;
     }
 
-    public OrderDTO postFranchiseOrder(int franchiseOwnerCode, RequestOrderVO orders) {
+    public int postFranchiseOrder(int franchiseOwnerCode, RequestOrderVO requestOrderVO) {
         FranchiseDTO franchise = franchiseService.findFranchiseByFranchiseOwnerCode(franchiseOwnerCode);
 
-        if(!productService.checkOrderEnable(orders.getProducts()))
-            return null;
-        System.out.println(",,");
-        return orderService.postFranchiseOrder(franchise,orders);
+        if(!productService.checkOrderEnable(requestOrderVO.getProducts()))
+            return 0;
+
+        int result = orderService.postFranchiseOrder(franchise,requestOrderVO);
+        return result;
     }
 
     public List<OrderDTO> getOrderListByFranchiseCode(int franchiseOwnerCode) {
-        return orderService.getOrderList(franchiseOwnerCode);
+        return orderService.getOrderListByFranchiseOwnerCode(franchiseOwnerCode);
     }
 
 

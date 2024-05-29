@@ -31,7 +31,7 @@ public class OrderProduct {
     @ManyToOne
     private Product product;
 
-    public OrderProduct(Integer count, int findCount, Order order, int productCode) {
+    public OrderProduct(int count, int findCount, Order order, int productCode) {
         this.requestProductCount = count;
         this.requestProductGetCount = findCount;
         this.order = order;

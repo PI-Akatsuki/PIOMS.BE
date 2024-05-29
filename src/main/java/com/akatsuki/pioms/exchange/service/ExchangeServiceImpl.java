@@ -49,14 +49,18 @@ public class ExchangeServiceImpl implements ExchangeService{
     @Override
     @Transactional
     public ExchangeDTO findExchangeToSend(int franchiseCode) {
-        List<Exchange> exchange = null;
-        exchange = exchangeRepository.findAllByFranchiseFranchiseCodeAndExchangeStatus(franchiseCode, EXCHANGE_STATUS.반송신청);
-        if(exchange.isEmpty())
-            return null;
-        Exchange returnExchange = exchange.get(0);
+        Exchange returnExchange;
+        try {
 
-        returnExchange.setExchangeStatus(EXCHANGE_STATUS.반송중);
-        exchangeRepository.save(returnExchange);
+            returnExchange = exchangeRepository.findByFranchiseFranchiseCodeAndExchangeStatus(franchiseCode, EXCHANGE_STATUS.반송신청);
+            if (returnExchange==null)
+                return null;
+            returnExchange.setExchangeStatus(EXCHANGE_STATUS.반송중);
+            exchangeRepository.save(returnExchange);
+        }
+        catch (Exception e){
+                returnExchange= null;
+        }
         return new ExchangeDTO(returnExchange);
     }
 
@@ -130,17 +134,7 @@ public class ExchangeServiceImpl implements ExchangeService{
     }
 
     @Override
-    public List<ExchangeProductDTO> getExchangeProductsWithStatus(int exchangeCode, EXCHANGE_PRODUCT_STATUS exchangeProductStatus) {
-        List<ExchangeProduct> exchangeProducts =exchangeProductRepository.findAllByExchangeExchangeCodeAndExchangeProductStatus(exchangeCode,exchangeProductStatus);
-        List<ExchangeProductDTO> exchangeProductDTOS = new ArrayList<>();
-        for (ExchangeProduct exchangeProduct : exchangeProducts) {
-            exchangeProductDTOS.add(new ExchangeProductDTO(exchangeProduct));
-        }
-        return exchangeProductDTOS;
-    }
-
-    @Override
-    public ExchangeDTO getAdminExchange(int adminCode,int exchangeCode) {
+    public ExchangeDTO getExchangeByAdminCode(int adminCode, int exchangeCode) {
         Exchange exchange = exchangeRepository.findById(exchangeCode).orElse(null);
         if (exchange ==null)
             return null;
@@ -150,7 +144,7 @@ public class ExchangeServiceImpl implements ExchangeService{
     }
 
     @Override
-    public ExchangeDTO getFranchiseExchange(int franchiseOwnerCode,int exchangeCode) {
+    public ExchangeDTO getExchangeByFranchiseOwnerCode(int franchiseOwnerCode, int exchangeCode) {
         //FIN
         Exchange exchange = exchangeRepository.findById(exchangeCode).orElse(null);
         if (exchange==null|| exchange.getFranchise().getFranchiseOwner().getFranchiseOwnerCode() != franchiseOwnerCode)
