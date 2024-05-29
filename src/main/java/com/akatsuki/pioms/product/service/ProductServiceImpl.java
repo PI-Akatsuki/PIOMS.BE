@@ -156,6 +156,11 @@ public class ProductServiceImpl implements ProductService{
         return responseProduct;
     }
 
+    @Override
+    public boolean checkPostOrderEnable(Map<Integer, Integer> orderProductMap) {
+        return false;
+    }
+
 
     @Override
     @Transactional
