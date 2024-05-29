@@ -217,4 +217,9 @@ public class FranchiseOwnerServiceImpl implements FranchiseOwnerService {
             throw new EntityNotFoundException("Franchise owner not found with code: " + franchiseOwnerCode);
         }
     }
+
+    @Override
+    public int findFranchiseOwnerCodeByName(String userName) {
+        return franchiseOwnerRepository.findByFranchiseOwnerName(userName).getFranchiseOwnerCode();
+    }
 }
