@@ -48,28 +48,30 @@ public class SecurityConfig {
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource)) // CORS 설정 추가
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/reissue", "/login", "/admin/login", "/franchise/login", "/driver/login").permitAll()
-                        .requestMatchers("/admin/**").hasRole("ROOT")
-                        .requestMatchers(
-                                "/admin/info",
-                                "/admin/list/**",
-                                "/admin/category/first/list/**",
-                                "/admin/category/second/list/**",
-                                "/admin/category/third/list/**",
-                                "/admin/driver/list/**",
-                                "/admin/franchise/list/**",
-                                "/admin/franchise/owner/list/**",
-                                "/admin/franchise/owner/update/**",
-                                "/admin/product/list/**",
-                                "/admin/specs/**",
-                                "/admin/order/**",
-                                "/admin/invoice/**",
-                                "/admin/exchange/**",
-                                "/admin/notice/list/**",
-                                "/admin/ask/**",
-                                "/admin/exceldownload/**").hasRole("ADMIN")
-                        .requestMatchers("/franchise/**").hasRole("OWNER")
-                        .requestMatchers("/driver/**").hasRole("DRIVER")
+                        .requestMatchers("/**").permitAll()
+//                        .requestMatchers("/reissue", "/login", "/admin/login", "/franchise/login", "/driver/login").permitAll()
+//                        .requestMatchers("/admin/**").hasRole("ROOT")
+//                        .requestMatchers(
+//                                "/admin/info",
+//                                "/admin/home",
+//                                "/admin/list/**",
+//                                "/admin/category/first/list/**",
+//                                "/admin/category/second/list/**",
+//                                "/admin/category/third/list/**",
+//                                "/admin/driver/list/**",
+//                                "/admin/franchise/list/**",
+//                                "/admin/franchise/owner/list/**",
+//                                "/admin/franchise/owner/update/**",
+//                                "/admin/product/list/**",
+//                                "/admin/specs/**",
+//                                "/admin/order/**",
+//                                "/admin/invoice/**",
+//                                "/admin/exchange/**",
+//                                "/admin/notice/list/**",
+//                                "/admin/ask/**",
+//                                "/admin/exceldownload/**").hasRole("ADMIN")
+//                        .requestMatchers("/franchise/**").hasRole("OWNER")
+//                        .requestMatchers("/driver/**").hasRole("DRIVER")
                         .anyRequest().authenticated()
                 )
                 .logout(logout -> logout
