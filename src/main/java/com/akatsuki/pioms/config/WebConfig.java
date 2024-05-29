@@ -19,7 +19,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedOriginPatterns(
                         "http://localhost:5173",   // Vue 개발 서버
                         "http://localhost:3000",   // Vue 배포 서버
-                        "http://spioms.shop"   // Vue 배포 서버
+                        "http://api.pioms.shop"   // Vue 배포 서버
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
