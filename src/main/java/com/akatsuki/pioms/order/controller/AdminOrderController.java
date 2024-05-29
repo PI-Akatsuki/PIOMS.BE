@@ -39,7 +39,6 @@ import java.util.List;
 @Tag(name = "Admin Order API" ,description = "관리자 관련 API 명세서입니다.")
 public class AdminOrderController {
     AdminOrderFacade orderFacade;
-
     @Autowired
     public AdminOrderController(AdminOrderFacade orderFacade) {
         this.orderFacade = orderFacade;
@@ -47,10 +46,10 @@ public class AdminOrderController {
 
     @GetMapping("/orders")
     @Operation(summary = "관리자가 관리하고 있는 모든 가맹점들의 발주 리스트를 조회합니다.")
-    public ResponseEntity<List<OrderVO>> getFranchisesOrderList(@RequestParam(name = "adminCode") int adminCode
+    public ResponseEntity<List<OrderVO>> getFranchisesOrderList(
 //            , @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size
     ){
-        List<OrderDTO> orderDTOS = orderFacade.getOrderListByAdminCode(adminCode);
+        List<OrderDTO> orderDTOS = orderFacade.getOrderListByAdminCode();
         if (orderDTOS.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
@@ -64,8 +63,8 @@ public class AdminOrderController {
 
     @PutMapping("/order/{orderCode}/accept")
     @Operation(summary = "승인 대기 중인 발주를 승인합니다.")
-    public ResponseEntity<Integer> acceptOrder(@RequestParam(name = "adminCode") int adminCode, @PathVariable int orderCode){
-        int result = orderFacade.accpet(orderCode, adminCode);
+    public ResponseEntity<Integer> acceptOrder( @PathVariable int orderCode){
+        int result = orderFacade.accpetOrder(orderCode);
         if (result==6)
             return ResponseEntity.ok(result);
         if(result==0)
@@ -75,8 +74,8 @@ public class AdminOrderController {
 
     @PutMapping("/order/{orderId}/deny")
     @Operation(summary = "승인 대기 중인 발주를 거절합니다.")
-    public ResponseEntity<Integer> denyOrder(@RequestParam(name = "adminCode") int adminCode,@PathVariable int orderId, @RequestParam String denyMessage){
-        int result = orderFacade.denyOrder(adminCode,orderId,denyMessage);
+    public ResponseEntity<Integer> denyOrder(@PathVariable int orderId, @RequestParam String denyMessage){
+        int result = orderFacade.denyOrder(orderId,denyMessage);
         if (result == 0){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
@@ -85,8 +84,8 @@ public class AdminOrderController {
 
     @GetMapping("/order/{orderCode}")
     @Operation(summary = "발주를 상세 조회합니다.")
-    public ResponseEntity<OrderVO> getOrder(@RequestParam(name = "adminCode") int adminCode, @PathVariable int orderCode){
-        OrderDTO orderDTO = orderFacade.getDetailOrderByAdminCode(adminCode,orderCode);
+    public ResponseEntity<OrderVO> getOrder(@PathVariable int orderCode){
+        OrderDTO orderDTO = orderFacade.getDetailOrderByAdminCode(orderCode);
         if(orderDTO == null){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         }

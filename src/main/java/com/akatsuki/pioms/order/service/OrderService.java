@@ -81,7 +81,7 @@ public interface OrderService {
     // 발주가 정상적으로 생성되면 true, 비정상적인 경우 false를 반환합니다.
     // 정상적으로 이루어진 경우: 발주서와 가맹점 코드가 일치. 발주서 상태가 승인 대기인 경우.
     // 비정상적으로 이루어진 경우: 발주서와 가맹점 코드 불일치. 발주서 상태가 승인 대기가 아닌 경우
-    boolean putFranchiseOrder(int franchiseCode, RequestPutOrder order);
+    boolean putFranchiseOrder(int franchiseOwnerCode, RequestPutOrder order);
 
     boolean findOrderByExchangeCode(int exchangeCode);
 

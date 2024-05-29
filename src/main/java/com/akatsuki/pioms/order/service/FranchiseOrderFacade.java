@@ -1,5 +1,6 @@
 package com.akatsuki.pioms.order.service;
 
+import com.akatsuki.pioms.config.ConvertUser;
 import com.akatsuki.pioms.exchange.service.ExchangeService;
 import com.akatsuki.pioms.franchise.dto.FranchiseDTO;
 import com.akatsuki.pioms.franchise.service.FranchiseService;
@@ -19,16 +20,17 @@ import java.util.List;
 
 @Service
 public class FranchiseOrderFacade {
-    OrderService orderService;
-    InvoiceService invoiceService;
-    SpecsService specsService;
-    ExchangeService exchangeService;
-    ProductService productService;
-    FranchiseService franchiseService;
-    FranchiseWarehouseService franchiseWarehouseService;
+    private final OrderService orderService;
+    private final InvoiceService invoiceService;
+    private final SpecsService specsService;
+    private final ExchangeService exchangeService;
+    private final ProductService productService;
+    private final FranchiseService franchiseService;
+    private final FranchiseWarehouseService franchiseWarehouseService;
+    private final ConvertUser convertUser;
 
     @Autowired
-    public FranchiseOrderFacade(OrderService orderService, InvoiceService invoiceService, SpecsService specsService, ExchangeService exchangeService, ProductService productService, FranchiseService franchiseService, FranchiseWarehouseService franchiseWarehouseService) {
+    public FranchiseOrderFacade(OrderService orderService, InvoiceService invoiceService, SpecsService specsService, ExchangeService exchangeService, ProductService productService, FranchiseService franchiseService, FranchiseWarehouseService franchiseWarehouseService, ConvertUser convertUser) {
         this.orderService = orderService;
         this.invoiceService = invoiceService;
         this.specsService = specsService;
@@ -36,9 +38,12 @@ public class FranchiseOrderFacade {
         this.productService = productService;
         this.franchiseService = franchiseService;
         this.franchiseWarehouseService =franchiseWarehouseService;
+        this.convertUser = convertUser;
     }
 
-    public int postFranchiseOrder(int franchiseOwnerCode, RequestOrderVO requestOrderVO) {
+    public int postFranchiseOrder(RequestOrderVO requestOrderVO) {
+        int franchiseOwnerCode = convertUser.convertUser();
+        System.out.println("franchiseOwnerCode = " + franchiseOwnerCode);
         FranchiseDTO franchise = franchiseService.findFranchiseByFranchiseOwnerCode(franchiseOwnerCode);
 
         if(!productService.checkOrderEnable(requestOrderVO.getProducts()))
@@ -48,12 +53,15 @@ public class FranchiseOrderFacade {
         return result;
     }
 
-    public List<OrderDTO> getOrderListByFranchiseCode(int franchiseOwnerCode) {
+    public List<OrderDTO> getOrderListByFranchiseCode() {
+        int franchiseOwnerCode = convertUser.convertUser();
         return orderService.getOrderListByFranchiseOwnerCode(franchiseOwnerCode);
     }
 
 
-    public boolean putFranchiseOrderCheck(int franchiseCode, RequestPutOrderCheck requestPutOrder){
+    public boolean putFranchiseOrderCheck(RequestPutOrderCheck requestPutOrder){
+        int franchiseOwnerCode = convertUser.convertUser();
+        int franchiseCode = franchiseService.findFranchiseByFranchiseOwnerCode(franchiseOwnerCode).getFranchiseCode();
         OrderDTO order = orderService.getOrder(franchiseCode,requestPutOrder.getOrderCode());
         if (order==null || requestPutOrder.getRequestProduct().size() != order.getOrderProductList().size()){
             return false;
@@ -86,11 +94,14 @@ public class FranchiseOrderFacade {
         return true;
     }
 
-    public boolean putFranchiseOrder(int franchiseCode, RequestPutOrder order) {
-        return orderService.putFranchiseOrder(franchiseCode,order);
+    public boolean putFranchiseOrder(RequestPutOrder order) {
+        int franchiseOwnerCode = convertUser.convertUser();
+        return orderService.putFranchiseOrder(franchiseOwnerCode,order);
     }
 
-    public OrderDTO getOrderByFranchiseCode(int franchiseCode, int orderCode) {
+    public OrderDTO getOrderByFranchiseCode(int orderCode) {
+        int franchiseOwnerCode = convertUser.convertUser();
+        int franchiseCode = franchiseService.findFranchiseByFranchiseOwnerCode(franchiseOwnerCode).getFranchiseCode();
         return orderService.getOrder(franchiseCode,orderCode);
     }
 }

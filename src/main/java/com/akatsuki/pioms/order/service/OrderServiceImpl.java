@@ -142,11 +142,11 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     @Transactional
-    public boolean putFranchiseOrder(int franchiseCode, RequestPutOrder requestOrder) {
+    public boolean putFranchiseOrder(int franchiseOwnerCode, RequestPutOrder requestOrder) {
 
         Order order = orderRepository.findById(requestOrder.getOrderCode())
                 .orElseThrow(() -> new IllegalArgumentException("Order not found"));
-        if (order.getFranchise().getFranchiseCode() != franchiseCode) {
+        if (order.getFranchise().getFranchiseCode() != franchiseOwnerCode) {
             return false;
         }
 

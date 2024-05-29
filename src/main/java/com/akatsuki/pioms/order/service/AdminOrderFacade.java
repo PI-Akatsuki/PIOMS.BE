@@ -1,5 +1,6 @@
 package com.akatsuki.pioms.order.service;
 
+import com.akatsuki.pioms.config.ConvertUser;
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import com.akatsuki.pioms.exchange.service.ExchangeService;
 import com.akatsuki.pioms.franchise.service.FranchiseService;
@@ -27,9 +28,10 @@ public class AdminOrderFacade {
     ProductService productService;
     FranchiseService franchiseService;
     FranchiseWarehouseService franchiseWarehouseService;
+    ConvertUser convertUser;
 
     @Autowired
-    public AdminOrderFacade(OrderService orderService, InvoiceService invoiceService, SpecsService specsService, ExchangeService exchangeService, ProductService productService, FranchiseService franchiseService, FranchiseWarehouseService franchiseWarehouseService) {
+    public AdminOrderFacade(OrderService orderService, InvoiceService invoiceService, SpecsService specsService, ExchangeService exchangeService, ProductService productService, FranchiseService franchiseService, FranchiseWarehouseService franchiseWarehouseService, ConvertUser convertUser) {
         this.orderService = orderService;
         this.invoiceService = invoiceService;
         this.specsService = specsService;
@@ -37,14 +39,17 @@ public class AdminOrderFacade {
         this.productService = productService;
         this.franchiseService = franchiseService;
         this.franchiseWarehouseService =franchiseWarehouseService;
+        this.convertUser = convertUser;
     }
 
-    public List<OrderDTO> getOrderListByAdminCode(int adminCode){
+    public List<OrderDTO> getOrderListByAdminCode(){
+        int adminCode = convertUser.convertUser();
         List<OrderDTO> orders =  orderService.getOrderListByAdminCode(adminCode);
         return orders;
     }
 
-    public OrderDTO getDetailOrderByAdminCode(int adminCode, int orderCode){
+    public OrderDTO getDetailOrderByAdminCode(int orderCode){
+        int adminCode = convertUser.convertUser();
         return orderService.getDetailOrderByAdminCode(adminCode,orderCode);
     }
 
@@ -59,7 +64,8 @@ public class AdminOrderFacade {
      5: Fail Exchange logic<br>
      6: Success!! */
     @Transactional(readOnly = false)
-    public int accpet(int orderCode, int adminCode){
+    public int accpetOrder(int orderCode){
+        int adminCode = convertUser.convertUser();
         OrderDTO order;
         ExchangeDTO exchangeDTO;
         int success=0;
@@ -114,7 +120,8 @@ public class AdminOrderFacade {
         return result;
     }
 
-    public int denyOrder(int adminCode,int orderId, String denyMessage){
+    public int denyOrder(int orderId, String denyMessage){
+        int adminCode = convertUser.convertUser();
         return orderService.denyOrder(adminCode,orderId,denyMessage);
     }
 
