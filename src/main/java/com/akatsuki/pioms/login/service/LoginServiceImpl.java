@@ -1,16 +1,19 @@
 package com.akatsuki.pioms.login.service;
 
-import com.akatsuki.pioms.admin.aggregate.Admin;
-import com.akatsuki.pioms.admin.repository.AdminRepository;
-import com.akatsuki.pioms.driver.aggregate.DeliveryDriver;
-import com.akatsuki.pioms.driver.repository.DeliveryDriverRepository;
-import com.akatsuki.pioms.frowner.aggregate.FranchiseOwner;
-import com.akatsuki.pioms.frowner.repository.FranchiseOwnerRepository;
+import com.akatsuki.pioms.user.aggregate.User;
+import com.akatsuki.pioms.user.dto.CustomUserDetails;
+import com.akatsuki.pioms.user.repository.UserRepository;
+import com.akatsuki.pioms.jwt.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -19,32 +22,60 @@ public class LoginServiceImpl implements LoginService {
 
     private static final Logger logger = Logger.getLogger(LoginServiceImpl.class.getName());
 
-    private final AdminRepository adminRepository;
-    private final FranchiseOwnerRepository franchiseOwnerRepository;
-    private final DeliveryDriverRepository deliveryDriverRepository;
+    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JWTUtil jwtUtil;
+    private final AuthenticationManager authenticationManager;
 
     @Autowired
-    public LoginServiceImpl(AdminRepository adminRepository, FranchiseOwnerRepository franchiseOwnerRepository, DeliveryDriverRepository deliveryDriverRepository, PasswordEncoder passwordEncoder) {
-        this.adminRepository = adminRepository;
-        this.franchiseOwnerRepository = franchiseOwnerRepository;
-        this.deliveryDriverRepository = deliveryDriverRepository;
+    public LoginServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, JWTUtil jwtUtil, AuthenticationManager authenticationManager) {
+        this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
+        this.authenticationManager = authenticationManager;
     }
 
     @Override
-    public ResponseEntity<Admin> adminLogin(String adminId, String password, String accessNumber) {
-        Optional<Admin> optionalAdmin = adminRepository.findByAdminId(adminId);
+    public ResponseEntity<User> adminLogin(String adminId, String password, String accessNumber) {
+        Optional<User> optionalUser = userRepository.findByUserId(adminId);
 
-        if (optionalAdmin.isPresent()) {
-            Admin admin = optionalAdmin.get();
-            logger.info("관리자: " + admin.getAdminId());
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
 
-            if (passwordEncoder.matches(password, admin.getAdminPwd()) && admin.getAccessNumber().equals(accessNumber)) {
-                logger.info("비밀번호와 접속번호가 일치함");
-                return ResponseEntity.ok(admin);
+            if (user.getPwdCheckCount() >= 5) {
+                logger.warning("비밀번호 틀린 횟수 초과: " + adminId);
+                return ResponseEntity.status(403).body(user);
+            }
+
+            if (("ROLE_ROOT".equals(user.getRole()) || "ROLE_ADMIN".equals(user.getRole())) &&
+                    passwordEncoder.matches(password, user.getPassword()) &&
+                    accessNumber.equals(user.getAccessNumber())) {
+
+                // 로그인 성공, 비밀번호 틀린 횟수 초기화
+                user.setPwdCheckCount(0);
+
+                // 휴면 설정 90일 후로 설정
+                user.setUserDormancy(false);
+                LocalDateTime dormancyDate = LocalDateTime.now().plusDays(90);
+                user.setUpdateDate(dormancyDate.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+
+                userRepository.save(user);
+
+                Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(adminId, password));
+                CustomUserDetails authenticatedUserDetails = (CustomUserDetails) authentication.getPrincipal();
+                User authenticatedUser = authenticatedUserDetails.getUser();
+
+                String accessToken = jwtUtil.createJwt("access", authenticatedUser.getUserId(), authenticatedUser.getRole(), 600000L);
+                String refreshToken = jwtUtil.createJwt("refresh", authenticatedUser.getUserId(), authenticatedUser.getRole(), 86400000L);
+
+                return ResponseEntity.ok()
+                        .header("Authorization", "Bearer " + accessToken)
+                        .header("Set-Cookie", "refresh=" + refreshToken + "; HttpOnly; Path=/; Max-Age=86400000;")
+                        .body(authenticatedUser);
             } else {
-                logger.warning("비밀번호나 접속번호가 일치하지 않음");
+                user.setPwdCheckCount(user.getPwdCheckCount() + 1);
+                userRepository.save(user);
+                logger.warning("비밀번호나 접속번호가 일치하지 않음 (관리자)");
             }
         } else {
             logger.warning("관리자를 찾을 수 없음: " + adminId);
@@ -54,42 +85,94 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
-    public ResponseEntity<FranchiseOwner> frOwnerLogin(String frOwnerId, String frOwnerPassword) {
-        Optional<FranchiseOwner> optionalFranchiseOwner = franchiseOwnerRepository.findByFranchiseOwnerId(frOwnerId);
+    public ResponseEntity<User> frOwnerLogin(String frOwnerId, String frOwnerPassword) {
+        Optional<User> optionalUser = userRepository.findByUserId(frOwnerId);
 
-        if (optionalFranchiseOwner.isPresent()) {
-            FranchiseOwner franchiseOwner = optionalFranchiseOwner.get();
-            logger.info("점주: " + franchiseOwner.getFranchiseOwnerId());
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
 
-            if (passwordEncoder.matches(frOwnerPassword, franchiseOwner.getFranchiseOwnerPwd())) {
-                logger.info("비밀번호 일치함");
-                return ResponseEntity.ok(franchiseOwner);
+            if (user.getPwdCheckCount() >= 5) {
+                logger.warning("비밀번호 틀린 횟수 초과: " + frOwnerId);
+                return ResponseEntity.status(403).body(user);
+            }
+
+            if ("ROLE_OWNER".equals(user.getRole()) && passwordEncoder.matches(frOwnerPassword, user.getPassword())) {
+
+                // 로그인 성공, 비밀번호 틀린 횟수 초기화
+                user.setPwdCheckCount(0);
+
+                // 휴면 설정 90일 후로 설정
+                user.setUserDormancy(false);
+                LocalDateTime dormancyDate = LocalDateTime.now().plusDays(90);
+                user.setUpdateDate(dormancyDate.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+
+                userRepository.save(user);
+
+                Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(frOwnerId, frOwnerPassword));
+                CustomUserDetails authenticatedUserDetails = (CustomUserDetails) authentication.getPrincipal();
+                User authenticatedUser = authenticatedUserDetails.getUser();
+
+                String accessToken = jwtUtil.createJwt("access", authenticatedUser.getUserId(), authenticatedUser.getRole(), 600000L);
+                String refreshToken = jwtUtil.createJwt("refresh", authenticatedUser.getUserId(), authenticatedUser.getRole(), 86400000L);
+
+                return ResponseEntity.ok()
+                        .header("Authorization", "Bearer " + accessToken)
+                        .header("Set-Cookie", "refresh=" + refreshToken + "; HttpOnly; Path=/; Max-Age=86400000;")
+                        .body(authenticatedUser);
             } else {
-                logger.warning("비밀번호가 일치하지 않음");
+                user.setPwdCheckCount(user.getPwdCheckCount() + 1);
+                userRepository.save(user);
+                logger.warning("비밀번호가 일치하지 않음 (점주)");
             }
         } else {
-            logger.warning("점주 찾을 수 없음: " + frOwnerId);
+            logger.warning("점주를 찾을 수 없음: " + frOwnerId);
         }
 
         return ResponseEntity.status(401).build();
     }
 
     @Override
-    public ResponseEntity<DeliveryDriver> driverLogin(String driverId, String driverPassword) {
-        Optional<DeliveryDriver> optionalDeliveryDriver = deliveryDriverRepository.findByDriverId(driverId);
+    public ResponseEntity<User> driverLogin(String driverId, String driverPassword) {
+        Optional<User> optionalUser = userRepository.findByUserId(driverId);
 
-        if (optionalDeliveryDriver.isPresent()) {
-            DeliveryDriver deliveryDriver = optionalDeliveryDriver.get();
-            logger.info("배송기사: " + deliveryDriver.getDriverId());
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
 
-            if (passwordEncoder.matches(driverPassword, deliveryDriver.getDriverPwd())) {
-                logger.info("비밀번호 일치함");
-                return ResponseEntity.ok(deliveryDriver);
+            if (user.getPwdCheckCount() >= 5) {
+                logger.warning("비밀번호 틀린 횟수 초과: " + driverId);
+                return ResponseEntity.status(403).body(user);
+            }
+
+            if ("ROLE_DRIVER".equals(user.getRole()) && passwordEncoder.matches(driverPassword, user.getPassword())) {
+
+                // 로그인 성공, 비밀번호 틀린 횟수 초기화
+                user.setPwdCheckCount(0);
+
+                // 휴면 설정 90일 후로 설정
+                user.setUserDormancy(false);
+                LocalDateTime dormancyDate = LocalDateTime.now().plusDays(90);
+                user.setUpdateDate(dormancyDate.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+
+                userRepository.save(user);
+
+                Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(driverId, driverPassword));
+                CustomUserDetails authenticatedUserDetails = (CustomUserDetails) authentication.getPrincipal();
+                User authenticatedUser = authenticatedUserDetails.getUser();
+
+                String accessToken = jwtUtil.createJwt("access", authenticatedUser.getUserId(), authenticatedUser.getRole(), 600000L);
+                String refreshToken = jwtUtil.createJwt("refresh", authenticatedUser.getUserId(), authenticatedUser.getRole(), 86400000L);
+
+                return ResponseEntity.ok()
+                        .header("Authorization", "Bearer " + accessToken)
+                        .header("Set-Cookie", "refresh=" + refreshToken + "; HttpOnly; Path=/; Max-Age=86400000;")
+                        .body(authenticatedUser);
             } else {
-                logger.warning("비밀번호가 일치하지 않음");
+                user.setPwdCheckCount(user.getPwdCheckCount() + 1);
+                userRepository.save(user);
+                logger.warning("비밀번호가 일치하지 않음 (배송기사)");
             }
         } else {
-            logger.warning("배송기사 찾을 수 없음: " + driverId);
+            logger.warning("배송기사를 찾을 수 없음: " + driverId);
         }
 
         return ResponseEntity.status(401).build();
