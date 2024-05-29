@@ -61,9 +61,11 @@ dependencies {
 //    implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
     // excel POI
-//     https://mvnrepository.com/artifact/org.apache.poi/poi
-    implementation group: 'org.apache.poi', name: 'poi', version: '5.2.3'
-    compileOnly group: 'org.apache.poi', name: 'poi-ooxml', version: '5.2.3'  // XSSFWorkbook 사용가능
+// https://mvnrepository.com/artifact/org.apache.poi/poi
+    implementation group: 'org.apache.poi', name: 'poi', version: '5.2.5'
+    // https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml
+    implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '5.2.5'
+
 
     testImplementation("org.junit.vintage:junit-vintage-engine") {
         exclude group: "org.hamcrest", module: "hamcrest-core"
