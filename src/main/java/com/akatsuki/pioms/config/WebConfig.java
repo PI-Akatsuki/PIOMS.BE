@@ -13,17 +13,19 @@ import java.util.List;
 @Configuration
 @EnableWebMvc
 public class WebConfig implements WebMvcConfigurer {
+
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOriginPatterns(
+                .allowedOrigins(
                         "http://localhost:5173",   // Vue 개발 서버
                         "http://localhost:3000",   // Vue 배포 서버
-                        "http://api.pioms.shop"   // Vue 배포 서버
+                        "http://api.pioms.shop",   // Vue 배포 서버
+                        "http://localhost:8080"    // Vue 배포 서버
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
-//                .exposedHeaders("Authorization")
+                .exposedHeaders("Authorization", "Set-Cookie") // 필요한 헤더 노출
                 .allowCredentials(true)
                 .maxAge(3600);
     }
