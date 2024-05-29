@@ -15,16 +15,18 @@ public class CustomUserDetails implements UserDetails {
         this.userEntity = userEntity;
     }
 
+    public User getUser() {
+        return userEntity;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-
         Collection<GrantedAuthority> collection = new ArrayList<>();
         collection.add(new GrantedAuthority() {
             @Override
             public String getAuthority() {
                 return userEntity.getRole();
             }
-
         });
         return collection;
     }
@@ -36,7 +38,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return userEntity.getUsername();
+        return userEntity.getUserId();
     }
 
     @Override
@@ -56,6 +58,6 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return userEntity.isUserStatus();
     }
 }

@@ -1,60 +1,53 @@
 package com.akatsuki.pioms.jwt;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 @Component
 public class JWTUtil {
 
-    private SecretKey secretKey;
+    private final SecretKey secretKey;
 
-    public JWTUtil(@Value("${spring.jwt.secret}")String secret) {
-
-
-        secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS512.key().build().getAlgorithm());
-    }
-
-//    public String getUsercode(String token) {
-//
-//        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("usercode", String.class);
-//    }
-
-    public String getCategory(String token) {
-
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("category", String.class);
-    }
-
-    public String getUsername(String token) {
-
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("username", String.class);
-    }
-
-    public String getRole(String token) {
-
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("role", String.class);
-    }
-
-    public Boolean isExpired(String token) {
-
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
+    public JWTUtil(@Value("${spring.jwt.secret}") String secret) {
+        this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
     public String createJwt(String category, String username, String role, Long expiredMs) {
-
         return Jwts.builder()
                 .claim("category", category)
                 .claim("username", username)
                 .claim("role", role)
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + expiredMs))
-                .signWith(secretKey)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + expiredMs))
+                .signWith(secretKey, SignatureAlgorithm.HS512)
                 .compact();
     }
 
+    public Boolean isExpired(String token) {
+        try {
+            return Jwts.parser().setSigningKey(secretKey).build().parseClaimsJws(token).getBody().getExpiration().before(new Date());
+        } catch (ExpiredJwtException e) {
+            return true;
+        }
+    }
+
+    public String getCategory(String token) {
+        return Jwts.parser().setSigningKey(secretKey).build().parseClaimsJws(token).getBody().get("category", String.class);
+    }
+
+    public String getUsername(String token) {
+        return Jwts.parser().setSigningKey(secretKey).build().parseClaimsJws(token).getBody().get("username", String.class);
+    }
+
+    public String getRole(String token) {
+        return Jwts.parser().setSigningKey(secretKey).build().parseClaimsJws(token).getBody().get("role", String.class);
+    }
 }

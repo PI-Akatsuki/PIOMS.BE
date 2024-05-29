@@ -1,7 +1,5 @@
 package com.akatsuki.pioms.jwt;
 
-import com.akatsuki.pioms.user.aggregate.User;
-import com.akatsuki.pioms.user.dto.CustomUserDetails;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
