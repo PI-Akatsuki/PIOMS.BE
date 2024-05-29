@@ -2,64 +2,41 @@ package com.akatsuki.pioms.order.service;
 
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import com.akatsuki.pioms.exchange.service.ExchangeService;
-import com.akatsuki.pioms.franchise.aggregate.Franchise;
-import com.akatsuki.pioms.franchise.service.FranchiseService;
 import com.akatsuki.pioms.frwarehouse.service.FranchiseWarehouseService;
-import com.akatsuki.pioms.invoice.dto.InvoiceDTO;
+import com.akatsuki.pioms.invoice.aggregate.Invoice;
 import com.akatsuki.pioms.invoice.service.InvoiceService;
 import com.akatsuki.pioms.order.aggregate.Order;
-import com.akatsuki.pioms.order.aggregate.RequestOrderVO;
-import com.akatsuki.pioms.order.aggregate.RequestPutOrderCheck;
 import com.akatsuki.pioms.order.dto.OrderDTO;
 import com.akatsuki.pioms.order.dto.OrderProductDTO;
 import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
 import com.akatsuki.pioms.product.service.ProductService;
 import com.akatsuki.pioms.specs.service.SpecsService;
+import org.hibernate.annotations.processing.Find;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Service
-public class AdminOrderFacade {
-    OrderService orderService;
-    InvoiceService invoiceService;
-    SpecsService specsService;
-    ExchangeService exchangeService;
-    ProductService productService;
-    FranchiseService franchiseService;
-    FranchiseWarehouseService franchiseWarehouseService;
+public class OrderFacade {
+    private final OrderService orderService;
+    private final ExchangeService exchangeService;
+    private final InvoiceService invoiceService;
+    private final ProductService productService;
+    private final FranchiseWarehouseService franchiseWarehouseService;
+    private final SpecsService specsService;
 
     @Autowired
-    public AdminOrderFacade(OrderService orderService, InvoiceService invoiceService, SpecsService specsService, ExchangeService exchangeService, ProductService productService, FranchiseService franchiseService, FranchiseWarehouseService franchiseWarehouseService) {
+    public OrderFacade(OrderService orderService, ExchangeService exchangeService, InvoiceService invoiceService, ProductService productService, FranchiseWarehouseService franchiseWarehouseService, SpecsService specsService) {
         this.orderService = orderService;
-        this.invoiceService = invoiceService;
-        this.specsService = specsService;
         this.exchangeService = exchangeService;
+        this.invoiceService = invoiceService;
         this.productService = productService;
-        this.franchiseService = franchiseService;
-        this.franchiseWarehouseService =franchiseWarehouseService;
-    }
-
-    public List<OrderDTO> getOrderListByAdminCode(int adminCode){
-        List<Order> orders =  orderService.getOrderListByAdminCode(adminCode);
-        List<OrderDTO> orderDTOS = new ArrayList<>();
-        orders.forEach(order -> {
-            orderDTOS.add(new OrderDTO(order));
-        });
-
-        return orderDTOS;
-    }
-    public List<OrderDTO> getAdminUncheckedOrders(int adminCode){
-        return orderService.getAdminUncheckesOrders(adminCode);
-    }
-    public OrderDTO getAdminOrder(int adminCode, int orderCode){
-        return orderService.getAdminOrder(adminCode,orderCode);
+        this.franchiseWarehouseService = franchiseWarehouseService;
+        this.specsService = specsService;
     }
 
     //1. accept Order
@@ -89,7 +66,7 @@ public class AdminOrderFacade {
             success++; // 1
             // check enable to change exchange product
             if (exchangeDTO!=null || !productService.checkExchangeProduct(order,exchangeDTO)){
-                exchangeDTO = null;
+                    exchangeDTO = null;
             }
 
             // change order condition '승인완료', add Exchange in order
@@ -97,7 +74,7 @@ public class AdminOrderFacade {
             if(order == null)
                 throw new Exception("accpet Order problem occured!!");
             success++; // 2
-
+            // export products of order
             productService.exportProducts(order);
             success++; // 3
             // create new specs
@@ -124,10 +101,6 @@ public class AdminOrderFacade {
             result.put(orderProductDTO.getProductCode(),orderProductDTO.getRequestProductCount());
         }
         return result;
-    }
-
-    public OrderDTO denyOrder(int adminCode,int orderId, String denyMessage){
-        return orderService.denyOrder(adminCode,orderId,denyMessage);
     }
 
 }

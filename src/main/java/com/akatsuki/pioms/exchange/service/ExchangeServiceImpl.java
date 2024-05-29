@@ -233,10 +233,12 @@ public class ExchangeServiceImpl implements ExchangeService{
     public void updateExchangeStartDelivery(int franchiseCode) {
         // 배송 시작하게 되면 이 떄 반환대기로 있는 교환품목 같이 배송
         List<Exchange> exchanges = exchangeRepository.findAllByFranchiseFranchiseCodeAndExchangeStatus(franchiseCode,EXCHANGE_STATUS.반환대기);
-
         if (exchanges.isEmpty())
             return;
+        saveExchangeAndProduct(exchanges);
+    }
 
+    private void saveExchangeAndProduct(List<Exchange> exchanges) {
         exchanges.forEach(exchange -> {
             exchange.setExchangeStatus(EXCHANGE_STATUS.반환중);
             for (int i = 0; i <exchange.getProducts().size(); i++) {
@@ -249,23 +251,28 @@ public class ExchangeServiceImpl implements ExchangeService{
             exchangeRepository.save(exchange);
         });
     }
+
     @Transactional
     public boolean updateExchangeEndDelivery(int franchiseCode){
         List<Exchange> exchanges = exchangeRepository.findAllByFranchiseFranchiseCodeAndExchangeStatus(franchiseCode,EXCHANGE_STATUS.반환중);
         if (exchanges.isEmpty()){
             return false;
         }
+        saveExchangeAndFRWareHouse(franchiseCode, exchanges);
+        return true;
+    }
+
+    private void saveExchangeAndFRWareHouse(int franchiseCode, List<Exchange> exchanges) {
         exchanges.forEach(exchange -> {
             exchange.setExchangeStatus(EXCHANGE_STATUS.반환완료);
             exchangeRepository.save(exchange);
             for (int i = 0; i < exchange.getProducts().size(); i++) {
                 if (exchange.getProducts().get(i).getExchangeProductStatus()== EXCHANGE_PRODUCT_STATUS.교환){
                     franchiseWarehouseService.saveProduct(exchange.getProducts().get(i).getProduct().getProductCode(),
-                            exchange.getProducts().get(i).getExchangeProductCount(),franchiseCode);
+                            exchange.getProducts().get(i).getExchangeProductCount(), franchiseCode);
                 }
             }
         });
-        return true;
     }
 
     @Override
@@ -314,14 +321,10 @@ public class ExchangeServiceImpl implements ExchangeService{
             System.out.println("3차 검증 실패: 반송 상품 검수 갯수 불일치" );
             return null;
         }
-        System.out.println("exchangeEntity = " + exchangeEntity);
         requestExchange.getProducts().forEach(this::updateExchangeProduct);
         exchangeEntity.setExchangeStatus(EXCHANGE_STATUS.처리완료);
-
         productService.importExchangeProducts(requestExchange);
-
         exchangeRepository.save(exchangeEntity);
-
         return new ExchangeDTO(exchangeRepository.findById(exchangeCode).orElseThrow());
     }
 
@@ -335,7 +338,6 @@ public class ExchangeServiceImpl implements ExchangeService{
             return;
         exchanges.forEach(exchange -> {
             exchange.setExchangeStatus(EXCHANGE_STATUS.반환대기);
-
             exchangeRepository.save(exchange);
         });
     }

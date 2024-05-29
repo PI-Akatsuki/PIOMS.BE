@@ -1,8 +1,6 @@
 package com.akatsuki.pioms.order.service;
 
-import com.akatsuki.pioms.exchange.aggregate.RequestExchange;
 import com.akatsuki.pioms.exchange.service.ExchangeService;
-import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import com.akatsuki.pioms.franchise.dto.FranchiseDTO;
 import com.akatsuki.pioms.franchise.service.FranchiseService;
 import com.akatsuki.pioms.frwarehouse.service.FranchiseWarehouseService;
@@ -15,7 +13,6 @@ import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
 import com.akatsuki.pioms.product.service.ProductService;
 import com.akatsuki.pioms.specs.service.SpecsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -44,7 +41,7 @@ public class FranchiseOrderFacade {
     public OrderDTO postFranchiseOrder(int franchiseOwnerCode, RequestOrderVO orders) {
         FranchiseDTO franchise = franchiseService.findFranchiseByFranchiseOwnerCode(franchiseOwnerCode);
 
-        if(!productService.checkPostOrderEnable(orders.getProducts()))
+        if(!productService.checkOrderEnable(orders.getProducts()))
             return null;
         System.out.println(",,");
         return orderService.postFranchiseOrder(franchise,orders);
@@ -70,7 +67,6 @@ public class FranchiseOrderFacade {
         }
 
         order.getOrderProductList().forEach(orderProduct->{
-            System.out.println("orderProduct = " + orderProduct);
             if(requestPutOrder.getRequestProduct().get(orderProduct.getRequestProductCode())!=null) {
                 // changeVal: 받은 수량
                 int changeVal = requestPutOrder.getRequestProduct().get(orderProduct.getRequestProductCode());
@@ -81,7 +77,7 @@ public class FranchiseOrderFacade {
                 // 요청 수량과 검수된 수량이 불일치하면 본사 창고에 이를 알려 수정하도록 함
                 if(changeVal != requestVal){
                     // 검수 수량 이상 있을 시 본사 창고에 잘못된 수량 업데이트
-                    productService.editIncorrectCount(orderProduct.getProductCode(), requestVal-changeVal);
+                    productService.productPlusCnt(orderProduct.getProductCode(), requestVal-changeVal);
                 }
             }
         });

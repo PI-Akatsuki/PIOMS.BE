@@ -1,6 +1,7 @@
 package com.akatsuki.pioms.specs.service;
 
 import com.akatsuki.pioms.franchise.aggregate.DELIVERY_DATE;
+import com.akatsuki.pioms.order.dto.OrderDTO;
 import com.akatsuki.pioms.specs.aggregate.Specs;
 import com.akatsuki.pioms.specs.dto.SpecsDTO;
 import com.akatsuki.pioms.specs.repository.SpecsRepository;
@@ -21,8 +22,8 @@ public class SpecsServiceImpl implements SpecsService{
 
     // order 승인 후
     @Override
-    public void afterAcceptOrder(int orderCode, int franchiseCode, DELIVERY_DATE deliveryDate){
-        specsRepository.save(new Specs(orderCode, franchiseCode));
+    public void afterAcceptOrder(OrderDTO orderDTO){
+        specsRepository.save(new Specs(orderDTO.getOrderCode(), orderDTO.getFranchiseCode()));
     }
 
     @Override

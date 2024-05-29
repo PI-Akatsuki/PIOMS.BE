@@ -2,6 +2,7 @@ package com.akatsuki.pioms.specs.service;
 
 
 import com.akatsuki.pioms.franchise.aggregate.DELIVERY_DATE;
+import com.akatsuki.pioms.order.dto.OrderDTO;
 import com.akatsuki.pioms.specs.dto.SpecsDTO;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public interface SpecsService {
      * */
 
     List<SpecsDTO> getSpecsList();
-    void afterAcceptOrder(int orderCode, int franchiseCode, DELIVERY_DATE deliveryDate);
+    void afterAcceptOrder(OrderDTO orderDTO);
     List<SpecsDTO> getSpecsListByAdminCode(int adminCode);
     SpecsDTO getSpecsByAdminCode(int adminCode, int specsCode);
     List<SpecsDTO> getSpecsListByFrOwnerCode(int franchiseOwnerCode);

@@ -83,14 +83,14 @@ public class AdminOrderController {
 
     @PutMapping("/order/{orderCode}/accept")
     @Operation(summary = "승인 대기 중인 발주를 승인합니다.")
-    public ResponseEntity<OrderVO> acceptOrder(@RequestParam(name = "adminCode") int adminCode, @PathVariable int orderCode){
-        OrderDTO orderDTO = orderFacade.acceptOrder(adminCode, orderCode);
-        System.out.println("승인 완료");
-        System.out.println("orderDTO = " + orderDTO);
-        if (orderDTO == null){
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
-        }
-        return ResponseEntity.ok().body(new OrderVO(orderDTO));
+    public ResponseEntity<Integer> acceptOrder(@RequestParam(name = "adminCode") int adminCode, @PathVariable int orderCode){
+        int result = orderFacade.accpet(orderCode, adminCode);
+
+        if (result==6)
+            return ResponseEntity.ok(result);
+        if(result==0)
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(result);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
     }
 
     @PutMapping("/order/{orderId}/deny")

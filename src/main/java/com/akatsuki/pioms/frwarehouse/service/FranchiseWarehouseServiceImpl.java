@@ -46,7 +46,9 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
         if(franchiseWarehouse == null ){
             franchiseWarehouse = new FranchiseWarehouse(false,franchiseCode,productCode);
         }
-        franchiseWarehouse.setFranchiseWarehouseTotal(franchiseWarehouse.getFranchiseWarehouseTotal()+changeVal);
+        if(changeVal>=0)
+            franchiseWarehouse.setFranchiseWarehouseTotal(franchiseWarehouse.getFranchiseWarehouseTotal()+changeVal);
+
         franchiseWarehouse.setFranchiseWarehouseCount(franchiseWarehouse.getFranchiseWarehouseCount()+changeVal);
         franchiseWarehouse.setFranchiseWarehouseEnable(franchiseWarehouse.getFranchiseWarehouseEnable()+changeVal);
         franchiseWarehouseRepository.save(franchiseWarehouse);

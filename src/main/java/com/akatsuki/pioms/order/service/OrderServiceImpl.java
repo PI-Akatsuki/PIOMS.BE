@@ -2,7 +2,6 @@ package com.akatsuki.pioms.order.service;
 
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import com.akatsuki.pioms.exchange.aggregate.Exchange;
-import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import com.akatsuki.pioms.franchise.dto.FranchiseDTO;
 import com.akatsuki.pioms.order.aggregate.*;
 import com.akatsuki.pioms.order.dto.OrderDTO;
@@ -10,6 +9,8 @@ import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
 import com.akatsuki.pioms.order.repository.OrderProductRepository;
 import com.akatsuki.pioms.order.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,9 +42,7 @@ public class OrderServiceImpl implements OrderService{
         if (orderList == null || orderList.isEmpty())
             return null;
         List<Order> orderDTOList = new ArrayList<>();
-
         orderDTOList.addAll(orderList);
-
         return orderDTOList;
     }
 
@@ -72,11 +71,6 @@ public class OrderServiceImpl implements OrderService{
     @Transactional(readOnly = false)
     public OrderDTO acceptOrder(int adminCode,int orderCode, ExchangeDTO exchange) {
         Order order = orderRepository.findById(orderCode).orElseThrow();
-
-        if (!checkOrderCondition(order)) {
-            System.out.println("order is null in checkOrderCondition");
-            return null;
-        }
         order.setOrderCondition(ORDER_CONDITION.승인완료);
 
         if (exchange!=null) {
@@ -84,20 +78,21 @@ public class OrderServiceImpl implements OrderService{
             exchange1.setExchangeCode(exchange.getExchangeCode());
             order.setExchange(exchange1);
         }
-//        order.setOrderCondition(ORDER_CONDITION.검수대기);
-        order=orderRepository.save(order);
 
+        order=orderRepository.save(order);
+        return new OrderDTO(order);
+    }
+    @Override
+    public OrderDTO addExchangeToOrder(ExchangeDTO exchange, int orderCode) {
+        Order order = orderRepository.findById(orderCode).orElseThrow();
+        Exchange exchange1 = new Exchange();
+        exchange1.setExchangeCode(exchange.getExchangeCode());
+        order.setExchange(exchange1);
+        order = orderRepository.save(order);
         return new OrderDTO(order);
     }
 
-    @Override
-    public boolean checkProductCnt(OrderDTO order) {
-        for (int i = 0; i < order.getOrderProductList().size(); i++) {
-            if(order.getOrderProductList().get(i).getRequestProductCount() > order.getOrderProductList().get(i).getRequestProductCount())
-                return false;
-        }
-        return true;
-    }
+
 
     @Override
     @Transactional
@@ -222,15 +217,7 @@ public class OrderServiceImpl implements OrderService{
         return orderRepository.existsByExchangeExchangeCode(exchangeCode);
     }
 
-    @Override
-    public OrderDTO addExchangeToOrder(ExchangeDTO exchange, int orderCode) {
-        Order order = orderRepository.findById(orderCode).orElseThrow();
-        Exchange exchange1 = new Exchange();
-        exchange1.setExchangeCode(exchange.getExchangeCode());
-        order.setExchange(exchange1);
-        order = orderRepository.save(order);
-        return new OrderDTO(order);
-    }
+
 
     @Override
     public OrderDTO putOrderCondition(int orderCode, ORDER_CONDITION orderCondition) {
@@ -238,5 +225,17 @@ public class OrderServiceImpl implements OrderService{
         order.setOrderCondition(orderCondition);
         return new OrderDTO(orderRepository.save(order));
     }
+
+    @Override
+    public OrderDTO getOrderById(int orderCode) {
+        Order order;
+        try {
+            order=orderRepository.findById(orderCode).orElseThrow();
+            return new OrderDTO(order);
+        }catch (Exception ignored){
+            return null;
+        }
+    }
+
 
 }
