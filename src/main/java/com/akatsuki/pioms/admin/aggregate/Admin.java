@@ -63,6 +63,7 @@ public class Admin {
     private String deleteDate;
 
     @OneToMany(mappedBy = "admin")
+    @ToString.Exclude
     private List<Franchise> franchise;
 
 }

@@ -27,32 +27,36 @@ public class FranchiseOrderController {
      * <h2>발주 생성</h2>
      * */
     @PostMapping("/order")
-    public ResponseEntity<OrderDTO> postFranchiseOrder(@RequestParam int franchiseOwnerCode, @RequestBody RequestOrderVO orders){
-        OrderDTO result = franchiseOrderFacade.postFranchiseOrder(franchiseOwnerCode,orders);
-        System.out.println("result = " + result);
-        if(result == null)
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+    public ResponseEntity<Integer> postFranchiseOrder(@RequestBody RequestOrderVO orders){
+        int result = franchiseOrderFacade.postFranchiseOrder(orders);
+
+        if(result== -1)
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR ).build();
+        if(result == 0)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         return ResponseEntity.ok().body(result);
     }
+
     @PutMapping("/order")
-    public ResponseEntity<String> putFranchiseOrder(@RequestParam int franchiseOwnerCode, @RequestBody RequestPutOrder order){
-        boolean result = franchiseOrderFacade.putFranchiseOrder(franchiseOwnerCode, order);
+    public ResponseEntity<String> putFranchiseOrder( @RequestBody RequestPutOrder order){
+        boolean result = franchiseOrderFacade.putFranchiseOrder(order);
         if(!result)
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("put failed. check again");
         return ResponseEntity.ok("put finished");
     }
+
     @PutMapping("/order/check")
-    public ResponseEntity<String> putFranchiseOrderCheck(@RequestParam int franchiseOwnerCode, @RequestBody RequestPutOrderCheck requestPutOrder){
+    public ResponseEntity<String> putFranchiseOrderCheck(@RequestBody RequestPutOrderCheck requestPutOrder){
         System.out.println("requestPutOrder = " + requestPutOrder);
-        boolean result = franchiseOrderFacade.putFranchiseOrderCheck(franchiseOwnerCode,requestPutOrder);
+        boolean result = franchiseOrderFacade.putFranchiseOrderCheck(requestPutOrder);
         if(!result)
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("put failed");
         return ResponseEntity.ok("put finished");
     }
 
     @GetMapping("/orders")
-    public ResponseEntity<OrderListVO> getFranchiseOrderList(@RequestParam int franchiseOwnerCode){
-        List<OrderDTO> orders = franchiseOrderFacade.getOrderListByFranchiseCode(franchiseOwnerCode);
+    public ResponseEntity<OrderListVO> getFranchiseOrderList(){
+        List<OrderDTO> orders = franchiseOrderFacade.getOrderListByFranchiseCode();
         if (orders.isEmpty() ){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         }
@@ -60,10 +64,10 @@ public class FranchiseOrderController {
     }
 
     @GetMapping("/order/{orderCode}")
-    public ResponseEntity<OrderVO> getOrder(@RequestParam int franchiseOwnerCode, @PathVariable int orderCode){
-        OrderDTO orderDTO = franchiseOrderFacade.getOrderByFranchiseCode(franchiseOwnerCode,orderCode);
+    public ResponseEntity<OrderVO> getOrder(@PathVariable int orderCode){
+        OrderDTO orderDTO = franchiseOrderFacade.getOrderByFranchiseCode(orderCode);
         if(orderDTO==null)
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         OrderVO orderVO = new OrderVO(orderDTO);
         return ResponseEntity.ok(orderVO);
     }

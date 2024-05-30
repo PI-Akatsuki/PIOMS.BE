@@ -22,4 +22,6 @@ public interface DeliveryDriverService {
 
     // 배송기사 삭제
     ResponseEntity<String> deleteDriver(int driverId, int requestorAdminCode);
+
+    int findDriverCodeByName(String userName);
 }

@@ -229,4 +229,9 @@ public class AdminInfoServiceImpl implements AdminInfoService {
         }
     }
 
+    @Override
+    public int findAdminCodeByName(String userName) {
+        return adminRepository.findByAdminName(userName).getAdminCode();
+    }
+
 }

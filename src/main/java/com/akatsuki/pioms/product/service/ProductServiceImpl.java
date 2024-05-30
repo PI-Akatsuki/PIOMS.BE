@@ -157,13 +157,13 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public boolean checkPostOrderEnable(Map<Integer, Integer> orderProductMap) {
+    public boolean checkOrderEnable(Map<Integer, Integer> orderProductMap) {
         // 상품 주문 가능 여부 판단하기 위한 로직
         if(orderProductMap==null)
             return false;
         for( int key : orderProductMap.keySet() ){
             Product product = productRepository.findById(key).orElse(null);
-            if (product==null || product.getProductCount()<orderProductMap.get(key) )
+            if (product==null || product.getProductCount()<orderProductMap.get(key) || !product.isProductExposureStatus() )
                 return false;
         }
         return true;
@@ -206,14 +206,13 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
+    @Transactional
     public void exportProducts(OrderDTO order) {
         // 발주 상품에 대해 재고 수정
         order.getOrderProductList().forEach(requestProduct->{
             productMinusCnt(requestProduct.getRequestProductCount(), requestProduct.getProductCode());
         });
     }
-
-
     @Override
     @Transactional
     public void importExchangeProducts(RequestExchange requestExchange) {
@@ -225,10 +224,9 @@ public class ProductServiceImpl implements ProductService{
             int count = exchangeProductVO.getExchangeProductNormalCount();
             productPlusCnt(productCode,count);
         });
-
     }
 
-    private void productPlusCnt(int productCode, int count) {
+    public void productPlusCnt(int productCode, int count) {
         Product product = productRepository.findById(productCode).orElseThrow();
         product.setProductCount(product.getProductCount()+count);
         productRepository.save(product);
@@ -237,7 +235,6 @@ public class ProductServiceImpl implements ProductService{
 
     @Override
     public boolean checkExchangeProduct(OrderDTO order, ExchangeDTO exchange) {
-        //
         if (exchange== null){
             return false;
         }
@@ -250,14 +247,12 @@ public class ProductServiceImpl implements ProductService{
                 }
             }
         }
-
         return true;
     }
 
     @Override
     public void productMinusCnt(int requestProduct, int orderProductCode) {
         Product product = productRepository.findById(orderProductCode).orElseThrow();
-        System.out.println("product = " + product);
         product.setProductCount(product.getProductCount() - requestProduct);
         productRepository.save(product);
     }
@@ -273,15 +268,6 @@ public class ProductServiceImpl implements ProductService{
         return responseProducts;
     }
 
-    @Override
-    public void editIncorrectCount(int productCode, int cnt) {
-        Product product = productRepository.findById(productCode).orElse(null);
-        // 가맹에서 검수 시 수량 불일치인 경우 처리하기 위한 로직
-        if (product!=null) {
-            product.setProductCount(product.getProductCount() + cnt);
-            productRepository.save(product);
-        }
-    }
 
     @Override
     public Boolean postProductWithImage(RequestProduct request, MultipartFile image)throws IOException {
@@ -327,8 +313,6 @@ public class ProductServiceImpl implements ProductService{
 
         return new ProductDTO(updatedProduct);
     }
-
-
 
 
     @Override

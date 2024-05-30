@@ -40,9 +40,9 @@ public class FranchiseExchangeController {
 
     @GetMapping("{franchiseOwnerCode}/exchange/{exchangeCode}")
     public ResponseEntity<ResponseExchange> getMyExchange(@PathVariable int franchiseOwnerCode, @PathVariable int exchangeCode){
-        ExchangeDTO exchangeDTO = exchangeService.getFranchiseExchange(franchiseOwnerCode,exchangeCode);
+        ExchangeDTO exchangeDTO = exchangeService.getExchangeByFranchiseOwnerCode(franchiseOwnerCode,exchangeCode);
         if (exchangeDTO == null)
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         return ResponseEntity.ok(new ResponseExchange(exchangeDTO));
     }
 

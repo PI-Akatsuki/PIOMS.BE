@@ -1,6 +1,5 @@
 package com.akatsuki.pioms.exchange.controller;
 
-import com.akatsuki.pioms.exchange.aggregate.EXCHANGE_STATUS;
 import com.akatsuki.pioms.exchange.aggregate.RequestExchange;
 import com.akatsuki.pioms.exchange.aggregate.ResponseExchange;
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
@@ -35,7 +34,7 @@ public class AdminExchangeController {
 
     @GetMapping("/exchange/{exchangeCode}")
     public ResponseEntity<ResponseExchange> getExchange(@RequestParam int adminCode,@PathVariable int exchangeCode){
-        ExchangeDTO exchangeDTO = exchangeService.getAdminExchange(adminCode,exchangeCode);
+        ExchangeDTO exchangeDTO = exchangeService.getExchangeByAdminCode(adminCode,exchangeCode);
         if (exchangeDTO == null)
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         return ResponseEntity.ok(new ResponseExchange(exchangeDTO));

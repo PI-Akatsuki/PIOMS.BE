@@ -44,10 +44,7 @@ public class User {
 
     @Column(name = "user_pwd_check")
     private int pwdCheckCount;
-
-    @Column(name = "user_dormancy")
-    private boolean userDormancy;
-
+    
     @Column(name = "user_enroll_date")
     private String enrollDate;
 
