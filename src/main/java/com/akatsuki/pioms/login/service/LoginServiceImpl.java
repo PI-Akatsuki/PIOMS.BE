@@ -50,7 +50,9 @@ public class LoginServiceImpl implements LoginService {
                 CustomUserDetails authenticatedUserDetails = (CustomUserDetails) authentication.getPrincipal();
                 User authenticatedUser = authenticatedUserDetails.getUser();
 
-                String accessToken = jwtUtil.createJwt("access", authenticatedUser.getUserCode(), authenticatedUser.getUserId(), authenticatedUser.getUsername(), authenticatedUser.getRole(), 600000L);
+                // 1시간
+                String accessToken = jwtUtil.createJwt("access", authenticatedUser.getUserCode(), authenticatedUser.getUserId(), authenticatedUser.getUsername(), authenticatedUser.getRole(), 3600000L);
+                // 24시간
                 String refreshToken = jwtUtil.createJwt("refresh", authenticatedUser.getUserCode(), authenticatedUser.getUserId(), authenticatedUser.getUsername(), authenticatedUser.getRole(), 86400000L);
 
                 redisTokenService.saveRefreshToken(authenticatedUser.getUserId(), refreshToken);
@@ -83,7 +85,7 @@ public class LoginServiceImpl implements LoginService {
                 CustomUserDetails authenticatedUserDetails = (CustomUserDetails) authentication.getPrincipal();
                 User authenticatedUser = authenticatedUserDetails.getUser();
 
-                String accessToken = jwtUtil.createJwt("access", authenticatedUser.getUserCode(), authenticatedUser.getUserId(), authenticatedUser.getUsername(), authenticatedUser.getRole(), 600000L);
+                String accessToken = jwtUtil.createJwt("access", authenticatedUser.getUserCode(), authenticatedUser.getUserId(), authenticatedUser.getUsername(), authenticatedUser.getRole(), 3600000L);
                 String refreshToken = jwtUtil.createJwt("refresh", authenticatedUser.getUserCode(), authenticatedUser.getUserId(), authenticatedUser.getUsername(), authenticatedUser.getRole(), 86400000L);
 
                 redisTokenService.saveRefreshToken(authenticatedUser.getUserId(), refreshToken);
@@ -116,7 +118,7 @@ public class LoginServiceImpl implements LoginService {
                 CustomUserDetails authenticatedUserDetails = (CustomUserDetails) authentication.getPrincipal();
                 User authenticatedUser = authenticatedUserDetails.getUser();
 
-                String accessToken = jwtUtil.createJwt("access", authenticatedUser.getUserCode(), authenticatedUser.getUserId(), authenticatedUser.getUsername(), authenticatedUser.getRole(), 600000L);
+                String accessToken = jwtUtil.createJwt("access", authenticatedUser.getUserCode(), authenticatedUser.getUserId(), authenticatedUser.getUsername(), authenticatedUser.getRole(), 3600000L);
                 String refreshToken = jwtUtil.createJwt("refresh", authenticatedUser.getUserCode(), authenticatedUser.getUserId(), authenticatedUser.getUsername(), authenticatedUser.getRole(), 86400000L);
 
                 redisTokenService.saveRefreshToken(authenticatedUser.getUserId(), refreshToken);
