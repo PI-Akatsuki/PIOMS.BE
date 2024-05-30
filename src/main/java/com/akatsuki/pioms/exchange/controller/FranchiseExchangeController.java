@@ -23,8 +23,8 @@ public class FranchiseExchangeController {
     }
 
     @GetMapping("/exchanges")
-    public ResponseEntity<List<ResponseExchange>> getMyExchanges(@RequestParam int franchiseOwnerCode){
-        List<ExchangeDTO> exchangeDTOS = exchangeService.getFrOwnerExchanges(franchiseOwnerCode);
+    public ResponseEntity<List<ResponseExchange>> getMyExchanges(){
+        List<ExchangeDTO> exchangeDTOS = exchangeService.getFrOwnerExchanges();
 
         if (exchangeDTOS ==null){
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
@@ -38,18 +38,18 @@ public class FranchiseExchangeController {
         return ResponseEntity.ok(responseExchanges);
     }
 
-    @GetMapping("{franchiseOwnerCode}/exchange/{exchangeCode}")
-    public ResponseEntity<ResponseExchange> getMyExchange(@PathVariable int franchiseOwnerCode, @PathVariable int exchangeCode){
-        ExchangeDTO exchangeDTO = exchangeService.getExchangeByFranchiseOwnerCode(franchiseOwnerCode,exchangeCode);
+    @GetMapping("/exchange/{exchangeCode}")
+    public ResponseEntity<ResponseExchange> getMyExchange(@PathVariable int exchangeCode){
+        ExchangeDTO exchangeDTO = exchangeService.getExchangeByFranchiseOwnerCode(exchangeCode);
         if (exchangeDTO == null)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         return ResponseEntity.ok(new ResponseExchange(exchangeDTO));
     }
 
     @PostMapping("exchange")
-    public ResponseEntity<ResponseExchange> postExchange(@RequestParam int franchiseOwnerCode, @RequestBody RequestExchange requestExchange){
+    public ResponseEntity<ResponseExchange> postExchange( @RequestBody RequestExchange requestExchange){
         System.out.println("requestExchange = " + requestExchange);
-        ExchangeDTO exchange=  exchangeService.postExchange(franchiseOwnerCode, requestExchange);
+        ExchangeDTO exchange=  exchangeService.postExchange(requestExchange);
         System.out.println("exchange = " + exchange);
         if (exchange==null)
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
@@ -58,9 +58,9 @@ public class FranchiseExchangeController {
     }
 
     @DeleteMapping("/exchange/{exchangeCode}")
-    public ResponseEntity<String> deleteExchange(@RequestParam int franchiseOwnerCode, @PathVariable int exchangeCode){
+    public ResponseEntity<String> deleteExchange(@PathVariable int exchangeCode){
 
-        boolean isDelete = exchangeService.deleteExchange(franchiseOwnerCode,exchangeCode);
+        boolean isDelete = exchangeService.deleteExchange(exchangeCode);
 
         if (!isDelete)
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("삭제 -실패-");

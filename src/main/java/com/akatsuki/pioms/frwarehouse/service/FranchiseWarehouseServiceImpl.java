@@ -3,6 +3,7 @@ package com.akatsuki.pioms.frwarehouse.service;
 
 import com.akatsuki.pioms.admin.aggregate.Admin;
 import com.akatsuki.pioms.admin.repository.AdminRepository;
+import com.akatsuki.pioms.config.ConvertUser;
 import com.akatsuki.pioms.exchange.aggregate.RequestExchange;
 import com.akatsuki.pioms.exchange.aggregate.ExchangeProductVO;
 import com.akatsuki.pioms.franchise.service.FranchiseService;
@@ -27,12 +28,14 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
     private final FranchiseWarehouseRepository franchiseWarehouseRepository;
     private final AdminRepository adminRepository;
     private final FranchiseService franchiseService;
+    private final ConvertUser convertUser;
 
     @Autowired
-    public FranchiseWarehouseServiceImpl(FranchiseWarehouseRepository franchiseWarehouseRepository, AdminRepository adminRepository,FranchiseService franchiseService) {
+    public FranchiseWarehouseServiceImpl(FranchiseWarehouseRepository franchiseWarehouseRepository, AdminRepository adminRepository,FranchiseService franchiseService,ConvertUser convertUser) {
         this.franchiseWarehouseRepository = franchiseWarehouseRepository;
         this.adminRepository = adminRepository;
         this.franchiseService = franchiseService;
+        this.convertUser =convertUser;
     }
 
     @Transactional
@@ -147,7 +150,8 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
     }
 
     @Override
-    public List<FranchiseWarehouseDTO> getFrWarehouseList(int franchiseOwnerCode) {
+    public List<FranchiseWarehouseDTO> getFrWarehouseList() {
+        int franchiseOwnerCode = convertUser.getCode();
         int franchiseCode = franchiseService.findFranchiseByFranchiseOwnerCode(franchiseOwnerCode).getFranchiseCode();
         List<FranchiseWarehouse> franchiseWarehouses = franchiseWarehouseRepository.findAllByFranchiseCode(franchiseCode);
         List<FranchiseWarehouseDTO> franchiseWarehouseDTOS = new ArrayList<>();

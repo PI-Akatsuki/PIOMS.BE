@@ -33,16 +33,16 @@ public interface ExchangeService {
 
 
     // 모든 반품 신청 리스트를 조회하기 위한 로직
-    List<ExchangeDTO> getExchangesByAdminCode(int adminCode);
-    ExchangeDTO processArrivedExchange(int adminCode, int exchangeCode, RequestExchange requestExchange);
-    ExchangeDTO getExchangeByAdminCode(int adminCode, int exchangeCode);
+    List<ExchangeDTO> getExchangesByAdminCode();
+    ExchangeDTO processArrivedExchange(int exchangeCode, RequestExchange requestExchange);
+    ExchangeDTO getExchangeByAdminCode(int exchangeCode);
 
     // 한 가맹점의 모든 반품 조회하기 위한 로직
     // 관리자가 관리하고 있는 모든 가맹점의 반품 리스트를 조회하기 위한 로직
-    ExchangeDTO getExchangeByFranchiseOwnerCode(int franchiseCode, int exchangeCode);
-    ExchangeDTO postExchange(int franchiseCode, RequestExchange requestExchange);
-    List<ExchangeDTO> getFrOwnerExchanges(int franchiseOwnerCode);
-    boolean deleteExchange(int franchiseOwnerCode, int exchangeCode);
+    ExchangeDTO getExchangeByFranchiseOwnerCode(int exchangeCode);
+    ExchangeDTO postExchange(RequestExchange requestExchange);
+    List<ExchangeDTO> getFrOwnerExchanges();
+    boolean deleteExchange(int exchangeCode);
     // 관리자가 발주를 승인하고 가맹점의 반품 신청이 있는지 조회하고 반품 신청 상태의 반품을 발주서에 담기 위한 로직
     // 만약 가맹점의 발주 신청 상태의 발주 리스트가 중복되어 여러개가 있는 경우 에러로 인식하여 해당 반품신청들을 삭제한다.
     ExchangeDTO findExchangeToSend(int franchiseCode);

@@ -25,7 +25,7 @@ public interface FranchiseWarehouseService {
 
     List<FranchiseWarehouse> findAllFavorites();
 
-    List<FranchiseWarehouseDTO> getFrWarehouseList(int franchiseOwnerCode);
+    List<FranchiseWarehouseDTO> getFrWarehouseList();
 
     void saveProductWhenDeleteExchange(int productCode, int exchangeProductCount, int franchiseCode);
 
