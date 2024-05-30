@@ -1,6 +1,7 @@
 package com.akatsuki.pioms.login.controller;
 
 import com.akatsuki.pioms.jwt.JWTUtil;
+import com.akatsuki.pioms.redis.RedisTokenService;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,9 +19,11 @@ public class ReissueController {
     private static final Logger logger = Logger.getLogger(ReissueController.class.getName());
 
     private final JWTUtil jwtUtil;
+    private final RedisTokenService redisTokenService;
 
-    public ReissueController(JWTUtil jwtUtil) {
+    public ReissueController(JWTUtil jwtUtil, RedisTokenService redisTokenService) {
         this.jwtUtil = jwtUtil;
+        this.redisTokenService = redisTokenService;
     }
 
     @PostMapping("/reissue")
@@ -56,11 +59,21 @@ public class ReissueController {
             return new ResponseEntity<>("invalid refresh token", HttpStatus.BAD_REQUEST);
         }
 
+        // Redis에서 refresh 토큰 확인
+        String userId = jwtUtil.getUserId(refreshToken);
+        String storedRefreshToken = redisTokenService.getRefreshToken(userId);
+        if (storedRefreshToken == null || !storedRefreshToken.equals(refreshToken)) {
+            logger.warning("Refresh token does not match or not found in Redis");
+            return new ResponseEntity<>("invalid refresh token", HttpStatus.BAD_REQUEST);
+        }
+
+        // 필요한 정보 추출
+        int userCode = jwtUtil.getUserCode(refreshToken);
         String username = jwtUtil.getUsername(refreshToken);
         String role = jwtUtil.getRole(refreshToken);
 
         // make new JWT
-        String newAccessToken = jwtUtil.createJwt("access", username, role, 600000L); // 10분 유효
+        String newAccessToken = jwtUtil.createJwt("access", userCode, userId, username, role, 600000L); // 10분 유효
 
         // response
         response.setHeader("Authorization", "Bearer " + newAccessToken);

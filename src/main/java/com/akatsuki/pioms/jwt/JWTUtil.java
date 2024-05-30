@@ -20,9 +20,11 @@ public class JWTUtil {
         this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
-    public String createJwt(String category, String username, String role, Long expiredMs) {
+    public String createJwt(String category, int usercode, String userid, String username, String role, Long expiredMs) {
         return Jwts.builder()
                 .claim("category", category)
+                .claim("usercode", usercode)
+                .claim("userid", userid)
                 .claim("username", username)
                 .claim("role", role)
                 .setIssuedAt(new Date())
@@ -33,7 +35,8 @@ public class JWTUtil {
 
     public Boolean isExpired(String token) {
         try {
-            return Jwts.parser().setSigningKey(secretKey).build().parseClaimsJws(token).getBody().getExpiration().before(new Date());
+            Jwts.parser().setSigningKey(secretKey).build().parseClaimsJws(token).getBody().getExpiration().before(new Date());
+            return false;
         } catch (ExpiredJwtException e) {
             return true;
         }
@@ -49,5 +52,13 @@ public class JWTUtil {
 
     public String getRole(String token) {
         return Jwts.parser().setSigningKey(secretKey).build().parseClaimsJws(token).getBody().get("role", String.class);
+    }
+
+    public String getUserId(String token) {
+        return Jwts.parser().setSigningKey(secretKey).build().parseClaimsJws(token).getBody().get("userid", String.class);
+    }
+
+    public int getUserCode(String token) {
+        return Jwts.parser().setSigningKey(secretKey).build().parseClaimsJws(token).getBody().get("usercode", Integer.class);
     }
 }
