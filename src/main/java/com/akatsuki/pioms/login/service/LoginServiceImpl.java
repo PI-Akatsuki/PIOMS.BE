@@ -56,10 +56,7 @@ public class LoginServiceImpl implements LoginService {
                 // 로그인 성공, 비밀번호 틀린 횟수 초기화
                 user.setPwdCheckCount(0);
 
-                // 휴면 설정 90일 후로 설정
-                user.setUserDormancy(false);
-                LocalDateTime dormancyDate = LocalDateTime.now().plusDays(90);
-                user.setUpdateDate(dormancyDate.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+
 
                 userRepository.save(user);
 
@@ -106,10 +103,7 @@ public class LoginServiceImpl implements LoginService {
                 // 로그인 성공, 비밀번호 틀린 횟수 초기화
                 user.setPwdCheckCount(0);
 
-                // 휴면 설정 90일 후로 설정
-                user.setUserDormancy(false);
-                LocalDateTime dormancyDate = LocalDateTime.now().plusDays(90);
-                user.setUpdateDate(dormancyDate.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+
 
                 userRepository.save(user);
 
@@ -156,10 +150,7 @@ public class LoginServiceImpl implements LoginService {
                 // 로그인 성공, 비밀번호 틀린 횟수 초기화
                 user.setPwdCheckCount(0);
 
-                // 휴면 설정 90일 후로 설정
-                user.setUserDormancy(false);
-                LocalDateTime dormancyDate = LocalDateTime.now().plusDays(90);
-                user.setUpdateDate(dormancyDate.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+
 
                 userRepository.save(user);
 
