@@ -13,8 +13,4 @@ import java.util.List;
 @ToString
 public class AskListDTO {
     private List<AskDTO> asks;
-
-    public List<AskDTO> getAskDTOs() {
-        return asks;
-    }
 }

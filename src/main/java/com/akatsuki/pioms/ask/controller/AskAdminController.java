@@ -6,9 +6,11 @@ import com.akatsuki.pioms.ask.service.AskService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Map;
 
@@ -32,8 +34,9 @@ import java.util.Map;
 @RestController
 @RequestMapping("/admin")
 public class AskAdminController {
-    AskService askService;
+    private final AskService askService;
 
+    @Autowired
     public AskAdminController(AskService askService){this.askService = askService;}
 
     /**
@@ -74,9 +77,9 @@ public class AskAdminController {
             AskDTO askDTO = askService.getAskDetails(askCode);
             return ResponseEntity.ok(askDTO);
         } catch (EntityNotFoundException e) {
-            return ResponseEntity.notFound().build();
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Ask not found", e);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error", e);
         }
     }
 
@@ -86,11 +89,22 @@ public class AskAdminController {
      * 답변작성후 상태 '답변완료'변경
      * */
     @PostMapping("/ask/answer/{askId}")
-    public ResponseEntity<AskDTO> answerAsk(@PathVariable Integer askId, @RequestBody Map<String, String> payload) {
-        String answer = payload.get("answer");
-        AskDTO askDTO = askService.answerAsk(askId, answer);
-        return ResponseEntity.ok(askDTO);
+    public ResponseEntity<?> answerAsk(@PathVariable Integer askId, @RequestBody Map<String, String> payload) {
+        try {
+            String answer = payload.get("answer");
+            if (answer == null || answer.isEmpty()) {
+                return ResponseEntity.badRequest().body("Answer cannot be empty");
+            }
+
+            AskDTO askDTO = askService.answerAsk(askId, answer);
+            return ResponseEntity.ok(askDTO);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ask not found");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal server error");
+        }
     }
+
 
 
 }

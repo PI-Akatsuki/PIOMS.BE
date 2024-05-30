@@ -10,6 +10,7 @@ import com.akatsuki.pioms.frowner.dto.FranchiseOwnerDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,8 +18,9 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/franchise")
 public class AskFranchiseController {
-    AskService askService;
+    private final AskService askService;
 
+    @Autowired
     public AskFranchiseController(AskService askService){this.askService = askService;}
 
     /**
@@ -51,9 +53,9 @@ public class AskFranchiseController {
      * 문의사항 작성
      * */
     @PostMapping("/ask/create/{franchise_owner_code}")
-    public ResponseEntity<AskDTO> createAsk(@PathVariable("franchise_owner_code") int franchiseOwnerCode, @RequestBody AskCreateDTO askDTO) {
-        askDTO.setFranchiseOwnerCode(franchiseOwnerCode);
-        AskDTO AskDTO = askService.createAsk(askDTO);
+    public ResponseEntity<AskDTO> createAsk(@PathVariable("franchise_owner_code") int franchiseOwnerCode, @RequestBody AskCreateDTO askCreateDTO) {
+        askCreateDTO.setFranchiseOwnerCode(franchiseOwnerCode);
+        AskDTO AskDTO = askService.createAsk(askCreateDTO);
         return ResponseEntity.ok(AskDTO);
     }
 
@@ -66,8 +68,10 @@ public class AskFranchiseController {
             Ask updatedAsk = askService.updateAsk(askCode, askUpdateDTO);
             AskDTO askDTO = new AskDTO(updatedAsk);
             return ResponseEntity.ok(askDTO);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
         }
     }
 
@@ -90,9 +94,9 @@ public class AskFranchiseController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
-
-    /**
-     * 문의사항 삭제
-     * */
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
 
 }
