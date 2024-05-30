@@ -11,7 +11,7 @@ import java.util.List;
 public interface FranchiseWarehouseService {
     void saveProduct(int productCode, int changeVal, int franchiseCode);
 
-    boolean checkEnableToAddExchange(RequestExchange requestExchange);
+    boolean checkEnableToAddExchangeAndChangeEnableCnt(RequestExchange requestExchange);
 
     List<FranchiseWarehouseDTO> getAllWarehouse();
 
@@ -28,4 +28,6 @@ public interface FranchiseWarehouseService {
     List<FranchiseWarehouseDTO> getFrWarehouseList(int franchiseOwnerCode);
 
     void saveProductWhenDeleteExchange(int productCode, int exchangeProductCount, int franchiseCode);
+
+    void saveProductWhenUpdateExchangeToCompany(int productCode, int i, int franchiseCode);
 }

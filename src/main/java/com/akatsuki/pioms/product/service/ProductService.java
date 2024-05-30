@@ -3,7 +3,6 @@ package com.akatsuki.pioms.product.service;
 import com.akatsuki.pioms.exchange.aggregate.RequestExchange;
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import com.akatsuki.pioms.order.dto.OrderDTO;
-import com.akatsuki.pioms.product.aggregate.Product;
 import com.akatsuki.pioms.product.aggregate.RequestProduct;
 import com.akatsuki.pioms.product.aggregate.ResponseProduct;
 import com.akatsuki.pioms.product.aggregate.ResponseProductWithImage;
@@ -30,14 +29,11 @@ public interface ProductService {
 
     List<ResponseProduct> getCategoryProductList(int categoryThirdCode);
 
-    // 가맹점에서 발주온 상품을 검수할 때 수량 불일치 시 이를 본사 창고에 반영하기 위한 로직
-    void editIncorrectCount(int productCode, int cnt);
-
     // 노출된 상품들만 조회 (가맹점)
     List<ProductDTO> getAllExposureProduct();
 
     // 발주 신청 가능 여부 확인
-    boolean checkPostOrderEnable(Map<Integer,Integer> orderProductMap);
+    boolean checkOrderEnable(Map<Integer,Integer> orderProductMap);
 
     Boolean postProductWithImage(RequestProduct request, MultipartFile image) throws IOException;
 
@@ -45,4 +41,5 @@ public interface ProductService {
 
     List<ResponseProductWithImage> getAllProductWithImage();
 
+    void productPlusCnt(int productCode, int i);
 }

@@ -4,6 +4,7 @@ import com.akatsuki.pioms.user.aggregate.User;
 import com.akatsuki.pioms.user.dto.CustomUserDetails;
 import com.akatsuki.pioms.user.repository.UserRepository;
 import com.akatsuki.pioms.jwt.JWTUtil;
+import com.akatsuki.pioms.redis.RedisTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,8 +13,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -26,13 +25,15 @@ public class LoginServiceImpl implements LoginService {
     private final PasswordEncoder passwordEncoder;
     private final JWTUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
+    private final RedisTokenService redisTokenService;
 
     @Autowired
-    public LoginServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, JWTUtil jwtUtil, AuthenticationManager authenticationManager) {
+    public LoginServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, JWTUtil jwtUtil, AuthenticationManager authenticationManager, RedisTokenService redisTokenService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
         this.authenticationManager = authenticationManager;
+        this.redisTokenService = redisTokenService;
     }
 
     @Override
@@ -41,40 +42,27 @@ public class LoginServiceImpl implements LoginService {
 
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
-
-            if (user.getPwdCheckCount() >= 5) {
-                logger.warning("비밀번호 틀린 횟수 초과: " + adminId);
-                return ResponseEntity.status(403).body(user);
-            }
-
             if (("ROLE_ROOT".equals(user.getRole()) || "ROLE_ADMIN".equals(user.getRole())) &&
                     passwordEncoder.matches(password, user.getPassword()) &&
                     accessNumber.equals(user.getAccessNumber())) {
-
-                // 로그인 성공, 비밀번호 틀린 횟수 초기화
-                user.setPwdCheckCount(0);
-
-                // 휴면 설정 90일 후로 설정
-                user.setUserDormancy(false);
-                LocalDateTime dormancyDate = LocalDateTime.now().plusDays(90);
-                user.setUpdateDate(dormancyDate.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-
-                userRepository.save(user);
 
                 Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(adminId, password));
                 CustomUserDetails authenticatedUserDetails = (CustomUserDetails) authentication.getPrincipal();
                 User authenticatedUser = authenticatedUserDetails.getUser();
 
-                String accessToken = jwtUtil.createJwt("access", authenticatedUser.getUserId(), authenticatedUser.getRole(), 600000L);
-                String refreshToken = jwtUtil.createJwt("refresh", authenticatedUser.getUserId(), authenticatedUser.getRole(), 86400000L);
+                String accessToken = jwtUtil.createJwt("access", authenticatedUser.getUserCode(), authenticatedUser.getUserId(), authenticatedUser.getUsername(), authenticatedUser.getRole(), 600000L);
+                String refreshToken = jwtUtil.createJwt("refresh", authenticatedUser.getUserCode(), authenticatedUser.getUserId(), authenticatedUser.getUsername(), authenticatedUser.getRole(), 86400000L);
+
+                redisTokenService.saveRefreshToken(authenticatedUser.getUserId(), refreshToken);
+
+                logger.info("Generated Access Token: " + accessToken);
+                logger.info("Generated Refresh Token: " + refreshToken);
 
                 return ResponseEntity.ok()
                         .header("Authorization", "Bearer " + accessToken)
                         .header("Set-Cookie", "refresh=" + refreshToken + "; HttpOnly; Path=/; Max-Age=86400000;")
                         .body(authenticatedUser);
             } else {
-                user.setPwdCheckCount(user.getPwdCheckCount() + 1);
-                userRepository.save(user);
                 logger.warning("비밀번호나 접속번호가 일치하지 않음 (관리자)");
             }
         } else {
@@ -90,38 +78,24 @@ public class LoginServiceImpl implements LoginService {
 
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
-
-            if (user.getPwdCheckCount() >= 5) {
-                logger.warning("비밀번호 틀린 횟수 초과: " + frOwnerId);
-                return ResponseEntity.status(403).body(user);
-            }
-
             if ("ROLE_OWNER".equals(user.getRole()) && passwordEncoder.matches(frOwnerPassword, user.getPassword())) {
-
-                // 로그인 성공, 비밀번호 틀린 횟수 초기화
-                user.setPwdCheckCount(0);
-
-                // 휴면 설정 90일 후로 설정
-                user.setUserDormancy(false);
-                LocalDateTime dormancyDate = LocalDateTime.now().plusDays(90);
-                user.setUpdateDate(dormancyDate.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-
-                userRepository.save(user);
-
                 Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(frOwnerId, frOwnerPassword));
                 CustomUserDetails authenticatedUserDetails = (CustomUserDetails) authentication.getPrincipal();
                 User authenticatedUser = authenticatedUserDetails.getUser();
 
-                String accessToken = jwtUtil.createJwt("access", authenticatedUser.getUserId(), authenticatedUser.getRole(), 600000L);
-                String refreshToken = jwtUtil.createJwt("refresh", authenticatedUser.getUserId(), authenticatedUser.getRole(), 86400000L);
+                String accessToken = jwtUtil.createJwt("access", authenticatedUser.getUserCode(), authenticatedUser.getUserId(), authenticatedUser.getUsername(), authenticatedUser.getRole(), 600000L);
+                String refreshToken = jwtUtil.createJwt("refresh", authenticatedUser.getUserCode(), authenticatedUser.getUserId(), authenticatedUser.getUsername(), authenticatedUser.getRole(), 86400000L);
+
+                redisTokenService.saveRefreshToken(authenticatedUser.getUserId(), refreshToken);
+
+                logger.info("Generated Access Token: " + accessToken);
+                logger.info("Generated Refresh Token: " + refreshToken);
 
                 return ResponseEntity.ok()
                         .header("Authorization", "Bearer " + accessToken)
                         .header("Set-Cookie", "refresh=" + refreshToken + "; HttpOnly; Path=/; Max-Age=86400000;")
                         .body(authenticatedUser);
             } else {
-                user.setPwdCheckCount(user.getPwdCheckCount() + 1);
-                userRepository.save(user);
                 logger.warning("비밀번호가 일치하지 않음 (점주)");
             }
         } else {
@@ -137,38 +111,24 @@ public class LoginServiceImpl implements LoginService {
 
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
-
-            if (user.getPwdCheckCount() >= 5) {
-                logger.warning("비밀번호 틀린 횟수 초과: " + driverId);
-                return ResponseEntity.status(403).body(user);
-            }
-
             if ("ROLE_DRIVER".equals(user.getRole()) && passwordEncoder.matches(driverPassword, user.getPassword())) {
-
-                // 로그인 성공, 비밀번호 틀린 횟수 초기화
-                user.setPwdCheckCount(0);
-
-                // 휴면 설정 90일 후로 설정
-                user.setUserDormancy(false);
-                LocalDateTime dormancyDate = LocalDateTime.now().plusDays(90);
-                user.setUpdateDate(dormancyDate.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-
-                userRepository.save(user);
-
                 Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(driverId, driverPassword));
                 CustomUserDetails authenticatedUserDetails = (CustomUserDetails) authentication.getPrincipal();
                 User authenticatedUser = authenticatedUserDetails.getUser();
 
-                String accessToken = jwtUtil.createJwt("access", authenticatedUser.getUserId(), authenticatedUser.getRole(), 600000L);
-                String refreshToken = jwtUtil.createJwt("refresh", authenticatedUser.getUserId(), authenticatedUser.getRole(), 86400000L);
+                String accessToken = jwtUtil.createJwt("access", authenticatedUser.getUserCode(), authenticatedUser.getUserId(), authenticatedUser.getUsername(), authenticatedUser.getRole(), 600000L);
+                String refreshToken = jwtUtil.createJwt("refresh", authenticatedUser.getUserCode(), authenticatedUser.getUserId(), authenticatedUser.getUsername(), authenticatedUser.getRole(), 86400000L);
+
+                redisTokenService.saveRefreshToken(authenticatedUser.getUserId(), refreshToken);
+
+                logger.info("Generated Access Token: " + accessToken);
+                logger.info("Generated Refresh Token: " + refreshToken);
 
                 return ResponseEntity.ok()
                         .header("Authorization", "Bearer " + accessToken)
                         .header("Set-Cookie", "refresh=" + refreshToken + "; HttpOnly; Path=/; Max-Age=86400000;")
                         .body(authenticatedUser);
             } else {
-                user.setPwdCheckCount(user.getPwdCheckCount() + 1);
-                userRepository.save(user);
                 logger.warning("비밀번호가 일치하지 않음 (배송기사)");
             }
         } else {

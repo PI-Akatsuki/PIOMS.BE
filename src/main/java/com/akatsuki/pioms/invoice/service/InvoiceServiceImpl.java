@@ -73,6 +73,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
+    @Transactional
     public void afterAcceptOrder(OrderDTO orderDTO)
     {
         Order order = new Order(orderDTO);

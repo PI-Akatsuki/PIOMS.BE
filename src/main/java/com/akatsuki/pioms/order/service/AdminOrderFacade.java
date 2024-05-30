@@ -1,25 +1,23 @@
 package com.akatsuki.pioms.order.service;
 
+import com.akatsuki.pioms.config.ConvertUser;
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import com.akatsuki.pioms.exchange.service.ExchangeService;
-import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import com.akatsuki.pioms.franchise.service.FranchiseService;
 import com.akatsuki.pioms.frwarehouse.service.FranchiseWarehouseService;
-import com.akatsuki.pioms.invoice.dto.InvoiceDTO;
 import com.akatsuki.pioms.invoice.service.InvoiceService;
-import com.akatsuki.pioms.order.aggregate.Order;
-import com.akatsuki.pioms.order.aggregate.RequestOrderVO;
-import com.akatsuki.pioms.order.aggregate.RequestPutOrderCheck;
 import com.akatsuki.pioms.order.dto.OrderDTO;
+import com.akatsuki.pioms.order.dto.OrderProductDTO;
 import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
 import com.akatsuki.pioms.product.service.ProductService;
 import com.akatsuki.pioms.specs.service.SpecsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class AdminOrderFacade {
@@ -30,9 +28,10 @@ public class AdminOrderFacade {
     ProductService productService;
     FranchiseService franchiseService;
     FranchiseWarehouseService franchiseWarehouseService;
+    ConvertUser convertUser;
 
     @Autowired
-    public AdminOrderFacade(OrderService orderService, InvoiceService invoiceService, SpecsService specsService, ExchangeService exchangeService, ProductService productService, FranchiseService franchiseService, FranchiseWarehouseService franchiseWarehouseService) {
+    public AdminOrderFacade(OrderService orderService, InvoiceService invoiceService, SpecsService specsService, ExchangeService exchangeService, ProductService productService, FranchiseService franchiseService, FranchiseWarehouseService franchiseWarehouseService, ConvertUser convertUser) {
         this.orderService = orderService;
         this.invoiceService = invoiceService;
         this.specsService = specsService;
@@ -40,62 +39,90 @@ public class AdminOrderFacade {
         this.productService = productService;
         this.franchiseService = franchiseService;
         this.franchiseWarehouseService =franchiseWarehouseService;
+        this.convertUser = convertUser;
     }
 
-    public List<OrderDTO> getOrderListByAdminCode(int adminCode){
-        List<Order> orders =  orderService.getOrderListByAdminCode(adminCode);
-
-        List<OrderDTO> orderDTOS = new ArrayList<>();
-        orders.forEach(order -> {
-            orderDTOS.add(new OrderDTO(order));
-        });
-
-        return orderDTOS;
-    }
-    public List<OrderDTO> getAdminUncheckedOrders(int adminCode){
-        return orderService.getAdminUncheckesOrders(adminCode);
-    }
-    public OrderDTO getAdminOrder(int adminCode, int orderCode){
-        return orderService.getAdminOrder(adminCode,orderCode);
+    public List<OrderDTO> getOrderListByAdminCode(){
+        int adminCode = convertUser.convertUser();
+        List<OrderDTO> orders =  orderService.getOrderListByAdminCode(adminCode);
+        return orders;
     }
 
-    public OrderDTO acceptOrder(int adminCode, int orderCode){
-        OrderDTO order = orderService.getAdminOrder(adminCode,orderCode);
+    public OrderDTO getDetailOrderByAdminCode(int orderCode){
+        int adminCode = convertUser.convertUser();
+        return orderService.getDetailOrderByAdminCode(adminCode,orderCode);
+    }
 
-        if (order==null || order.getOrderCondition() != ORDER_CONDITION.승인대기 ){
-            // null인지 검사
-            // 주문 상태가 승인 대기인지 검사
-            // 해당 상품의 수량이 본사 재고를 초과하는지 검사
-            System.out.println("error");
-            return null;
+    /**
+     <h1>accept Order</h1>
+     <h2>return value</h2>
+     0: This order's condition is not '승인대기' || find exchange to send franchise fail <br>
+     1: Fail Product logic<br>
+     2: Fail change order's conditions or put exchange to order<br>
+     3: Fail Specs logic<br>
+     4: Fail Invoice logic<br>
+     5: Fail Exchange logic<br>
+     6: Success!! */
+    @Transactional(readOnly = false)
+    public int accpetOrder(int orderCode){
+        int adminCode = convertUser.convertUser();
+        OrderDTO order;
+        ExchangeDTO exchangeDTO;
+        int success=0;
+        try {
+            order = orderService.getOrderById(orderCode);
+            if (order.getOrderCondition() != ORDER_CONDITION.승인대기 ||
+                    !productService.checkOrderEnable(convertListToMap(order.getOrderProductList()) ))
+                throw new Exception("승인 대기가 아님");
+            exchangeDTO = findExchangeToAdd(order);// find exchange to send to company
+            success++; // 1
+            // change order condition '승인완료', add Exchange in order
+            order = orderService.acceptOrder(adminCode,orderCode,exchangeDTO);
+            if(order == null)
+                throw new Exception("accpet Order problem occured!!");
+            success++; // 2
+            success +=afterAcceptOrder(order);
+            return success;
+        }catch (Exception e){
+            return success;
         }
-        if(!orderService.checkProductCnt(order)){
-            System.out.println("count invalid");
-            return null;
-        }
-
-        ExchangeDTO exchange =  exchangeService.findExchangeToSend(order.getFranchiseCode());
-
-        if(exchange!=null) {
-            // 교환 가능 여부 검사
-            if(productService.checkExchangeProduct(order,exchange) ){
-                order = orderService.addExchangeToOrder(exchange, order.getOrderCode());
-//                exchangeService.exportExchangeToFranchise(exchange.getExchangeCode());
-            }
-        }
-        productService.exportProducts(order);
-
-        order = orderService.acceptOrder(adminCode,orderCode, exchange);
-        System.out.println("order = " + order);
-        specsService.afterAcceptOrder(orderCode, order.getFranchiseCode(), order.getDeliveryDate());
-        invoiceService.afterAcceptOrder(order);
-        exchangeService.afterAcceptOrder(order);
-        return order;
+    }
+    @Transactional
+    public int afterAcceptOrder(OrderDTO order){
+        int success=0;
+        productService.exportProducts(order);  // change product count
+        success++; // 3
+        specsService.afterAcceptOrder(order); // create new specs
+        success++; // 4
+        invoiceService.afterAcceptOrder(order); // create new invoice
+        success++; // 5
+        exchangeService.afterAcceptOrder(order); // Change to waiting for return of processed exchanges
+        success++; // 6
+        return success;
     }
 
-    public OrderDTO denyOrder(int adminCode,int orderId, String denyMessage){
+    private ExchangeDTO findExchangeToAdd(OrderDTO order) {
+        ExchangeDTO exchangeDTO;
+        exchangeDTO = exchangeService.findExchangeToSend(order.getFranchiseCode());
+        // check enable to change exchange product
+        if (exchangeDTO!=null || !productService.checkExchangeProduct(order,exchangeDTO)){
+            exchangeDTO = null;
+        }
+        return exchangeDTO;
+    }
+
+    private Map<Integer, Integer> convertListToMap(List<OrderProductDTO> orderProductList) {
+        Map<Integer,Integer> result = new HashMap<>();
+        for (int i = 0; i < orderProductList.size(); i++) {
+            OrderProductDTO orderProductDTO = orderProductList.get(i);
+            result.put(orderProductDTO.getProductCode(),orderProductDTO.getRequestProductCount());
+        }
+        return result;
+    }
+
+    public int denyOrder(int orderId, String denyMessage){
+        int adminCode = convertUser.convertUser();
         return orderService.denyOrder(adminCode,orderId,denyMessage);
-
     }
 
 }

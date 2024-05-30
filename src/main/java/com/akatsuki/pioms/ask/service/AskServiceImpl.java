@@ -95,6 +95,13 @@ public class AskServiceImpl implements AskService{
 
     @Override
     public AskDTO createAsk(AskCreateDTO askDTO) {
+        if (askDTO.getTitle() == null || askDTO.getTitle().trim().isEmpty()) {
+            throw new IllegalArgumentException("Title cannot be empty");
+        }
+        if (askDTO.getContent() == null || askDTO.getContent().trim().isEmpty()) {
+            throw new IllegalArgumentException("Content cannot be empty");
+        }
+
         Ask ask = new Ask();
         ask.setAskTitle(askDTO.getTitle());
         ask.setAskContent(askDTO.getContent());

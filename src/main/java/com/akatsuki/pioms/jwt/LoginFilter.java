@@ -1,5 +1,6 @@
 package com.akatsuki.pioms.jwt;
 
+import com.akatsuki.pioms.user.dto.CustomUserDetails;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -44,8 +45,12 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         GrantedAuthority auth = iterator.next();
         String role = auth.getAuthority();
 
-        String access = jwtUtil.createJwt("access", username, role, 600000L);
-        String refresh = jwtUtil.createJwt("refresh", username, role, 86400000L);
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        int usercode = userDetails.getUser().getUserCode();
+        String userid = userDetails.getUser().getUserId();
+
+        String access = jwtUtil.createJwt("access", usercode, userid, username, role, 600000L);
+        String refresh = jwtUtil.createJwt("refresh", usercode, userid, username, role, 86400000L);
 
         response.setHeader("access", access);
         response.addCookie(createCookie("refresh", refresh));
@@ -61,6 +66,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private Cookie createCookie(String key, String value) {
         Cookie cookie = new Cookie(key, value);
         cookie.setMaxAge(86400000);
+        cookie.setPath("/");
+//        cookie.setSecure(true);   // https를 위함
         cookie.setHttpOnly(true);
         return cookie;
     }
