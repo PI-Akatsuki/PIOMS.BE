@@ -7,13 +7,11 @@ import com.akatsuki.pioms.ask.dto.AskUpdateDTO;
 import com.akatsuki.pioms.ask.aggregate.Ask;
 import com.akatsuki.pioms.ask.service.AskService;
 import com.akatsuki.pioms.frowner.dto.FranchiseOwnerDTO;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-@Tag(name="문의사항", description = "Franchise Ask")
+
 @RestController
 @RequestMapping("/franchise")
 public class AskFranchiseController {
@@ -24,7 +22,6 @@ public class AskFranchiseController {
     /**
      * 문의사항 전체조회
      * */
-    @Operation(summary = "문의사항조회", description = "문의사항 전체 조회입니다.")
     @GetMapping("/ask/list")
     public ResponseEntity<AskListDTO> getAllAskList(){
         AskListDTO askListDTO = askService.getAllAskList();
@@ -34,7 +31,6 @@ public class AskFranchiseController {
     /**
      * 문의사항 상세 조회
      * */
-    @Operation(summary = "문의사항조회", description = "문의사항 상세 조회입니다.")
     @GetMapping("/ask/{askCode}")
     public ResponseEntity<AskDTO> getAskDetails(@PathVariable int askCode) {
         try {
@@ -71,14 +67,12 @@ public class AskFranchiseController {
         }
     }
 
-    @Operation(summary = "문의사항조회", description = "점주별 문의사항 전체 조회입니다.")
     @GetMapping("/asklist/{franchiseOwnerId}")
     public ResponseEntity<AskListDTO> getAsksByFranchiseOwnerId(@PathVariable Integer franchiseOwnerId) {
         AskListDTO askListDTO = askService.getAsksByFranchiseOwnerId(franchiseOwnerId);
         return ResponseEntity.ok().body(askListDTO);
     }
 
-    @Operation(summary = "문의사항조회", description = "점주별 문의사항 상세 조회입니다.")
     @GetMapping("/owner/{franchiseOwnerCode}")
     public ResponseEntity<FranchiseOwnerDTO> getFranchiseOwnerDetails(@PathVariable int franchiseOwnerCode) {
         try {
