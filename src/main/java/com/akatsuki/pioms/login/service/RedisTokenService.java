@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.concurrent.TimeUnit;
+import java.time.Duration;
 
 @Service
 public class RedisTokenService {
@@ -17,14 +17,14 @@ public class RedisTokenService {
     }
 
     public void saveRefreshToken(String userId, String refreshToken) {
-        redisTemplate.opsForValue().set(userId, refreshToken, 7, TimeUnit.DAYS);
+        redisTemplate.opsForValue().set("refreshToken:" + userId, refreshToken, Duration.ofDays(1));
     }
 
     public String getRefreshToken(String userId) {
-        return (String) redisTemplate.opsForValue().get(userId);
+        return (String) redisTemplate.opsForValue().get("refreshToken:" + userId);
     }
 
     public void deleteRefreshToken(String userId) {
-        redisTemplate.delete(userId);
+        redisTemplate.delete("refreshToken:" + userId);
     }
 }

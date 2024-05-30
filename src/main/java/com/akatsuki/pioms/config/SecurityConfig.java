@@ -1,8 +1,10 @@
 package com.akatsuki.pioms.config;
 
+import com.akatsuki.pioms.jwt.CustomLogoutFilter;
 import com.akatsuki.pioms.jwt.JWTFilter;
 import com.akatsuki.pioms.jwt.JWTUtil;
 import com.akatsuki.pioms.jwt.LoginFilter;
+import com.akatsuki.pioms.redis.RedisTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -25,16 +27,15 @@ public class SecurityConfig {
 
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JWTUtil jwtUtil;
-    private final CorsConfigurationSource corsConfigurationSource;
+    private final RedisTokenService redisTokenService;
 
     @Autowired
-    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil, CorsConfigurationSource corsConfigurationSource) {
+    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil, RedisTokenService redisTokenService) {
         this.authenticationConfiguration = authenticationConfiguration;
         this.jwtUtil = jwtUtil;
-        this.corsConfigurationSource = corsConfigurationSource;
+        this.redisTokenService = redisTokenService;
     }
 
-    // AuthenticationManager Bean 등록
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
@@ -46,46 +47,36 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .formLogin(formLogin -> formLogin.disable())
                 .httpBasic(httpBasic -> httpBasic.disable())
-                .cors(cors -> cors.configurationSource(corsConfigurationSource)) // CORS 설정 추가
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/**").permitAll()
-//                        .requestMatchers("/reissue", "/login", "/admin/login", "/franchise/login", "/driver/login").permitAll()
-//                        .requestMatchers("/admin/**").hasRole("ROOT")
-//                        .requestMatchers(
-//                                "/admin/info",
-//                                "/admin/home",
-//                                "/admin/list/**",
-//                                "/admin/category/first/list/**",
-//                                "/admin/category/second/list/**",
-//                                "/admin/category/third/list/**",
-//                                "/admin/driver/list/**",
-//                                "/admin/franchise/list/**",
-//                                "/admin/franchise/owner/list/**",
-//                                "/admin/franchise/owner/update/**",
-//                                "/admin/product/list/**",
-//                                "/admin/specs/**",
-//                                "/admin/order/**",
-//                                "/admin/invoice/**",
-//                                "/admin/exchange/**",
-//                                "/admin/notice/list/**",
-//                                "/admin/ask/**",
-//                                "/admin/exceldownload/**").hasRole("ADMIN")
-//                        .requestMatchers("/franchise/**").hasRole("OWNER")
-//                        .requestMatchers("/driver/**").hasRole("DRIVER")
+                        .requestMatchers("/reissue", "/admin/login", "/franchise/login", "/driver/login").permitAll()
+                        .requestMatchers("/admin/**").hasRole("ROOT")
+                        .requestMatchers(
+                                "/admin/info",
+                                "/admin/home",
+                                "/admin/list/**",
+                                "/admin/category/first/list/**",
+                                "/admin/category/second/list/**",
+                                "/admin/category/third/list/**",
+                                "/admin/driver/list/**",
+                                "/admin/franchise/list/**",
+                                "/admin/franchise/owner/list/**",
+                                "/admin/franchise/owner/update/**",
+                                "/admin/product/list/**",
+                                "/admin/specs/**",
+                                "/admin/order/**",
+                                "/admin/invoice/**",
+                                "/admin/exchange/**",
+                                "/admin/notice/list/**",
+                                "/admin/ask/**",
+                                "/admin/exceldownload/**").hasRole("ADMIN")
+                        .requestMatchers("/franchise/**").hasRole("OWNER")
+                        .requestMatchers("/driver/**").hasRole("DRIVER")
                         .anyRequest().authenticated()
                 )
-                .logout(logout -> logout
-                        .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login?logout=true")
-                        .permitAll()
-                );
-
-        http
+                .addFilterBefore(new CustomLogoutFilter(jwtUtil, redisTokenService), LogoutFilter.class)
                 .addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class)
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         return http.build();
     }
