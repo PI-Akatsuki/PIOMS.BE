@@ -12,5 +12,10 @@ public interface AskRepository extends JpaRepository<Ask, Integer> {
     @Query("SELECT a FROM Ask a WHERE a.askStatus = '답변대기'")
     List<Ask> findAllByStatusWaitingForReply();
 
-    List<Ask> findByFranchiseOwner_FranchiseOwnerCode(int franchiseOwnerCode);
+    @Query("SELECT a FROM Ask a ORDER BY a.askEnrollDate DESC")
+    List<Ask> findAllOrderByEnrollDateDesc();
+
+    @Query("SELECT a FROM Ask a WHERE a.franchiseOwner.franchiseOwnerCode = :franchiseOwnerId ORDER BY a.askEnrollDate DESC")
+    List<Ask> findByFranchiseOwner_FranchiseOwnerCodeOrderByAskEnrollDateDesc(Integer franchiseOwnerId);
 }
+

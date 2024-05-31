@@ -18,7 +18,7 @@ import java.util.List;
 public class ProductExcelAdminController {
 
     private ProductService productService;
-    private List<ProductDTO> productList;
+    private final List<ProductDTO> productList;
 
     public ProductExcelAdminController(ProductService productService) {
         this.productService = productService;
