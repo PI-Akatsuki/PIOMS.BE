@@ -223,7 +223,15 @@ public class ProductServiceImpl implements ProductService{
             int productCode = exchangeProductVO.getProductCode();
             int count = exchangeProductVO.getExchangeProductNormalCount();
             productPlusCnt(productCode,count);
+            count = exchangeProductVO.getExchangeProductDiscount();
+            productPlusDisCnt(productCode,count);
         });
+    }
+
+    private void productPlusDisCnt(int productCode,int count) {
+        Product product = productRepository.findById(productCode).orElseThrow();
+        product.setProductDiscount(product.getProductDiscount()+count);
+        productRepository.save(product);
     }
 
     public void productPlusCnt(int productCode, int count) {

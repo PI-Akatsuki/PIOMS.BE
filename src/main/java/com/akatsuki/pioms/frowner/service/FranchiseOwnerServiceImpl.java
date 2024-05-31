@@ -99,7 +99,7 @@ public class FranchiseOwnerServiceImpl implements FranchiseOwnerService {
                     .franchiseOwnerEnrollDate(franchiseOwnerDTO.getFranchiseOwnerEnrollDate())
                     .franchiseOwnerUpdateDate(franchiseOwnerDTO.getFranchiseOwnerUpdateDate())
                     .build();
-
+            franchiseOwner.setFranchiseRole("ROLE_OWNER");
             franchiseOwnerRepository.save(franchiseOwner);
             logService.saveLog("root", LogStatus.등록, franchiseOwner.getFranchiseOwnerName(), "FranchiseOwner");
             return ResponseEntity.ok("신규 프랜차이즈 오너 등록이 완료되었습니다.");

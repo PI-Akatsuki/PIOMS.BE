@@ -86,19 +86,19 @@ public class ExchangeServiceImpl implements ExchangeService{
     @Transactional
     public ExchangeDTO postExchange( RequestExchange requestExchange) {
         int franchiseOwnerCode = convertUser.getCode();
-        if(exchangeRepository.existsByFranchiseFranchiseCodeAndExchangeStatus(requestExchange.getFranchiseCode(), EXCHANGE_STATUS.반송신청))
+        FranchiseDTO franchiseDTO = franchiseService.findFranchiseByFranchiseOwnerCode(franchiseOwnerCode);
+        if(exchangeRepository.existsByFranchiseFranchiseCodeAndExchangeStatus(franchiseDTO.getFranchiseCode(), EXCHANGE_STATUS.반송신청))
             return null;
-        FranchiseDTO franchise = franchiseService.findFranchiseByFranchiseOwnerCode(franchiseOwnerCode);
-        if (franchise.getFranchiseOwner().getFranchiseOwnerCode()!= franchiseOwnerCode)
+        if (franchiseDTO.getFranchiseOwner().getFranchiseOwnerCode()!= franchiseOwnerCode)
             return null;
-        if(!franchiseWarehouseService.checkEnableToAddExchangeAndChangeEnableCnt(requestExchange))
+        if(!franchiseWarehouseService.checkEnableToAddExchangeAndChangeEnableCnt(requestExchange,franchiseDTO.getFranchiseCode()))
             return null;
 
         Exchange exchange = new Exchange();
         exchange.setExchangeDate(LocalDateTime.now());
         exchange.setExchangeStatus(EXCHANGE_STATUS.반송신청);
 
-        Franchise franchise1 = getFranchise(franchiseOwnerCode, franchise);
+        Franchise franchise1 = getFranchise(franchiseOwnerCode, franchiseDTO);
 
         exchange.setFranchise(franchise1);
         Exchange exchange1 = exchangeRepository.save(exchange);

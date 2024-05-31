@@ -71,37 +71,37 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
     public void saveProductWhenUpdateExchangeToCompany(int productCode, int changeVal, int franchiseCode) {
         FranchiseWarehouse franchiseWarehouse
                 = franchiseWarehouseRepository.findByProductProductCodeAndFranchiseCode(productCode,franchiseCode);
-        franchiseWarehouse.setFranchiseWarehouseCount(franchiseWarehouse.getFranchiseWarehouseEnable()-changeVal);
+        franchiseWarehouse.setFranchiseWarehouseCount(franchiseWarehouse.getFranchiseWarehouseCount()-changeVal);
         franchiseWarehouseRepository.save(franchiseWarehouse);
     }
 
     @Override
     @Transactional
-    public boolean checkEnableToAddExchangeAndChangeEnableCnt(RequestExchange requestExchange) {
+    public boolean checkEnableToAddExchangeAndChangeEnableCnt(RequestExchange requestExchange, int franchiseCode) {
 
         for (int i = 0; i < requestExchange.getProducts().size(); i++) {
             ExchangeProductVO exchange =requestExchange.getProducts().get(i);
-
             FranchiseWarehouse franchiseWarehouse =
-                    franchiseWarehouseRepository.findByProductProductCodeAndFranchiseCode(exchange.getProductCode(), requestExchange.getFranchiseCode());
-
+                    franchiseWarehouseRepository.findByProductProductCodeAndFranchiseCode(exchange.getProductCode(), franchiseCode);
             if(franchiseWarehouse==null || franchiseWarehouse.getFranchiseWarehouseEnable()< exchange.getExchangeProductCount()) {
                 return false;
             }
         }
-        editCountByPostExchange(requestExchange);
+        editCountByPostExchange(requestExchange, franchiseCode);
         return true;
     }
     @Transactional
-    public void editCountByPostExchange(RequestExchange requestExchange) {
+    public void editCountByPostExchange(RequestExchange requestExchange,int franchiseCode) {
         int cnt = requestExchange.getProducts().size();
         for (int i = 0; i < cnt; i++) {
             ExchangeProductVO exchange = requestExchange.getProducts().get(i);
             FranchiseWarehouse franchiseWarehouse =
-                    franchiseWarehouseRepository.findByProductProductCodeAndFranchiseCode(exchange.getProductCode(),requestExchange.getFranchiseCode());
+                    franchiseWarehouseRepository.findByProductProductCodeAndFranchiseCode(exchange.getProductCode(),franchiseCode);
             System.out.println(franchiseWarehouse);
             if (franchiseWarehouse!=null) {
                 franchiseWarehouse.setFranchiseWarehouseEnable(franchiseWarehouse.getFranchiseWarehouseEnable() - exchange.getExchangeProductCount());
+                System.out.println("sadfjfsddfbshsdfbj");
+                System.out.println("franchiseWarehouse = " + franchiseWarehouse);
                 franchiseWarehouseRepository.save(franchiseWarehouse);
             }
         }

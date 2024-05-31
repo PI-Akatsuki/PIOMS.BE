@@ -86,7 +86,7 @@ public class AdminProductController {
 
 
     @PostMapping("/image")
-    public ResponseEntity<Boolean> postImage(@ModelAttribute RequestProduct request) {
+    public ResponseEntity<Boolean> postImage(RequestProduct request) {
         Boolean result = null;
         System.out.println("request = " + request);
 

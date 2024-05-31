@@ -105,7 +105,7 @@ public class AdminOrderFacade {
         ExchangeDTO exchangeDTO;
         exchangeDTO = exchangeService.findExchangeToSend(order.getFranchiseCode());
         // check enable to change exchange product
-        if (exchangeDTO!=null || !productService.checkExchangeProduct(order,exchangeDTO)){
+        if (exchangeDTO!=null && !productService.checkExchangeProduct(order,exchangeDTO)){
             exchangeDTO = null;
         }
         return exchangeDTO;
