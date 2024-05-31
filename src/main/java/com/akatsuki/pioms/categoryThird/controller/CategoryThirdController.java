@@ -49,19 +49,19 @@ public class CategoryThirdController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<String> postCategoryThird(@RequestBody RequestCategoryThird request, int requesterAdminCode) {
-        return categoryThirdService.postCategory(request, requesterAdminCode);
+    public ResponseEntity<String> postCategoryThird(@RequestBody RequestCategoryThird request) {
+        return categoryThirdService.postCategory(request);
     }
 
     @PutMapping("/update/{categoryThirdCode}")
-    public ResponseEntity<String> updateCategoryThird(@PathVariable int categoryThirdCode, @RequestBody RequestCategoryThird request, int requesterAdminCode) {
-        return categoryThirdService.updateCategory(categoryThirdCode, request, requesterAdminCode);
+    public ResponseEntity<String> updateCategoryThird(@PathVariable int categoryThirdCode, @RequestBody RequestCategoryThird request) {
+        return categoryThirdService.updateCategory(categoryThirdCode, request);
     }
 
     @DeleteMapping("/delete/{categoryThirdCode}")
     @Operation(summary = "카테고리(소) 카테고리 삭제", description = "포함되어 있는 상품이 0개인 카테고리(소) 카테고리 삭제 기능")
-    public ResponseEntity<String> deleteCategoryThird(@PathVariable int categoryThirdCode, int requesterAdminCode) {
-        return categoryThirdService.deleteCategoryThird(categoryThirdCode, requesterAdminCode);
+    public ResponseEntity<String> deleteCategoryThird(@PathVariable int categoryThirdCode) {
+        return categoryThirdService.deleteCategoryThird(categoryThirdCode);
     }
 
 }

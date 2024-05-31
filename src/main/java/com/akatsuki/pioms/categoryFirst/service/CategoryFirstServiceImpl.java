@@ -60,11 +60,8 @@ public class CategoryFirstServiceImpl implements CategoryFirstService {
 
     @Override
     @Transactional
-    public ResponseEntity<String> updateCategoryFirst(int categoryFirstCode, RequestCategoryFirst request, int requesterAdminCode) {
-        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
-        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
-            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
-        }
+    public ResponseEntity<String> updateCategoryFirst(int categoryFirstCode, RequestCategoryFirst request) {
+
         CategoryFirst categoryFirst = categoryFirstRepository.findById(categoryFirstCode)
                 .orElseThrow(() -> new EntityNotFoundException("CategoryFirst not found"));
 
@@ -82,11 +79,7 @@ public class CategoryFirstServiceImpl implements CategoryFirstService {
 
     @Override
     @Transactional
-    public ResponseEntity<String> postCategoryFirst(RequestCategoryFirst request, int requesterAdminCode) {
-        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
-        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
-            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
-        }
+    public ResponseEntity<String> postCategoryFirst(RequestCategoryFirst request) {
         CategoryFirst categoryFirst = new CategoryFirst();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formattedDateTime = LocalDateTime.now().format(formatter);
@@ -100,5 +93,18 @@ public class CategoryFirstServiceImpl implements CategoryFirstService {
 
         logService.saveLog("root", LogStatus.등록,savedCategoryFirst.getCategoryFirstName(),"CategoryFirst");
         return ResponseEntity.ok("카테고리(대) 생성 완료!");
+    }
+
+    @Override
+    public ResponseEntity<String> deleteCategoryFirst(int categoryFirstCode) {
+        CategoryFirst categoryFirst = categoryFirstRepository.findById(categoryFirstCode)
+                .orElseThrow(() -> new EntityNotFoundException("CategoryFirst not found"));
+        if(categoryFirst == null) {
+            return ResponseEntity.badRequest().body(categoryFirstCode + "번 카테고리 없음");
+        }
+
+        categoryFirstRepository.delete(categoryFirst);
+        logService.saveLog("root", LogStatus.삭제,categoryFirst.getCategoryFirstName(),"CategoryFirst");
+        return ResponseEntity.badRequest().body("카테고리 소분류 삭제 완료");
     }
 }
