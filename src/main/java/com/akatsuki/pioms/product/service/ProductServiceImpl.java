@@ -278,11 +278,10 @@ public class ProductServiceImpl implements ProductService{
 
 
     @Override
-    public Boolean postProductWithImage(RequestProduct request, MultipartFile image)throws IOException {
-//        Product product = new Product(request);
-//        product = productRepository.save(product);
+    @Transactional
+    public Boolean postProductWithImage(RequestProduct request, MultipartFile image) {
         ProductDTO productDTO = postProduct2(request,1);
-        return googleImage.uploadImage(productDTO.getProductCode(),image);
+        return googleImage.uploadImage(productDTO.getProductCode(), image);
     }
 
     @Transactional

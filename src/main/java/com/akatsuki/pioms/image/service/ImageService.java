@@ -29,26 +29,29 @@ ImageService {
         this.imageRepository = imageRepository;
     }
 
-    public boolean uploadImage(int productCode, MultipartFile file) throws IOException {
-        ClassPathResource resource = new ClassPathResource(credentialsLocation);
-        GoogleCredentials credentials = GoogleCredentials.fromStream(resource.getInputStream());
+    public boolean uploadImage(int productCode, MultipartFile file) {
 
-        Storage storage = StorageOptions.newBuilder()
-                .setCredentials(credentials)
-                .setProjectId(projectId)
-                .build()
-                .getService();
+        try {
+            ClassPathResource resource = new ClassPathResource(credentialsLocation);
+            GoogleCredentials credentials = GoogleCredentials.fromStream(resource.getInputStream());
 
-        String fileName = UUID.randomUUID().toString().substring(0,6);
+            Storage storage = StorageOptions.newBuilder()
+                    .setCredentials(credentials)
+                    .setProjectId(projectId)
+                    .build()
+                    .getService();
 
-        BlobId blobId = BlobId.of(bucketName, fileName);
-        BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
+            String fileName = UUID.randomUUID().toString().substring(0, 6);
 
-        byte[] bytes = file.getBytes();
-        Blob blob = storage.create(blobInfo, bytes);
-        Image image = imageRepository.save(new Image(blob.getMediaLink(),productCode));
-        System.out.println(image);
+            BlobId blobId = BlobId.of(bucketName, fileName);
+            BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
 
+            byte[] bytes = file.getBytes();
+            Blob blob = storage.create(blobInfo, bytes);
+            Image image = imageRepository.save(new Image(blob.getMediaLink(), productCode));
+        }catch (IOException e){
+            return false;
+        }
         return true;
     }
 

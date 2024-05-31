@@ -90,11 +90,8 @@ public class AdminProductController {
         Boolean result = null;
         System.out.println("request = " + request);
 
-        try {
-            result = productService.postProductWithImage(request, request.getFile());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        result = productService.postProductWithImage(request, request.getFile());
+
         return ResponseEntity.ok(result);
     }
 
