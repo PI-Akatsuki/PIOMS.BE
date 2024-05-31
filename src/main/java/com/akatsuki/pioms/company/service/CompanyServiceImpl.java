@@ -8,6 +8,8 @@ import com.akatsuki.pioms.log.etc.LogStatus;
 import com.akatsuki.pioms.log.service.LogService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -70,8 +72,11 @@ public class                             CompanyServiceImpl implements CompanySe
                             .companyFax(companyEntity.getCompanyFax())
                             .build();
                      companyRepository.save(updatedCompany);
+
+                    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                    String username = authentication.getName();
                     if (logMessage.length() > 0) {
-                        logService.saveLog("root", LogStatus.수정, logMessage.toString(), "Company");
+                        logService.saveLog(username, LogStatus.수정, "통합관리자 로그인", "Company");
                     }
 
                     return updatedCompany;
