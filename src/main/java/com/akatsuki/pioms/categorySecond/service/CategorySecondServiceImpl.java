@@ -64,11 +64,8 @@ public class CategorySecondServiceImpl implements CategorySecondService{
 
     @Override
     @Transactional
-    public ResponseEntity<String> postCategorySecond(RequestCategorySecond request, int requesterAdminCode) {
-        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
-        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
-            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
-        }
+    public ResponseEntity<String> postCategorySecond(RequestCategorySecond request) {
+
         CategorySecond categorySecond = new CategorySecond();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formattedDateTime = LocalDateTime.now().format(formatter);
@@ -91,11 +88,8 @@ public class CategorySecondServiceImpl implements CategorySecondService{
 
     @Override
     @Transactional
-    public ResponseEntity<String> updateCategorySecond(int categorySecondCode, RequestCategorySecond request, int requesterAdminCode) {
-        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
-        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
-            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
-        }
+    public ResponseEntity<String> updateCategorySecond(int categorySecondCode, RequestCategorySecond request) {
+
         CategorySecond categorySecond = categorySecondRepository.findById(categorySecondCode)
                 .orElseThrow(() -> new EntityNotFoundException("CategorySecond not found"));
 
@@ -120,5 +114,18 @@ public class CategorySecondServiceImpl implements CategorySecondService{
             responseCategorySeconds.add(new ResponseCategorySecond(categorySecond));
         });
         return responseCategorySeconds;
+    }
+
+    @Override
+    public ResponseEntity<String> deleteCategorySecond(int categorySecondCode) {
+        CategorySecond categorySecond = categorySecondRepository.findById(categorySecondCode)
+                .orElseThrow(() -> new EntityNotFoundException("NoNo"));
+        if (categorySecond == null) {
+            return ResponseEntity.badRequest().body(categorySecondCode + "번 카테고리(소) 카테고리가 없습니다!");
+        }
+
+        categorySecondRepository.delete(categorySecond);
+        logService.saveLog("root", LogStatus.삭제,categorySecond.getCategorySecondName(),"CategorySecond");
+        return ResponseEntity.badRequest().body("카테고리(중) 삭제 완료");
     }
 }
