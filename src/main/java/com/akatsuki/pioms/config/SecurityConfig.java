@@ -48,30 +48,31 @@ public class SecurityConfig {
                 .formLogin(formLogin -> formLogin.disable())
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/reissue", "/admin/login", "/franchise/login", "/driver/login").permitAll()
-                        .requestMatchers("/admin/**").hasRole("ROOT")
-                        .requestMatchers(
-                                "/admin/info",
-                                "/admin/home",
-                                "/admin/list/**",
-                                "/admin/category/first/list/**",
-                                "/admin/category/second/list/**",
-                                "/admin/category/third/list/**",
-                                "/admin/driver/list/**",
-                                "/admin/franchise/list/**",
-                                "/admin/franchise/owner/list/**",
-                                "/admin/franchise/owner/update/**",
-                                "/admin/product/list/**",
-                                "/admin/specs/**",
-                                "/admin/order/**",
-                                "/admin/invoice/**",
-                                "/admin/exchange/**",
-                                "/admin/notice/list/**",
-                                "/admin/ask/**",
-                                "/admin/exceldownload/**").hasRole("ADMIN")
-                        .requestMatchers("/franchise/**").hasRole("OWNER")
-                        .requestMatchers("/driver/**").hasRole("DRIVER")
-                        .anyRequest().authenticated()
+                                .requestMatchers("/reissue", "/admin/login", "/franchise/login", "/driver/login").permitAll()
+//                        .requestMatchers("/admin/**").hasRole("ROOT")
+                                .requestMatchers("/admin/**").hasAnyRole("ROOT","ADMIN")
+                                .requestMatchers(
+                                        "/admin/info",
+                                        "/admin/home",
+                                        "/admin/list/**",
+                                        "/admin/category/first/list/**",
+                                        "/admin/category/second/list/**",
+                                        "/admin/category/third/list/**",
+                                        "/admin/driver/list/**",
+                                        "/admin/franchise/list/**",
+                                        "/admin/franchise/owner/list/**",
+                                        "/admin/franchise/owner/update/**",
+                                        "/admin/product/list/**",
+                                        "/admin/specs/**",
+                                        "/admin/order/**",
+                                        "/admin/invoice/**",
+                                        "/admin/exchange/**",
+                                        "/admin/notice/list/**",
+                                        "/admin/ask/**",
+                                        "/admin/exceldownload/**").hasRole("ROOT")
+                                .requestMatchers("/franchise/**").hasRole("ROOT")
+                                .requestMatchers("/driver/**").hasAnyRole("ROOT", "DRIVER")
+                                .anyRequest().authenticated()
                 )
                 .addFilterBefore(new CustomLogoutFilter(jwtUtil, redisTokenService), LogoutFilter.class)
                 .addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)

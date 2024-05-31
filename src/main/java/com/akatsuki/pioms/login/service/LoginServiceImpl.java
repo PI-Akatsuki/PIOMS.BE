@@ -80,7 +80,7 @@ public class LoginServiceImpl implements LoginService {
 
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
-            if ("ROLE_OWNER".equals(user.getRole()) && passwordEncoder.matches(frOwnerPassword, user.getPassword())) {
+            if ("ROLE_ROOT".equals(user.getRole()) && passwordEncoder.matches(frOwnerPassword, user.getPassword())) {
                 Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(frOwnerId, frOwnerPassword));
                 CustomUserDetails authenticatedUserDetails = (CustomUserDetails) authentication.getPrincipal();
                 User authenticatedUser = authenticatedUserDetails.getUser();
@@ -113,7 +113,7 @@ public class LoginServiceImpl implements LoginService {
 
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
-            if ("ROLE_DRIVER".equals(user.getRole()) && passwordEncoder.matches(driverPassword, user.getPassword())) {
+            if ("ROLE_ROOT".equals(user.getRole()) && passwordEncoder.matches(driverPassword, user.getPassword())) {
                 Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(driverId, driverPassword));
                 CustomUserDetails authenticatedUserDetails = (CustomUserDetails) authentication.getPrincipal();
                 User authenticatedUser = authenticatedUserDetails.getUser();
