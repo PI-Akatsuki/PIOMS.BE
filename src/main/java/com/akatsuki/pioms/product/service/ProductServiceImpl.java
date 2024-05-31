@@ -149,6 +149,11 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
+    public boolean checkOrderEnable(Map<Integer, Integer> orderProductMap) {
+        return false;
+    }
+
+    @Override
     @Transactional
     public ResponseEntity<String> updateProduct(int productCode, RequestProduct request) {
         Product product = productRepository.findById(productCode)
