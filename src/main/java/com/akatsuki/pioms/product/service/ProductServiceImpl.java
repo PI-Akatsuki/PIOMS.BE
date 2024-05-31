@@ -24,6 +24,8 @@ import com.akatsuki.pioms.product.aggregate.RequestProduct;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -117,7 +119,10 @@ public class ProductServiceImpl implements ProductService{
 
         Product updatedProduct = productRepository.save(product);
 
-        logService.saveLog("root", LogStatus.등록, updatedProduct.getProductName(), "Product");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        logService.saveLog(username, LogStatus.등록, updatedProduct.getProductName(), "Product");
 
         return ResponseEntity.ok("상품 등록 완료!");
     }
@@ -134,7 +139,9 @@ public class ProductServiceImpl implements ProductService{
             return ResponseEntity.badRequest().body("해당 상품이 없습니다.");
         }
         String productName = product.getProductName();
-        logService.saveLog("root", LogStatus.삭제, productName, "Product");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        logService.saveLog(username, LogStatus.삭제, productName, "Product");
 
         if (!product.isProductExposureStatus()) {
             product.setProductExposureStatus(true);
@@ -200,7 +207,9 @@ public class ProductServiceImpl implements ProductService{
         product.setProductDiscount(request.getProductDisCount());
         product.setProductCount(request.getProductCount());
         Product updatedProduct = productRepository.save(product);
-        logService.saveLog("root", LogStatus.수정, updatedProduct.getProductName(), "Product");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        logService.saveLog(username, LogStatus.수정, updatedProduct.getProductName(), "Product");
 
         return ResponseEntity.ok("상품 수정 완료!");
     }
