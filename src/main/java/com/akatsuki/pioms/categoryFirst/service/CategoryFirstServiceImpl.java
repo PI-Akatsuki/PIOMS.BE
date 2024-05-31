@@ -12,6 +12,8 @@ import com.akatsuki.pioms.log.service.LogService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -76,7 +78,9 @@ public class CategoryFirstServiceImpl implements CategoryFirstService {
         categoryFirst.setCategoryFirstName(request.getCategoryFirstName());
         categoryFirst.setCategoryFirstUpdateDate(formattedDateTime);
 
-        logService.saveLog("root", LogStatus.수정,updatedCategoryFirst.getCategoryFirstName(),"CategoryFirst");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        logService.saveLog(username, LogStatus.수정,updatedCategoryFirst.getCategoryFirstName(),"CategoryFirst");
         return ResponseEntity.ok("카테고리(대) 수정 완료!");
     }
 
@@ -98,7 +102,9 @@ public class CategoryFirstServiceImpl implements CategoryFirstService {
 
         CategoryFirst savedCategoryFirst = categoryFirstRepository.save(categoryFirst);
 
-        logService.saveLog("root", LogStatus.등록,savedCategoryFirst.getCategoryFirstName(),"CategoryFirst");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        logService.saveLog(username, LogStatus.등록,savedCategoryFirst.getCategoryFirstName(),"CategoryFirst");
         return ResponseEntity.ok("카테고리(대) 생성 완료!");
     }
 }
