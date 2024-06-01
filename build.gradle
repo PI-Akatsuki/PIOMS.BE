@@ -59,14 +59,14 @@ dependencies {
     implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.3.0'
 
     // JWT 0.12.3
-    implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
-    implementation 'io.jsonwebtoken:jjwt-impl:0.12.3'
-    implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'
+//    implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
+//    implementation 'io.jsonwebtoken:jjwt-impl:0.12.3'
+//    implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'
 
     // JWT 0.11.5
-//    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
-//    implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
-//    implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
     // excel POI
 // https://mvnrepository.com/artifact/org.apache.poi/poi
