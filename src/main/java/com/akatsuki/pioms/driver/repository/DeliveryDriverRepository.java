@@ -12,4 +12,5 @@ public interface DeliveryDriverRepository extends JpaRepository<DeliveryDriver, 
     Optional<DeliveryDriver> findByDriverId(String driverId);
 
     DeliveryDriver findByDriverName(String userName);
+
 }

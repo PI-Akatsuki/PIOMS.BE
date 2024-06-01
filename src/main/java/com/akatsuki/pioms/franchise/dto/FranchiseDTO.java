@@ -1,17 +1,12 @@
 package com.akatsuki.pioms.franchise.dto;
 
-import com.akatsuki.pioms.admin.aggregate.Admin;
-import com.akatsuki.pioms.admin.dto.AdminDTO;
 import com.akatsuki.pioms.driver.aggregate.DeliveryDriver;
 import com.akatsuki.pioms.franchise.aggregate.DELIVERY_DATE;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
-import com.akatsuki.pioms.frowner.aggregate.FranchiseOwner;
 import com.akatsuki.pioms.frowner.dto.FranchiseOwnerDTO;
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 
 @Getter
 @NoArgsConstructor
@@ -33,7 +28,6 @@ public class FranchiseDTO {
     private int adminCode;
     private String adminName;
 
-
     public FranchiseDTO(Franchise franchise) {
         this.franchiseCode = franchise.getFranchiseCode();
         this.franchiseName = franchise.getFranchiseName();
@@ -44,7 +38,7 @@ public class FranchiseDTO {
         this.franchiseDeleteDate = franchise.getFranchiseDeleteDate();
         this.franchiseBusinessNum = franchise.getFranchiseBusinessNum();
         this.franchiseDeliveryDate = franchise.getFranchiseDeliveryDate();
-        this.franchiseOwner = new FranchiseOwnerDTO(franchise.getFranchiseOwner(), franchise);
+        this.franchiseOwner = new FranchiseOwnerDTO(franchise.getFranchiseOwner());
         this.adminCode = franchise.getAdmin().getAdminCode();
         this.adminName = franchise.getAdmin().getAdminName();
         this.deliveryDriver = franchise.getDeliveryDriver();

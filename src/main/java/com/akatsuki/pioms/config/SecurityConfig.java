@@ -4,17 +4,24 @@ import com.akatsuki.pioms.jwt.CustomLogoutFilter;
 import com.akatsuki.pioms.jwt.JWTFilter;
 import com.akatsuki.pioms.jwt.JWTUtil;
 import com.akatsuki.pioms.jwt.LoginFilter;
-import com.akatsuki.pioms.redis.RedisTokenService;
+import com.akatsuki.pioms.admin.repository.AdminRepository;
+import com.akatsuki.pioms.frowner.repository.FranchiseOwnerRepository;
+import com.akatsuki.pioms.driver.repository.DeliveryDriverRepository;
+import com.akatsuki.pioms.login.service.RedisTokenService;
+import com.akatsuki.pioms.user.service.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -28,17 +35,41 @@ public class SecurityConfig {
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JWTUtil jwtUtil;
     private final RedisTokenService redisTokenService;
+    private final AdminRepository adminRepository;
+    private final FranchiseOwnerRepository franchiseOwnerRepository;
+    private final DeliveryDriverRepository deliveryDriverRepository;
+    private final CustomUserDetailsService customUserDetailsService;
 
     @Autowired
-    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil, RedisTokenService redisTokenService) {
+    public SecurityConfig(
+            AuthenticationConfiguration authenticationConfiguration,
+            JWTUtil jwtUtil,
+            RedisTokenService redisTokenService,
+            AdminRepository adminRepository,
+            FranchiseOwnerRepository franchiseOwnerRepository,
+            DeliveryDriverRepository deliveryDriverRepository,
+            CustomUserDetailsService customUserDetailsService
+    ) {
         this.authenticationConfiguration = authenticationConfiguration;
         this.jwtUtil = jwtUtil;
         this.redisTokenService = redisTokenService;
+        this.adminRepository = adminRepository;
+        this.franchiseOwnerRepository = franchiseOwnerRepository;
+        this.deliveryDriverRepository = deliveryDriverRepository;
+        this.customUserDetailsService = customUserDetailsService;
     }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
+    }
+
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(customUserDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return authProvider;
     }
 
     @Bean
@@ -48,34 +79,34 @@ public class SecurityConfig {
                 .formLogin(formLogin -> formLogin.disable())
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .authorizeHttpRequests(authorize -> authorize
-                                .requestMatchers("/reissue", "/admin/login", "/franchise/login", "/driver/login").permitAll()
-//                        .requestMatchers("/admin/**").hasRole("ROOT")
-                                .requestMatchers("/admin/**").hasAnyRole("ROOT","ADMIN")
-                                .requestMatchers(
-                                        "/admin/info",
-                                        "/admin/home",
-                                        "/admin/list/**",
-                                        "/admin/category/first/list/**",
-                                        "/admin/category/second/list/**",
-                                        "/admin/category/third/list/**",
-                                        "/admin/driver/list/**",
-                                        "/admin/franchise/list/**",
-                                        "/admin/franchise/owner/list/**",
-                                        "/admin/franchise/owner/update/**",
-                                        "/admin/product/list/**",
-                                        "/admin/specs/**",
-                                        "/admin/order/**",
-                                        "/admin/invoice/**",
-                                        "/admin/exchange/**",
-                                        "/admin/notice/list/**",
-                                        "/admin/ask/**",
-                                        "/admin/exceldownload/**").hasRole("ROOT")
-                                .requestMatchers("/franchise/**").hasRole("ROOT")
-                                .requestMatchers("/driver/**").hasAnyRole("ROOT", "DRIVER")
-                                .anyRequest().authenticated()
+                        .requestMatchers("/**").permitAll()
+                        .requestMatchers("/reissue", "/admin/login", "/franchise/login", "/driver/login").permitAll()
+                        .requestMatchers("/admin/**").hasAnyRole("ROOT", "ADMIN")
+                        .requestMatchers(
+                                "/admin/info",
+                                "/admin/home",
+                                "/admin/list/**",
+                                "/admin/category/first/list/**",
+                                "/admin/category/second/list/**",
+                                "/admin/category/third/list/**",
+                                "/admin/driver/list/**",
+                                "/admin/franchise/list/**",
+                                "/admin/franchise/owner/list/**",
+                                "/admin/franchise/owner/update/**",
+                                "/admin/product/list/**",
+                                "/admin/specs/**",
+                                "/admin/order/**",
+                                "/admin/invoice/**",
+                                "/admin/exchange/**",
+                                "/admin/notice/list/**",
+                                "/admin/ask/**",
+                                "/admin/exceldownload/**").hasRole("ROOT")
+                        .requestMatchers("/franchise/**").hasRole("ROOT")
+                        .requestMatchers("/driver/**").hasAnyRole("ROOT", "DRIVER")
+                        .anyRequest().authenticated()
                 )
                 .addFilterBefore(new CustomLogoutFilter(jwtUtil, redisTokenService), LogoutFilter.class)
-                .addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JWTFilter(jwtUtil, adminRepository, franchiseOwnerRepository, deliveryDriverRepository), UsernamePasswordAuthenticationFilter.class)
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
