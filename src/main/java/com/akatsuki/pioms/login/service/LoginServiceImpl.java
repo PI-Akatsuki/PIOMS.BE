@@ -8,6 +8,8 @@ import com.akatsuki.pioms.frowner.aggregate.FranchiseOwner;
 import com.akatsuki.pioms.frowner.repository.FranchiseOwnerRepository;
 import com.akatsuki.pioms.jwt.JWTUtil;
 import com.akatsuki.pioms.user.dto.CustomUserDetails;
+import com.akatsuki.pioms.log.service.LogService;
+import com.akatsuki.pioms.log.etc.LogStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -30,6 +32,7 @@ public class LoginServiceImpl implements LoginService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationProvider authenticationProvider;
     private final RedisTokenService redisTokenService;
+    private final LogService logService;
 
     @Autowired
     public LoginServiceImpl(AdminRepository adminRepository,
@@ -38,7 +41,8 @@ public class LoginServiceImpl implements LoginService {
                             JWTUtil jwtUtil,
                             PasswordEncoder passwordEncoder,
                             AuthenticationProvider authenticationProvider,
-                            RedisTokenService redisTokenService) {
+                            RedisTokenService redisTokenService,
+                            LogService logService) {
         this.adminRepository = adminRepository;
         this.franchiseOwnerRepository = franchiseOwnerRepository;
         this.deliveryDriverRepository = deliveryDriverRepository;
@@ -46,6 +50,7 @@ public class LoginServiceImpl implements LoginService {
         this.passwordEncoder = passwordEncoder;
         this.authenticationProvider = authenticationProvider;
         this.redisTokenService = redisTokenService;
+        this.logService = logService;
     }
 
     private static final Logger logger = Logger.getLogger(LoginServiceImpl.class.getName());
@@ -117,6 +122,14 @@ public class LoginServiceImpl implements LoginService {
 
             logger.info("생성된 Access Token: " + accessToken);
             logger.info("생성된 Refresh Token: " + refreshToken);
+
+            if (user instanceof Admin) {
+                logService.saveLog(userName, LogStatus.등록, "관리자 로그인", "Login");
+            } else if (user instanceof FranchiseOwner) {
+                logService.saveLog(userName, LogStatus.등록, "가맹점주 로그인", "Login");
+            } else if (user instanceof DeliveryDriver) {
+                logService.saveLog(userName, LogStatus.등록, "배송기사 로그인", "Login");
+            }
 
             return ResponseEntity.ok()
                     .header("Authorization", "Bearer " + accessToken)

@@ -132,7 +132,8 @@ public class AdminInfoServiceImpl implements AdminInfoService {
         admin.setFranchise(franchises);
 
         adminRepository.save(admin);
-        logService.saveLog("root", LogStatus.등록, admin.getAdminName(), "Admin");
+        String username = getCurrentUser();
+        logService.saveLog(username, LogStatus.등록, admin.getAdminName(), "Admin");
         return ResponseEntity.ok("신규 관리자 등록이 완료되었습니다.");
     }
 
@@ -167,10 +168,11 @@ public class AdminInfoServiceImpl implements AdminInfoService {
             admin.setUpdateDate(LocalDateTime.now().format(formatter));
 
             adminRepository.save(admin);
+            String username = getCurrentUser();
             if (changes.length() > 0) {
-                logService.saveLog("root", LogStatus.수정, changes.toString(), "Admin");
+                logService.saveLog(username, LogStatus.수정, changes.toString(), "Admin");
             } else {
-                logService.saveLog("root", LogStatus.수정, "No changes", "Admin");
+                logService.saveLog(username, LogStatus.수정, "변경사항 없음", "Admin");
             }
             return ResponseEntity.ok("관리자 정보 수정이 완료되었습니다.");
         } else {
@@ -204,8 +206,9 @@ public class AdminInfoServiceImpl implements AdminInfoService {
             admin.setAdminStatus(false);
 
             adminRepository.save(admin);
-            logService.saveLog("root", LogStatus.삭제, admin.getAdminName(), "Admin");
-            return ResponseEntity.ok("관리자 비활성화(삭제)가 완료됨.");
+            String username = getCurrentUser();
+            logService.saveLog(username, LogStatus.삭제, admin.getAdminName(), "Admin");
+            return ResponseEntity.ok("관리자 비활성화(삭제)가 완료되었습니다.");
         } else {
             return ResponseEntity.notFound().build();
         }
