@@ -36,10 +36,10 @@ public class ConvertUser {
         System.out.println("role = " + role);
         System.out.println("userName = " + userName);
         if (role.equals("ROLE_ADMIN") ||role.equals("ROLE_ROOT"))
-            return adminInfoRepository.findByAdminName(userName).getAdminCode();
+            return adminInfoRepository.findByAdminId(userName).get().getAdminCode();
         if (role.equals("ROLE_Driver"))
-            return deliveryDriverRepository.findByDriverName(userName).getDriverCode();
-        return franchiseOwnerRepository.findByFranchiseOwnerName(userName).getFranchiseOwnerCode();
+            return deliveryDriverRepository.findByDriverId(userName).get().getDriverCode();
+        return franchiseOwnerRepository.findByFranchiseOwnerId(userName).get().getFranchiseOwnerCode();
     }
 
     public String getName(){
