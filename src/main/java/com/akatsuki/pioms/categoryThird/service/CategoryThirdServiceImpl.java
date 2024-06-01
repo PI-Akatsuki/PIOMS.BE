@@ -16,6 +16,8 @@ import com.akatsuki.pioms.product.repository.ProductRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -90,7 +92,10 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
 
         CategoryThird savedCategoryThird = categoryThirdRepository.save(categoryThird);
         System.out.println("savedCategoryThird = " + savedCategoryThird);
-        logService.saveLog("root", LogStatus.등록, savedCategoryThird.getCategoryThirdName(), "CategoryThird");
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        logService.saveLog(username, LogStatus.등록, savedCategoryThird.getCategoryThirdName(), "CategoryThird");
 
         return ResponseEntity.ok("카테고리(소) 생성 완료!");
     }
@@ -110,7 +115,9 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
         categoryThird.setCategoryThirdName(request.getCategoryThirdName());
         categoryThird.setCategoryThirdUpdateDate(formattedDateTime);
 
-        logService.saveLog("root", LogStatus.수정,updatedCategoryThird.getCategoryThirdName(),"CategoryThird");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        logService.saveLog(username, LogStatus.수정,updatedCategoryThird.getCategoryThirdName(),"CategoryThird");
         return ResponseEntity.ok("카테고리(소) 수정 완료!");
     }
 
@@ -134,7 +141,10 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
 
         categoryThird.setCategoryThirdDeleteDate(formattedDateTime);
         categoryThirdRepository.delete(categoryThird);
-        logService.saveLog("root", LogStatus.삭제,categoryThird.getCategoryThirdName(),"CategoryThird");
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        logService.saveLog(username, LogStatus.삭제,categoryThird.getCategoryThirdName(),"CategoryThird");
         return ResponseEntity.badRequest().body("해당 카테고리(소) 카테고리가 성공적으로 삭제되었습니다!");
     }
 

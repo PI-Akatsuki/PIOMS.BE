@@ -1,7 +1,7 @@
 package com.akatsuki.pioms.login.controller;
 
 import com.akatsuki.pioms.jwt.JWTUtil;
-import com.akatsuki.pioms.redis.RedisTokenService;
+import com.akatsuki.pioms.login.service.RedisTokenService;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;

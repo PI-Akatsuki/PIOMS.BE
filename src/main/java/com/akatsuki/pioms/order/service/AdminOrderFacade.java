@@ -43,13 +43,13 @@ public class AdminOrderFacade {
     }
 
     public List<OrderDTO> getOrderListByAdminCode(){
-        int adminCode = convertUser.convertUser();
+        int adminCode = convertUser.getCode();
         List<OrderDTO> orders =  orderService.getOrderListByAdminCode(adminCode);
         return orders;
     }
 
     public OrderDTO getDetailOrderByAdminCode(int orderCode){
-        int adminCode = convertUser.convertUser();
+        int adminCode = convertUser.getCode();
         return orderService.getDetailOrderByAdminCode(adminCode,orderCode);
     }
 
@@ -65,7 +65,7 @@ public class AdminOrderFacade {
      6: Success!! */
     @Transactional(readOnly = false)
     public int accpetOrder(int orderCode){
-        int adminCode = convertUser.convertUser();
+        int adminCode = convertUser.getCode();
         OrderDTO order;
         ExchangeDTO exchangeDTO;
         int success=0;
@@ -105,7 +105,7 @@ public class AdminOrderFacade {
         ExchangeDTO exchangeDTO;
         exchangeDTO = exchangeService.findExchangeToSend(order.getFranchiseCode());
         // check enable to change exchange product
-        if (exchangeDTO!=null || !productService.checkExchangeProduct(order,exchangeDTO)){
+        if (exchangeDTO!=null && !productService.checkExchangeProduct(order,exchangeDTO)){
             exchangeDTO = null;
         }
         return exchangeDTO;
@@ -121,7 +121,7 @@ public class AdminOrderFacade {
     }
 
     public int denyOrder(int orderId, String denyMessage){
-        int adminCode = convertUser.convertUser();
+        int adminCode = convertUser.getCode();
         return orderService.denyOrder(adminCode,orderId,denyMessage);
     }
 

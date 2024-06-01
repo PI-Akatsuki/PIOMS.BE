@@ -101,7 +101,7 @@ public class FranchiseOwnerServiceImpl implements FranchiseOwnerService {
                     .franchiseOwnerEnrollDate(franchiseOwnerDTO.getFranchiseOwnerEnrollDate())
                     .franchiseOwnerUpdateDate(franchiseOwnerDTO.getFranchiseOwnerUpdateDate())
                     .build();
-
+            franchiseOwner.setFranchiseRole("ROLE_OWNER");
             franchiseOwnerRepository.save(franchiseOwner);
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String username = authentication.getName();

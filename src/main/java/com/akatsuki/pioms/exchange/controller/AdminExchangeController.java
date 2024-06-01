@@ -23,8 +23,8 @@ public class AdminExchangeController {
     }
 
     @GetMapping("/exchanges")
-    public ResponseEntity<List<ResponseExchange>> getExchanges(@RequestParam int adminCode){
-        List<ExchangeDTO> exchangeDTOS = exchangeService.getExchangesByAdminCode(adminCode);
+    public ResponseEntity<List<ResponseExchange>> getExchanges(){
+        List<ExchangeDTO> exchangeDTOS = exchangeService.getExchangesByAdminCode();
         List<ResponseExchange> responseExchanges = new ArrayList<>();
         exchangeDTOS.forEach(exchangeDTO -> {
             responseExchanges.add(new ResponseExchange(exchangeDTO));
@@ -33,8 +33,8 @@ public class AdminExchangeController {
     }
 
     @GetMapping("/exchange/{exchangeCode}")
-    public ResponseEntity<ResponseExchange> getExchange(@RequestParam int adminCode,@PathVariable int exchangeCode){
-        ExchangeDTO exchangeDTO = exchangeService.getExchangeByAdminCode(adminCode,exchangeCode);
+    public ResponseEntity<ResponseExchange> getExchange(@PathVariable int exchangeCode){
+        ExchangeDTO exchangeDTO = exchangeService.getExchangeByAdminCode(exchangeCode);
         if (exchangeDTO == null)
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         return ResponseEntity.ok(new ResponseExchange(exchangeDTO));
@@ -42,9 +42,9 @@ public class AdminExchangeController {
 
     // admin이 반송 수정시킴
     @PutMapping("/exchange/{exchangeCode}")
-    public ResponseEntity<ResponseExchange> processArrivedExchange(@RequestParam int adminCode,@PathVariable int exchangeCode,@RequestBody RequestExchange requestExchange){
+    public ResponseEntity<ResponseExchange> processArrivedExchange(@PathVariable int exchangeCode,@RequestBody RequestExchange requestExchange){
         System.out.println("requestExchange = " + requestExchange);
-        ExchangeDTO exchangeDTO= exchangeService.processArrivedExchange(adminCode,exchangeCode,requestExchange);
+        ExchangeDTO exchangeDTO= exchangeService.processArrivedExchange(exchangeCode,requestExchange);
         if (exchangeDTO==null)
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(null);
         return ResponseEntity.ok(new ResponseExchange(exchangeDTO));

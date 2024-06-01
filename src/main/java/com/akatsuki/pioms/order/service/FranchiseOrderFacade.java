@@ -42,7 +42,7 @@ public class FranchiseOrderFacade {
     }
 
     public int postFranchiseOrder(RequestOrderVO requestOrderVO) {
-        int franchiseOwnerCode = convertUser.convertUser();
+        int franchiseOwnerCode = convertUser.getCode();
         System.out.println("franchiseOwnerCode = " + franchiseOwnerCode);
         FranchiseDTO franchise = franchiseService.findFranchiseByFranchiseOwnerCode(franchiseOwnerCode);
 
@@ -54,13 +54,13 @@ public class FranchiseOrderFacade {
     }
 
     public List<OrderDTO> getOrderListByFranchiseCode() {
-        int franchiseOwnerCode = convertUser.convertUser();
+        int franchiseOwnerCode = convertUser.getCode();
         return orderService.getOrderListByFranchiseOwnerCode(franchiseOwnerCode);
     }
 
 
     public boolean putFranchiseOrderCheck(RequestPutOrderCheck requestPutOrder){
-        int franchiseOwnerCode = convertUser.convertUser();
+        int franchiseOwnerCode = convertUser.getCode();
         int franchiseCode = franchiseService.findFranchiseByFranchiseOwnerCode(franchiseOwnerCode).getFranchiseCode();
         OrderDTO order = orderService.getOrder(franchiseCode,requestPutOrder.getOrderCode());
         if (order==null || requestPutOrder.getRequestProduct().size() != order.getOrderProductList().size()){
@@ -95,12 +95,12 @@ public class FranchiseOrderFacade {
     }
 
     public boolean putFranchiseOrder(RequestPutOrder order) {
-        int franchiseOwnerCode = convertUser.convertUser();
+        int franchiseOwnerCode = convertUser.getCode();
         return orderService.putFranchiseOrder(franchiseOwnerCode,order);
     }
 
     public OrderDTO getOrderByFranchiseCode(int orderCode) {
-        int franchiseOwnerCode = convertUser.convertUser();
+        int franchiseOwnerCode = convertUser.getCode();
         int franchiseCode = franchiseService.findFranchiseByFranchiseOwnerCode(franchiseOwnerCode).getFranchiseCode();
         return orderService.getOrder(franchiseCode,orderCode);
     }

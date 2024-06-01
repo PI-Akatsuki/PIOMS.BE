@@ -35,7 +35,7 @@ public interface ProductService {
     // 발주 신청 가능 여부 확인
     boolean checkOrderEnable(Map<Integer,Integer> orderProductMap);
 
-    Boolean postProductWithImage(RequestProduct request, MultipartFile image) throws IOException;
+    Boolean postProductWithImage(RequestProduct request, MultipartFile image);
 
     void importExchangeProducts(RequestExchange requestExchange);
 
