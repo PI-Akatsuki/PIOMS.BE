@@ -79,9 +79,8 @@ public class SecurityConfig {
                 .formLogin(formLogin -> formLogin.disable())
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/**").permitAll()
-                        .requestMatchers("/reissue", "/admin/login", "/franchise/login", "/driver/login").permitAll()
-                        .requestMatchers("/admin/**").hasAnyRole("ROOT", "ADMIN")
+                        .requestMatchers("/", "/reissue", "/admin/login", "/franchise/login", "/driver/login").permitAll()
+                        .requestMatchers("/admin/**").hasRole("ROOT")
                         .requestMatchers(
                                 "/admin/info",
                                 "/admin/home",
@@ -100,9 +99,9 @@ public class SecurityConfig {
                                 "/admin/exchange/**",
                                 "/admin/notice/list/**",
                                 "/admin/ask/**",
-                                "/admin/exceldownload/**").hasRole("ROOT")
-                        .requestMatchers("/franchise/**").hasRole("ROOT")
-                        .requestMatchers("/driver/**").hasAnyRole("ROOT", "DRIVER")
+                                "/admin/exceldownload/**").hasRole("ADMIN")
+                        .requestMatchers("/franchise/**").hasRole("OWNER")
+                        .requestMatchers("/driver/**").hasRole("DRIVER")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(new CustomLogoutFilter(jwtUtil, redisTokenService), LogoutFilter.class)
