@@ -35,7 +35,7 @@ public class FranchiseOwnerDTO {
         this.franchiseOwnerEnrollDate = franchiseOwner.getFranchiseOwnerEnrollDate();
         this.franchiseOwnerUpdateDate = franchiseOwner.getFranchiseOwnerUpdateDate();
         this.franchiseOwnerDeleteDate = franchiseOwner.getFranchiseOwnerDeleteDate();
-        this.franchiseName = franchiseOwner.getFranchise().getFranchiseName();
+//        this.franchiseName = franchiseOwner.getFranchise().getFranchiseName();
     }
 
 }
