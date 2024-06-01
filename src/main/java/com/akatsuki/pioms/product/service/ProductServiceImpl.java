@@ -212,7 +212,15 @@ public class ProductServiceImpl implements ProductService{
             int productCode = exchangeProductVO.getProductCode();
             int count = exchangeProductVO.getExchangeProductNormalCount();
             productPlusCnt(productCode,count);
+            count = exchangeProductVO.getExchangeProductDiscount();
+            productPlusDisCnt(productCode,count);
         });
+    }
+
+    private void productPlusDisCnt(int productCode,int count) {
+        Product product = productRepository.findById(productCode).orElseThrow();
+        product.setProductDiscount(product.getProductDiscount()+count);
+        productRepository.save(product);
     }
 
     public void productPlusCnt(int productCode, int count) {
@@ -259,11 +267,10 @@ public class ProductServiceImpl implements ProductService{
 
 
     @Override
-    public Boolean postProductWithImage(RequestProduct request, MultipartFile image)throws IOException {
-//        Product product = new Product(request);
-//        product = productRepository.save(product);
+    @Transactional
+    public Boolean postProductWithImage(RequestProduct request, MultipartFile image) {
         ProductDTO productDTO = postProduct2(request,1);
-        return googleImage.uploadImage(productDTO.getProductCode(),image);
+        return googleImage.uploadImage(productDTO.getProductCode(), image);
     }
 
     @Transactional

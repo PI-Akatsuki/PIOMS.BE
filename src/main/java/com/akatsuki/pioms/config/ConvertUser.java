@@ -1,44 +1,53 @@
-//package com.akatsuki.pioms.config;
-//
-//
-//import com.akatsuki.pioms.admin.service.AdminInfoService;
-//import com.akatsuki.pioms.driver.service.DeliveryDriverService;
-//import com.akatsuki.pioms.frowner.service.FranchiseOwnerService;
-//import com.akatsuki.pioms.user.dto.CustomUserDetails;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.security.core.Authentication;
-//import org.springframework.security.core.context.SecurityContextHolder;
-//import org.springframework.security.core.userdetails.UserDetailsService;
-//import org.springframework.stereotype.Service;
-//
-//@Service
-//public class ConvertUser {
-//
-//    private final UserDetailsService userDetailsService;
-//    private final AdminInfoService adminInfoService;
-//    private final DeliveryDriverService deliveryDriverService;
-//    private final FranchiseOwnerService franchiseOwnerService;
-//    @Autowired
-//    public ConvertUser(UserDetailsService userDetailsService, AdminInfoService adminInfoService, DeliveryDriverService deliveryDriverService, FranchiseOwnerService franchiseOwnerService) {
-//        this.userDetailsService = userDetailsService;
-//        this.adminInfoService = adminInfoService;
-//        this.deliveryDriverService = deliveryDriverService;
-//        this.franchiseOwnerService = franchiseOwnerService;
-//    }
-//
-//    public int convertUser(){
-//
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-//
-//        String userName = userDetails.getUsername();
-//        String role = userDetails.getAuthorities().iterator().next().getAuthority(); // 권한 정보
-//        System.out.println("role = " + role);
-//        if (role.equals("ROLE_ADMIN") ||role.equals("ROLE_ROOT"))
-//            return adminInfoService.findAdminCodeByName(userName);
-//        if (role.equals("ROLE_Driver"))
-//            return deliveryDriverService.findDriverCodeByName(userName);
-////        if (role.equals("ROLE_OWNER"))
-//        return franchiseOwnerService.findFranchiseOwnerCodeByName(userName);
-//    }
-//}
+package com.akatsuki.pioms.config;
+
+
+import com.akatsuki.pioms.admin.repository.AdminRepository;
+import com.akatsuki.pioms.driver.repository.DeliveryDriverRepository;
+import com.akatsuki.pioms.frowner.repository.FranchiseOwnerRepository;
+import com.akatsuki.pioms.user.dto.CustomUserDetails;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+
+@Service
+public class ConvertUser {
+
+    private final AdminRepository adminInfoRepository;
+    private final DeliveryDriverRepository deliveryDriverRepository;
+    private final FranchiseOwnerRepository franchiseOwnerRepository;
+
+    @Autowired
+    public ConvertUser(AdminRepository adminInfoRepository, DeliveryDriverRepository deliveryDriverRepository, FranchiseOwnerRepository franchiseOwnerRepository) {
+        this.adminInfoRepository = adminInfoRepository;
+        this.deliveryDriverRepository = deliveryDriverRepository;
+        this.franchiseOwnerRepository = franchiseOwnerRepository;
+    }
+
+    public int getCode(){
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+
+        String userName = authentication.getName();
+        String role = userDetails.getAuthorities().iterator().next().getAuthority(); // 권한 정보
+//        if (!ROLE.equals(role))
+//            return -1;
+        System.out.println("role = " + role);
+        System.out.println("userName = " + userName);
+        if (role.equals("ROLE_ADMIN") ||role.equals("ROLE_ROOT"))
+            return adminInfoRepository.findByAdminId(userName).get().getAdminCode();
+        if (role.equals("ROLE_Driver"))
+            return deliveryDriverRepository.findByDriverId(userName).get().getDriverCode();
+        return franchiseOwnerRepository.findByFranchiseOwnerId(userName).get().getFranchiseOwnerCode();
+    }
+
+    public String getName(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+
+        String userName = authentication.getName();
+        return userName;
+    }
+
+}

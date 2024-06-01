@@ -76,7 +76,7 @@ public class franchiseWarehouseController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<FranchiseWarehouseDTO>> getFrWarehouseList(@RequestParam int franchiseOwnerCode){
-        return ResponseEntity.ok(franchiseWarehouseService.getFrWarehouseList(franchiseOwnerCode));
+    public ResponseEntity<List<FranchiseWarehouseDTO>> getFrWarehouseList(){
+        return ResponseEntity.ok(franchiseWarehouseService.getFrWarehouseList());
     }
 }

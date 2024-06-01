@@ -143,17 +143,20 @@ public class OrderServiceImpl implements OrderService{
     @Override
     @Transactional
     public boolean putFranchiseOrder(int franchiseOwnerCode, RequestPutOrder requestOrder) {
-
+        System.out.println(franchiseOwnerCode);
         Order order = orderRepository.findById(requestOrder.getOrderCode())
                 .orElseThrow(() -> new IllegalArgumentException("Order not found"));
-        if (order.getFranchise().getFranchiseCode() != franchiseOwnerCode) {
+        System.out.println(" = " );
+        if (order.getFranchise().getFranchiseOwner().getFranchiseOwnerCode() != franchiseOwnerCode) {
             return false;
         }
-
+        System.out.println(" = " );
         if (order.getOrderCondition() != ORDER_CONDITION.승인대기 && order.getOrderCondition() != ORDER_CONDITION.승인거부 ) {
             return false;
         }
+        System.out.println(" = " );
         putOrder(requestOrder, order);
+        System.out.println(" = " );
         return true;
     }
 
