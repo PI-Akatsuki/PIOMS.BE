@@ -1,5 +1,6 @@
 package com.akatsuki.pioms.order.service;
 
+import com.akatsuki.pioms.config.GetUserInfo;
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import com.akatsuki.pioms.exchange.service.ExchangeService;
 import com.akatsuki.pioms.franchise.service.FranchiseService;
@@ -20,16 +21,19 @@ import java.util.Map;
 
 @Service
 public class AdminOrderFacade {
-    OrderService orderService;
-    InvoiceService invoiceService;
-    SpecsService specsService;
-    ExchangeService exchangeService;
-    ProductService productService;
-    FranchiseService franchiseService;
-    FranchiseWarehouseService franchiseWarehouseService;
+    private final OrderService orderService;
+    private final InvoiceService invoiceService;
+    private final SpecsService specsService;
+    private final ExchangeService exchangeService;
+    private final ProductService productService;
+    private final FranchiseService franchiseService;
+    private final FranchiseWarehouseService franchiseWarehouseService;
+    private final GetUserInfo getUserInfo;
 
     @Autowired
-    public AdminOrderFacade(OrderService orderService, InvoiceService invoiceService, SpecsService specsService, ExchangeService exchangeService, ProductService productService, FranchiseService franchiseService, FranchiseWarehouseService franchiseWarehouseService) {
+    public AdminOrderFacade(OrderService orderService, InvoiceService invoiceService, SpecsService specsService, ExchangeService exchangeService, ProductService productService, FranchiseService franchiseService, FranchiseWarehouseService franchiseWarehouseService
+        ,GetUserInfo getUserInfo
+    ) {
         this.orderService = orderService;
         this.invoiceService = invoiceService;
         this.specsService = specsService;
@@ -37,16 +41,17 @@ public class AdminOrderFacade {
         this.productService = productService;
         this.franchiseService = franchiseService;
         this.franchiseWarehouseService =franchiseWarehouseService;
+        this.getUserInfo = getUserInfo;
     }
 
     public List<OrderDTO> getOrderListByAdminCode(){
-        int adminCode=1;
+        int adminCode= getUserInfo.getAdminCode();
         List<OrderDTO> orders =  orderService.getOrderListByAdminCode(adminCode);
         return orders;
     }
 
     public OrderDTO getDetailOrderByAdminCode(int orderCode){
-        int adminCode=1;
+        int adminCode= getUserInfo.getAdminCode();
         return orderService.getDetailOrderByAdminCode(adminCode,orderCode);
     }
 
@@ -62,7 +67,7 @@ public class AdminOrderFacade {
      6: Success!! */
     @Transactional(readOnly = false)
     public int accpetOrder(int orderCode){
-        int adminCode=1;
+        int adminCode= getUserInfo.getAdminCode();
         OrderDTO order;
         ExchangeDTO exchangeDTO;
         int success=0;
@@ -118,7 +123,7 @@ public class AdminOrderFacade {
     }
 
     public int denyOrder(int orderId, String denyMessage){
-        int adminCode=1;
+        int adminCode= getUserInfo.getAdminCode();
         return orderService.denyOrder(adminCode,orderId,denyMessage);
     }
 

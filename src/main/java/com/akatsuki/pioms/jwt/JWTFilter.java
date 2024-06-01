@@ -65,7 +65,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
         if ("ROLE_ROOT".equals(jwtUtil.getRole(accessToken)) || "ROLE_ADMIN".equals(jwtUtil.getRole(accessToken))) {
             userDetails = new CustomUserDetails(adminRepository.findByAdminId(userId).orElseThrow(), jwtUtil.getAuthorities(accessToken));
-        } else if ("ROLE_FROWNER".equals(jwtUtil.getRole(accessToken))) {
+        } else if ("ROLE_OWNER".equals(jwtUtil.getRole(accessToken))) {
             userDetails = new CustomUserDetails(franchiseOwnerRepository.findByFranchiseOwnerId(userId).orElseThrow(), jwtUtil.getAuthorities(accessToken));
         } else if ("ROLE_DRIVER".equals(jwtUtil.getRole(accessToken))) {
             userDetails = new CustomUserDetails(deliveryDriverRepository.findByDriverId(userId).orElseThrow(), jwtUtil.getAuthorities(accessToken));
