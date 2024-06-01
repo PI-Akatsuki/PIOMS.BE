@@ -1,7 +1,6 @@
 package com.akatsuki.pioms.exchange.service;
 
 import com.akatsuki.pioms.admin.aggregate.Admin;
-import com.akatsuki.pioms.config.ConvertUser;
 import com.akatsuki.pioms.exchange.aggregate.*;
 import com.akatsuki.pioms.exchange.aggregate.ExchangeProductVO;
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
@@ -32,11 +31,10 @@ public class ExchangeServiceImpl implements ExchangeService{
     private final OrderService orderService ;
     private final FranchiseService franchiseService;
     private final ProductService productService;
-    private final ConvertUser convertUser;
 
     @Autowired
     public ExchangeServiceImpl(ExchangeRepository exchangeRepository,ExchangeProductRepository exchangeProductRepository,FranchiseWarehouseService franchiseWarehouseService
-    , OrderService orderService, FranchiseService franchiseService, ProductService productService,ConvertUser convertUser
+    , OrderService orderService, FranchiseService franchiseService, ProductService productService
     ) {
         this.exchangeRepository = exchangeRepository;
         this.exchangeProductRepository = exchangeProductRepository;
@@ -44,7 +42,6 @@ public class ExchangeServiceImpl implements ExchangeService{
         this.orderService = orderService;
         this.franchiseService = franchiseService;
         this.productService = productService;
-        this.convertUser =convertUser;
     }
 
 
@@ -67,7 +64,7 @@ public class ExchangeServiceImpl implements ExchangeService{
 
     @Override
     public List<ExchangeDTO> getExchangesByAdminCode() {
-        int adminCode = convertUser.getCode();
+        int adminCode=1;
         List<Exchange> exchangeList;
         if(adminCode==1)
             exchangeList = exchangeRepository.findAll();
@@ -85,7 +82,7 @@ public class ExchangeServiceImpl implements ExchangeService{
     @Override
     @Transactional
     public ExchangeDTO postExchange( RequestExchange requestExchange) {
-        int franchiseOwnerCode = convertUser.getCode();
+        int franchiseOwnerCode = 1;
         FranchiseDTO franchiseDTO = franchiseService.findFranchiseByFranchiseOwnerCode(franchiseOwnerCode);
         if(exchangeRepository.existsByFranchiseFranchiseCodeAndExchangeStatus(franchiseDTO.getFranchiseCode(), EXCHANGE_STATUS.반송신청))
             return null;
@@ -132,7 +129,7 @@ public class ExchangeServiceImpl implements ExchangeService{
 
     @Override
     public ExchangeDTO getExchangeByAdminCode( int exchangeCode) {
-        int adminCode = convertUser.getCode();
+        int adminCode=1;
         Exchange exchange = exchangeRepository.findById(exchangeCode).orElse(null);
         if (exchange ==null ||exchange.getFranchise().getAdmin().getAdminCode() != adminCode)
             return null;
@@ -141,7 +138,7 @@ public class ExchangeServiceImpl implements ExchangeService{
 
     @Override
     public ExchangeDTO getExchangeByFranchiseOwnerCode( int exchangeCode) {
-        int franchiseOwnerCode = convertUser.getCode();
+        int franchiseOwnerCode = 1;
         //FIN
         Exchange exchange = exchangeRepository.findById(exchangeCode).orElse(null);
         if (exchange==null|| exchange.getFranchise().getFranchiseOwner().getFranchiseOwnerCode() != franchiseOwnerCode)
@@ -151,7 +148,7 @@ public class ExchangeServiceImpl implements ExchangeService{
 
     @Override
     public List<ExchangeDTO> getFrOwnerExchanges() {
-        int franchiseOwnerCode = convertUser.getCode();
+        int franchiseOwnerCode = 1;
         //FIN
         List<Exchange> exchangeList =
                 exchangeRepository.findAllByFranchiseFranchiseOwnerFranchiseOwnerCodeOrderByExchangeDateDesc(franchiseOwnerCode);
@@ -163,7 +160,7 @@ public class ExchangeServiceImpl implements ExchangeService{
     @Override
     @Transactional
     public boolean deleteExchange(int exchangeCode) {
-        int franchiseOwnerCode = convertUser.getCode();
+        int franchiseOwnerCode = 1;
         //FIN
         Exchange exchange = exchangeRepository.findById(exchangeCode).orElse(null);
         if (exchange==null ||
@@ -285,7 +282,7 @@ public class ExchangeServiceImpl implements ExchangeService{
         // 관리자가 반품온 상품들 처리하기 위한 메서드
         //
         //FIN
-        int adminCode = convertUser.getCode();
+        int adminCode=1;
         Exchange exchangeEntity = exchangeRepository.findById(exchangeCode).orElse(null);
         if (exchangeEntity == null){
             System.out.println("없는 교환 코드");

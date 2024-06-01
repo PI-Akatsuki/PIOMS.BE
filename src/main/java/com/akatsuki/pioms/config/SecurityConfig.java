@@ -80,7 +80,7 @@ public class SecurityConfig {
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/", "/reissue", "/admin/login", "/franchise/login", "/driver/login").permitAll()
-                        .requestMatchers("/admin/**").hasRole("ROOT")
+                        .requestMatchers("/admin/**").hasAnyRole("ROOT","ADMIN")
                         .requestMatchers(
                                 "/admin/info",
                                 "/admin/home",
@@ -100,7 +100,7 @@ public class SecurityConfig {
                                 "/admin/notice/list/**",
                                 "/admin/ask/**",
                                 "/admin/exceldownload/**").hasRole("ADMIN")
-                        .requestMatchers("/franchise/**").hasRole("OWNER")
+                        .requestMatchers("/franchise/**").permitAll()
                         .requestMatchers("/driver/**").hasRole("DRIVER")
                         .anyRequest().authenticated()
                 )
