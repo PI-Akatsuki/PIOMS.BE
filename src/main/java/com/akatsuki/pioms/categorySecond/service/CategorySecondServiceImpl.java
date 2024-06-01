@@ -13,6 +13,8 @@ import com.akatsuki.pioms.log.service.LogService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -82,7 +84,9 @@ public class CategorySecondServiceImpl implements CategorySecondService{
 
         CategorySecond savedCategorySecond = categorySecondRepository.save(categorySecond);
 
-        logService.saveLog("root", LogStatus.등록,savedCategorySecond.getCategorySecondName(),"CategorySecond");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        logService.saveLog(username, LogStatus.등록,savedCategorySecond.getCategorySecondName(),"CategorySecond");
         return ResponseEntity.ok("카테고리(중) 생성 완료!");
     }
 
@@ -101,7 +105,9 @@ public class CategorySecondServiceImpl implements CategorySecondService{
         categorySecond.setCategorySecondName(request.getCategorySecondName());
         categorySecond.setCategorySecondUpdateDate(formattedDateTime);
 
-        logService.saveLog("root", LogStatus.수정,updatedCategorySecond.getCategorySecondName(),"CategorySecond");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        logService.saveLog(username, LogStatus.수정,updatedCategorySecond.getCategorySecondName(),"CategorySecond");
         return ResponseEntity.ok("카테고리(중) 수정 완료!");
     }
 

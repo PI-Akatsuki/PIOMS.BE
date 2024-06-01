@@ -1,5 +1,7 @@
 package com.akatsuki.pioms.login.service;
 
+import com.akatsuki.pioms.log.etc.LogStatus;
+import com.akatsuki.pioms.log.service.LogService;
 import com.akatsuki.pioms.user.aggregate.User;
 import com.akatsuki.pioms.user.dto.CustomUserDetails;
 import com.akatsuki.pioms.user.repository.UserRepository;
@@ -26,14 +28,16 @@ public class LoginServiceImpl implements LoginService {
     private final JWTUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
     private final RedisTokenService redisTokenService;
+    private final LogService logService;
 
     @Autowired
-    public LoginServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, JWTUtil jwtUtil, AuthenticationManager authenticationManager, RedisTokenService redisTokenService) {
+    public LoginServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, JWTUtil jwtUtil, AuthenticationManager authenticationManager, RedisTokenService redisTokenService, LogService logService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
         this.authenticationManager = authenticationManager;
         this.redisTokenService = redisTokenService;
+        this.logService = logService;
     }
 
     @Override
@@ -59,6 +63,8 @@ public class LoginServiceImpl implements LoginService {
 
                 logger.info("Generated Access Token: " + accessToken);
                 logger.info("Generated Refresh Token: " + refreshToken);
+
+                logService.saveLog(authenticatedUser.getUsername(), LogStatus.등록, "관리자 로그인", "Login");
 
                 return ResponseEntity.ok()
                         .header("Authorization", "Bearer " + accessToken)
@@ -93,6 +99,8 @@ public class LoginServiceImpl implements LoginService {
                 logger.info("Generated Access Token: " + accessToken);
                 logger.info("Generated Refresh Token: " + refreshToken);
 
+                logService.saveLog(authenticatedUser.getUsername(), LogStatus.등록, "가맹점주 로그인", "Login");
+
                 return ResponseEntity.ok()
                         .header("Authorization", "Bearer " + accessToken)
                         .header("Set-Cookie", "refresh=" + refreshToken + "; HttpOnly; Path=/; Max-Age=86400000;")
@@ -125,6 +133,8 @@ public class LoginServiceImpl implements LoginService {
 
                 logger.info("Generated Access Token: " + accessToken);
                 logger.info("Generated Refresh Token: " + refreshToken);
+
+                logService.saveLog(authenticatedUser.getUsername(), LogStatus.등록, "배송기사 로그인", "Login");
 
                 return ResponseEntity.ok()
                         .header("Authorization", "Bearer " + accessToken)
