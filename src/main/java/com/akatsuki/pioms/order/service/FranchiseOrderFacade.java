@@ -1,5 +1,6 @@
 package com.akatsuki.pioms.order.service;
 
+import com.akatsuki.pioms.config.GetUserInfo;
 import com.akatsuki.pioms.exchange.service.ExchangeService;
 import com.akatsuki.pioms.franchise.dto.FranchiseDTO;
 import com.akatsuki.pioms.franchise.service.FranchiseService;
@@ -26,9 +27,12 @@ public class FranchiseOrderFacade {
     private final ProductService productService;
     private final FranchiseService franchiseService;
     private final FranchiseWarehouseService franchiseWarehouseService;
+    private final GetUserInfo getUserInfo;
 
     @Autowired
-    public FranchiseOrderFacade(OrderService orderService, InvoiceService invoiceService, SpecsService specsService, ExchangeService exchangeService, ProductService productService, FranchiseService franchiseService, FranchiseWarehouseService franchiseWarehouseService) {
+    public FranchiseOrderFacade(OrderService orderService, InvoiceService invoiceService, SpecsService specsService, ExchangeService exchangeService, ProductService productService, FranchiseService franchiseService, FranchiseWarehouseService franchiseWarehouseService
+        ,GetUserInfo getUserInfo
+    ) {
         this.orderService = orderService;
         this.invoiceService = invoiceService;
         this.specsService = specsService;
@@ -36,10 +40,12 @@ public class FranchiseOrderFacade {
         this.productService = productService;
         this.franchiseService = franchiseService;
         this.franchiseWarehouseService =franchiseWarehouseService;
+
+        this.getUserInfo = getUserInfo;
     }
 
     public int postFranchiseOrder(RequestOrderVO requestOrderVO) {
-        int franchiseOwnerCode=1;
+        int franchiseOwnerCode= getUserInfo.getFranchiseOwnerCode();
         System.out.println("franchiseOwnerCode = " + franchiseOwnerCode);
         FranchiseDTO franchise = franchiseService.findFranchiseByFranchiseOwnerCode(franchiseOwnerCode);
 
@@ -51,13 +57,13 @@ public class FranchiseOrderFacade {
     }
 
     public List<OrderDTO> getOrderListByFranchiseCode() {
-        int franchiseOwnerCode=1;
+        int franchiseOwnerCode= getUserInfo.getFranchiseOwnerCode();
         return orderService.getOrderListByFranchiseOwnerCode(franchiseOwnerCode);
     }
 
 
     public boolean putFranchiseOrderCheck(RequestPutOrderCheck requestPutOrder){
-        int franchiseOwnerCode=1;
+        int franchiseOwnerCode= getUserInfo.getFranchiseOwnerCode();
         int franchiseCode = franchiseService.findFranchiseByFranchiseOwnerCode(franchiseOwnerCode).getFranchiseCode();
         OrderDTO order = orderService.getOrder(franchiseCode,requestPutOrder.getOrderCode());
         if (order==null || requestPutOrder.getRequestProduct().size() != order.getOrderProductList().size()){
@@ -92,12 +98,12 @@ public class FranchiseOrderFacade {
     }
 
     public boolean putFranchiseOrder(RequestPutOrder order) {
-        int franchiseOwnerCode=1;
+        int franchiseOwnerCode= getUserInfo.getFranchiseOwnerCode();
         return orderService.putFranchiseOrder(franchiseOwnerCode,order);
     }
 
     public OrderDTO getOrderByFranchiseCode(int orderCode) {
-        int franchiseOwnerCode=1;
+        int franchiseOwnerCode= getUserInfo.getFranchiseOwnerCode();
         int franchiseCode = franchiseService.findFranchiseByFranchiseOwnerCode(franchiseOwnerCode).getFranchiseCode();
         return orderService.getOrder(franchiseCode,orderCode);
     }
