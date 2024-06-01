@@ -22,6 +22,4 @@ public interface AdminInfoService {
     // 비활성화(삭제)
     ResponseEntity<String> deleteAdmin(int adminCode);
 
-    int findAdminCodeByName(String userName);
-
 }

@@ -49,41 +49,27 @@ public class AdminProductController {
 
     @PostMapping("/create")
     @Operation(summary = "상품 등록")
-    public ResponseEntity<String> postProduct(@RequestBody RequestProduct request, int requesterAdminCode) {
-        return productService.postProduct(request, requesterAdminCode);
+    public ResponseEntity<String> postProduct(@RequestBody RequestProduct request) {
+        return productService.postProduct(request);
     }
 
 
     @DeleteMapping("/delete/{productCode}")
     @Operation(summary = "상품 삭제", description = "상품 코드로 상품 삭제")
-    public ResponseEntity<String> deleteProduct(@PathVariable int productCode, int requesterAdminCode) {
-        return productService.deleteProduct(productCode, requesterAdminCode);
+    public ResponseEntity<String> deleteProduct(@PathVariable int productCode) {
+        return productService.deleteProduct(productCode);
     }
 
     @PutMapping("/update/{productCode}")
     @Operation(summary = "상품 정보 수정", description = "상품 수정 기능")
-    public ResponseEntity<String> updateProduct(@PathVariable int productCode, @RequestBody RequestProduct request, int requesterAdminCode) {
-        return productService.updateProduct(productCode, request, requesterAdminCode);
+    public ResponseEntity<String> updateProduct(@PathVariable int productCode, @RequestBody RequestProduct request) {
+        return productService.updateProduct(productCode, request);
     }
 
     @GetMapping("/category/{categoryThirdCode}")
     public ResponseEntity<List<ResponseProduct>> getCategoryProductList(@PathVariable int categoryThirdCode) {
         return ResponseEntity.ok(productService.getCategoryProductList(categoryThirdCode));
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     @PostMapping("/image")
     public ResponseEntity<Boolean> postImage(RequestProduct request) {

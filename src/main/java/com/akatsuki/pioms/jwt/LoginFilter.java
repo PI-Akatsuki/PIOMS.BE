@@ -1,6 +1,9 @@
 package com.akatsuki.pioms.jwt;
 
 import com.akatsuki.pioms.user.dto.CustomUserDetails;
+import com.akatsuki.pioms.admin.aggregate.Admin;
+import com.akatsuki.pioms.driver.aggregate.DeliveryDriver;
+import com.akatsuki.pioms.frowner.aggregate.FranchiseOwner;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -46,8 +49,20 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String role = auth.getAuthority();
 
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        int usercode = userDetails.getUser().getUserCode();
-        String userid = userDetails.getUser().getUserId();
+        Object user = userDetails.getUser();
+        int usercode;
+        String userid;
+
+        if (user instanceof Admin) {
+            usercode = ((Admin) user).getAdminCode();
+            userid = ((Admin) user).getAdminId();
+        } else if (user instanceof FranchiseOwner) {
+            usercode = ((FranchiseOwner) user).getFranchiseOwnerCode();
+            userid = ((FranchiseOwner) user).getFranchiseOwnerId();
+        } else {
+            usercode = ((DeliveryDriver) user).getDriverCode();
+            userid = ((DeliveryDriver) user).getDriverId();
+        }
 
         String access = jwtUtil.createJwt("access", usercode, userid, username, role, 600000L);
         String refresh = jwtUtil.createJwt("refresh", usercode, userid, username, role, 86400000L);
@@ -65,7 +80,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private Cookie createCookie(String key, String value) {
         Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(86400000);
+        cookie.setMaxAge(86400);  // 86400 seconds = 1 day
         cookie.setPath("/");
 //        cookie.setSecure(true);   // https를 위함
         cookie.setHttpOnly(true);

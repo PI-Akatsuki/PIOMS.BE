@@ -11,9 +11,11 @@ public interface CategorySecondService {
 
     List<CategorySecondDTO> findCategorySecondByCode(int categorySecondCode);
 
-    ResponseEntity<String> postCategorySecond(RequestCategorySecond request, int requesterAdminCode);
+    ResponseEntity<String> postCategorySecond(RequestCategorySecond request);
 
-    ResponseEntity<String> updateCategorySecond(int categorySecondCode, RequestCategorySecond request, int requesterAdminCode);
+    ResponseEntity<String> updateCategorySecond(int categorySecondCode, RequestCategorySecond request);
 
     List<ResponseCategorySecond> getCategorySecondInFirst(int categoryFirstCode);
+
+    ResponseEntity<String> deleteCategorySecond(int categorySecondCode);
 }

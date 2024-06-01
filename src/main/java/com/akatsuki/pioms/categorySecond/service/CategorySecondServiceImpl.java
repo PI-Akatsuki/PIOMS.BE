@@ -13,6 +13,8 @@ import com.akatsuki.pioms.log.service.LogService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,11 +66,8 @@ public class CategorySecondServiceImpl implements CategorySecondService{
 
     @Override
     @Transactional
-    public ResponseEntity<String> postCategorySecond(RequestCategorySecond request, int requesterAdminCode) {
-        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
-        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
-            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
-        }
+    public ResponseEntity<String> postCategorySecond(RequestCategorySecond request) {
+
         CategorySecond categorySecond = new CategorySecond();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formattedDateTime = LocalDateTime.now().format(formatter);
@@ -85,17 +84,16 @@ public class CategorySecondServiceImpl implements CategorySecondService{
 
         CategorySecond savedCategorySecond = categorySecondRepository.save(categorySecond);
 
-        logService.saveLog("root", LogStatus.등록,savedCategorySecond.getCategorySecondName(),"CategorySecond");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        logService.saveLog(username, LogStatus.등록,savedCategorySecond.getCategorySecondName(),"CategorySecond");
         return ResponseEntity.ok("카테고리(중) 생성 완료!");
     }
 
     @Override
     @Transactional
-    public ResponseEntity<String> updateCategorySecond(int categorySecondCode, RequestCategorySecond request, int requesterAdminCode) {
-        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
-        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
-            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
-        }
+    public ResponseEntity<String> updateCategorySecond(int categorySecondCode, RequestCategorySecond request) {
+
         CategorySecond categorySecond = categorySecondRepository.findById(categorySecondCode)
                 .orElseThrow(() -> new EntityNotFoundException("CategorySecond not found"));
 
@@ -107,7 +105,9 @@ public class CategorySecondServiceImpl implements CategorySecondService{
         categorySecond.setCategorySecondName(request.getCategorySecondName());
         categorySecond.setCategorySecondUpdateDate(formattedDateTime);
 
-        logService.saveLog("root", LogStatus.수정,updatedCategorySecond.getCategorySecondName(),"CategorySecond");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        logService.saveLog(username, LogStatus.수정,updatedCategorySecond.getCategorySecondName(),"CategorySecond");
         return ResponseEntity.ok("카테고리(중) 수정 완료!");
     }
 
@@ -120,5 +120,18 @@ public class CategorySecondServiceImpl implements CategorySecondService{
             responseCategorySeconds.add(new ResponseCategorySecond(categorySecond));
         });
         return responseCategorySeconds;
+    }
+
+    @Override
+    public ResponseEntity<String> deleteCategorySecond(int categorySecondCode) {
+        CategorySecond categorySecond = categorySecondRepository.findById(categorySecondCode)
+                .orElseThrow(() -> new EntityNotFoundException("NoNo"));
+        if (categorySecond == null) {
+            return ResponseEntity.badRequest().body(categorySecondCode + "번 카테고리(소) 카테고리가 없습니다!");
+        }
+
+        categorySecondRepository.delete(categorySecond);
+        logService.saveLog("root", LogStatus.삭제,categorySecond.getCategorySecondName(),"CategorySecond");
+        return ResponseEntity.badRequest().body("카테고리(중) 삭제 완료");
     }
 }

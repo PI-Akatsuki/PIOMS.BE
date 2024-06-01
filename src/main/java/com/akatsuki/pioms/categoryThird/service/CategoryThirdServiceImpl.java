@@ -16,6 +16,8 @@ import com.akatsuki.pioms.product.repository.ProductRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -68,12 +70,7 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
 
     @Override
     @Transactional
-    public ResponseEntity<String> postCategory(RequestCategoryThird request, int requesterAdminCode) {
-        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
-        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
-            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
-        }
-
+    public ResponseEntity<String> postCategory(RequestCategoryThird request) {
         CategoryThird categoryThird = new CategoryThird();
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -95,18 +92,17 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
 
         CategoryThird savedCategoryThird = categoryThirdRepository.save(categoryThird);
         System.out.println("savedCategoryThird = " + savedCategoryThird);
-        logService.saveLog("root", LogStatus.등록, savedCategoryThird.getCategoryThirdName(), "CategoryThird");
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        logService.saveLog(username, LogStatus.등록, savedCategoryThird.getCategoryThirdName(), "CategoryThird");
 
         return ResponseEntity.ok("카테고리(소) 생성 완료!");
     }
 
     @Override
     @Transactional
-    public ResponseEntity<String> updateCategory(int categoryThirdCode, RequestCategoryThird request, int requesterAdminCode) {
-        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
-        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
-            return ResponseEntity.status(403).body("카테고리 수정은 루트 관리자만 가능합니다.");
-        }
+    public ResponseEntity<String> updateCategory(int categoryThirdCode, RequestCategoryThird request) {
         CategoryThird categoryThird = categoryThirdRepository.findById(categoryThirdCode)
                 .orElseThrow(() -> new EntityNotFoundException("CategoryThird not found"));
 
@@ -119,17 +115,15 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
         categoryThird.setCategoryThirdName(request.getCategoryThirdName());
         categoryThird.setCategoryThirdUpdateDate(formattedDateTime);
 
-        logService.saveLog("root", LogStatus.수정,updatedCategoryThird.getCategoryThirdName(),"CategoryThird");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        logService.saveLog(username, LogStatus.수정,updatedCategoryThird.getCategoryThirdName(),"CategoryThird");
         return ResponseEntity.ok("카테고리(소) 수정 완료!");
     }
 
     @Override
     @Transactional
-    public ResponseEntity<String> deleteCategoryThird(int categoryThirdCode, int requesterAdminCode) {
-        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
-        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
-            return ResponseEntity.status(403).body("카테고리 삭제는 루트 관리자만 가능합니다.");
-        }
+    public ResponseEntity<String> deleteCategoryThird(int categoryThirdCode) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formattedDateTime = LocalDateTime.now().format(formatter);
@@ -147,7 +141,10 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
 
         categoryThird.setCategoryThirdDeleteDate(formattedDateTime);
         categoryThirdRepository.delete(categoryThird);
-        logService.saveLog("root", LogStatus.삭제,categoryThird.getCategoryThirdName(),"CategoryThird");
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        logService.saveLog(username, LogStatus.삭제,categoryThird.getCategoryThirdName(),"CategoryThird");
         return ResponseEntity.badRequest().body("해당 카테고리(소) 카테고리가 성공적으로 삭제되었습니다!");
     }
 

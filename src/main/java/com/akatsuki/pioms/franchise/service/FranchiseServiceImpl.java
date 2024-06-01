@@ -10,6 +10,8 @@ import com.akatsuki.pioms.log.etc.LogStatus;
 import com.akatsuki.pioms.log.service.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -75,7 +77,9 @@ public class FranchiseServiceImpl implements FranchiseService {
         franchise.setFranchiseUpdateDate(now);
 
         franchiseRepository.save(franchise);
-        logService.saveLog("root", LogStatus.등록, franchise.getFranchiseName(), "Franchise");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        logService.saveLog(username, LogStatus.등록, franchise.getFranchiseName(), "Franchise");
         return ResponseEntity.ok("신규 프랜차이즈 등록이 완료되었습니다.");
     }
 
@@ -132,10 +136,12 @@ public class FranchiseServiceImpl implements FranchiseService {
     }
 
     private void logChanges(StringBuilder changes) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
         if (changes.length() > 0) {
-            logService.saveLog("root", LogStatus.수정, changes.toString(), "Franchise");
+            logService.saveLog(username, LogStatus.수정, changes.toString(), "Franchise");
         } else {
-            logService.saveLog("root", LogStatus.수정, "No changes made.", "Franchise");
+            logService.saveLog(username, LogStatus.수정, "No changes made.", "Franchise");
         }
     }
 
@@ -161,7 +167,10 @@ public class FranchiseServiceImpl implements FranchiseService {
 
             franchise.setFranchiseDeleteDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
             franchiseRepository.save(franchise);
-            logService.saveLog("root", LogStatus.삭제, franchise.getFranchiseName(), "Franchise");
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = authentication.getName();
+
+            logService.saveLog(username, LogStatus.삭제, franchise.getFranchiseName(), "Franchise");
             return ResponseEntity.ok("프랜차이즈가 삭제되었습니다.");
         } else {
             return ResponseEntity.notFound().build();

@@ -1,45 +1,74 @@
 package com.akatsuki.pioms.user.dto;
 
-import com.akatsuki.pioms.user.aggregate.User;
+import com.akatsuki.pioms.admin.aggregate.Admin;
+import com.akatsuki.pioms.driver.aggregate.DeliveryDriver;
+import com.akatsuki.pioms.frowner.aggregate.FranchiseOwner;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 public class CustomUserDetails implements UserDetails {
 
-    private final User userEntity;
+    @Getter
+    private Admin admin;
+    @Getter
+    private FranchiseOwner franchiseOwner;
+    @Getter
+    private DeliveryDriver deliveryDriver;
+    private Collection<? extends GrantedAuthority> authorities;
 
-    public CustomUserDetails(User userEntity) {
-        this.userEntity = userEntity;
+    public CustomUserDetails(Admin admin, Collection<? extends GrantedAuthority> authorities) {
+        this.admin = admin;
+        this.authorities = authorities;
     }
 
-    public User getUser() {
-        return userEntity;
+    public CustomUserDetails(FranchiseOwner franchiseOwner, Collection<? extends GrantedAuthority> authorities) {
+        this.franchiseOwner = franchiseOwner;
+        this.authorities = authorities;
+    }
+
+    public CustomUserDetails(DeliveryDriver deliveryDriver, Collection<? extends GrantedAuthority> authorities) {
+        this.deliveryDriver = deliveryDriver;
+        this.authorities = authorities;
+    }
+
+    public Object getUser() {
+        if (admin != null) {
+            return admin;
+        } else if (franchiseOwner != null) {
+            return franchiseOwner;
+        } else {
+            return deliveryDriver;
+        }
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Collection<GrantedAuthority> collection = new ArrayList<>();
-        collection.add(new GrantedAuthority() {
-            @Override
-            public String getAuthority() {
-
-                return userEntity.getRole();
-            }
-        });
-        return collection;
+        return authorities;
     }
 
     @Override
     public String getPassword() {
-        return userEntity.getPassword();
+        if (admin != null) {
+            return admin.getAdminPwd();
+        } else if (franchiseOwner != null) {
+            return franchiseOwner.getFranchiseOwnerPwd();
+        } else {
+            return deliveryDriver.getDriverPwd();
+        }
     }
 
     @Override
     public String getUsername() {
-        return userEntity.getUserId();
+        if (admin != null) {
+            return admin.getAdminId();
+        } else if (franchiseOwner != null) {
+            return franchiseOwner.getFranchiseOwnerId();
+        } else {
+            return deliveryDriver.getDriverId();
+        }
     }
 
     @Override
@@ -59,6 +88,6 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return userEntity.isUserStatus();
+        return true;
     }
 }

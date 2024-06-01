@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.akatsuki.pioms.ask.aggregate.ASK_STATUS.답변완료;
 
@@ -41,11 +42,10 @@ public class AskServiceImpl implements AskService{
     }
     @Override
     public AskListDTO getAllAskList() {
-        List<Ask> askList = askRepository.findAll();
-        List<AskDTO> askDTOList = new ArrayList<>();
-        askList.forEach(ask -> {
-            askDTOList.add(new AskDTO(ask));
-        });
+        List<Ask> askList = askRepository.findAllOrderByEnrollDateDesc();
+        List<AskDTO> askDTOList = askList.stream()
+                .map(AskDTO::new)
+                .collect(Collectors.toList());
         return new AskListDTO(askDTOList);
     }
     @Override
@@ -64,7 +64,7 @@ public class AskServiceImpl implements AskService{
 
     @Override
     public AskListDTO getAsksByFranchiseOwnerId(Integer franchiseOwnerId) {
-        List<Ask> askList = askRepository.findByFranchiseOwner_FranchiseOwnerCode(franchiseOwnerId);
+        List<Ask> askList = askRepository.findByFranchiseOwner_FranchiseOwnerCodeOrderByAskEnrollDateDesc(franchiseOwnerId);
         return convertToAskListDTO(askList);
     }
 

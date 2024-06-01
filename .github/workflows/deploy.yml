@@ -38,9 +38,14 @@ jobs:
             port: 5000
             tomcat:
               uri-encoding: UTF-8
+
           spring:
             application:
               name: pioms
+            main:
+              allow-bean-definition-overriding: true
+            jwt:
+              secret: \${SPRING_JWT_SECRET}
             cloud:
               gcp:
                 storage:
@@ -57,18 +62,22 @@ jobs:
               database-platform: org.hibernate.dialect.MySQL8Dialect
               generate-ddl: false
             datasource:
+              driver-class-name: org.mariadb.jdbc.Driver
               url: jdbc:mariadb://\${RDS_HOSTNAME}:\${RDS_PORT}/\${RDS_DB_NAME}
               username: \${RDS_USERNAME}
               password: \${RDS_PASSWORD}
-            jwt:
-              secret: \${SPRING_JWT_SECRET}
-          cache:
-            type: redis
-          data:
-            redis:
-              host: \${REDIS_HOST}
-              port: \${REDIS_PORT}
-              password: \${REDIS_PWD}
+            cache:
+              type: redis
+            data:
+              redis:
+                host: \${REDIS_HOST}
+                port: \${REDIS_PORT}
+                password: \${REDIS_PWD}
+          logging:
+            level:
+              root: INFO
+              org.springframework.web: DEBUG
+              org.hibernate: ERROR
           EOL
 
       - name: Set Yaml

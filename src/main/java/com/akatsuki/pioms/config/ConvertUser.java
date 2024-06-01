@@ -29,11 +29,12 @@ public class ConvertUser {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 
-        String userName = userDetails.getUser().getUsername();
+        String userName = authentication.getName();
         String role = userDetails.getAuthorities().iterator().next().getAuthority(); // 권한 정보
 //        if (!ROLE.equals(role))
 //            return -1;
         System.out.println("role = " + role);
+        System.out.println("userName = " + userName);
         if (role.equals("ROLE_ADMIN") ||role.equals("ROLE_ROOT"))
             return adminInfoRepository.findByAdminName(userName).getAdminCode();
         if (role.equals("ROLE_Driver"))
@@ -45,7 +46,7 @@ public class ConvertUser {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 
-        String userName = userDetails.getUser().getUsername();
+        String userName = authentication.getName();
         return userName;
     }
 

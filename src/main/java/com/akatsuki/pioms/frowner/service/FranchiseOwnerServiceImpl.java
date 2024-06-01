@@ -10,6 +10,8 @@ import com.akatsuki.pioms.log.service.LogService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -101,7 +103,9 @@ public class FranchiseOwnerServiceImpl implements FranchiseOwnerService {
                     .build();
             franchiseOwner.setFranchiseRole("ROLE_OWNER");
             franchiseOwnerRepository.save(franchiseOwner);
-            logService.saveLog("root", LogStatus.등록, franchiseOwner.getFranchiseOwnerName(), "FranchiseOwner");
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = authentication.getName();
+            logService.saveLog(username, LogStatus.등록, franchiseOwner.getFranchiseOwnerName(), "FranchiseOwner");
             return ResponseEntity.ok("신규 프랜차이즈 오너 등록이 완료되었습니다.");
         } catch (Exception e) {
             return ResponseEntity.status(500).body("프랜차이즈 오너 등록 중 오류가 발생했습니다.");
@@ -148,8 +152,10 @@ public class FranchiseOwnerServiceImpl implements FranchiseOwnerService {
                 existingFranchiseOwner.setFranchiseOwnerUpdateDate(LocalDateTime.now().format(formatter));
 
                 franchiseOwnerRepository.save(existingFranchiseOwner);
+                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                String username = authentication.getName();
                 if (changes.length() > 0) {
-                    logService.saveLog("root", LogStatus.수정, changes.toString(), "FranchiseOwner");
+                    logService.saveLog(username, LogStatus.수정, changes.toString(), "FranchiseOwner");
                 }
                 return ResponseEntity.ok("프랜차이즈 오너 정보가 성공적으로 업데이트되었습니다.");
             } else {
@@ -184,7 +190,9 @@ public class FranchiseOwnerServiceImpl implements FranchiseOwnerService {
             existingFranchiseOwner.setFranchiseOwnerDeleteDate(LocalDateTime.now().format(formatter));
 
             franchiseOwnerRepository.save(existingFranchiseOwner);
-            logService.saveLog("root", LogStatus.삭제, existingFranchiseOwner.getFranchiseOwnerName(), "FranchiseOwner");
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = authentication.getName();
+            logService.saveLog(username, LogStatus.삭제, existingFranchiseOwner.getFranchiseOwnerName(), "FranchiseOwner");
             return ResponseEntity.ok("프랜차이즈 오너가 성공적으로 삭제(비활성화)되었습니다.");
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
