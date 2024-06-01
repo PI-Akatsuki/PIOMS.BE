@@ -1,11 +1,11 @@
 package com.akatsuki.pioms.admin.dto;
 
-import com.akatsuki.pioms.franchise.dto.FranchiseDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import com.akatsuki.pioms.login.aggregate.AdminLoginRequest;
 
 import java.util.List;
 
@@ -25,9 +25,10 @@ public class AdminDTO {
     private String adminRole;
     private boolean adminStatus;
     private int pwdCheckCount;
-    private boolean adminDormancy;
     private String enrollDate;
     private String updateDate;
     private String deleteDate;
-    private List<FranchiseDTO> franchiseList;
+    private List<Integer> franchiseCodes;
+    private AdminLoginRequest adminLoginRequest;
+    private int franchiseCount;
 }

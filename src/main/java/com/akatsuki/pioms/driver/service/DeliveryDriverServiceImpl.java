@@ -4,7 +4,6 @@ import com.akatsuki.pioms.admin.aggregate.Admin;
 import com.akatsuki.pioms.driver.aggregate.DeliveryDriver;
 import com.akatsuki.pioms.driver.repository.DeliveryDriverRepository;
 import com.akatsuki.pioms.admin.repository.AdminRepository;
-import com.akatsuki.pioms.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;

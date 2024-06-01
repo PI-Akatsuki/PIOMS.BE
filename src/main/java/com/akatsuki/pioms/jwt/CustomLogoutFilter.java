@@ -1,6 +1,6 @@
 package com.akatsuki.pioms.jwt;
 
-import com.akatsuki.pioms.redis.RedisTokenService;
+import com.akatsuki.pioms.login.service.RedisTokenService;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -69,7 +69,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
             return;
         }
 
-        String userId = jwtUtil.getUsername(refresh);
+        String userId = jwtUtil.getUserId(refresh);
         boolean isExist = redisTokenService.getRefreshToken(userId) != null;
         if (!isExist) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);

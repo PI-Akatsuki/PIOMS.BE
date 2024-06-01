@@ -42,9 +42,6 @@ public class FranchiseOwner {
     @Column(name = "franchise_owner_pwd_check")
     private int ownerPwdCheckCount;
 
-    @Column(name = "franchise_owner_dormancy")
-    private boolean franchiseOwnerDormancy;
-
     @Column(name = "franchise_owner_enroll_date")
     private String franchiseOwnerEnrollDate;
 
@@ -57,5 +54,4 @@ public class FranchiseOwner {
     @OneToOne(mappedBy = "franchiseOwner")
     @ToString.Exclude
     private Franchise franchise;
-
 }

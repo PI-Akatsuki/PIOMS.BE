@@ -1,7 +1,9 @@
 package com.akatsuki.pioms.jwt;
 
-import com.akatsuki.pioms.user.aggregate.User;
 import com.akatsuki.pioms.user.dto.CustomUserDetails;
+import com.akatsuki.pioms.admin.repository.AdminRepository;
+import com.akatsuki.pioms.frowner.repository.FranchiseOwnerRepository;
+import com.akatsuki.pioms.driver.repository.DeliveryDriverRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -14,13 +16,20 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collections;
 
 public class JWTFilter extends OncePerRequestFilter {
 
     private final JWTUtil jwtUtil;
+    private final AdminRepository adminRepository;
+    private final FranchiseOwnerRepository franchiseOwnerRepository;
+    private final DeliveryDriverRepository deliveryDriverRepository;
 
-    public JWTFilter(JWTUtil jwtUtil) {
+    public JWTFilter(JWTUtil jwtUtil, AdminRepository adminRepository, FranchiseOwnerRepository franchiseOwnerRepository, DeliveryDriverRepository deliveryDriverRepository) {
         this.jwtUtil = jwtUtil;
+        this.adminRepository = adminRepository;
+        this.franchiseOwnerRepository = franchiseOwnerRepository;
+        this.deliveryDriverRepository = deliveryDriverRepository;
     }
 
     @Override
@@ -51,16 +60,21 @@ public class JWTFilter extends OncePerRequestFilter {
             return;
         }
 
-        String username = jwtUtil.getUsername(accessToken);
-        String role = jwtUtil.getRole(accessToken);
+        String userId = jwtUtil.getUserId(accessToken);
+        CustomUserDetails userDetails = null;
 
-        User userEntity = new User();
-        userEntity.setUsername(username);
-        userEntity.setRole(role);
-        CustomUserDetails customUserDetails = new CustomUserDetails(userEntity);
+        if ("ROLE_ROOT".equals(jwtUtil.getRole(accessToken)) || "ROLE_ADMIN".equals(jwtUtil.getRole(accessToken))) {
+            userDetails = new CustomUserDetails(adminRepository.findByAdminId(userId).orElseThrow(), jwtUtil.getAuthorities(accessToken));
+        } else if ("ROLE_FROWNER".equals(jwtUtil.getRole(accessToken))) {
+            userDetails = new CustomUserDetails(franchiseOwnerRepository.findByFranchiseOwnerId(userId).orElseThrow(), jwtUtil.getAuthorities(accessToken));
+        } else if ("ROLE_DRIVER".equals(jwtUtil.getRole(accessToken))) {
+            userDetails = new CustomUserDetails(deliveryDriverRepository.findByDriverId(userId).orElseThrow(), jwtUtil.getAuthorities(accessToken));
+        }
 
-        Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(authToken);
+        if (userDetails != null) {
+            Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
 
         filterChain.doFilter(request, response);
     }

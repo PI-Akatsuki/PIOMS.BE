@@ -39,9 +39,6 @@ public class DeliveryDriver {
     @Column(name = "delivery_man_pwd_check")
     private int driverPwdCheckCount;
 
-    @Column(name = "delivery_man_dormancy")
-    private boolean driverDormancy;
-
     @Column(name = "delivery_man_enroll_date")
     private String driverEnrollDate;
 
