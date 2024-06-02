@@ -49,7 +49,9 @@ public class FranchiseOrderFacade {
         System.out.println("franchiseOwnerCode = " + franchiseOwnerCode);
         FranchiseDTO franchise = franchiseService.findFranchiseByFranchiseOwnerCode(franchiseOwnerCode);
 
-        if(!productService.checkOrderEnable(requestOrderVO.getProducts()))
+        if(!productService.checkOrderEnable(requestOrderVO.getProducts())
+                || orderService.findUnprocessedOrder(franchiseOwnerCode)
+        )
             return 0;
 
         int result = orderService.postFranchiseOrder(franchise,requestOrderVO);

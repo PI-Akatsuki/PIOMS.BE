@@ -84,7 +84,8 @@ public class OrderServiceImpl implements OrderService{
         // 이미 존재하는 발주 있는지 확인
         if (requestOrder.getProducts() == null || requestOrder.getProducts().isEmpty() ||
                 orderRepository.existsByFranchiseFranchiseCodeAndOrderCondition(franchiseDTO.getFranchiseCode(), ORDER_CONDITION.승인대기)
-                || orderRepository.existsByFranchiseFranchiseCodeAndOrderCondition(franchiseDTO.getFranchiseCode(),ORDER_CONDITION.승인거부)){
+                || orderRepository.existsByFranchiseFranchiseCodeAndOrderCondition(franchiseDTO.getFranchiseCode(),ORDER_CONDITION.승인거부)
+        ){
             return 0;
         }
         try {
@@ -214,6 +215,14 @@ public class OrderServiceImpl implements OrderService{
         int inspectionWaitCnt = orderRepository.getInspectionWaitCntByAdminCode(adminCode);
         int inspectionFinishCnt = orderRepository.getInspectionFinishCntByAdminCode(adminCode);
         return new OrderStat(waitCnt,acceptCnt,denyCnt,deliveryCnt,inspectionWaitCnt,inspectionFinishCnt);
+    }
+
+    @Override
+    public boolean findUnprocessedOrder(int franchiseOwnerCode) {
+        // 발주 생성 전 미처리된 발주 있는지 확인 - 미처리 있으면 true
+         int result = orderRepository.findUnprocessedOrder(franchiseOwnerCode);
+        System.out.println("result = " + result);
+        return result != 0;
     }
 
 

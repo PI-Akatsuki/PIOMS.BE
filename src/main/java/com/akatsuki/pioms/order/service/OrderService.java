@@ -90,4 +90,6 @@ public interface OrderService {
     OrderDTO getOrderById(int orderCode);
 
     OrderStat getOrderStat(int rootCode);
+
+    boolean findUnprocessedOrder(int franchiseOwnerCode);
 }
