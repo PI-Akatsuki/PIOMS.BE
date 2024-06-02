@@ -196,5 +196,25 @@ public class OrderServiceImpl implements OrderService{
         }
     }
 
+    @Override
+    public OrderStat getOrderStat(int adminCode) {
+        if(adminCode==1){
+            int waitCnt = orderRepository.getWaitCnt();
+            int acceptCnt = orderRepository.getAcceptCnt();
+            int denyCnt = orderRepository.getDenyCnt();
+            int deliveryCnt = orderRepository.getDeliveryCnt();
+            int inspectionWaitCnt = orderRepository.getInspectionWaitCnt();
+            int inspectionFinishCnt = orderRepository.getInspectionFinishCnt();
+            return new OrderStat(waitCnt,acceptCnt,denyCnt,deliveryCnt,inspectionWaitCnt,inspectionFinishCnt);
+        }
+        int waitCnt = orderRepository.getWaitCntByAdminCode(adminCode);
+        int acceptCnt = orderRepository.getAcceptCntByAdminCode(adminCode);
+        int denyCnt = orderRepository.getDenyCntByAdminCode(adminCode);
+        int deliveryCnt = orderRepository.getDeliveryCntByAdminCode(adminCode);
+        int inspectionWaitCnt = orderRepository.getInspectionWaitCntByAdminCode(adminCode);
+        int inspectionFinishCnt = orderRepository.getInspectionFinishCntByAdminCode(adminCode);
+        return new OrderStat(waitCnt,acceptCnt,denyCnt,deliveryCnt,inspectionWaitCnt,inspectionFinishCnt);
+    }
+
 
 }

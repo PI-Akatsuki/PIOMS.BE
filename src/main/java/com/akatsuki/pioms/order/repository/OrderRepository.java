@@ -3,7 +3,9 @@ package com.akatsuki.pioms.order.repository;
 
 import com.akatsuki.pioms.order.aggregate.Order;
 import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
+import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -29,4 +31,35 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
     Order findByFranchiseFranchiseCodeAndOrderCondition(int adminCode, ORDER_CONDITION orderCondition);
 
     List<Order> findByFranchiseFranchiseOwnerFranchiseOwnerCodeOrderByOrderDateDesc(int franchiseCode);
+
+
+    @Query("SELECT COUNT(*) FROM Order a WHERE a.orderCondition='승인대기' ")
+    int getWaitCnt();
+    @Query("SELECT COUNT(*) FROM Order a WHERE a.orderCondition='승인완료' ")
+    int getAcceptCnt();
+    @Query("SELECT COUNT(*) FROM Order a WHERE a.orderCondition='승인거부' ")
+    int getDenyCnt();
+    @Query("SELECT COUNT(*) FROM Order a WHERE a.orderCondition='배송중' ")
+    int getDeliveryCnt();
+    @Query("SELECT COUNT(*) FROM Order a WHERE a.orderCondition='검수대기' ")
+    int getInspectionWaitCnt();
+    @Query("SELECT COUNT(*) FROM Order a WHERE a.orderCondition='검수완료' ")
+    int getInspectionFinishCnt();
+
+    @Query("SELECT COUNT(*) FROM Order a WHERE a.orderCondition='승인거부' AND a.orderCode = :adminCode ")
+    int getWaitCntByAdminCode(@Param("adminCode") int adminCode);
+    @Query("SELECT COUNT(*) FROM Order a WHERE a.orderCondition='승인거부' AND a.orderCode = :adminCode ")
+    int getAcceptCntByAdminCode(@Param("adminCode")int adminCode);
+    @Query("SELECT COUNT(*) FROM Order a WHERE a.orderCondition='승인거부' AND a.orderCode = :adminCode ")
+    int getDenyCntByAdminCode(@Param("adminCode")int adminCode);
+
+    @Query("SELECT COUNT(*) FROM Order a WHERE a.orderCondition='배송중' AND a.orderCode = :adminCode ")
+
+    int getDeliveryCntByAdminCode(@Param("adminCode")int adminCode);
+    @Query("SELECT COUNT(*) FROM Order a WHERE a.orderCondition='검수대기' AND a.orderCode = :adminCode ")
+
+    int getInspectionWaitCntByAdminCode(@Param("adminCode")int adminCode);
+    @Query("SELECT COUNT(*) FROM Order a WHERE a.orderCondition='검수완료' AND a.orderCode = :adminCode ")
+
+    int getInspectionFinishCntByAdminCode(@Param("adminCode")int adminCode);
 }
