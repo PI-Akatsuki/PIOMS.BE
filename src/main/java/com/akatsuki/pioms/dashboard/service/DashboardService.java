@@ -4,4 +4,6 @@ import com.akatsuki.pioms.dashboard.aggregate.ResponseAdminDashBoard;
 
 public interface DashboardService {
     ResponseAdminDashBoard getRootDash();
+
+    ResponseAdminDashBoard getAdminDash();
 }

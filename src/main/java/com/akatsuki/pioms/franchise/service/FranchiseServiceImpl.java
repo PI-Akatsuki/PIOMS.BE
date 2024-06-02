@@ -193,4 +193,10 @@ public class FranchiseServiceImpl implements FranchiseService {
         }
         return franchiseDTOS;
     }
+
+    @Override
+    public List<Franchise> findFranchiseByAdminCode(int adminCode) {
+
+        return franchiseRepository.findAllByAdminAdminCode(adminCode);
+    }
 }
