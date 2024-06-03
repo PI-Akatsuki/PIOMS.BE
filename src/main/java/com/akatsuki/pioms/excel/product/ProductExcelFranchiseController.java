@@ -1,23 +1,26 @@
-package com.akatsuki.pioms.excel;
+package com.akatsuki.pioms.excel.product;
 
 import com.akatsuki.pioms.product.dto.ProductDTO;
 import com.akatsuki.pioms.product.service.ProductService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("admin/exceldownload")
-public class ProductExcelAdminController {
+@RequestMapping("franchise/exceldownload")
+@ComponentScan
+public class ProductExcelFranchiseController {
 
-    private final ProductService productService;
+    private ProductService productService;
 
-    public ProductExcelAdminController(ProductService productService) {
+    public ProductExcelFranchiseController(ProductService productService) {
         this.productService = productService;
     }
 
@@ -28,7 +31,6 @@ public class ProductExcelAdminController {
 
     @GetMapping(value = "/product-excel")
     public void excelDownload(HttpServletResponse response) throws Exception {
-        List<ProductDTO> productList = productService.getAllProduct(); // 최신 데이터 가져오기
         Workbook wb = new XSSFWorkbook();
         Sheet sheet = wb.createSheet("상품 목록 시트");
         Row row = null;
@@ -58,11 +60,10 @@ public class ProductExcelAdminController {
         bodyStyle.setBorderLeft(BorderStyle.THIN);
         bodyStyle.setBorderRight(BorderStyle.THIN);
 
-
         // Header
         String[] headers = {
                 "상품코드", "상품명", "상품가격", "등록일", "수정일", "상품 설명",
-                "색상", "사이즈", "성별", "본사 총 보유량", "상태", "노출상태",
+                "색상", "사이즈", "성별", "본사 총 보유량", "상태",
                 "알림기준 수량", "본사 폐기량", "본사 보유량", "카테고리"
         };
         row = sheet.createRow(rowNum++);
@@ -72,9 +73,13 @@ public class ProductExcelAdminController {
             cell.setCellValue(headers[i]);
         }
 
+        // 필터링된 product list
+        List<ProductDTO> filteredProductList = productService.getAllProduct().stream()
+                .filter(ProductDTO::isProductExposureStatus)
+                .collect(Collectors.toList());
 
         // Body
-        for (ProductDTO dto : productList) {
+        for (ProductDTO dto : filteredProductList) {
             row = sheet.createRow(rowNum++);
             cell = row.createCell(0);
             cell.setCellStyle(bodyStyle);
@@ -111,17 +116,14 @@ public class ProductExcelAdminController {
             cell.setCellValue(dto.getProductStatus().toString());
             cell = row.createCell(11);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.isProductExposureStatus());
+            cell.setCellValue(dto.getProductNoticeCount());
             cell = row.createCell(12);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getProductNoticeCount());
+            cell.setCellValue(dto.getProductDiscount());
             cell = row.createCell(13);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getProductDiscount());
-            cell = row.createCell(14);
-            cell.setCellStyle(bodyStyle);
             cell.setCellValue(dto.getProductCount());
-            cell = row.createCell(15);
+            cell = row.createCell(14);
             cell.setCellStyle(bodyStyle);
             cell.setCellValue(dto.getCategoryThirdCode());
         }
@@ -141,4 +143,3 @@ public class ProductExcelAdminController {
         wb.close();
     }
 }
-
