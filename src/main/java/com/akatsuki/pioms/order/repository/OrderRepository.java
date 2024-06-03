@@ -65,4 +65,6 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
 
     @Query("SELECT COUNT(*) FROM Order a WHERE a.orderCondition!='검수완료' AND a.franchise.franchiseOwner.franchiseOwnerCode = :franchiseOwnerCode")
     int findUnprocessedOrder(@Param("franchiseOwnerCode") int franchiseOwnerCode);
+
+    List<Order> findAllByFranchiseDeliveryDriverDriverCode(int driverCode);
 }

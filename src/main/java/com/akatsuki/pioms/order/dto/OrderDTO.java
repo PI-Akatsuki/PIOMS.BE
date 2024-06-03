@@ -27,6 +27,7 @@ import java.util.List;
 public class OrderDTO {
 
     private int orderCode;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime orderDate;
     private int orderTotalPrice;
     private ORDER_CONDITION orderCondition;
@@ -50,6 +51,7 @@ public class OrderDTO {
     private List<OrderProductDTO> orderProductList;
 
     private int invoiceCode;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime invoiceDate;
 
 

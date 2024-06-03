@@ -73,4 +73,5 @@ public interface InvoiceService {
     // 배송상태조회 - 배송완료 상태의 송장 수 조회
     int countStatusCompleteDeliveryDriverInvoices(int driverCode);
 
+    List<InvoiceDTO> getInvoicesByDriverCode(int driverCode);
 }

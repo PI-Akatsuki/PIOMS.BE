@@ -1,9 +1,11 @@
 package com.akatsuki.pioms.dashboard.controller;
 
 import com.akatsuki.pioms.dashboard.aggregate.ResponseAdminDashBoard;
+import com.akatsuki.pioms.dashboard.aggregate.ResponseDriverDashBoard;
 import com.akatsuki.pioms.dashboard.service.DashboardService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,5 +27,11 @@ public class DashboardController {
     public ResponseEntity<ResponseAdminDashBoard> getAdminDash(){
         ResponseAdminDashBoard responseAdminDashBoard = dashboardService.getAdminDash();
         return ResponseEntity.ok(responseAdminDashBoard);
+    }
+
+    @GetMapping("/driver/dashboard")
+    public ResponseEntity<ResponseDriverDashBoard> getDriverDashBoard() {
+        ResponseDriverDashBoard driverDashBoard = dashboardService.getDriverDashBoard();
+        return ResponseEntity.ok(driverDashBoard);
     }
 }
