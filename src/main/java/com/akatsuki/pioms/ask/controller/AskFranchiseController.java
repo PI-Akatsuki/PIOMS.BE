@@ -6,6 +6,7 @@ import com.akatsuki.pioms.ask.dto.AskListDTO;
 import com.akatsuki.pioms.ask.dto.AskUpdateDTO;
 import com.akatsuki.pioms.ask.aggregate.Ask;
 import com.akatsuki.pioms.ask.service.AskService;
+import com.akatsuki.pioms.config.GetUserInfo;
 import com.akatsuki.pioms.frowner.dto.FranchiseOwnerDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -19,9 +20,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/franchise")
 public class AskFranchiseController {
     private final AskService askService;
+    private final GetUserInfo getUserInfo;
 
     @Autowired
-    public AskFranchiseController(AskService askService){this.askService = askService;}
+    public AskFranchiseController(AskService askService, GetUserInfo getUserInfo){this.askService = askService;
+        this.getUserInfo = getUserInfo;
+    }
 
     /**
      * 문의사항 전체조회
@@ -52,11 +56,19 @@ public class AskFranchiseController {
     /**
      * 문의사항 작성
      * */
-    @PostMapping("/ask/create/{franchise_owner_code}")
-    public ResponseEntity<AskDTO> createAsk(@PathVariable("franchise_owner_code") int franchiseOwnerCode, @RequestBody AskCreateDTO askCreateDTO) {
+//    @PostMapping("/ask/create/{franchise_owner_code}")
+//    public ResponseEntity<AskDTO> createAsk(@PathVariable("franchise_owner_code") int franchiseOwnerCode, @RequestBody AskCreateDTO askCreateDTO) {
+//        askCreateDTO.setFranchiseOwnerCode(franchiseOwnerCode);
+//        AskDTO AskDTO = askService.createAsk(askCreateDTO);
+//        return ResponseEntity.ok(AskDTO);
+//    }
+
+    @PostMapping("/create")
+    public ResponseEntity<AskDTO> createAsk(@RequestBody AskCreateDTO askCreateDTO) {
+        int franchiseOwnerCode = getUserInfo.getFranchiseOwnerCode();
         askCreateDTO.setFranchiseOwnerCode(franchiseOwnerCode);
-        AskDTO AskDTO = askService.createAsk(askCreateDTO);
-        return ResponseEntity.ok(AskDTO);
+        AskDTO askDTO = askService.createAsk(askCreateDTO);
+        return ResponseEntity.ok(askDTO);
     }
 
     /**
@@ -76,16 +88,18 @@ public class AskFranchiseController {
     }
 
     @Operation(summary = "문의사항조회", description = "점주별 문의사항 전체 조회입니다.")
-    @GetMapping("/asklist/{franchiseOwnerId}")
-    public ResponseEntity<AskListDTO> getAsksByFranchiseOwnerId(@PathVariable Integer franchiseOwnerId) {
+    @GetMapping("/asklist")
+    public ResponseEntity<AskListDTO> getAsksByFranchiseOwner() {
+        int franchiseOwnerId = getUserInfo.getFranchiseOwnerCode();  // 토큰에서 값 가져오기
         AskListDTO askListDTO = askService.getAsksByFranchiseOwnerId(franchiseOwnerId);
         return ResponseEntity.ok().body(askListDTO);
     }
 
     @Operation(summary = "문의사항조회", description = "점주별 문의사항 상세 조회입니다.")
-    @GetMapping("/owner/{franchiseOwnerCode}")
-    public ResponseEntity<FranchiseOwnerDTO> getFranchiseOwnerDetails(@PathVariable int franchiseOwnerCode) {
+    @GetMapping("/owner")
+    public ResponseEntity<FranchiseOwnerDTO> getFranchiseOwnerDetails() {
         try {
+            int franchiseOwnerCode = getUserInfo.getFranchiseOwnerCode();  // 토큰에서 값 가져오기
             FranchiseOwnerDTO franchiseOwnerDTO = askService.getFranchiseOwnerDetails(franchiseOwnerCode);
             return ResponseEntity.ok(franchiseOwnerDTO);
         } catch (EntityNotFoundException e) {

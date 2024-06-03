@@ -1,10 +1,12 @@
 package com.akatsuki.pioms.frwarehouse.controller;
 
+import com.akatsuki.pioms.config.GetUserInfo;
 import com.akatsuki.pioms.frwarehouse.aggregate.FranchiseWarehouse;
 import com.akatsuki.pioms.frwarehouse.aggregate.RequestFranchiseWarehouse;
 import com.akatsuki.pioms.frwarehouse.aggregate.ResponseFranchiseWarehouse;
 import com.akatsuki.pioms.frwarehouse.dto.FranchiseWarehouseDTO;
 import com.akatsuki.pioms.frwarehouse.service.FranchiseWarehouseService;
+import com.akatsuki.pioms.product.dto.ProductDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,14 +16,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/warehouse")
+@RequestMapping("/franchise/warehouse")
 public class franchiseWarehouseController {
 
     private final FranchiseWarehouseService franchiseWarehouseService;
+    private final GetUserInfo getUserInfo;
 
     @Autowired
-    public franchiseWarehouseController(FranchiseWarehouseService franchiseWarehouseService) {
+    public franchiseWarehouseController(FranchiseWarehouseService franchiseWarehouseService, GetUserInfo getUserInfo) {
         this.franchiseWarehouseService = franchiseWarehouseService;
+        this.getUserInfo = getUserInfo;
     }
 
     @GetMapping("")
@@ -78,5 +82,27 @@ public class franchiseWarehouseController {
     @GetMapping("/list")
     public ResponseEntity<List<FranchiseWarehouseDTO>> getFrWarehouseList(){
         return ResponseEntity.ok(franchiseWarehouseService.getFrWarehouseList());
+    }
+
+//    @Operation(summary = "상품 리스트 조회", description = "가맹점 코드로 상품 리스트를 조회합니다.")
+//    @GetMapping("/list/product")
+//    public ResponseEntity<List<ProductDTO>> getProductsByFranchiseCode() {
+//        int franchiseCode = getUserInfo.getFranchiseOwnerCode(); // 토큰에서 franchiseCode 가져오기
+//        List<ProductDTO> productList = franchiseWarehouseService.getProductsByFranchiseCode(franchiseCode);
+//        return ResponseEntity.ok(productList);
+//    }
+
+    @Operation(summary = "상품 리스트 조회", description = "가맹점 코드로 상품 리스트를 조회합니다.")
+    @GetMapping("/list/product")
+    public ResponseEntity<List<ProductDTO>> getProductsByFranchiseCode() {
+        int franchiseCode;
+        try {
+            franchiseCode = getUserInfo.getFranchiseOwnerCode(); // 토큰에서 franchiseCode 가져오기
+        } catch (Exception e) {
+            franchiseCode = 3; // 하드코딩된 값
+        }
+
+        List<ProductDTO> productList = franchiseWarehouseService.getProductsByFranchiseCode(franchiseCode);
+        return ResponseEntity.ok(productList);
     }
 }
