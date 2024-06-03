@@ -11,6 +11,8 @@ import com.akatsuki.pioms.frwarehouse.aggregate.FranchiseWarehouse;
 import com.akatsuki.pioms.frwarehouse.aggregate.RequestFranchiseWarehouse;
 import com.akatsuki.pioms.frwarehouse.dto.FranchiseWarehouseDTO;
 import com.akatsuki.pioms.frwarehouse.repository.FranchiseWarehouseRepository;
+import com.akatsuki.pioms.product.aggregate.Product;
+import com.akatsuki.pioms.product.dto.ProductDTO;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -200,5 +203,13 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
     @Override
     public List<FranchiseWarehouse> findAllFavorites() {
         return franchiseWarehouseRepository.findByFranchiseWarehouseFavoriteTrue();
+    }
+
+    @Override
+    public List<ProductDTO> getProductsByFranchiseCode(int franchiseCode) {
+        List<Product> products = franchiseWarehouseRepository.findByFranchiseCode(franchiseCode);
+        return products.stream()
+                .map(product -> new ProductDTO(product))
+                .collect(Collectors.toList());
     }
 }
