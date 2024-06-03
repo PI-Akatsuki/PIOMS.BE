@@ -331,6 +331,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     @Transactional(readOnly = true)
     public int countStatusCompleteDeliveryDriverInvoices(int driverCode) {
+
         List<ResponseDriverInvoice> responseDriverInvoices = getAllDriverInvoiceList(driverCode);
         int count = 0;
         for (ResponseDriverInvoice responseDriverInvoice : responseDriverInvoices) {
@@ -339,6 +340,16 @@ public class InvoiceServiceImpl implements InvoiceService {
             }
         }
         return count;
+    }
+
+    @Override
+    public List<InvoiceDTO> getInvoicesByDriverCode(int driverCode) {
+        List<Invoice> invoices = invoiceRepository.findAllByOrderFranchiseDeliveryDriverDriverCode(driverCode);
+        List<InvoiceDTO> invoiceDTOS = new ArrayList<>();
+        for (int i = 0; i < invoices.size(); i++) {
+            invoiceDTOS.add(new InvoiceDTO(invoices.get(i)));
+        }
+        return invoiceDTOS;
     }
 
 }

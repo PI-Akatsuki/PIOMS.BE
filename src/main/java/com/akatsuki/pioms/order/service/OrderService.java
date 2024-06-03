@@ -92,4 +92,6 @@ public interface OrderService {
     OrderStat getOrderStat(int rootCode);
 
     boolean findUnprocessedOrder(int franchiseOwnerCode);
+
+    List<OrderDTO> getOrderListByDriverCode(int driverCode);
 }
