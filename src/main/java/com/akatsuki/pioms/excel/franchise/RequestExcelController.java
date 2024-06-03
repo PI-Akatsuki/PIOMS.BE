@@ -1,7 +1,7 @@
-package com.akatsuki.pioms.excel.admin;
+package com.akatsuki.pioms.excel.franchise;
 
-import com.akatsuki.pioms.driver.aggregate.DeliveryDriver;
-import com.akatsuki.pioms.driver.service.DeliveryDriverService;
+import com.akatsuki.pioms.order.dto.OrderDTO;
+import com.akatsuki.pioms.order.service.FranchiseOrderFacade;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -12,20 +12,22 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("admin/exceldownload")
-public class DriverExcelController {
+@RequestMapping("franchise/exceldownload")
+public class RequestExcelController {
 
-    private final DeliveryDriverService deliveryDriverService;
+    private final FranchiseOrderFacade FranchiseOrderFacade;
+    private final FranchiseOrderFacade franchiseOrderFacade;
 
-    public DriverExcelController(DeliveryDriverService deliveryDriverService) {
-        this.deliveryDriverService = deliveryDriverService;
+    public RequestExcelController(FranchiseOrderFacade franchiseOrderFacade) {
+        this.FranchiseOrderFacade = franchiseOrderFacade;
+        this.franchiseOrderFacade = franchiseOrderFacade;
     }
 
-    @GetMapping(value = "driver-excel")
-    public void excelDownload(HttpServletResponse response) throws Exception {
-        List<DeliveryDriver> driverList = deliveryDriverService.findDriverList();
+    @GetMapping("/order-excel")
+    public void exceldownload(HttpServletResponse response) throws Exception {
+        List<OrderDTO> orderDTOList = franchiseOrderFacade.getOrderListByFranchiseCode();// 최신 데이터 가져오기
         Workbook wb = new XSSFWorkbook();
-        Sheet sheet = wb.createSheet("배송기사 목록 시트");
+        Sheet sheet = wb.createSheet("상품 목록 시트");
         Row row = null;
         Cell cell = null;
         int rowNum = 0;
@@ -55,8 +57,7 @@ public class DriverExcelController {
 
         // Header
         String[] headers = {
-                "기사코드","이름","ID","PWD","휴대전화","등록일",
-                "수정일","삭제일","역할","로그인실패횟수","활성상태"
+                "발주코드","발주일","총금액","승인여부","반려사유","가맹코드","교환,반품신청코드"
         };
         row = sheet.createRow(rowNum++);
         for (int i = 0; i < headers.length; i++) {
@@ -64,42 +65,31 @@ public class DriverExcelController {
             cell.setCellStyle(headStyle);
             cell.setCellValue(headers[i]);
         }
+
         // Body
-        for (DeliveryDriver dto : driverList) {
+        for (OrderDTO dto : orderDTOList) {
             row = sheet.createRow(rowNum++);
             cell = row.createCell(0);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getDriverCode());
+            cell.setCellValue(dto.getOrderCode());
             cell = row.createCell(1);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getDriverName());
+            cell.setCellValue(dto.getOrderDate());
             cell = row.createCell(2);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getDriverId());
+            cell.setCellValue(dto.getOrderTotalPrice());
             cell = row.createCell(3);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getDriverPwd());
+            cell.setCellValue(String.valueOf(dto.getOrderCondition()));
             cell = row.createCell(4);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getDriverPhone());
+            cell.setCellValue(dto.getOrderReason());
             cell = row.createCell(5);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getDriverEnrollDate());
+            cell.setCellValue(dto.getFranchiseCode());
             cell = row.createCell(6);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getDriverUpdateDate());
-            cell = row.createCell(7);
-            cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getDriverDeleteDate());
-            cell = row.createCell(8);
-            cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getDriverRole());
-            cell = row.createCell(9);
-            cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getDriverPwdCheckCount());
-            cell = row.createCell(10);
-            cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.isDriverStatus());
+            cell.setCellValue(dto.getExchange().getExchangeCode());
         }
 
         // Column width auto-sizing
@@ -110,7 +100,7 @@ public class DriverExcelController {
 
         // 컨텐츠 타입과 파일명 지정
         response.setContentType("ms-vnd/excel");
-        response.setHeader("Content-Disposition", "attachment;filename=driverList.xlsx");
+        response.setHeader("Content-Disposition", "attachment;filename=FrOrderList.xlsx");
 
         // Excel File Output
         wb.write(response.getOutputStream());
