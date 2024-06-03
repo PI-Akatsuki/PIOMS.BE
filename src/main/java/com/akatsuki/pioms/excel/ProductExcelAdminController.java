@@ -5,7 +5,6 @@ import com.akatsuki.pioms.product.service.ProductService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,15 +13,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping("admin/exceldownload")
-@ComponentScan
 public class ProductExcelAdminController {
 
-    private ProductService productService;
-    private final List<ProductDTO> productList;
+    private final ProductService productService;
 
     public ProductExcelAdminController(ProductService productService) {
         this.productService = productService;
-        this.productList = productService.getAllProduct();
     }
 
     @GetMapping("/excel/go")
@@ -32,7 +28,7 @@ public class ProductExcelAdminController {
 
     @GetMapping(value = "/product-excel")
     public void excelDownload(HttpServletResponse response) throws Exception {
-//        Workbook wb = new HSSFWorkbook();
+        List<ProductDTO> productList = productService.getAllProduct(); // 최신 데이터 가져오기
         Workbook wb = new XSSFWorkbook();
         Sheet sheet = wb.createSheet("상품 목록 시트");
         Row row = null;
@@ -134,13 +130,10 @@ public class ProductExcelAdminController {
         for(int k = 0 ; k < headers.length ; k++){
             sheet.autoSizeColumn(k);
             sheet.setColumnWidth(k, (sheet.getColumnWidth(k))+(short)1024); //너비 더 넓게
-//            row.setHeight((short)512);
         }
 
-        System.out.println("productList = " + productList);
         // 컨텐츠 타입과 파일명 지정
         response.setContentType("ms-vnd/excel");
-//        response.setHeader("Content-Disposition", "attachment;filename=example.xls");
         response.setHeader("Content-Disposition", "attachment;filename=product.xlsx");
 
         // Excel File Output
@@ -148,3 +141,4 @@ public class ProductExcelAdminController {
         wb.close();
     }
 }
+
