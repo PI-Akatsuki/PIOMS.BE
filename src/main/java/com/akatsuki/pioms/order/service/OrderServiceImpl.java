@@ -84,7 +84,8 @@ public class OrderServiceImpl implements OrderService{
         // 이미 존재하는 발주 있는지 확인
         if (requestOrder.getProducts() == null || requestOrder.getProducts().isEmpty() ||
                 orderRepository.existsByFranchiseFranchiseCodeAndOrderCondition(franchiseDTO.getFranchiseCode(), ORDER_CONDITION.승인대기)
-                || orderRepository.existsByFranchiseFranchiseCodeAndOrderCondition(franchiseDTO.getFranchiseCode(),ORDER_CONDITION.승인거부)){
+                || orderRepository.existsByFranchiseFranchiseCodeAndOrderCondition(franchiseDTO.getFranchiseCode(),ORDER_CONDITION.승인거부)
+        ){
             return 0;
         }
         try {
@@ -194,6 +195,44 @@ public class OrderServiceImpl implements OrderService{
         }catch (Exception ignored){
             return null;
         }
+    }
+
+    @Override
+    public OrderStat getOrderStat(int adminCode) {
+        if(adminCode==1){
+            int waitCnt = orderRepository.getWaitCnt();
+            int acceptCnt = orderRepository.getAcceptCnt();
+            int denyCnt = orderRepository.getDenyCnt();
+            int deliveryCnt = orderRepository.getDeliveryCnt();
+            int inspectionWaitCnt = orderRepository.getInspectionWaitCnt();
+            int inspectionFinishCnt = orderRepository.getInspectionFinishCnt();
+            return new OrderStat(waitCnt,acceptCnt,denyCnt,deliveryCnt,inspectionWaitCnt,inspectionFinishCnt);
+        }
+        int waitCnt = orderRepository.getWaitCntByAdminCode(adminCode);
+        int acceptCnt = orderRepository.getAcceptCntByAdminCode(adminCode);
+        int denyCnt = orderRepository.getDenyCntByAdminCode(adminCode);
+        int deliveryCnt = orderRepository.getDeliveryCntByAdminCode(adminCode);
+        int inspectionWaitCnt = orderRepository.getInspectionWaitCntByAdminCode(adminCode);
+        int inspectionFinishCnt = orderRepository.getInspectionFinishCntByAdminCode(adminCode);
+        return new OrderStat(waitCnt,acceptCnt,denyCnt,deliveryCnt,inspectionWaitCnt,inspectionFinishCnt);
+    }
+
+    @Override
+    public boolean findUnprocessedOrder(int franchiseOwnerCode) {
+        // 발주 생성 전 미처리된 발주 있는지 확인 - 미처리 있으면 true
+         int result = orderRepository.findUnprocessedOrder(franchiseOwnerCode);
+        System.out.println("result = " + result);
+        return result != 0;
+    }
+
+    @Override
+    public List<OrderDTO> getOrderListByDriverCode(int driverCode) {
+        List<Order> orders = orderRepository.findAllByFranchiseDeliveryDriverDriverCode(driverCode);
+        List<OrderDTO> orderDTOList = new ArrayList<>();
+        for (int i = 0; i < orders.size(); i++) {
+            orderDTOList.add(new OrderDTO(orders.get(i)));
+        }
+        return orderDTOList;
     }
 
 

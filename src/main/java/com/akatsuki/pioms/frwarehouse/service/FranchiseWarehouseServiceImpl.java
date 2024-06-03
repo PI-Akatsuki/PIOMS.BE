@@ -6,11 +6,14 @@ import com.akatsuki.pioms.admin.repository.AdminRepository;
 import com.akatsuki.pioms.config.GetUserInfo;
 import com.akatsuki.pioms.exchange.aggregate.RequestExchange;
 import com.akatsuki.pioms.exchange.aggregate.ExchangeProductVO;
+import com.akatsuki.pioms.franchise.aggregate.Franchise;
+import com.akatsuki.pioms.franchise.repository.FranchiseRepository;
 import com.akatsuki.pioms.franchise.service.FranchiseService;
 import com.akatsuki.pioms.frwarehouse.aggregate.FranchiseWarehouse;
 import com.akatsuki.pioms.frwarehouse.aggregate.RequestFranchiseWarehouse;
 import com.akatsuki.pioms.frwarehouse.dto.FranchiseWarehouseDTO;
 import com.akatsuki.pioms.frwarehouse.repository.FranchiseWarehouseRepository;
+import com.akatsuki.pioms.product.dto.ProductDTO;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -29,15 +33,17 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
     private final AdminRepository adminRepository;
     private final FranchiseService franchiseService;
     private final GetUserInfo getUserInfo;
+    private final FranchiseRepository franchiseRepository;
 
     @Autowired
-    public FranchiseWarehouseServiceImpl(FranchiseWarehouseRepository franchiseWarehouseRepository, AdminRepository adminRepository,FranchiseService franchiseService
-        ,GetUserInfo getUserInfo
+    public FranchiseWarehouseServiceImpl(FranchiseWarehouseRepository franchiseWarehouseRepository, AdminRepository adminRepository, FranchiseService franchiseService
+        , GetUserInfo getUserInfo, FranchiseRepository franchiseRepository
     ) {
         this.franchiseWarehouseRepository = franchiseWarehouseRepository;
         this.adminRepository = adminRepository;
         this.franchiseService = franchiseService;
         this.getUserInfo = getUserInfo;
+        this.franchiseRepository = franchiseRepository;
     }
 
 
@@ -173,16 +179,39 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
     @Override
     @Transactional
     public void toggleFavorite(int franchiseWarehouseCode) {
+        // 로그 추가: 메서드 시작 및 입력 값 확인
+        System.out.println("toggleFavorite 메서드 시작: franchiseWarehouseCode = " + franchiseWarehouseCode);
+
+        // findById 호출 및 결과 확인
         FranchiseWarehouse favorite = franchiseWarehouseRepository.findById(franchiseWarehouseCode)
-                .orElseThrow(() -> new RuntimeException("Warehouse not found"));
+                .orElseThrow(() -> {
+                    // 로그 추가: Warehouse not found
+                    System.out.println("Warehouse not found for franchiseWarehouseCode = " + franchiseWarehouseCode);
+                    return new RuntimeException("Warehouse not found");
+                });
+
+        // 로그 추가: 현재 즐겨찾기 상태 확인
+        System.out.println("현재 즐겨찾기 상태: " + favorite.isFranchiseWarehouseFavorite());
 
         if (favorite.isFranchiseWarehouseFavorite()) {
+            // 로그 추가: 이미 즐겨찾기 상태일 때
+            System.out.println("이미 즐겨찾기 추가된 상품입니다");
             throw new RuntimeException("이미 즐겨찾기 추가된 상품입니다");
         }
 
+        // 즐겨찾기 상태 변경
         favorite.setFranchiseWarehouseFavorite(true);
+
+        // 로그 추가: 즐겨찾기 상태 변경 후 확인
+        System.out.println("즐겨찾기 상태 변경 후: " + favorite.isFranchiseWarehouseFavorite());
+
+        // 데이터베이스에 저장
         franchiseWarehouseRepository.save(favorite);
+
+        // 로그 추가: 저장 완료
+        System.out.println("즐겨찾기 상태 저장 완료");
     }
+
 
     @Transactional
     public void removeFavorite(int franchiseWarehouseCode) {
@@ -200,5 +229,21 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
     @Override
     public List<FranchiseWarehouse> findAllFavorites() {
         return franchiseWarehouseRepository.findByFranchiseWarehouseFavoriteTrue();
+    }
+
+    @Override
+    public List<FranchiseWarehouseDTO> getProductsByFranchiseOwnerCode(int franchiseOwnerCode) {
+        // FranchiseOwnerCode로 FranchiseCode 가져오기
+        Franchise franchise = franchiseRepository.findByFranchiseOwner_FranchiseOwnerCode(franchiseOwnerCode);
+        if (franchise == null) {
+            throw new RuntimeException("Franchise not found for franchise owner code: " + franchiseOwnerCode);
+        }
+        int franchiseCode = franchise.getFranchiseCode();
+
+        // FranchiseCode로 FranchiseWarehouseDTO 리스트 가져오기
+        List<FranchiseWarehouse> franchiseWarehouses = franchiseWarehouseRepository.findByFranchiseCode(franchiseCode);
+        return franchiseWarehouses.stream()
+                .map(FranchiseWarehouseDTO::new)
+                .collect(Collectors.toList());
     }
 }

@@ -28,4 +28,6 @@ public interface FranchiseService {
 
 
     List<FranchiseDTO> findFranchiseListByDriverCode(int driverCode);
+
+    List<Franchise> findFranchiseByAdminCode(int adminCode);
 }

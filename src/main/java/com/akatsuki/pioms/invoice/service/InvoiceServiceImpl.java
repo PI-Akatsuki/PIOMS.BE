@@ -298,4 +298,58 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         return true;
     }
+
+    // 배송상태조회 - 배송전 상태의 송장 수 조회
+    @Override
+    @Transactional(readOnly = true)
+    public int countStatusBeforeDeliveryDriverInvoices(int driverCode) {
+        List<ResponseDriverInvoice> responseDriverInvoices = getAllDriverInvoiceList(driverCode);
+        int count = 0;
+        for (ResponseDriverInvoice responseDriverInvoice : responseDriverInvoices) {
+            if (responseDriverInvoice.getDeliveryStatus() == DELIVERY_STATUS.배송전) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    // 배송상태조회 - 배송중 상태의 송장 수 조회
+    @Override
+    @Transactional(readOnly = true)
+    public int countStatusIngDeliveryDriverInvoices(int driverCode) {
+        List<ResponseDriverInvoice> responseDriverInvoices = getAllDriverInvoiceList(driverCode);
+        int count = 0;
+        for (ResponseDriverInvoice responseDriverInvoice : responseDriverInvoices) {
+            if (responseDriverInvoice.getDeliveryStatus() == DELIVERY_STATUS.배송중) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    // 배송상태조회 - 배송중 상태의 송장 수 조회
+    @Override
+    @Transactional(readOnly = true)
+    public int countStatusCompleteDeliveryDriverInvoices(int driverCode) {
+
+        List<ResponseDriverInvoice> responseDriverInvoices = getAllDriverInvoiceList(driverCode);
+        int count = 0;
+        for (ResponseDriverInvoice responseDriverInvoice : responseDriverInvoices) {
+            if (responseDriverInvoice.getDeliveryStatus() == DELIVERY_STATUS.배송완료) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    @Override
+    public List<InvoiceDTO> getInvoicesByDriverCode(int driverCode) {
+        List<Invoice> invoices = invoiceRepository.findAllByOrderFranchiseDeliveryDriverDriverCode(driverCode);
+        List<InvoiceDTO> invoiceDTOS = new ArrayList<>();
+        for (int i = 0; i < invoices.size(); i++) {
+            invoiceDTOS.add(new InvoiceDTO(invoices.get(i)));
+        }
+        return invoiceDTOS;
+    }
+
 }

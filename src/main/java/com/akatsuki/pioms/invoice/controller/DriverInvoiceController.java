@@ -61,4 +61,23 @@ public class DriverInvoiceController {
         boolean result = invoiceService.modifyInvoiceStatusByDriver(invoiceCode, 0, deliveryStatus);
         return ResponseEntity.ok(result);
     }
+
+    @Operation(summary = "배송전 상태 송장 수 조회", description = "배송기사가 가진 배송전 송장 수 조회")
+    @GetMapping("/{driverCode}/before-delivery/count")
+    public int countStatusBeforeDeliveryDriverInvoices(@PathVariable int driverCode) {
+        return invoiceService.countStatusBeforeDeliveryDriverInvoices(driverCode);
+    }
+
+    @Operation(summary = "배송전 상태 송장 수 조회", description = "배송기사가 가진 배송중 송장 수 조회")
+    @GetMapping("/{driverCode}/ing-delivery/count")
+    public int countStatusIngDeliveryDriverInvoices(@PathVariable int driverCode) {
+        return invoiceService.countStatusIngDeliveryDriverInvoices(driverCode);
+    }
+
+    @Operation(summary = "배송전 상태 송장 수 조회", description = "배송기사가 가진 배송완료 송장 수 조회")
+    @GetMapping("/{driverCode}/complete-delivery/count")
+    public int countStatusCompleteDeliveryDriverInvoices(@PathVariable int driverCode) {
+        return invoiceService.countStatusCompleteDeliveryDriverInvoices(driverCode);
+    }
+
 }

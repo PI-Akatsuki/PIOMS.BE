@@ -3,6 +3,7 @@ import com.akatsuki.pioms.exchange.aggregate.RequestExchange;
 import com.akatsuki.pioms.frwarehouse.aggregate.FranchiseWarehouse;
 import com.akatsuki.pioms.frwarehouse.aggregate.RequestFranchiseWarehouse;
 import com.akatsuki.pioms.frwarehouse.dto.FranchiseWarehouseDTO;
+import com.akatsuki.pioms.product.dto.ProductDTO;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -30,4 +31,6 @@ public interface FranchiseWarehouseService {
     void saveProductWhenDeleteExchange(int productCode, int exchangeProductCount, int franchiseCode);
 
     void saveProductWhenUpdateExchangeToCompany(int productCode, int i, int franchiseCode);
+
+    List<FranchiseWarehouseDTO> getProductsByFranchiseOwnerCode(int franchiseOwnerCode);
 }
