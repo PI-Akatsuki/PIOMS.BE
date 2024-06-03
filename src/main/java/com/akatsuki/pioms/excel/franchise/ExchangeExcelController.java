@@ -1,7 +1,7 @@
 package com.akatsuki.pioms.excel.franchise;
 
-import com.akatsuki.pioms.order.dto.OrderDTO;
-import com.akatsuki.pioms.order.service.FranchiseOrderFacade;
+import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
+import com.akatsuki.pioms.exchange.service.ExchangeService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -13,19 +13,20 @@ import java.util.List;
 
 @RestController
 @RequestMapping("franchise/exceldownload")
-public class RequestExcelController {
+public class ExchangeExcelController {
 
-    private final FranchiseOrderFacade franchiseOrderFacade;
+    private final ExchangeService exchangeService;
 
-    public RequestExcelController(FranchiseOrderFacade franchiseOrderFacade) {
-        this.franchiseOrderFacade = franchiseOrderFacade;
+    public ExchangeExcelController(ExchangeService exchangeService) {
+        this.exchangeService = exchangeService;
     }
 
-    @GetMapping("/order-excel")
-    public void exceldownload(HttpServletResponse response) throws Exception {
-        List<OrderDTO> orderDTOList = franchiseOrderFacade.getOrderListByFranchiseCode();// 최신 데이터 가져오기
+    // 점주의 교환,반품 신청 내역
+    @GetMapping("/exchange-excel")
+    public void excelDownload(HttpServletResponse response) throws Exception {
+        List<ExchangeDTO> exchangeDTOList = exchangeService.getFrOwnerExchanges();
         Workbook wb = new XSSFWorkbook();
-        Sheet sheet = wb.createSheet("상품 목록 시트");
+        Sheet sheet = wb.createSheet("교환반품신청내역 목록 시트");
         Row row = null;
         Cell cell = null;
         int rowNum = 0;
@@ -55,8 +56,9 @@ public class RequestExcelController {
 
         // Header
         String[] headers = {
-                "발주코드","발주일","총금액","승인여부","반려사유","가맹코드","교환,반품신청코드"
+                "교환반품신청코드","신청일","처리여부","가맹코드"
         };
+
         row = sheet.createRow(rowNum++);
         for (int i = 0; i < headers.length; i++) {
             cell = row.createCell(i);
@@ -65,29 +67,21 @@ public class RequestExcelController {
         }
 
         // Body
-        for (OrderDTO dto : orderDTOList) {
+        for (ExchangeDTO dto : exchangeDTOList) {
             row = sheet.createRow(rowNum++);
             cell = row.createCell(0);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getOrderCode());
+            cell.setCellValue(dto.getExchangeCode());
             cell = row.createCell(1);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getOrderDate());
+            cell.setCellValue(dto.getExchangeDate());
             cell = row.createCell(2);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getOrderTotalPrice());
+            cell.setCellValue(String.valueOf(dto.getExchangeStatus()));
             cell = row.createCell(3);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(String.valueOf(dto.getOrderCondition()));
-            cell = row.createCell(4);
-            cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getOrderReason());
-            cell = row.createCell(5);
-            cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getFranchiseCode());
-            cell = row.createCell(6);
-            cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getExchange().getExchangeCode());
+            cell.setCellValue(dto.getFranchise().getFranchiseCode());
+
         }
 
         // Column width auto-sizing
