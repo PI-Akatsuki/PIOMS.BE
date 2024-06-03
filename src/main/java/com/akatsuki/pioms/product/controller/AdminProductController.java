@@ -1,16 +1,17 @@
 package com.akatsuki.pioms.product.controller;
 
 import com.akatsuki.pioms.product.aggregate.ResponseProductWithImage;
+import com.akatsuki.pioms.product.dto.KakaoAlertRequest;
 import com.akatsuki.pioms.product.dto.ProductDTO;
 import com.akatsuki.pioms.product.service.ProductService;
 import com.akatsuki.pioms.product.aggregate.RequestProduct;
 import com.akatsuki.pioms.product.aggregate.ResponseProduct;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -53,7 +54,6 @@ public class AdminProductController {
         return productService.postProduct(request);
     }
 
-
     @DeleteMapping("/delete/{productCode}")
     @Operation(summary = "상품 삭제", description = "상품 코드로 상품 삭제")
     public ResponseEntity<String> deleteProduct(@PathVariable int productCode) {
@@ -67,28 +67,35 @@ public class AdminProductController {
     }
 
     @GetMapping("/category/{categoryThirdCode}")
+    @Operation(summary = "카테고리별 상품 조회", description = "카테고리 코드로 상품 목록 조회")
     public ResponseEntity<List<ResponseProduct>> getCategoryProductList(@PathVariable int categoryThirdCode) {
         return ResponseEntity.ok(productService.getCategoryProductList(categoryThirdCode));
     }
 
     @PostMapping("/image")
+    @Operation(summary = "상품 이미지 등록", description = "상품 이미지 등록 기능")
     public ResponseEntity<Boolean> postImage(RequestProduct request) {
-        Boolean result = null;
-        System.out.println("request = " + request);
-
-        result = productService.postProductWithImage(request, request.getFile());
-
+        Boolean result = productService.postProductWithImage(request, request.getFile());
         return ResponseEntity.ok(result);
     }
 
     @GetMapping("/productImage")
-    public ResponseEntity<List<ResponseProductWithImage>> getProducts(){
+    @Operation(summary = "상품 이미지 조회", description = "상품 이미지 조회 기능")
+    public ResponseEntity<List<ResponseProductWithImage>> getProducts() {
         List<ResponseProductWithImage> responseProductImage = productService.getAllProductWithImage();
-
         if (responseProductImage.isEmpty())
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         return ResponseEntity.ok(responseProductImage);
     }
 
-
+    @PostMapping("/sendKakaoAlert")
+    @Operation(summary = "카카오톡 알림 전송")
+    public ResponseEntity<String> sendKakaoAlert(@RequestBody KakaoAlertRequest request) {
+        try {
+            productService.sendKakaoAlert(request.getProductName(), request.getStockQuantity());
+            return ResponseEntity.ok("카카오톡 알림 전송 완료");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("카카오톡 알림 전송 실패");
+        }
+    }
 }

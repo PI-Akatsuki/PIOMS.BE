@@ -7,6 +7,7 @@ import com.akatsuki.pioms.product.aggregate.RequestProduct;
 import com.akatsuki.pioms.product.aggregate.ResponseProduct;
 import com.akatsuki.pioms.product.aggregate.ResponseProductWithImage;
 import com.akatsuki.pioms.product.dto.ProductDTO;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,7 +26,7 @@ public interface ProductService {
     void exportProducts(OrderDTO order);
     boolean checkExchangeProduct(OrderDTO order, ExchangeDTO exchange);
 
-    void productMinusCnt(int requestProduct, int orderProductCode);
+    void productMinusCnt(int requestProduct, int orderProductCode) throws JsonProcessingException;
 
     List<ResponseProduct> getCategoryProductList(int categoryThirdCode);
 
@@ -42,4 +43,8 @@ public interface ProductService {
     List<ResponseProductWithImage> getAllProductWithImage();
 
     void productPlusCnt(int productCode, int i);
+
+    // 카카오 알림
+    void sendKakaoAlert(String productName, int stockQuantity) throws JsonProcessingException;
+
 }

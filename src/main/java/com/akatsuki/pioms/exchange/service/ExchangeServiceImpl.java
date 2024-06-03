@@ -16,6 +16,7 @@ import com.akatsuki.pioms.order.dto.OrderDTO;
 import com.akatsuki.pioms.order.service.OrderService;
 import com.akatsuki.pioms.product.aggregate.Product;
 import com.akatsuki.pioms.product.service.ProductService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -233,7 +234,11 @@ public class ExchangeServiceImpl implements ExchangeService{
                     return;
                 int productCode= exchange.getProducts().get(i).getProduct().getProductCode();
                 int cnt = exchange.getProducts().get(i).getExchangeProductCount();
-                productService.productMinusCnt(cnt,productCode);
+                try {
+                    productService.productMinusCnt(cnt,productCode);
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
             }
             exchangeRepository.save(exchange);
         });
