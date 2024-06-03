@@ -1,7 +1,7 @@
-package com.akatsuki.pioms.excel.company;
+package com.akatsuki.pioms.excel.admin;
 
-import com.akatsuki.pioms.admin.dto.AdminDTO;
-import com.akatsuki.pioms.admin.service.AdminInfoService;
+import com.akatsuki.pioms.driver.aggregate.DeliveryDriver;
+import com.akatsuki.pioms.driver.service.DeliveryDriverService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -13,17 +13,17 @@ import java.util.List;
 
 @RestController
 @RequestMapping("admin/exceldownload")
-public class AdminExcelController {
+public class DriverExcelController {
 
-    private final AdminInfoService adminInfoService;
+    private final DeliveryDriverService deliveryDriverService;
 
-    public AdminExcelController(AdminInfoService adminInfoService) {
-        this.adminInfoService = adminInfoService;
+    public DriverExcelController(DeliveryDriverService deliveryDriverService) {
+        this.deliveryDriverService = deliveryDriverService;
     }
 
-    @GetMapping(value = "/admin-excel")
-    public void excelDownload(HttpServletResponse response) throws Exception{
-        List<AdminDTO> adminDTOList = adminInfoService.findAdminList(); // 최신 데이터 가져오기
+    @GetMapping(value = "driver-excel")
+    public void excelDownload(HttpServletResponse response) throws Exception {
+        List<DeliveryDriver> driverList = deliveryDriverService.findDriverList();
         Workbook wb = new XSSFWorkbook();
         Sheet sheet = wb.createSheet("관리자 목록 시트");
         Row row = null;
@@ -55,8 +55,8 @@ public class AdminExcelController {
 
         // Header
         String[] headers = {
-                "관리자코드","이름","ID","PWD","등록일","수정일","삭제일","이메일",
-                "휴대전화","발급코드","역할","활성상태","로그인실패횟수"
+                "기사코드","이름","ID","PWD","휴대전화","등록일",
+                "수정일","삭제일","역할","로그인실패횟수","활성상태"
         };
         row = sheet.createRow(rowNum++);
         for (int i = 0; i < headers.length; i++) {
@@ -65,47 +65,41 @@ public class AdminExcelController {
             cell.setCellValue(headers[i]);
         }
         // Body
-        for (AdminDTO dto : adminDTOList) {
+        for (DeliveryDriver dto : driverList) {
             row = sheet.createRow(rowNum++);
             cell = row.createCell(0);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getAdminCode());
+            cell.setCellValue(dto.getDriverCode());
             cell = row.createCell(1);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getAdminName());
+            cell.setCellValue(dto.getDriverName());
             cell = row.createCell(2);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getAdminId());
+            cell.setCellValue(dto.getDriverId());
             cell = row.createCell(3);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getAdminPwd());
+            cell.setCellValue(dto.getDriverPwd());
             cell = row.createCell(4);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getEnrollDate());
+            cell.setCellValue(dto.getDriverPhone());
             cell = row.createCell(5);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getUpdateDate());
+            cell.setCellValue(dto.getDriverEnrollDate());
             cell = row.createCell(6);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getDeleteDate());
+            cell.setCellValue(dto.getDriverUpdateDate());
             cell = row.createCell(7);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getAdminEmail());
+            cell.setCellValue(dto.getDriverDeleteDate());
             cell = row.createCell(8);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getAdminPhone());
+            cell.setCellValue(dto.getDriverRole());
             cell = row.createCell(9);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getAccessNumber());
+            cell.setCellValue(dto.getDriverPwdCheckCount());
             cell = row.createCell(10);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getAdminRole());
-            cell = row.createCell(11);
-            cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.isAdminStatus());
-            cell = row.createCell(12);
-            cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getPwdCheckCount());
+            cell.setCellValue(dto.isDriverStatus());
         }
 
         // Column width auto-sizing
@@ -116,7 +110,7 @@ public class AdminExcelController {
 
         // 컨텐츠 타입과 파일명 지정
         response.setContentType("ms-vnd/excel");
-        response.setHeader("Content-Disposition", "attachment;filename=adminList.xlsx");
+        response.setHeader("Content-Disposition", "attachment;filename=driverList.xlsx");
 
         // Excel File Output
         wb.write(response.getOutputStream());
