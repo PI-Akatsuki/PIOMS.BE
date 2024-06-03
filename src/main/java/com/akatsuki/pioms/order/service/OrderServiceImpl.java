@@ -225,5 +225,15 @@ public class OrderServiceImpl implements OrderService{
         return result != 0;
     }
 
+    @Override
+    public List<OrderDTO> getOrderListByDriverCode(int driverCode) {
+        List<Order> orders = orderRepository.findAllByFranchiseDeliveryDriverDriverCode(driverCode);
+        List<OrderDTO> orderDTOList = new ArrayList<>();
+        for (int i = 0; i < orders.size(); i++) {
+            orderDTOList.add(new OrderDTO(orders.get(i)));
+        }
+        return orderDTOList;
+    }
+
 
 }
