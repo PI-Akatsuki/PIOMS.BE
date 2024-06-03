@@ -30,9 +30,10 @@ public class AdminManualPDFController {
 
             try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
                 contentStream.beginText();
-                contentStream.setFont(PDType1Font.HELVETICA_BOLD, 12);
+                // 기본 폰트 설정 (예: Times-Roman)
+                contentStream.setFont(PDType1Font.HELVETICA, 12);
                 contentStream.newLineAtOffset(100, 700);
-                contentStream.showText("본사 관리자 매뉴얼 PDF");
+                contentStream.showText("AdminManualPDF");
                 contentStream.endText();
             }
 

@@ -100,7 +100,7 @@ public class SecurityConfig {
                                 "/admin/exchange/**",
                                 "/admin/notice/list/**",
                                 "/admin/ask/**",
-//                                "/admin/pdfdownload/**",
+                                "/admin/pdfdownload/**",
                                 "/admin/exceldownload/**").hasRole("ADMIN")
                         .requestMatchers("/franchise/**").hasAnyRole("OWNER")
                         .requestMatchers("/driver/**").hasRole("DRIVER")
