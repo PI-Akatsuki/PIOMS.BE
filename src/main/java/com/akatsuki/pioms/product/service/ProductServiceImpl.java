@@ -24,8 +24,6 @@ import com.akatsuki.pioms.product.aggregate.RequestProduct;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -115,10 +113,7 @@ public class ProductServiceImpl implements ProductService{
 
         Product updatedProduct = productRepository.save(product);
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-
-        logService.saveLog(username, LogStatus.등록, updatedProduct.getProductName(), "Product");
+        logService.saveLog("root", LogStatus.등록, updatedProduct.getProductName(), "Product");
 
         return ResponseEntity.ok("상품 등록 완료!");
     }
@@ -126,22 +121,25 @@ public class ProductServiceImpl implements ProductService{
     @Override
     @Transactional
     public ResponseEntity<String> deleteProduct(int productCode) {
-        Product product = productRepository.findById(productCode).orElseThrow(()-> new EntityNotFoundException("그런거 없다."));
-        if(product == null) {
+        Product product = productRepository.findById(productCode).orElseThrow(() -> new EntityNotFoundException("그런거 없다."));
+
+        // 상품이 존재하지 않으면 에러 메시지 반환
+        if (product == null) {
             return ResponseEntity.badRequest().body("해당 상품이 없습니다.");
         }
-        String productName = product.getProductName();
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        logService.saveLog(username, LogStatus.삭제, productName, "Product");
 
-        if (!product.isProductExposureStatus()) {
-            product.setProductExposureStatus(true);
-            productRepository.save(product);
-            return ResponseEntity.ok("상품의 노출상태가 변경되었습니다.");
-        } else {
-            return ResponseEntity.ok("해당 상품은 이미 비노출상태의 상품입니다.");
-        }
+        // 로그 저장
+        String productName = product.getProductName();
+        logService.saveLog("root", LogStatus.삭제, productName, "Product");
+
+        // 상품 노출 상태 반전
+        boolean currentStatus = product.isProductExposureStatus();
+        product.setProductExposureStatus(!currentStatus);
+        productRepository.save(product);
+
+        // 변경된 노출 상태에 따라 메시지 설정
+        String newStatus = currentStatus ? "미노출" : "노출";
+        return ResponseEntity.ok("상품의 노출상태가 " + newStatus + "로 변경되었습니다.");
     }
 
     @Override
@@ -195,9 +193,7 @@ public class ProductServiceImpl implements ProductService{
         product.setProductDiscount(request.getProductDisCount());
         product.setProductCount(request.getProductCount());
         Product updatedProduct = productRepository.save(product);
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        logService.saveLog(username, LogStatus.수정, updatedProduct.getProductName(), "Product");
+        logService.saveLog("root", LogStatus.수정, updatedProduct.getProductName(), "Product");
 
         return ResponseEntity.ok("상품 수정 완료!");
     }
@@ -220,15 +216,7 @@ public class ProductServiceImpl implements ProductService{
             int productCode = exchangeProductVO.getProductCode();
             int count = exchangeProductVO.getExchangeProductNormalCount();
             productPlusCnt(productCode,count);
-            count = exchangeProductVO.getExchangeProductDiscount();
-            productPlusDisCnt(productCode,count);
         });
-    }
-
-    private void productPlusDisCnt(int productCode,int count) {
-        Product product = productRepository.findById(productCode).orElseThrow();
-        product.setProductDiscount(product.getProductDiscount()+count);
-        productRepository.save(product);
     }
 
     public void productPlusCnt(int productCode, int count) {
@@ -275,10 +263,11 @@ public class ProductServiceImpl implements ProductService{
 
 
     @Override
-    @Transactional
     public Boolean postProductWithImage(RequestProduct request, MultipartFile image) {
+//        Product product = new Product(request);
+//        product = productRepository.save(product);
         ProductDTO productDTO = postProduct2(request,1);
-        return googleImage.uploadImage(productDTO.getProductCode(), image);
+        return googleImage.uploadImage(productDTO.getProductCode(),image);
     }
 
     @Transactional
