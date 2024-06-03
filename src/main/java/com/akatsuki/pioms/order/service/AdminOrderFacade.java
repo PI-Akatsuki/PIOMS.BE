@@ -68,6 +68,7 @@ public class AdminOrderFacade {
     @Transactional(readOnly = false)
     public int accpetOrder(int orderCode){
         int adminCode= getUserInfo.getAdminCode();
+        System.out.println("adminCode = " + adminCode);
         OrderDTO order;
         ExchangeDTO exchangeDTO;
         int success=0;

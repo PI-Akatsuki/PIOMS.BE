@@ -157,8 +157,15 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public boolean checkOrderEnable(Map<Integer, Integer> orderProductMap) {
-        // Implementation needed
-        return false;
+        // 상품 주문 가능 여부 판단하기 위한 로직
+        if(orderProductMap==null)
+            return false;
+        for( int key : orderProductMap.keySet() ){
+            Product product = productRepository.findById(key).orElse(null);
+            if (product==null || product.getProductCount()<orderProductMap.get(key) || !product.isProductExposureStatus() )
+                return false;
+        }
+        return true;
     }
 
     @Override

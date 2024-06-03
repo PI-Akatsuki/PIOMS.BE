@@ -88,4 +88,8 @@ public interface OrderService {
     OrderDTO putOrderCondition(int orderCode, ORDER_CONDITION orderCondition);
 
     OrderDTO getOrderById(int orderCode);
+
+    OrderStat getOrderStat(int rootCode);
+
+    boolean findUnprocessedOrder(int franchiseOwnerCode);
 }
