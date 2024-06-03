@@ -16,9 +16,7 @@ public class CorsConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
-        config.setAllowedOrigins(Arrays.asList("http://localhost:8080"));
-        config.setAllowedOrigins(Arrays.asList("http://api.pioms.shop"));
+        config.setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://localhost:8080", "http://api.pioms.shop"));
         config.setAllowedHeaders(Arrays.asList("Origin", "Content-Type", "Accept", "Authorization"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setExposedHeaders(Arrays.asList("Authorization", "Set-Cookie", "Cookie"));
