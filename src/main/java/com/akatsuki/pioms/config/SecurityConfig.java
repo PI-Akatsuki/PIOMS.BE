@@ -78,9 +78,10 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .formLogin(formLogin -> formLogin.disable())
                 .httpBasic(httpBasic -> httpBasic.disable())
+                .logout(logout -> logout.disable())
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/", "/reissue", "/admin/login", "/franchise/login", "/driver/login").permitAll()
-                        .requestMatchers("/admin/**").hasAnyRole("ROOT","ADMIN")
+                        .requestMatchers("/", "/reissue", "/admin/login", "/franchise/login", "/driver/login", "/admin/product/sendKakaoAlert").permitAll()
+                        .requestMatchers("/admin/**").hasRole("ROOT")
                         .requestMatchers(
                                 "/admin/info",
                                 "/admin/home",
@@ -100,7 +101,7 @@ public class SecurityConfig {
                                 "/admin/notice/list/**",
                                 "/admin/ask/**",
                                 "/admin/exceldownload/**").hasRole("ADMIN")
-                        .requestMatchers("/franchise/**").permitAll()
+                        .requestMatchers("/franchise/**").hasAnyRole("OWNER")
                         .requestMatchers("/driver/**").hasRole("DRIVER")
                         .anyRequest().authenticated()
                 )
@@ -111,6 +112,7 @@ public class SecurityConfig {
 
         return http.build();
     }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
