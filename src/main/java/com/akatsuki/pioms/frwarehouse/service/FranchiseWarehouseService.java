@@ -32,5 +32,5 @@ public interface FranchiseWarehouseService {
 
     void saveProductWhenUpdateExchangeToCompany(int productCode, int i, int franchiseCode);
 
-    List<ProductDTO> getProductsByFranchiseCode(int franchiseCode);
+    List<FranchiseWarehouseDTO> getProductsByFranchiseOwnerCode(int franchiseOwnerCode);
 }

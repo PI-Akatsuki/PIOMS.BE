@@ -94,15 +94,9 @@ public class franchiseWarehouseController {
 
     @Operation(summary = "상품 리스트 조회", description = "가맹점 코드로 상품 리스트를 조회합니다.")
     @GetMapping("/list/product")
-    public ResponseEntity<List<ProductDTO>> getProductsByFranchiseCode() {
-        int franchiseCode;
-        try {
-            franchiseCode = getUserInfo.getFranchiseOwnerCode(); // 토큰에서 franchiseCode 가져오기
-        } catch (Exception e) {
-            franchiseCode = 3; // 하드코딩된 값
-        }
-
-        List<ProductDTO> productList = franchiseWarehouseService.getProductsByFranchiseCode(franchiseCode);
+    public ResponseEntity<List<FranchiseWarehouseDTO>> getProductsByFranchiseCode() {
+        int franchiseOwnerCode = getUserInfo.getFranchiseOwnerCode(); // 토큰에서 franchiseOwnerCode 가져오기
+        List<FranchiseWarehouseDTO> productList = franchiseWarehouseService.getProductsByFranchiseOwnerCode(franchiseOwnerCode);
         return ResponseEntity.ok(productList);
     }
 }

@@ -1,6 +1,7 @@
 package com.akatsuki.pioms.frwarehouse.repository;
 
 
+import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import com.akatsuki.pioms.frwarehouse.aggregate.FranchiseWarehouse;
 import com.akatsuki.pioms.product.aggregate.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,5 +19,5 @@ public interface FranchiseWarehouseRepository extends JpaRepository<FranchiseWar
 
     List<FranchiseWarehouse> findByFranchiseWarehouseFavoriteTrue();
 
-    List<Product> findByFranchiseCode(int franchiseCode);
+    List<FranchiseWarehouse> findByFranchiseCode(int franchiseCode);
 }
