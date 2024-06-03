@@ -24,9 +24,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+
+import org.springframework.http.ResponseEntity;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
@@ -111,10 +115,7 @@ public class ProductServiceImpl implements ProductService {
 
         Product updatedProduct = productRepository.save(product);
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-
-        logService.saveLog(username, LogStatus.등록, updatedProduct.getProductName(), "Product");
+        logService.saveLog("root", LogStatus.등록, updatedProduct.getProductName(), "Product");
 
         return ResponseEntity.ok("상품 등록 완료!");
     }
@@ -122,19 +123,27 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public ResponseEntity<String> deleteProduct(int productCode) {
-        Product product = productRepository.findById(productCode).orElseThrow(() -> new EntityNotFoundException("해당 상품이 없습니다."));
-        String productName = product.getProductName();
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        logService.saveLog(username, LogStatus.삭제, productName, "Product");
 
-        if (!product.isProductExposureStatus()) {
-            product.setProductExposureStatus(true);
-            productRepository.save(product);
-            return ResponseEntity.ok("상품의 노출상태가 변경되었습니다.");
-        } else {
-            return ResponseEntity.ok("해당 상품은 이미 비노출상태의 상품입니다.");
+        Product product = productRepository.findById(productCode).orElseThrow(() -> new EntityNotFoundException("해당 상품이 없습니다."));
+
+        // 상품이 존재하지 않으면 에러 메시지 반환
+        if (product == null) {
+            return ResponseEntity.badRequest().body("해당 상품이 없습니다.");
         }
+
+        // 로그 저장
+
+        String productName = product.getProductName();
+        logService.saveLog("root", LogStatus.삭제, productName, "Product");
+
+        // 상품 노출 상태 반전
+        boolean currentStatus = product.isProductExposureStatus();
+        product.setProductExposureStatus(!currentStatus);
+        productRepository.save(product);
+
+        // 변경된 노출 상태에 따라 메시지 설정
+        String newStatus = currentStatus ? "미노출" : "노출";
+        return ResponseEntity.ok("상품의 노출상태가 " + newStatus + "로 변경되었습니다.");
     }
 
     @Override
@@ -188,6 +197,7 @@ public class ProductServiceImpl implements ProductService {
 
         Product updatedProduct = productRepository.save(product);
 
+
         // 로그 추가
         System.out.println("Old Product Count: " + oldProductCount);
         System.out.println("Updated Product Count: " + updatedProduct.getProductCount());
@@ -204,7 +214,6 @@ public class ProductServiceImpl implements ProductService {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-
         logService.saveLog(username, LogStatus.수정, updatedProduct.getProductName(), "Product");
 
         return ResponseEntity.ok("상품 수정 완료!");
@@ -244,6 +253,7 @@ public class ProductServiceImpl implements ProductService {
         product.setProductDiscount(product.getProductDiscount() + count);
         productRepository.save(product);
     }
+
 
     public void productPlusCnt(int productCode, int count) {
         Product product = productRepository.findById(productCode).orElseThrow();
@@ -291,10 +301,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    @Transactional
     public Boolean postProductWithImage(RequestProduct request, MultipartFile image) {
+      
+
         ProductDTO productDTO = postProduct2(request, 1);
         return googleImage.uploadImage(productDTO.getProductCode(), image);
+
     }
 
     @Transactional
