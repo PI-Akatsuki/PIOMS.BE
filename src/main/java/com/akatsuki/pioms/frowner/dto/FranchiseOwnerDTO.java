@@ -11,14 +11,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Setter
 @Builder
 @ToString
-public class
-FranchiseOwnerDTO {
+public class FranchiseOwnerDTO {
     private int franchiseOwnerCode;
     private String franchiseOwnerName;
     private String franchiseOwnerId;
     private String franchiseOwnerPwd;
     private String franchiseOwnerEmail;
     private String franchiseOwnerPhone;
+    private int ownerStatus;
+    private int ownerPwdCheckCount;
     private String franchiseOwnerEnrollDate;
     private String franchiseOwnerUpdateDate;
     private String franchiseOwnerDeleteDate;
@@ -32,12 +33,13 @@ FranchiseOwnerDTO {
         this.franchiseOwnerId = franchiseOwner.getFranchiseOwnerId();
         this.franchiseOwnerPwd = franchiseOwner.getFranchiseOwnerPwd();
         this.franchiseOwnerEmail = franchiseOwner.getFranchiseOwnerEmail();
+        this.ownerStatus = franchiseOwner.getOwnerPwdCheckCount();
+        this.ownerPwdCheckCount = franchiseOwner.getOwnerPwdCheckCount();
         this.franchiseOwnerPhone = franchiseOwner.getFranchiseOwnerPhone();
         this.franchiseOwnerEnrollDate = franchiseOwner.getFranchiseOwnerEnrollDate();
         this.franchiseOwnerUpdateDate = franchiseOwner.getFranchiseOwnerUpdateDate();
         this.franchiseOwnerDeleteDate = franchiseOwner.getFranchiseOwnerDeleteDate();
-        if (franchiseOwner.getFranchise()!=null)
-            this.franchiseName = franchiseOwner.getFranchise().getFranchiseName();
+        this.franchiseName = franchiseOwner.getFranchise().getFranchiseName();
     }
 
 }
