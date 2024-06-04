@@ -94,19 +94,13 @@ public class FrOwnerExcelController {
             cell.setCellValue(dto.getFranchiseOwnerDeleteDate());
             cell = row.createCell(8);
             cell.setCellStyle(bodyStyle);
-//            cell.setCellValue(dto.getFranchiseOwner);
-//            cell = row.createCell(9);
-//            cell.setCellStyle(bodyStyle);
-//            cell.setCellValue(dto.getAccessNumber());
-//            cell = row.createCell(10);
-//            cell.setCellStyle(bodyStyle);
-//            cell.setCellValue(dto.getAdminRole());
-//            cell = row.createCell(11);
-//            cell.setCellStyle(bodyStyle);
-//            cell.setCellValue(dto.isAdminStatus());
-//            cell = row.createCell(12);
-//            cell.setCellStyle(bodyStyle);
-//            cell.setCellValue(dto.getPwdCheckCount());
+            cell.setCellValue(dto.getOwnerRole());
+            cell = row.createCell(9);
+            cell.setCellStyle(bodyStyle);
+            cell.setCellValue(dto.getOwnerPwdCheckCount());
+            cell = row.createCell(10);
+            cell.setCellStyle(bodyStyle);
+            cell.setCellValue(dto.getOwnerStatus());
         }
 
         // Column width auto-sizing

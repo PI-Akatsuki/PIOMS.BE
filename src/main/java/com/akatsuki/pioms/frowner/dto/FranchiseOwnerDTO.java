@@ -20,6 +20,7 @@ public class FranchiseOwnerDTO {
     private String franchiseOwnerPhone;
     private int ownerStatus;
     private int ownerPwdCheckCount;
+    private String ownerRole;
     private String franchiseOwnerEnrollDate;
     private String franchiseOwnerUpdateDate;
     private String franchiseOwnerDeleteDate;
@@ -35,6 +36,7 @@ public class FranchiseOwnerDTO {
         this.franchiseOwnerEmail = franchiseOwner.getFranchiseOwnerEmail();
         this.ownerStatus = franchiseOwner.getOwnerPwdCheckCount();
         this.ownerPwdCheckCount = franchiseOwner.getOwnerPwdCheckCount();
+        this.ownerRole = franchiseOwner.getFranchiseRole();
         this.franchiseOwnerPhone = franchiseOwner.getFranchiseOwnerPhone();
         this.franchiseOwnerEnrollDate = franchiseOwner.getFranchiseOwnerEnrollDate();
         this.franchiseOwnerUpdateDate = franchiseOwner.getFranchiseOwnerUpdateDate();
