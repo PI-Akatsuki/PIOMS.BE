@@ -22,7 +22,7 @@ public class AdminExchangeController {
         this.exchangeService = exchangeService;
     }
 
-    @GetMapping("/exchanges")
+    @GetMapping("/exchange/list")
     public ResponseEntity<List<ResponseExchange>> getExchanges(){
         List<ExchangeDTO> exchangeDTOS = exchangeService.getExchangesByAdminCode();
         List<ResponseExchange> responseExchanges = new ArrayList<>();
