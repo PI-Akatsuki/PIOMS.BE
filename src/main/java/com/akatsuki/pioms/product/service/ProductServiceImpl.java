@@ -456,7 +456,7 @@ public class ProductServiceImpl implements ProductService {
 
         Product updatedProduct = productRepository.save(product);
         if(!request.getFile().isEmpty()){
-            googleImage.uploadImage(productCode,request.getFile());
+            googleImage.changeImage(productCode,request.getFile());
         }
 
         // 로그 추가
