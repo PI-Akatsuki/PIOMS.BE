@@ -9,11 +9,11 @@ import com.akatsuki.pioms.exchange.aggregate.ExchangeProductVO;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import com.akatsuki.pioms.franchise.repository.FranchiseRepository;
 import com.akatsuki.pioms.franchise.service.FranchiseService;
+import com.akatsuki.pioms.frowner.repository.FranchiseOwnerRepository;
 import com.akatsuki.pioms.frwarehouse.aggregate.FranchiseWarehouse;
 import com.akatsuki.pioms.frwarehouse.aggregate.RequestFranchiseWarehouse;
 import com.akatsuki.pioms.frwarehouse.dto.FranchiseWarehouseDTO;
 import com.akatsuki.pioms.frwarehouse.repository.FranchiseWarehouseRepository;
-import com.akatsuki.pioms.product.dto.ProductDTO;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -34,16 +34,18 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
     private final FranchiseService franchiseService;
     private final GetUserInfo getUserInfo;
     private final FranchiseRepository franchiseRepository;
+    private final FranchiseOwnerRepository franchiseOwnerRepository;
 
     @Autowired
     public FranchiseWarehouseServiceImpl(FranchiseWarehouseRepository franchiseWarehouseRepository, AdminRepository adminRepository, FranchiseService franchiseService
-        , GetUserInfo getUserInfo, FranchiseRepository franchiseRepository
+        , GetUserInfo getUserInfo, FranchiseRepository franchiseRepository, FranchiseOwnerRepository franchiseOwnerRepository
     ) {
         this.franchiseWarehouseRepository = franchiseWarehouseRepository;
         this.adminRepository = adminRepository;
         this.franchiseService = franchiseService;
         this.getUserInfo = getUserInfo;
         this.franchiseRepository = franchiseRepository;
+        this.franchiseOwnerRepository = franchiseOwnerRepository;
     }
 
 
@@ -243,6 +245,17 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
         // FranchiseCode로 FranchiseWarehouseDTO 리스트 가져오기
         List<FranchiseWarehouse> franchiseWarehouses = franchiseWarehouseRepository.findByFranchiseCode(franchiseCode);
         return franchiseWarehouses.stream()
+                .map(FranchiseWarehouseDTO::new)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<FranchiseWarehouseDTO> findFavoritesByOwner(int franchiseOwnerCode) {
+        int franchiseCode = franchiseOwnerRepository.findById(franchiseOwnerCode)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid franchise owner code"))
+                .getFranchise().getFranchiseCode();
+
+        return franchiseWarehouseRepository.findByFranchiseCodeAndFranchiseWarehouseFavorite(franchiseCode, true).stream()
                 .map(FranchiseWarehouseDTO::new)
                 .collect(Collectors.toList());
     }
