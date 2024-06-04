@@ -43,8 +43,8 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService 
     @Autowired
     public FranchiseWarehouseServiceImpl(FranchiseWarehouseRepository franchiseWarehouseRepository, AdminRepository adminRepository,
                                          FranchiseService franchiseService, GetUserInfo getUserInfo,
-                                         FranchiseRepository franchiseRepository, KakaoProperties kakaoProperties, 
-                                         FranchiseOwnerRepository franchiseOwnerRepository ) {
+                                         FranchiseRepository franchiseRepository, KakaoProperties kakaoProperties,
+                                         FranchiseOwnerRepository franchiseOwnerRepository) {
         this.franchiseWarehouseRepository = franchiseWarehouseRepository;
         this.adminRepository = adminRepository;
         this.franchiseService = franchiseService;
@@ -315,15 +315,15 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService 
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-    @Override
-    public List<FranchiseWarehouseDTO> findFavoritesByOwner(int franchiseOwnerCode) {
-        int franchiseCode = franchiseOwnerRepository.findById(franchiseOwnerCode)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid franchise owner code"))
-                .getFranchise().getFranchiseCode();
-
-        return franchiseWarehouseRepository.findByFranchiseCodeAndFranchiseWarehouseFavorite(franchiseCode, true).stream()
-                .map(FranchiseWarehouseDTO::new)
-                .collect(Collectors.toList());
     }
-}
+        @Override
+        public List<FranchiseWarehouseDTO> findFavoritesByOwner ( int franchiseOwnerCode){
+            int franchiseCode = franchiseOwnerRepository.findById(franchiseOwnerCode)
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid franchise owner code"))
+                    .getFranchise().getFranchiseCode();
+
+            return franchiseWarehouseRepository.findByFranchiseCodeAndFranchiseWarehouseFavorite(franchiseCode, true).stream()
+                    .map(FranchiseWarehouseDTO::new)
+                    .collect(Collectors.toList());
+        }
+    }
