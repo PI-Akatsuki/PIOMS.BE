@@ -210,9 +210,9 @@ public class ProductServiceImpl implements ProductService {
         System.out.println("Old Product Count: " + oldProductCount);
         System.out.println("Updated Product Count: " + updatedProduct.getProductCount());
 
-        // 재고가 특정 임계값 이하로 떨어지면 알림 전송
-        int threshold = 10; // 예시로 재고 임계값을 10으로 설정
-        if (updatedProduct.getProductCount() < threshold) {
+        // 재고가 5이하로 떨어지면 알림 전송
+        int threshold = 5;
+        if (updatedProduct.getProductCount() <= threshold) {
             try {
                 sendKakaoAlert(updatedProduct.getProductName(), updatedProduct.getProductCount());
             } catch (JsonProcessingException e) {
@@ -292,9 +292,9 @@ public class ProductServiceImpl implements ProductService {
         product.setProductCount(product.getProductCount() - requestProduct);
         productRepository.save(product);
 
-        // 재고가 특정 임계값 이하로 떨어지면 알림 전송
-        int threshold = 10; // 예시로 재고 임계값을 10으로 설정
-        if (product.getProductCount() < threshold) {
+        // 재고가 5이하로 떨어지면 알림 전송
+        int threshold = 5;
+        if (product.getProductCount() <= threshold) {
             sendKakaoAlert(product.getProductName(), product.getProductCount());
         }
     }
@@ -310,7 +310,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Boolean postProductWithImage(RequestProduct request, MultipartFile image) {
-      
+
 
         ProductDTO productDTO = postProduct2(request, 1);
         return googleImage.uploadImage(productDTO.getProductCode(), image);
@@ -375,14 +375,14 @@ public class ProductServiceImpl implements ProductService {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        headers.setBearerAuth(kakaoProperties.getToken()); // OAuth 토큰 추가
+        headers.setBearerAuth(kakaoProperties.getToken());
 
         Map<String, Object> templateObject = new HashMap<>();
         templateObject.put("object_type", "text");
         templateObject.put("text", productName + "의 재고가 " + stockQuantity + "개 남았습니다.");
         Map<String, String> linkObject = new HashMap<>();
         linkObject.put("web_url", "http://pioms.shop");
-        linkObject.put("mobile_web_url", "https://pioms.shop");
+        linkObject.put("mobile_web_url", "http://pioms.shop");
         templateObject.put("link", linkObject);
         templateObject.put("button_title", "바로 확인");
 
@@ -396,7 +396,7 @@ public class ProductServiceImpl implements ProductService {
         RestTemplate restTemplate = new RestTemplate();
 
         try {
-            // 디버깅 정보 출력
+            // sout
             System.out.println("Sending Kakao alert with the following details:");
             System.out.println("URL: " + url);
             System.out.println("Headers: " + headers);
@@ -463,8 +463,8 @@ public class ProductServiceImpl implements ProductService {
         System.out.println("Old Product Count: " + oldProductCount);
         System.out.println("Updated Product Count: " + updatedProduct.getProductCount());
 
-        // 재고가 특정 임계값 이하로 떨어지면 알림 전송
-        int threshold = 10; // 예시로 재고 임계값을 10으로 설정
+        // 재고가 5이하로 떨어지면 알림 전송
+        int threshold = 5;
         if (updatedProduct.getProductCount() < threshold) {
             try {
                 sendKakaoAlert(updatedProduct.getProductName(), updatedProduct.getProductCount());
