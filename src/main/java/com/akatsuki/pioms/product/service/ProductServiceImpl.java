@@ -171,6 +171,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public ResponseEntity<String> updateProduct(int productCode, RequestProduct request) {
+
         Product product = productRepository.findById(productCode)
                 .orElseThrow(() -> new EntityNotFoundException("해당 상품이 존재하지 않습니다."));
 
@@ -414,5 +415,68 @@ public class ProductServiceImpl implements ProductService {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+
+
+    @Override
+    @Transactional
+    public ResponseEntity<String> updateProductWithImage(int productCode, RequestProduct request) {
+
+        Product product = productRepository.findById(productCode)
+                .orElseThrow(() -> new EntityNotFoundException("해당 상품이 존재하지 않습니다."));
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String formattedDateTime = LocalDateTime.now().format(formatter);
+
+        List<CategoryThird> categoryThirdList = categoryThirdRepository.findByCategoryThirdCode(request.getCategoryThirdCode());
+
+        if (categoryThirdList == null || categoryThirdList.isEmpty()) {
+            return ResponseEntity.badRequest().body("해당 카테고리가 존재하지 않습니다. 다시 확인해주세요.");
+        }
+
+        CategoryThird categoryThird = categoryThirdList.get(0);
+        product.setCategoryThird(categoryThird);
+
+        int oldProductCount = product.getProductCount();
+
+        product.setProductName(request.getProductName());
+        product.setProductPrice(request.getProductPrice());
+        product.setProductContent(request.getProductContent());
+        product.setProductUpdateDate(formattedDateTime);
+        product.setProductColor(request.getProductColor());
+        product.setProductSize(request.getProductSize());
+        product.setProductGender(request.getProductGender());
+        product.setProductTotalCount(request.getProductTotalCount());
+        product.setProductStatus(request.getProductStatus());
+        product.setProductExposureStatus(request.isProductExposureStatus());
+        product.setProductNoticeCount(request.getProductNoticeCount());
+        product.setProductDiscount(request.getProductDisCount());
+        product.setProductCount(request.getProductCount());
+
+        Product updatedProduct = productRepository.save(product);
+        if(!request.getFile().isEmpty()){
+            googleImage.uploadImage(productCode,request.getFile());
+        }
+
+        // 로그 추가
+        System.out.println("Old Product Count: " + oldProductCount);
+        System.out.println("Updated Product Count: " + updatedProduct.getProductCount());
+
+        // 재고가 특정 임계값 이하로 떨어지면 알림 전송
+        int threshold = 10; // 예시로 재고 임계값을 10으로 설정
+        if (updatedProduct.getProductCount() < threshold) {
+            try {
+                sendKakaoAlert(updatedProduct.getProductName(), updatedProduct.getProductCount());
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+        }
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        logService.saveLog(username, LogStatus.수정, updatedProduct.getProductName(), "Product");
+
+        return ResponseEntity.ok("상품 수정 완료!");
     }
 }

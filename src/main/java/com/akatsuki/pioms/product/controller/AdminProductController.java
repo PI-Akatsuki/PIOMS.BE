@@ -98,4 +98,11 @@ public class AdminProductController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("카카오톡 알림 전송 실패");
         }
     }
+
+
+    @PutMapping("/update/image/{productCode}")
+    @Operation(summary = "상품 정보(+이미지) 수정", description = "상품(+이미지) 수정 기능")
+    public ResponseEntity<String> updateProduct2(@PathVariable int productCode, @RequestBody RequestProduct request) {
+        return productService.updateProduct(productCode, request);
+    }
 }

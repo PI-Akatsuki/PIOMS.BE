@@ -10,6 +10,7 @@ import com.akatsuki.pioms.product.dto.ProductDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -47,4 +48,6 @@ public interface ProductService {
     // 카카오 알림
     void sendKakaoAlert(String productName, int stockQuantity) throws JsonProcessingException;
 
+    @Transactional
+    ResponseEntity<String> updateProductWithImage(int productCode, RequestProduct request);
 }
