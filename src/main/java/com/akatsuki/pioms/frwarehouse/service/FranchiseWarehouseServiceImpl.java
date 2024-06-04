@@ -1,9 +1,8 @@
 package com.akatsuki.pioms.frwarehouse.service;
 
-
-import com.akatsuki.pioms.admin.aggregate.Admin;
 import com.akatsuki.pioms.admin.repository.AdminRepository;
 import com.akatsuki.pioms.config.GetUserInfo;
+import com.akatsuki.pioms.config.KakaoProperties;
 import com.akatsuki.pioms.exchange.aggregate.RequestExchange;
 import com.akatsuki.pioms.exchange.aggregate.ExchangeProductVO;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
@@ -14,76 +13,92 @@ import com.akatsuki.pioms.frwarehouse.aggregate.FranchiseWarehouse;
 import com.akatsuki.pioms.frwarehouse.aggregate.RequestFranchiseWarehouse;
 import com.akatsuki.pioms.frwarehouse.dto.FranchiseWarehouseDTO;
 import com.akatsuki.pioms.frwarehouse.repository.FranchiseWarehouseRepository;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
-
 @Service
-public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
+public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService {
     private final FranchiseWarehouseRepository franchiseWarehouseRepository;
     private final AdminRepository adminRepository;
     private final FranchiseService franchiseService;
     private final GetUserInfo getUserInfo;
     private final FranchiseRepository franchiseRepository;
+    private final KakaoProperties kakaoProperties;
     private final FranchiseOwnerRepository franchiseOwnerRepository;
 
     @Autowired
-    public FranchiseWarehouseServiceImpl(FranchiseWarehouseRepository franchiseWarehouseRepository, AdminRepository adminRepository, FranchiseService franchiseService
-        , GetUserInfo getUserInfo, FranchiseRepository franchiseRepository, FranchiseOwnerRepository franchiseOwnerRepository
-    ) {
+    public FranchiseWarehouseServiceImpl(FranchiseWarehouseRepository franchiseWarehouseRepository, AdminRepository adminRepository,
+                                         FranchiseService franchiseService, GetUserInfo getUserInfo,
+                                         FranchiseRepository franchiseRepository, KakaoProperties kakaoProperties, 
+                                         FranchiseOwnerRepository franchiseOwnerRepository ) {
         this.franchiseWarehouseRepository = franchiseWarehouseRepository;
         this.adminRepository = adminRepository;
         this.franchiseService = franchiseService;
         this.getUserInfo = getUserInfo;
         this.franchiseRepository = franchiseRepository;
+        this.kakaoProperties = kakaoProperties;
         this.franchiseOwnerRepository = franchiseOwnerRepository;
     }
 
-
-
     @Transactional
     @Override
-    public void saveProduct(int productCode, int changeVal, int franchiseCode){
+    public void saveProduct(int productCode, int changeVal, int franchiseCode) {
         System.out.println("가맹창고접근");
         FranchiseWarehouse franchiseWarehouse
-                = franchiseWarehouseRepository.findByProductProductCodeAndFranchiseCode(productCode,franchiseCode);
+                = franchiseWarehouseRepository.findByProductProductCodeAndFranchiseCode(productCode, franchiseCode);
         System.out.println("franchiseWarehouse = " + franchiseWarehouse);
         //없다면 새로 저장하긔
-        if(franchiseWarehouse == null ){
-            franchiseWarehouse = new FranchiseWarehouse(false,franchiseCode,productCode);
+        if (franchiseWarehouse == null) {
+            franchiseWarehouse = new FranchiseWarehouse(false, franchiseCode, productCode);
         }
-        if(changeVal>=0)
-            franchiseWarehouse.setFranchiseWarehouseTotal(franchiseWarehouse.getFranchiseWarehouseTotal()+changeVal);
+        if (changeVal >= 0)
+            franchiseWarehouse.setFranchiseWarehouseTotal(franchiseWarehouse.getFranchiseWarehouseTotal() + changeVal);
 
-        franchiseWarehouse.setFranchiseWarehouseCount(franchiseWarehouse.getFranchiseWarehouseCount()+changeVal);
-        franchiseWarehouse.setFranchiseWarehouseEnable(franchiseWarehouse.getFranchiseWarehouseEnable()+changeVal);
+        int oldCount = franchiseWarehouse.getFranchiseWarehouseCount();
+        franchiseWarehouse.setFranchiseWarehouseCount(franchiseWarehouse.getFranchiseWarehouseCount() + changeVal);
+        franchiseWarehouse.setFranchiseWarehouseEnable(franchiseWarehouse.getFranchiseWarehouseEnable() + changeVal);
         franchiseWarehouseRepository.save(franchiseWarehouse);
         System.out.println("saved");
+
+        // 재고가 5개 이하로 떨어질 때 알림톡 전송
+        int threshold = 5;
+        if (franchiseWarehouse.getFranchiseWarehouseEnable() <= threshold && oldCount > threshold) {
+            try {
+                sendKakaoAlert(franchiseWarehouse.getProduct().getProductName(), franchiseWarehouse.getFranchiseWarehouseEnable());
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Transactional
     @Override
-    public void saveProductWhenDeleteExchange(int productCode, int changeVal, int franchiseCode){
+    public void saveProductWhenDeleteExchange(int productCode, int changeVal, int franchiseCode) {
         FranchiseWarehouse franchiseWarehouse
-                = franchiseWarehouseRepository.findByProductProductCodeAndFranchiseCode(productCode,franchiseCode);
-        franchiseWarehouse.setFranchiseWarehouseEnable(franchiseWarehouse.getFranchiseWarehouseEnable()+changeVal);
+                = franchiseWarehouseRepository.findByProductProductCodeAndFranchiseCode(productCode, franchiseCode);
+        franchiseWarehouse.setFranchiseWarehouseEnable(franchiseWarehouse.getFranchiseWarehouseEnable() + changeVal);
         franchiseWarehouseRepository.save(franchiseWarehouse);
     }
 
     @Override
     public void saveProductWhenUpdateExchangeToCompany(int productCode, int changeVal, int franchiseCode) {
         FranchiseWarehouse franchiseWarehouse
-                = franchiseWarehouseRepository.findByProductProductCodeAndFranchiseCode(productCode,franchiseCode);
-        franchiseWarehouse.setFranchiseWarehouseCount(franchiseWarehouse.getFranchiseWarehouseCount()-changeVal);
+                = franchiseWarehouseRepository.findByProductProductCodeAndFranchiseCode(productCode, franchiseCode);
+        franchiseWarehouse.setFranchiseWarehouseCount(franchiseWarehouse.getFranchiseWarehouseCount() - changeVal);
         franchiseWarehouseRepository.save(franchiseWarehouse);
     }
 
@@ -92,25 +107,26 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
     public boolean checkEnableToAddExchangeAndChangeEnableCnt(RequestExchange requestExchange, int franchiseCode) {
 
         for (int i = 0; i < requestExchange.getProducts().size(); i++) {
-            ExchangeProductVO exchange =requestExchange.getProducts().get(i);
+            ExchangeProductVO exchange = requestExchange.getProducts().get(i);
             FranchiseWarehouse franchiseWarehouse =
                     franchiseWarehouseRepository.findByProductProductCodeAndFranchiseCode(exchange.getProductCode(), franchiseCode);
-            if(franchiseWarehouse==null || franchiseWarehouse.getFranchiseWarehouseEnable()< exchange.getExchangeProductCount()) {
+            if (franchiseWarehouse == null || franchiseWarehouse.getFranchiseWarehouseEnable() < exchange.getExchangeProductCount()) {
                 return false;
             }
         }
         editCountByPostExchange(requestExchange, franchiseCode);
         return true;
     }
+
     @Transactional
-    public void editCountByPostExchange(RequestExchange requestExchange,int franchiseCode) {
+    public void editCountByPostExchange(RequestExchange requestExchange, int franchiseCode) {
         int cnt = requestExchange.getProducts().size();
         for (int i = 0; i < cnt; i++) {
             ExchangeProductVO exchange = requestExchange.getProducts().get(i);
             FranchiseWarehouse franchiseWarehouse =
-                    franchiseWarehouseRepository.findByProductProductCodeAndFranchiseCode(exchange.getProductCode(),franchiseCode);
+                    franchiseWarehouseRepository.findByProductProductCodeAndFranchiseCode(exchange.getProductCode(), franchiseCode);
             System.out.println(franchiseWarehouse);
-            if (franchiseWarehouse!=null) {
+            if (franchiseWarehouse != null) {
                 franchiseWarehouse.setFranchiseWarehouseEnable(franchiseWarehouse.getFranchiseWarehouseEnable() - exchange.getExchangeProductCount());
                 System.out.println("sadfjfsddfbshsdfbj");
                 System.out.println("franchiseWarehouse = " + franchiseWarehouse);
@@ -144,21 +160,28 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
 
     @Override
     @Transactional
-    public ResponseEntity<String> updateWarehouseCount(int franchiseWarehouseCode, RequestFranchiseWarehouse request, int requesterAdminCode) {
-        Optional<Admin> requestorAdmin = adminRepository.findById(requesterAdminCode);
-        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
-            return ResponseEntity.status(403).body("신규 카테고리 등록은 루트 관리자만 가능합니다.");
-        }
+    public ResponseEntity<String> updateWarehouseCount(int franchiseWarehouseCode, RequestFranchiseWarehouse request) {
         FranchiseWarehouse franchiseWarehouse = franchiseWarehouseRepository.findById(franchiseWarehouseCode)
                 .orElseThrow(() -> new EntityNotFoundException("FranchiseWarehouse not found"));
 
+        int oldCount = franchiseWarehouse.getFranchiseWarehouseCount();
         franchiseWarehouse.setFranchiseWarehouseTotal(request.getFranchiseWarehouseTotal());
         franchiseWarehouse.setFranchiseWarehouseEnable(request.getFranchiseWarehouseEnable());
         franchiseWarehouse.setFranchiseWarehouseCount(request.getFranchiseWarehouseCount());
 
         franchiseWarehouseRepository.save(franchiseWarehouse);
-        return ResponseEntity.ok("재고 수정 완료!");
 
+        // 재고가 5개 이하로 떨어질 때 알림톡 전송
+        int threshold = 5;
+        if (franchiseWarehouse.getFranchiseWarehouseEnable() <= threshold && oldCount > threshold) {
+            try {
+                sendKakaoAlert(franchiseWarehouse.getProduct().getProductName(), franchiseWarehouse.getFranchiseWarehouseEnable());
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return ResponseEntity.ok("재고 수정 완료!");
     }
 
     @Override
@@ -175,8 +198,6 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
         }
         return franchiseWarehouseDTOS;
     }
-
-
 
     @Override
     @Transactional
@@ -214,7 +235,6 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
         System.out.println("즐겨찾기 상태 저장 완료");
     }
 
-
     @Transactional
     public void removeFavorite(int franchiseWarehouseCode) {
         FranchiseWarehouse favorite = franchiseWarehouseRepository.findById(franchiseWarehouseCode)
@@ -248,6 +268,53 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService{
                 .map(FranchiseWarehouseDTO::new)
                 .collect(Collectors.toList());
     }
+
+
+    public void sendKakaoAlert(String productName, int stockQuantity) throws JsonProcessingException {
+        String url = kakaoProperties.getUrl() + "/v2/api/talk/memo/default/send";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        headers.setBearerAuth(kakaoProperties.getToken()); // OAuth 토큰 추가
+
+        Map<String, Object> templateObject = new HashMap<>();
+        templateObject.put("object_type", "text");
+        templateObject.put("text", productName + "의 재고가 " + stockQuantity + "개 남았습니다.");
+        Map<String, String> linkObject = new HashMap<>();
+        linkObject.put("web_url", "http://pioms.shop");
+        linkObject.put("mobile_web_url", "http://pioms.shop");
+        templateObject.put("link", linkObject);
+        templateObject.put("button_title", "바로 확인");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonTemplateObject = objectMapper.writeValueAsString(templateObject);
+
+        MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
+        requestBody.add("template_object", jsonTemplateObject);
+
+        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(requestBody, headers);
+        RestTemplate restTemplate = new RestTemplate();
+
+        try {
+            // sout
+            System.out.println("Sending Kakao alert with the following details:");
+            System.out.println("URL: " + url);
+            System.out.println("Headers: " + headers);
+            System.out.println("Request Body: " + requestBody);
+
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
+            if (response.getStatusCode() == HttpStatus.OK) {
+                System.out.println("알림톡 전송 성공");
+            } else {
+                System.out.println("알림톡 전송 실패: " + response.getBody());
+            }
+        } catch (HttpClientErrorException e) {
+            System.err.println("HTTP Error: " + e.getStatusCode());
+            System.err.println("Response Body: " + e.getResponseBodyAsString());
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     @Override
     public List<FranchiseWarehouseDTO> findFavoritesByOwner(int franchiseOwnerCode) {
