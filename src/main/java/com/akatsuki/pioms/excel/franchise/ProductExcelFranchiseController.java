@@ -1,4 +1,4 @@
-package com.akatsuki.pioms.excel;
+package com.akatsuki.pioms.excel.franchise;
 
 import com.akatsuki.pioms.product.dto.ProductDTO;
 import com.akatsuki.pioms.product.service.ProductService;
