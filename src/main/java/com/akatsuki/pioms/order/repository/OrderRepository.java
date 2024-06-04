@@ -46,10 +46,11 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
     @Query("SELECT COUNT(*) FROM Order a WHERE a.orderCondition='검수완료' ")
     int getInspectionFinishCnt();
 
-    @Query("SELECT COUNT(*) FROM Order a WHERE a.orderCondition='승인거부' AND a.orderCode = :adminCode ")
+    @Query("SELECT COUNT(*) FROM Order a WHERE a.orderCondition='승인대기' AND a.orderCode = :adminCode ")
     int getWaitCntByAdminCode(@Param("adminCode") int adminCode);
-    @Query("SELECT COUNT(*) FROM Order a WHERE a.orderCondition='승인거부' AND a.orderCode = :adminCode ")
+    @Query("SELECT COUNT(*) FROM Order a WHERE a.orderCondition='승인완료' AND a.orderCode = :adminCode ")
     int getAcceptCntByAdminCode(@Param("adminCode")int adminCode);
+
     @Query("SELECT COUNT(*) FROM Order a WHERE a.orderCondition='승인거부' AND a.orderCode = :adminCode ")
     int getDenyCntByAdminCode(@Param("adminCode")int adminCode);
 
