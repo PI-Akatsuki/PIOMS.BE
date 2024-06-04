@@ -1,4 +1,4 @@
-package com.akatsuki.pioms.excel.franchise;
+package com.akatsuki.pioms.excel.driver;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -17,10 +17,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("franchise/pdfdownload")
-public class FrOwnerManualPDFController {
+@RequestMapping("driver/pdfdownload")
+public class DriverManualPDFController {
 
-    @GetMapping(value = "/fraowner-pdf")
+    @GetMapping(value = "/driver-pdf")
     public ResponseEntity<Resource> downloadPdf() throws IOException {
         // PDF 생성
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -33,7 +33,7 @@ public class FrOwnerManualPDFController {
                 // 기본 폰트 설정 (예: Times-Roman)
                 contentStream.setFont(PDType1Font.HELVETICA, 12);
                 contentStream.newLineAtOffset(100, 700);
-                contentStream.showText("FrOwnerManualPDF");
+                contentStream.showText("DriverManualPDF");
                 contentStream.endText();
             }
 
@@ -45,7 +45,7 @@ public class FrOwnerManualPDFController {
 
         // ResponseEntity 설정
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=frOwnerManual.pdf")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=driverManual.pdf")
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(resource);
     }

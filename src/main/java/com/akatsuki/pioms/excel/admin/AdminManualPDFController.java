@@ -45,7 +45,7 @@ public class AdminManualPDFController {
 
         // ResponseEntity 설정
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=sample.pdf")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=adminManual.pdf")
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(resource);
     }
