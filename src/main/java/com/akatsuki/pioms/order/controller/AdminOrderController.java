@@ -44,7 +44,7 @@ public class AdminOrderController {
         this.orderFacade = orderFacade;
     }
 
-    @GetMapping("/orders")
+    @GetMapping("/order/orders")
     @Operation(summary = "관리자가 관리하고 있는 모든 가맹점들의 발주 리스트를 조회합니다.")
     public ResponseEntity<List<OrderVO>> getFranchisesOrderList(
 //            , @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size

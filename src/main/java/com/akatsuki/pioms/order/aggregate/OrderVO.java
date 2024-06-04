@@ -41,7 +41,7 @@ public class OrderVO {
     private DELIVERY_DATE franchiseDeliveryDate;
     private int adminCode;
     private String adminName;
-
+    private String adminPhone;
     private List<OrderProductDTO> orderProductList  = new ArrayList<>();
     private List<ExchangeProductDTO> exchangeProductList  = new ArrayList<>();
 
@@ -67,6 +67,7 @@ public class OrderVO {
 
         this.adminCode = order.getAdminCode();
         this.adminName = order.getAdminName();
+        this.adminPhone = order.getAdminPhone();
         this.orderProductList = order.getOrderProductList();
         if (order.getExchange()!=null) {
             this.exchangeProductList = order.getExchange().getExchangeProducts();

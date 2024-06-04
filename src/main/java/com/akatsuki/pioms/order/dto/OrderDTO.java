@@ -45,7 +45,7 @@ public class OrderDTO {
 
     private int AdminCode;
     private String AdminName;
-
+    private String adminPhone;
     private ExchangeDTO exchange;
 
     private List<OrderProductDTO> orderProductList;
@@ -70,7 +70,7 @@ public class OrderDTO {
         this.franchiseOwnerPhone = order.getFranchise().getFranchiseOwner().getFranchiseOwnerPhone();
         this.AdminCode= order.getFranchise().getAdmin().getAdminCode();
         this.AdminName= order.getFranchise().getAdmin().getAdminName();
-
+        this.adminPhone = order.getFranchise().getAdmin().getAdminPhone();
         if (order.getExchange()!=null) {
             this.exchange = new ExchangeDTO(order.getExchange());
         }
