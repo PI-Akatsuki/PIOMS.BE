@@ -1,12 +1,11 @@
 package com.akatsuki.pioms.frwarehouse.controller;
 
-import com.akatsuki.pioms.config.GetUserInfo;
 import com.akatsuki.pioms.frwarehouse.aggregate.FranchiseWarehouse;
 import com.akatsuki.pioms.frwarehouse.aggregate.RequestFranchiseWarehouse;
 import com.akatsuki.pioms.frwarehouse.aggregate.ResponseFranchiseWarehouse;
 import com.akatsuki.pioms.frwarehouse.dto.FranchiseWarehouseDTO;
 import com.akatsuki.pioms.frwarehouse.service.FranchiseWarehouseService;
-import com.akatsuki.pioms.product.dto.ProductDTO;
+import com.akatsuki.pioms.jwt.JWTUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,12 +19,12 @@ import java.util.List;
 public class franchiseWarehouseController {
 
     private final FranchiseWarehouseService franchiseWarehouseService;
-    private final GetUserInfo getUserInfo;
+    private final JWTUtil jwtUtil;
 
     @Autowired
-    public franchiseWarehouseController(FranchiseWarehouseService franchiseWarehouseService, GetUserInfo getUserInfo) {
+    public franchiseWarehouseController(FranchiseWarehouseService franchiseWarehouseService, JWTUtil jwtUtil) {
         this.franchiseWarehouseService = franchiseWarehouseService;
-        this.getUserInfo = getUserInfo;
+        this.jwtUtil = jwtUtil;
     }
 
     @GetMapping("")
@@ -44,10 +43,10 @@ public class franchiseWarehouseController {
         return ResponseEntity.ok(responseWarehouse);
     }
 
-    @PostMapping("/update/{franchiseWarehouseCode}")
+    @PutMapping("/update/{franchiseWarehouseCode}") // PostMapping -> PutMapping으로 수정했습니다.
     @Operation(summary = "사라졌을 상품을 위한 재고 수정 기능")
-    public ResponseEntity<String> updateWarehouseCount(@PathVariable int franchiseWarehouseCode, @RequestBody RequestFranchiseWarehouse request, int requesterAdminCode) {
-        return franchiseWarehouseService.updateWarehouseCount(franchiseWarehouseCode,request, requesterAdminCode);
+    public ResponseEntity<String> updateWarehouseCount(@PathVariable int franchiseWarehouseCode, @RequestBody RequestFranchiseWarehouse request) {
+        return franchiseWarehouseService.updateWarehouseCount(franchiseWarehouseCode, request);
     }
 
     @PutMapping("/toggleFavorite/{franchiseWarehouseCode}")
@@ -84,18 +83,10 @@ public class franchiseWarehouseController {
         return ResponseEntity.ok(franchiseWarehouseService.getFrWarehouseList());
     }
 
-//    @Operation(summary = "상품 리스트 조회", description = "가맹점 코드로 상품 리스트를 조회합니다.")
-//    @GetMapping("/list/product")
-//    public ResponseEntity<List<ProductDTO>> getProductsByFranchiseCode() {
-//        int franchiseCode = getUserInfo.getFranchiseOwnerCode(); // 토큰에서 franchiseCode 가져오기
-//        List<ProductDTO> productList = franchiseWarehouseService.getProductsByFranchiseCode(franchiseCode);
-//        return ResponseEntity.ok(productList);
-//    }
-
     @Operation(summary = "상품 리스트 조회", description = "가맹점 코드로 상품 리스트를 조회합니다.")
     @GetMapping("/list/product")
-    public ResponseEntity<List<FranchiseWarehouseDTO>> getProductsByFranchiseCode() {
-        int franchiseOwnerCode = getUserInfo.getFranchiseOwnerCode(); // 토큰에서 franchiseOwnerCode 가져오기
+    public ResponseEntity<List<FranchiseWarehouseDTO>> getProductsByFranchiseCode(@RequestHeader("Authorization") String token) {
+        int franchiseOwnerCode = jwtUtil.getUserCode(extractToken(token)); // 토큰에서 franchiseOwnerCode 가져오기
         List<FranchiseWarehouseDTO> productList = franchiseWarehouseService.getProductsByFranchiseOwnerCode(franchiseOwnerCode);
         return ResponseEntity.ok(productList);
     }
@@ -107,5 +98,14 @@ public class franchiseWarehouseController {
         List<FranchiseWarehouseDTO> favorites = franchiseWarehouseService.findFavoritesByOwner(franchiseOwnerCode);
         return ResponseEntity.ok(favorites);
     }
+
+
+    private String extractToken(String bearerToken) {
+        if (bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+        throw new RuntimeException("Invalid token format");
+    }
+
 
 }
