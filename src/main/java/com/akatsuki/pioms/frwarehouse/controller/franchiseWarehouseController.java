@@ -81,7 +81,9 @@ public class franchiseWarehouseController {
 
     @GetMapping("/list")
     public ResponseEntity<List<FranchiseWarehouseDTO>> getFrWarehouseList(){
-        return ResponseEntity.ok(franchiseWarehouseService.getFrWarehouseList());
+        List<FranchiseWarehouseDTO>franchiseWarehouseDTOS = franchiseWarehouseService.getFrWarehouseList();
+        System.out.println("franchiseWarehouseDTOS = " + franchiseWarehouseDTOS);
+        return ResponseEntity.ok(franchiseWarehouseDTOS);
     }
 
 //    @Operation(summary = "상품 리스트 조회", description = "가맹점 코드로 상품 리스트를 조회합니다.")
@@ -97,6 +99,7 @@ public class franchiseWarehouseController {
     public ResponseEntity<List<FranchiseWarehouseDTO>> getProductsByFranchiseCode() {
         int franchiseOwnerCode = getUserInfo.getFranchiseOwnerCode(); // 토큰에서 franchiseOwnerCode 가져오기
         List<FranchiseWarehouseDTO> productList = franchiseWarehouseService.getProductsByFranchiseOwnerCode(franchiseOwnerCode);
+//        System.out.println("productList = " + productList);
         return ResponseEntity.ok(productList);
     }
 }

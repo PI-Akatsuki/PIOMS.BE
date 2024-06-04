@@ -144,24 +144,20 @@ public class OrderServiceImpl implements OrderService{
     @Override
     @Transactional
     public boolean putFranchiseOrder(int franchiseOwnerCode, RequestPutOrder requestOrder) {
-        System.out.println(franchiseOwnerCode);
         Order order = orderRepository.findById(requestOrder.getOrderCode())
                 .orElseThrow(() -> new IllegalArgumentException("Order not found"));
-        System.out.println(" = " );
         if (order.getFranchise().getFranchiseOwner().getFranchiseOwnerCode() != franchiseOwnerCode) {
             return false;
         }
-        System.out.println(" = " );
         if (order.getOrderCondition() != ORDER_CONDITION.승인대기 && order.getOrderCondition() != ORDER_CONDITION.승인거부 ) {
             return false;
         }
-        System.out.println(" = " );
         putOrder(requestOrder, order);
-        System.out.println(" = " );
         return true;
     }
 
-    private void putOrder(RequestPutOrder requestOrder, Order order) {
+    @Transactional
+    public void putOrder(RequestPutOrder requestOrder, Order order) {
         // 기존 주문서의 상품 리스트 삭제
         orderProductRepository.deleteAllByOrderOrderCode(order.getOrderCode());
         // 주문서 상태 업데이트
