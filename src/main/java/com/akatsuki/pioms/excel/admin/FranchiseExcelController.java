@@ -1,7 +1,8 @@
-package com.akatsuki.pioms.excel;
+package com.akatsuki.pioms.excel.admin;
 
-import com.akatsuki.pioms.product.dto.ProductDTO;
-import com.akatsuki.pioms.product.service.ProductService;
+import com.akatsuki.pioms.admin.dto.AdminDTO;
+import com.akatsuki.pioms.franchise.aggregate.Franchise;
+import com.akatsuki.pioms.franchise.service.FranchiseService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -13,24 +14,19 @@ import java.util.List;
 
 @RestController
 @RequestMapping("admin/exceldownload")
-public class ProductExcelAdminController {
+public class FranchiseExcelController {
 
-    private final ProductService productService;
+    private final FranchiseService franchiseService;
 
-    public ProductExcelAdminController(ProductService productService) {
-        this.productService = productService;
+    public FranchiseExcelController(FranchiseService franchiseService) {
+        this.franchiseService = franchiseService;
     }
 
-    @GetMapping("/excel/go")
-    public String home() {
-        return "home";
-    }
-
-    @GetMapping(value = "/product-excel")
+    @GetMapping(value = "/franchise-excel")
     public void excelDownload(HttpServletResponse response) throws Exception {
-        List<ProductDTO> productList = productService.getAllProduct(); // 최신 데이터 가져오기
+    List<Franchise> franchiseList = franchiseService.findFranchiseList();
         Workbook wb = new XSSFWorkbook();
-        Sheet sheet = wb.createSheet("상품 목록 시트");
+        Sheet sheet = wb.createSheet("관리자 목록 시트");
         Row row = null;
         Cell cell = null;
         int rowNum = 0;
@@ -58,12 +54,10 @@ public class ProductExcelAdminController {
         bodyStyle.setBorderLeft(BorderStyle.THIN);
         bodyStyle.setBorderRight(BorderStyle.THIN);
 
-
         // Header
         String[] headers = {
-                "상품코드", "상품명", "상품가격", "등록일", "수정일", "상품 설명",
-                "색상", "사이즈", "성별", "본사 총 보유량", "상태", "노출상태",
-                "알림기준 수량", "본사 폐기량", "본사 보유량", "카테고리"
+                "가맹코드","가맹점명","주소","전화번호","등록일","수정일","삭제일",
+                "사업자등록번호","배송요일","점주코드","관리자코드","배송기사코드"
         };
         row = sheet.createRow(rowNum++);
         for (int i = 0; i < headers.length; i++) {
@@ -71,59 +65,45 @@ public class ProductExcelAdminController {
             cell.setCellStyle(headStyle);
             cell.setCellValue(headers[i]);
         }
-
-
         // Body
-        for (ProductDTO dto : productList) {
+        for (Franchise dto : franchiseList) {
             row = sheet.createRow(rowNum++);
             cell = row.createCell(0);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getProductCode());
+            cell.setCellValue(dto.getFranchiseCode());
             cell = row.createCell(1);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getProductName());
+            cell.setCellValue(dto.getFranchiseName());
             cell = row.createCell(2);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getProductPrice());
+            cell.setCellValue(dto.getFranchiseAddress());
             cell = row.createCell(3);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getProductEnrollDate());
+            cell.setCellValue(dto.getFranchiseCall());
             cell = row.createCell(4);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getProductUpdateDate());
+            cell.setCellValue(dto.getFranchiseEnrollDate());
             cell = row.createCell(5);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getProductContent());
+            cell.setCellValue(dto.getFranchiseUpdateDate());
             cell = row.createCell(6);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getProductColor().toString());
+            cell.setCellValue(dto.getFranchiseDeleteDate());
             cell = row.createCell(7);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getProductSize());
+            cell.setCellValue(dto.getFranchiseBusinessNum());
             cell = row.createCell(8);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getProductGender().toString());
+            cell.setCellValue(String.valueOf(dto.getFranchiseDeliveryDate()));
             cell = row.createCell(9);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getProductTotalCount());
+            cell.setCellValue(dto.getFranchiseOwner().getFranchiseOwnerCode());
             cell = row.createCell(10);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getProductStatus().toString());
+            cell.setCellValue(dto.getAdmin().getAdminCode());
             cell = row.createCell(11);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.isProductExposureStatus());
-            cell = row.createCell(12);
-            cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getProductNoticeCount());
-            cell = row.createCell(13);
-            cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getProductDiscount());
-            cell = row.createCell(14);
-            cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getProductCount());
-            cell = row.createCell(15);
-            cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getCategoryThirdCode());
+            cell.setCellValue(dto.getDeliveryDriver().getDriverCode());
         }
 
         // Column width auto-sizing
@@ -134,11 +114,10 @@ public class ProductExcelAdminController {
 
         // 컨텐츠 타입과 파일명 지정
         response.setContentType("ms-vnd/excel");
-        response.setHeader("Content-Disposition", "attachment;filename=product.xlsx");
+        response.setHeader("Content-Disposition", "attachment;filename=franchiseList.xlsx");
 
         // Excel File Output
         wb.write(response.getOutputStream());
         wb.close();
     }
 }
-
