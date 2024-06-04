@@ -8,12 +8,15 @@ import com.akatsuki.pioms.exchange.aggregate.ExchangeProductVO;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import com.akatsuki.pioms.franchise.repository.FranchiseRepository;
 import com.akatsuki.pioms.franchise.service.FranchiseService;
+import com.akatsuki.pioms.frowner.repository.FranchiseOwnerRepository;
 import com.akatsuki.pioms.frwarehouse.aggregate.FranchiseWarehouse;
 import com.akatsuki.pioms.frwarehouse.aggregate.RequestFranchiseWarehouse;
 import com.akatsuki.pioms.frwarehouse.dto.FranchiseWarehouseDTO;
 import com.akatsuki.pioms.frwarehouse.repository.FranchiseWarehouseRepository;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -35,17 +38,20 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService 
     private final GetUserInfo getUserInfo;
     private final FranchiseRepository franchiseRepository;
     private final KakaoProperties kakaoProperties;
+    private final FranchiseOwnerRepository franchiseOwnerRepository;
 
     @Autowired
     public FranchiseWarehouseServiceImpl(FranchiseWarehouseRepository franchiseWarehouseRepository, AdminRepository adminRepository,
                                          FranchiseService franchiseService, GetUserInfo getUserInfo,
-                                         FranchiseRepository franchiseRepository, KakaoProperties kakaoProperties) {
+                                         FranchiseRepository franchiseRepository, KakaoProperties kakaoProperties, 
+                                         FranchiseOwnerRepository franchiseOwnerRepository ) {
         this.franchiseWarehouseRepository = franchiseWarehouseRepository;
         this.adminRepository = adminRepository;
         this.franchiseService = franchiseService;
         this.getUserInfo = getUserInfo;
         this.franchiseRepository = franchiseRepository;
         this.kakaoProperties = kakaoProperties;
+        this.franchiseOwnerRepository = franchiseOwnerRepository;
     }
 
     @Transactional
@@ -263,6 +269,7 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService 
                 .collect(Collectors.toList());
     }
 
+
     public void sendKakaoAlert(String productName, int stockQuantity) throws JsonProcessingException {
         String url = kakaoProperties.getUrl() + "/v2/api/talk/memo/default/send";
 
@@ -308,5 +315,15 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService 
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+    @Override
+    public List<FranchiseWarehouseDTO> findFavoritesByOwner(int franchiseOwnerCode) {
+        int franchiseCode = franchiseOwnerRepository.findById(franchiseOwnerCode)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid franchise owner code"))
+                .getFranchise().getFranchiseCode();
+
+        return franchiseWarehouseRepository.findByFranchiseCodeAndFranchiseWarehouseFavorite(franchiseCode, true).stream()
+                .map(FranchiseWarehouseDTO::new)
+                .collect(Collectors.toList());
     }
 }

@@ -91,10 +91,21 @@ public class franchiseWarehouseController {
         return ResponseEntity.ok(productList);
     }
 
+    @GetMapping("/favorites/by-owner")
+    @Operation(summary = "점주별 즐겨찾기 상품 조회")
+    public ResponseEntity<List<FranchiseWarehouseDTO>> findFavoritesByOwner() {
+        int franchiseOwnerCode = getUserInfo.getFranchiseOwnerCode();
+        List<FranchiseWarehouseDTO> favorites = franchiseWarehouseService.findFavoritesByOwner(franchiseOwnerCode);
+        return ResponseEntity.ok(favorites);
+    }
+
+
     private String extractToken(String bearerToken) {
         if (bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }
         throw new RuntimeException("Invalid token format");
     }
+
+
 }

@@ -24,7 +24,7 @@ public class FranchiseOwnerDTO {
     private String franchiseOwnerEnrollDate;
     private String franchiseOwnerUpdateDate;
     private String franchiseOwnerDeleteDate;
-    @JsonIgnore
+//    @JsonIgnore
     private String franchiseName;
 
     // FranchiseOwner 엔티티에서 FranchiseOwnerDTO로 변환하는 메서드
