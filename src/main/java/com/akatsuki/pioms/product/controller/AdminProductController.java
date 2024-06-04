@@ -102,7 +102,8 @@ public class AdminProductController {
 
     @PutMapping("/update/image/{productCode}")
     @Operation(summary = "상품 정보(+이미지) 수정", description = "상품(+이미지) 수정 기능")
-    public ResponseEntity<String> updateProduct2(@PathVariable int productCode, @RequestBody RequestProduct request) {
-        return productService.updateProduct(productCode, request);
+    public ResponseEntity<String> updateProduct2(@PathVariable int productCode, RequestProduct request) {
+        return productService.updateProductWithImage(productCode, request);
     }
+
 }
