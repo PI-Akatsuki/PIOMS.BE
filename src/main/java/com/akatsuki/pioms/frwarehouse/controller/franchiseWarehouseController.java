@@ -1,5 +1,6 @@
 package com.akatsuki.pioms.frwarehouse.controller;
 
+import com.akatsuki.pioms.config.GetUserInfo;
 import com.akatsuki.pioms.frwarehouse.aggregate.FranchiseWarehouse;
 import com.akatsuki.pioms.frwarehouse.aggregate.RequestFranchiseWarehouse;
 import com.akatsuki.pioms.frwarehouse.aggregate.ResponseFranchiseWarehouse;
@@ -20,11 +21,14 @@ public class franchiseWarehouseController {
 
     private final FranchiseWarehouseService franchiseWarehouseService;
     private final JWTUtil jwtUtil;
+    private final GetUserInfo getUserInfo;
 
     @Autowired
-    public franchiseWarehouseController(FranchiseWarehouseService franchiseWarehouseService, JWTUtil jwtUtil) {
+    public franchiseWarehouseController(FranchiseWarehouseService franchiseWarehouseService, JWTUtil jwtUtil
+                , GetUserInfo getUserInfo) {
         this.franchiseWarehouseService = franchiseWarehouseService;
         this.jwtUtil = jwtUtil;
+        this.getUserInfo = getUserInfo;
     }
 
     @GetMapping("")

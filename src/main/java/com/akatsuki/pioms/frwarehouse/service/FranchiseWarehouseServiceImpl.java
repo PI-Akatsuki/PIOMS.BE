@@ -315,13 +315,12 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService 
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+    }
     @Override
     public List<FranchiseWarehouseDTO> findFavoritesByOwner(int franchiseOwnerCode) {
         int franchiseCode = franchiseOwnerRepository.findById(franchiseOwnerCode)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid franchise owner code"))
                 .getFranchise().getFranchiseCode();
-
         return franchiseWarehouseRepository.findByFranchiseCodeAndFranchiseWarehouseFavorite(franchiseCode, true).stream()
                 .map(FranchiseWarehouseDTO::new)
                 .collect(Collectors.toList());
