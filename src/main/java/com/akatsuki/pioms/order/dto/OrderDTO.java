@@ -5,6 +5,7 @@ import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import com.akatsuki.pioms.franchise.aggregate.DELIVERY_DATE;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import com.akatsuki.pioms.franchise.dto.FranchiseDTO;
+import com.akatsuki.pioms.invoice.aggregate.DELIVERY_STATUS;
 import com.akatsuki.pioms.invoice.dto.InvoiceDTO;
 import com.akatsuki.pioms.order.aggregate.Order;
 import com.akatsuki.pioms.order.aggregate.OrderProduct;
@@ -53,6 +54,7 @@ public class OrderDTO {
     private int invoiceCode;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime invoiceDate;
+    private DELIVERY_STATUS deliveryStatus;
 
 
     public OrderDTO(Order order) {
@@ -83,6 +85,7 @@ public class OrderDTO {
         if (order.getInvoice()!=null){
             invoiceCode = order.getInvoice().getInvoiceCode();
             invoiceDate = order.getInvoice().getInvoiceDate();
+            deliveryStatus = order.getInvoice().getDeliveryStatus();
         }
 
 
