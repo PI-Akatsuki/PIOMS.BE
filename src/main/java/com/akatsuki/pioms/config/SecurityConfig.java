@@ -80,6 +80,7 @@ public class SecurityConfig {
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .logout(logout -> logout.disable())
                 .authorizeHttpRequests(authorize -> authorize
+//                        .requestMatchers("/**").permitAll()
                         .requestMatchers("/", "/reissue", "/admin/login", "/franchise/login", "/driver/login", "/admin/product/sendKakaoAlert").permitAll()
                         .requestMatchers(
                                 "/admin/info",
