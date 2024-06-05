@@ -28,16 +28,13 @@ public class ResponseAdminDashBoard {
 
 
     public ResponseAdminDashBoard(CompanyVO company, OrderStat orderStat,
-                                  List<Franchise> franchises, List<ExchangeDTO> exchanges,
+                                  List<FranchiseDTO> franchises, List<ExchangeDTO> exchanges,
                                   List<NoticeVO> notices, List<AskDTO> asks,
                                   List<ProductDTO> products
     ) {
         this.companyVO = company;
         this.orderStat = orderStat;
-        this.franchiseList = new ArrayList<>();
-        for (int i = 0; i < franchises.size(); i++) {
-            franchiseList.add(new FranchiseDTO(franchises.get(i)));
-        }
+        this.franchiseList = franchises;
         this.exchangeList = exchanges;
         this.noticeList = notices;
         this.askList = asks;
@@ -46,7 +43,7 @@ public class ResponseAdminDashBoard {
     }
 
     public ResponseAdminDashBoard(CompanyVO company, OrderStat orderStat,
-                                  List<Franchise> franchises, List<ExchangeDTO> exchanges,
+                                  List<FranchiseDTO> franchises, List<ExchangeDTO> exchanges,
                                   List<NoticeVO> notices, List<AskDTO> asks) {
         this.companyVO = company;
         this.orderStat = orderStat;

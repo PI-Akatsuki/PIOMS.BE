@@ -1,6 +1,7 @@
 package com.akatsuki.pioms.dashboard.service;
 
 import com.akatsuki.pioms.admin.service.AdminInfoService;
+import com.akatsuki.pioms.ask.dto.AskDTO;
 import com.akatsuki.pioms.ask.dto.AskListDTO;
 import com.akatsuki.pioms.ask.service.AskService;
 import com.akatsuki.pioms.company.aggregate.CompanyVO;
@@ -117,7 +118,7 @@ public class DashboardServiceImpl implements DashboardService {
 //        OrderStat orderStat = orderService.getOrderStat(adminCode);
         List<OrderDTO> orders = orderService.getOrderListByAdminCode(adminCode);
         OrderStat orderStat = new OrderStat(orders);
-        List<Franchise> franchises = franchiseService.findFranchiseByAdminCode(adminCode);
+        List<FranchiseDTO> franchises = franchiseService.findFranchiseByAdminCode(adminCode);
         List<ExchangeDTO> exchanges = exchangeService.getExchangesByAdminCode();
         List<NoticeVO> notices = noticeService.getAllNoticeList();
         AskListDTO askList = askService.getAllAskList();
