@@ -2,6 +2,7 @@ package com.akatsuki.pioms.product.repository;
 
 import com.akatsuki.pioms.product.aggregate.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -15,4 +16,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     List<Product> findByProductCode(int productCode);
 
     List<Product> findAllByProductExposureStatusTrue();
+
+    @Query("SELECT a FROM Product a WHERE a.productCount<=5 ")
+    List<Product> findNotEnoughProducts();
 }

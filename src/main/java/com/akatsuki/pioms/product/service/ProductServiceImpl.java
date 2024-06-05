@@ -479,4 +479,12 @@ public class ProductServiceImpl implements ProductService {
 
         return ResponseEntity.ok("상품 수정 완료!");
     }
+
+    @Override
+    public List<ProductDTO> findNotEnoughProducts() {
+        List<Product> products = productRepository.findNotEnoughProducts();
+        List<ProductDTO> productDTOS = new ArrayList<>();
+        products.forEach(product -> productDTOS.add(new ProductDTO(product)));
+        return productDTOS;
+    }
 }
