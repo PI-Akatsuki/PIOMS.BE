@@ -116,14 +116,17 @@ public class DashboardServiceImpl implements DashboardService {
         int adminCode = getUserInfo.getAdminCode();
 
         CompanyVO company = companyService.findInformation();
-        OrderStat orderStat = orderService.getOrderStat(adminCode);
+//        OrderStat orderStat = orderService.getOrderStat(adminCode);
+        List<OrderDTO> orders = orderService.getOrderListByAdminCode(adminCode);
+        OrderStat orderStat = new OrderStat(orders);
         List<Franchise> franchises = franchiseService.findFranchiseByAdminCode(adminCode);
         List<ExchangeDTO> exchanges = exchangeService.getExchangesByAdminCode();
         List<NoticeVO> notices = noticeService.getAllNoticeList();
         AskListDTO askList = askService.getAllAskList();
         List<AskDTO> asks = new ArrayList<>(askList.getAsks());
+        List<ProductDTO> products = productService.findNotEnoughProducts();
 
-        return new ResponseAdminDashBoard(company,orderStat,franchises,exchanges,notices,asks);
+        return new ResponseAdminDashBoard(company,orderStat,franchises,exchanges,notices,asks,products);
     }
 
     @Override
