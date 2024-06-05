@@ -1,6 +1,5 @@
 package com.akatsuki.pioms.excel.admin;
 
-import com.akatsuki.pioms.admin.dto.AdminDTO;
 import com.akatsuki.pioms.frowner.dto.FranchiseOwnerDTO;
 import com.akatsuki.pioms.frowner.service.FranchiseOwnerService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -56,8 +55,8 @@ public class FrOwnerExcelController {
 
         // Header
         String[] headers = {
-                "점주코드","이름","ID","PWD","이메일","휴대전화","등록일","수정일","삭제일",
-                "역할","로그인실패횟수","활성상태"
+                "점주코드", "이름", "ID", "PWD", "이메일", "휴대전화", "등록일", "수정일", "삭제일",
+                "역할", "로그인실패횟수", "활성상태", "담당 관리자"
         };
         row = sheet.createRow(rowNum++);
         for (int i = 0; i < headers.length; i++) {
@@ -85,28 +84,34 @@ public class FrOwnerExcelController {
             cell.setCellValue(dto.getFranchiseOwnerEmail());
             cell = row.createCell(5);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getFranchiseOwnerEnrollDate());
+            cell.setCellValue(dto.getFranchiseOwnerPhone());
             cell = row.createCell(6);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getFranchiseOwnerUpdateDate());
+            cell.setCellValue(dto.getFranchiseOwnerEnrollDate());
             cell = row.createCell(7);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getFranchiseOwnerDeleteDate());
+            cell.setCellValue(dto.getFranchiseOwnerUpdateDate());
             cell = row.createCell(8);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getOwnerRole());
+            cell.setCellValue(dto.getFranchiseOwnerDeleteDate());
             cell = row.createCell(9);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getOwnerPwdCheckCount());
+            cell.setCellValue(dto.getFranchiseRole());
             cell = row.createCell(10);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getOwnerStatus());
+            cell.setCellValue(dto.getOwnerPwdCheckCount());
+            cell = row.createCell(11);
+            cell.setCellStyle(bodyStyle);
+            cell.setCellValue(dto.getFranchiseStatus());
+            cell = row.createCell(12);
+            cell.setCellStyle(bodyStyle);
+            cell.setCellValue(dto.getAdminName());
         }
 
         // Column width auto-sizing
-        for(int k = 0 ; k < headers.length ; k++){
+        for (int k = 0; k < headers.length; k++) {
             sheet.autoSizeColumn(k);
-            sheet.setColumnWidth(k, (sheet.getColumnWidth(k))+(short)1024); //너비 더 넓게
+            sheet.setColumnWidth(k, (sheet.getColumnWidth(k)) + (short) 1024); //너비 더 넓게
         }
 
         // 컨텐츠 타입과 파일명 지정

@@ -15,15 +15,17 @@ public interface FranchiseOwnerService {
     ResponseEntity<FranchiseOwnerDTO> findFranchiseOwnerById(int franchiseOwnerCode);
 
     // 오너 등록
-    ResponseEntity<String> registerFranchiseOwner(FranchiseOwnerDTO franchiseOwnerDTO, int requestorAdminCode);
+    ResponseEntity<String> registerFranchiseOwner(FranchiseOwnerDTO franchiseOwnerDTO);
 
     // 오너 수정
-    ResponseEntity<String> updateFranchiseOwner(int franchiseOwnerCode, FranchiseOwnerDTO updatedFranchiseOwnerDTO, int requestorAdminCode);
+    ResponseEntity<String> updateFranchiseOwner(int franchiseOwnerCode, FranchiseOwnerDTO updatedFranchiseOwnerDTO);
 
     // 오너 삭제
-    ResponseEntity<String> deleteFranchiseOwner(int franchiseOwnerCode, int requestorAdminCode);
+    ResponseEntity<String> deleteFranchiseOwner(int franchiseOwnerCode);
+
+    // 비밀번호 초기화
+    ResponseEntity<String> resetFranchiseOwnerPassword(int franchiseOwnerCode);
 
     FranchiseOwnerDTO getFranchiseOwnerWithFranchiseName(int franchiseOwnerCode);
 
-    int findFranchiseOwnerCodeByName(String userName);
 }
