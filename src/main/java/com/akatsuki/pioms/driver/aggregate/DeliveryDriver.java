@@ -1,6 +1,7 @@
 package com.akatsuki.pioms.driver.aggregate;
 
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -52,5 +53,7 @@ public class DeliveryDriver {
     private boolean driverStatus;
 
     @OneToMany(mappedBy = "deliveryDriver")
+    @JsonIgnore
+    @ToString.Exclude
     private List<Franchise> franchises;
 }
