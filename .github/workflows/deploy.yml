@@ -50,9 +50,9 @@ jobs:
               gcp:
                 storage:
                   credentials:
-                    location: itability-418007-0c2a47d403c7.json
-                  project-id: itability-418007
-                  bucket: \${GCP_CREDENTIALS_JSON}
+                    location: \${SPRING_CLOUD_GCP_STORAGE_LOCATION}
+                  project-id: \${SPRING_CLOUD_GCP_STORAGE_PROJECT_ID}
+                  bucket: \${SPRING_CLOUD_GCP_STORAGE_BUCKET}
             jpa:
               show-sql: false
               database: mysql
@@ -73,6 +73,14 @@ jobs:
                 host: \${REDIS_HOST}
                 port: \${REDIS_PORT}
                 password: \${REDIS_PWD}
+          kakao:
+            api:
+              url: \${KAKAO_URL}
+              key: \${KAKAO_KEY}
+              user_id: \${KAKAO_USER_ID}
+              sender: \${KAKAO_SENDER}
+              client_secret: \${KAKAO_CLIENT_SECRET}
+              token: \${KAKAO_TOKEN}
           logging:
             level:
               root: INFO
@@ -90,11 +98,19 @@ jobs:
           RDS_DB_NAME: ${{ secrets.RDS_DB_NAME }}
           RDS_USERNAME: ${{ secrets.RDS_USERNAME }}
           RDS_PASSWORD: ${{ secrets.RDS_PASSWORD }}
-          GCP_CREDENTIALS_JSON: ${{ secrets.GCP_CREDENTIALS_JSON }}
+          SPRING_CLOUD_GCP_STORAGE_LOCATION: ${{ secrets.SPRING_CLOUD_GCP_STORAGE_LOCATION }}
+          SPRING_CLOUD_GCP_STORAGE_PROJECT_ID: ${{ secrets.SPRING_CLOUD_GCP_STORAGE_PROJECT_ID }}
+          SPRING_CLOUD_GCP_STORAGE_BUCKET: ${{ secrets.SPRING_CLOUD_GCP_STORAGE_BUCKET }}
           SPRING_JWT_SECRET: ${{ secrets.SPRING_JWT_SECRET }}
           REDIS_HOST: ${{ secrets.REDIS_HOST }}
           REDIS_PORT: ${{ secrets.REDIS_PORT }}
           REDIS_PWD: ${{ secrets.REDIS_PWD }}
+          KAKAO_URL: ${{ secrets.KAKAO_URL }}
+          KAKAO_KEY: ${{ secrets.KAKAO_KEY }}
+          KAKAO_USER_ID: ${{ secrets.KAKAO_USER_ID }}
+          KAKAO_SENDER: ${{ secrets.KAKAO_SENDER }}
+          KAKAO_CLIENT_SECRET: ${{ secrets.KAKAO_CLIENT_SECRET }}
+          KAKAO_TOKEN: ${{ secrets.KAKAO_TOKEN }}
 
       - name: Check for Tests
         run: |
@@ -168,7 +184,7 @@ jobs:
       - name: Create new Elastic Beanstalk application version
         run: |
           aws elasticbeanstalk create-application-version \
-            --application-name AkatsukiBE \
+            --application-name akatsukiBE \
             --version-label github-action-${{steps.current-time.outputs.formattedTime}} \
             --source-bundle S3Bucket=elasticbeanstalk-ap-northeast-2-730335325274,S3Key=deploy/deploy.zip
         env:
