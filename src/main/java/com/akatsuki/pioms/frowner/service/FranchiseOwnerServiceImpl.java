@@ -177,7 +177,6 @@ public class FranchiseOwnerServiceImpl implements FranchiseOwnerService {
         // 삭제일 설정
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         existingFranchiseOwner.setFranchiseOwnerDeleteDate(LocalDateTime.now().format(formatter));
-
         franchiseOwnerRepository.save(existingFranchiseOwner);
         String username = getCurrentUser();
         logService.saveLog(username, LogStatus.삭제, existingFranchiseOwner.getFranchiseOwnerName(), "FranchiseOwner");
