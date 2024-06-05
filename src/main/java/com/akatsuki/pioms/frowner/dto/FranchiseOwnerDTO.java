@@ -47,6 +47,24 @@ public class FranchiseOwnerDTO {
         }
     }
 
+    // DTO를 Entity로 변환
+    public FranchiseOwner toEntity() {
+        return FranchiseOwner.builder()
+                .franchiseOwnerCode(this.franchiseOwnerCode)
+                .franchiseOwnerName(this.franchiseOwnerName)
+                .franchiseOwnerId(this.franchiseOwnerId)
+                .franchiseOwnerPwd(this.franchiseOwnerPwd)
+                .franchiseOwnerEmail(this.franchiseOwnerEmail)
+                .franchiseOwnerPhone(this.franchiseOwnerPhone)
+                .franchiseRole(this.franchiseRole)
+                .franchiseOwnerStatus(this.franchiseOwnerStatus)
+                .ownerPwdCheckCount(this.ownerPwdCheckCount)
+                .franchiseOwnerEnrollDate(this.franchiseOwnerEnrollDate)
+                .franchiseOwnerUpdateDate(this.franchiseOwnerUpdateDate)
+                .franchiseOwnerDeleteDate(this.franchiseOwnerDeleteDate)
+                .build();
+    }
+
     // 상태를 문자열로 반환
     public String getFranchiseStatus() {
         return this.franchiseOwnerStatus ? "활성화" : "비활성화";
