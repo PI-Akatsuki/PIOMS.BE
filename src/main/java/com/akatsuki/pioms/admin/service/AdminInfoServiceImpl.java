@@ -9,6 +9,7 @@ import com.akatsuki.pioms.log.service.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -40,39 +42,22 @@ public class AdminInfoServiceImpl implements AdminInfoService {
     }
 
     private boolean isCurrentUserRoot() {
-        String currentUsername = getCurrentUser();
-        Admin requestorAdmin = adminRepository.findByAdminId(currentUsername).orElse(null);
-        return requestorAdmin != null && "ROLE_ROOT".equals(requestorAdmin.getAdminRole());
-    }
-
-    private AdminDTO convertToDTO(Admin admin) {
-        AdminDTO adminDTO = new AdminDTO();
-        adminDTO.setAdminCode(admin.getAdminCode());
-        adminDTO.setAdminName(admin.getAdminName());
-        adminDTO.setAdminId(admin.getAdminId());
-        adminDTO.setAdminPwd(admin.getAdminPwd());
-        adminDTO.setEnrollDate(admin.getEnrollDate());
-        adminDTO.setUpdateDate(admin.getUpdateDate());
-        adminDTO.setDeleteDate(admin.getDeleteDate());
-        adminDTO.setAdminEmail(admin.getAdminEmail());
-        adminDTO.setAdminPhone(admin.getAdminPhone());
-        adminDTO.setAccessNumber(admin.getAccessNumber());
-        adminDTO.setAdminRole(admin.getAdminRole());
-        adminDTO.setAdminStatus(admin.isAdminStatus());
-        adminDTO.setFranchiseCodes(admin.getFranchise() != null ?
-                admin.getFranchise().stream()
-                        .map(Franchise::getFranchiseCode)
-                        .collect(Collectors.toList())
-                : null);
-        adminDTO.setFranchiseCount(admin.getFranchiseCount());
-        return adminDTO;
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getAuthorities() != null) {
+            for (GrantedAuthority authority : authentication.getAuthorities()) {
+                if ("ROLE_ROOT".equals(authority.getAuthority())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Transactional(readOnly = true)
     @Override
     public List<AdminDTO> findAdminList() {
         return adminRepository.findAll().stream()
-                .map(this::convertToDTO)
+                .map(AdminDTO::new)
                 .collect(Collectors.toList());
     }
 
@@ -81,7 +66,7 @@ public class AdminInfoServiceImpl implements AdminInfoService {
     public ResponseEntity<AdminDTO> findAdminById(int adminCode) {
         Admin admin = adminRepository.findById(adminCode).orElse(null);
         if (admin != null) {
-            return ResponseEntity.ok(convertToDTO(admin));
+            return ResponseEntity.ok(new AdminDTO(admin));
         } else {
             return ResponseEntity.notFound().build();
         }
@@ -98,7 +83,7 @@ public class AdminInfoServiceImpl implements AdminInfoService {
             return ResponseEntity.status(400).body("중복된 아이디가 존재합니다.");
         }
 
-        if (adminDTO.getFranchiseCodes() != null && adminDTO.getFranchiseCodes().size() > 6) {
+        if (adminDTO.getFranchiseNames() != null && adminDTO.getFranchiseNames().size() > 6) {
             return ResponseEntity.badRequest().body("관리자는 최대 6개의 가맹점만 등록할 수 있습니다.");
         }
 
@@ -107,11 +92,11 @@ public class AdminInfoServiceImpl implements AdminInfoService {
 
         String uuid = UUID.randomUUID().toString().replaceAll("-", "").substring(0, 8);
 
-        List<Franchise> franchises = adminDTO.getFranchiseCodes() != null ?
-                adminDTO.getFranchiseCodes().stream()
-                        .map(franchiseCode -> {
+        List<Franchise> franchises = adminDTO.getFranchiseNames() != null ?
+                adminDTO.getFranchiseNames().stream()
+                        .map(franchiseName -> {
                             Franchise franchise = new Franchise();
-                            franchise.setFranchiseCode(franchiseCode);
+                            franchise.setFranchiseName(franchiseName);
                             return franchise;
                         })
                         .collect(Collectors.toList())
@@ -212,5 +197,22 @@ public class AdminInfoServiceImpl implements AdminInfoService {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<String> resetAdminPassword(int adminCode) {
+        if (!isCurrentUserRoot()) {
+            return ResponseEntity.status(403).body("비밀번호 초기화는 루트 관리자만 가능합니다.");
+        }
+
+        Admin admin = adminRepository.findById(adminCode)
+                .orElseThrow(() -> new RuntimeException("관리자 코드를 찾을 수 없음: " + adminCode));
+
+        admin.setAdminPwd(passwordEncoder.encode("1234"));
+        adminRepository.save(admin);
+        String username = getCurrentUser();
+        logService.saveLog(username, LogStatus.수정, "비밀번호 초기화: " + admin.getAdminName(), "Admin");
+        return ResponseEntity.ok("관리자 비밀번호 초기화가 완료되었습니다.");
     }
 }
