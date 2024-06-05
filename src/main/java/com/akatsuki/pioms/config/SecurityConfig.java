@@ -81,32 +81,32 @@ public class SecurityConfig {
                 .logout(logout -> logout.disable())
                 .authorizeHttpRequests(authorize -> authorize
 //                        .requestMatchers("/**").permitAll()
-                        .requestMatchers("/", "/reissue", "/admin/login", "/franchise/login", "/driver/login", "/admin/product/sendKakaoAlert").permitAll()
-                        .requestMatchers(
-                                "/admin/info",
-                                "/admin/home",
-                                "/admin/list/**",
-                                "/admin/category/first/list/**",
-                                "/admin/category/second/list/**",
-                                "/admin/category/third/list/**",
-                                "/admin/driver/list/**",
-                                "/admin/franchise/list/**",
-                                "/admin/franchise/owner/list/**",
-                                "/admin/franchise/owner/update/**",
-                                "/admin/product/list/**",
-                                "/admin/specs/**",
-                                "/admin/order/**",
-                                "/admin/invoice/**",
-                                "/admin/exchange/**",
-                                "/admin/notice/list/**",
-                                "/admin/ask/**",
-                                "/admin/pdfdownload/**",
-                                "/admin/exceldownload/**",
-                                "/admin/adminDashboard").hasRole("ADMIN")
-                        .requestMatchers("/admin/**").hasRole("ROOT")
-                        .requestMatchers("/franchise/**").hasAnyRole("OWNER")
-                        .requestMatchers("/driver/**").hasRole("DRIVER")
-                        .anyRequest().authenticated()
+                                .requestMatchers("/", "/reissue", "/admin/login", "/franchise/login", "/driver/login", "/admin/product/sendKakaoAlert").permitAll()
+                                .requestMatchers(
+                                        "/admin/info",
+                                        "/admin/home",
+                                        "/admin/list/**",
+                                        "/admin/category/first/list/**",
+                                        "/admin/category/second/list/**",
+                                        "/admin/category/third/list/**",
+                                        "/admin/driver/list/**",
+                                        "/admin/franchise/list/**",
+                                        "/admin/franchise/owner/list/**",
+                                        "/admin/franchise/owner/update/**",
+                                        "/admin/product/list/**",
+                                        "/admin/specs/**",
+                                        "/admin/order/**",
+                                        "/admin/invoice/**",
+                                        "/admin/exchange/**",
+                                        "/admin/notice/list/**",
+                                        "/admin/ask/**",
+                                        "/admin/pdfdownload/**",
+                                        "/admin/exceldownload/**",
+                                        "/admin/adminDashboard").hasRole("ADMIN")
+                                .requestMatchers("/admin/**").hasRole("ROOT")
+                                .requestMatchers("/franchise/**").hasAnyRole("OWNER")
+                                .requestMatchers("/driver/**").hasRole("DRIVER")
+                                .anyRequest().authenticated()
                 )
                 .addFilterBefore(new CustomLogoutFilter(jwtUtil, redisTokenService), LogoutFilter.class)
                 .addFilterBefore(new JWTFilter(jwtUtil, adminRepository, franchiseOwnerRepository, deliveryDriverRepository), UsernamePasswordAuthenticationFilter.class)
