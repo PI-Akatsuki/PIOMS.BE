@@ -43,7 +43,7 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService 
     @Autowired
     public FranchiseWarehouseServiceImpl(FranchiseWarehouseRepository franchiseWarehouseRepository, AdminRepository adminRepository,
                                          FranchiseService franchiseService, GetUserInfo getUserInfo,
-                                         FranchiseRepository franchiseRepository, KakaoProperties kakaoProperties, 
+                                         FranchiseRepository franchiseRepository, KakaoProperties kakaoProperties,
                                          FranchiseOwnerRepository franchiseOwnerRepository ) {
         this.franchiseWarehouseRepository = franchiseWarehouseRepository;
         this.adminRepository = adminRepository;
@@ -256,7 +256,7 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService 
     @Override
     public List<FranchiseWarehouseDTO> getProductsByFranchiseOwnerCode(int franchiseOwnerCode) {
         // FranchiseOwnerCode로 FranchiseCode 가져오기
-        Franchise franchise = franchiseRepository.findByFranchiseOwner_FranchiseOwnerCode(franchiseOwnerCode);
+        Franchise franchise = franchiseRepository.findByFranchiseOwnerFranchiseOwnerCode(franchiseOwnerCode);
         if (franchise == null) {
             throw new RuntimeException("Franchise not found for franchise owner code: " + franchiseOwnerCode);
         }
