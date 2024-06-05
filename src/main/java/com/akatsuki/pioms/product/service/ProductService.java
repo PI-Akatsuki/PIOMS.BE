@@ -48,6 +48,7 @@ public interface ProductService {
     // 카카오 알림
     void sendKakaoAlert(String productName, int stockQuantity) throws JsonProcessingException;
 
-    @Transactional
     ResponseEntity<String> updateProductWithImage(int productCode, RequestProduct request);
+
+    List<ProductDTO> findNotEnoughProducts();
 }
