@@ -1,7 +1,6 @@
 package com.akatsuki.pioms.dashboard.service;
 
 import com.akatsuki.pioms.admin.service.AdminInfoService;
-import com.akatsuki.pioms.ask.dto.AskDTO;
 import com.akatsuki.pioms.ask.dto.AskListDTO;
 import com.akatsuki.pioms.ask.service.AskService;
 import com.akatsuki.pioms.company.aggregate.CompanyVO;
@@ -22,7 +21,6 @@ import com.akatsuki.pioms.frowner.aggregate.FranchiseOwner;
 import com.akatsuki.pioms.frowner.dto.FranchiseOwnerDTO;
 import com.akatsuki.pioms.frowner.repository.FranchiseOwnerRepository;
 import com.akatsuki.pioms.frowner.service.FranchiseOwnerService;
-import com.akatsuki.pioms.frwarehouse.aggregate.FranchiseWarehouse;
 import com.akatsuki.pioms.frwarehouse.dto.FranchiseWarehouseDTO;
 import com.akatsuki.pioms.frwarehouse.service.FranchiseWarehouseService;
 import com.akatsuki.pioms.invoice.dto.InvoiceDTO;
@@ -90,7 +88,7 @@ public class DashboardServiceImpl implements DashboardService {
         int rootCode = getUserInfo.getAdminCode();
         CompanyVO company = companyService.findInformation();
         OrderStat orderStat = orderService.getOrderStat(rootCode);
-        List<Franchise> franchises = franchiseService.findFranchiseList();
+        List<FranchiseDTO> franchises = franchiseService.findFranchiseList();
         List<ExchangeDTO> exchanges = exchangeService.getExchangesByAdminCode();
         List<NoticeVO> notices = noticeService.getAllNoticeList();
         AskListDTO asks = askService.getAllAskList();
@@ -111,7 +109,7 @@ public class DashboardServiceImpl implements DashboardService {
 
         CompanyVO company = companyService.findInformation();
         OrderStat orderStat = orderService.getOrderStat(adminCode);
-        List<Franchise> franchises = franchiseService.findFranchiseByAdminCode(adminCode);
+        List<FranchiseDTO> franchises = franchiseService.findFranchiseByAdminCode(adminCode);
         List<ExchangeDTO> exchanges = exchangeService.getExchangesByAdminCode();
         List<NoticeVO> notices = noticeService.getAllNoticeList();
         AskListDTO asks = askService.getAllAskList();

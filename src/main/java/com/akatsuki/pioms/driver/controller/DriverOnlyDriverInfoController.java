@@ -1,13 +1,12 @@
 package com.akatsuki.pioms.driver.controller;
 
-import com.akatsuki.pioms.driver.aggregate.DeliveryDriver;
+import com.akatsuki.pioms.driver.dto.DeliveryDriverDTO;
 import com.akatsuki.pioms.driver.service.DeliveryDriverService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -21,11 +20,10 @@ public class DriverOnlyDriverInfoController {
         this.deliveryDriverService = deliveryDriverService;
     }
 
-
     @Operation(summary = "배송기사 상세 조회", description = "배송기사 상세 정보를 조회합니다.")
     @GetMapping("/info/detail/{driverId}")
-    public ResponseEntity<DeliveryDriver> getDriverById(@PathVariable int driverId) {
-        Optional<DeliveryDriver> driver = deliveryDriverService.findDriverById(driverId);
+    public ResponseEntity<DeliveryDriverDTO> getDriverById(@PathVariable int driverId) {
+        Optional<DeliveryDriverDTO> driver = deliveryDriverService.findDriverById(driverId);
         return driver.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
@@ -34,10 +32,8 @@ public class DriverOnlyDriverInfoController {
     @PutMapping("/update/{driverId}")
     public ResponseEntity<String> updateDriver(
             @PathVariable int driverId,
-            @RequestBody DeliveryDriver updatedDriver,
-            @RequestParam(required = false) Integer requestorAdminCode,
-            @RequestParam(required = false) Integer requestorDriverCode
+            @RequestBody DeliveryDriverDTO updatedDriverDTO
     ) {
-        return deliveryDriverService.updateDriver(driverId, updatedDriver, requestorAdminCode, requestorDriverCode);
+        return deliveryDriverService.updateDriver(driverId, updatedDriverDTO);
     }
 }

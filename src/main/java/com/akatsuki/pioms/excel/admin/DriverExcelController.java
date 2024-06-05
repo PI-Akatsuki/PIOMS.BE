@@ -1,6 +1,7 @@
 package com.akatsuki.pioms.excel.admin;
 
 import com.akatsuki.pioms.driver.aggregate.DeliveryDriver;
+import com.akatsuki.pioms.driver.dto.DeliveryDriverDTO;
 import com.akatsuki.pioms.driver.service.DeliveryDriverService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.poi.ss.usermodel.*;
@@ -23,7 +24,7 @@ public class DriverExcelController {
 
     @GetMapping(value = "driver-excel")
     public void excelDownload(HttpServletResponse response) throws Exception {
-        List<DeliveryDriver> driverList = deliveryDriverService.findDriverList();
+        List<DeliveryDriverDTO> driverList = deliveryDriverService.findDriverList();
         Workbook wb = new XSSFWorkbook();
         Sheet sheet = wb.createSheet("배송기사 목록 시트");
         Row row = null;
@@ -65,7 +66,7 @@ public class DriverExcelController {
             cell.setCellValue(headers[i]);
         }
         // Body
-        for (DeliveryDriver dto : driverList) {
+        for (DeliveryDriverDTO dto : driverList) {
             row = sheet.createRow(rowNum++);
             cell = row.createCell(0);
             cell.setCellStyle(bodyStyle);

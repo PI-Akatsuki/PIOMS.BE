@@ -1,11 +1,15 @@
 package com.akatsuki.pioms.driver.service;
 
-import com.akatsuki.pioms.admin.aggregate.Admin;
 import com.akatsuki.pioms.driver.aggregate.DeliveryDriver;
+import com.akatsuki.pioms.driver.dto.DeliveryDriverDTO;
 import com.akatsuki.pioms.driver.repository.DeliveryDriverRepository;
-import com.akatsuki.pioms.admin.repository.AdminRepository;
+import com.akatsuki.pioms.log.etc.LogStatus;
+import com.akatsuki.pioms.log.service.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,62 +18,85 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class DeliveryDriverServiceImpl implements DeliveryDriverService {
 
     private final DeliveryDriverRepository deliveryDriverRepository;
-    private final AdminRepository adminRepository;
-
     private final PasswordEncoder passwordEncoder;
+    private final LogService logService;
 
     @Autowired
-    public DeliveryDriverServiceImpl(DeliveryDriverRepository deliveryDriverRepository, AdminRepository adminRepository, PasswordEncoder passwordEncoder) {
+    public DeliveryDriverServiceImpl(DeliveryDriverRepository deliveryDriverRepository, PasswordEncoder passwordEncoder, LogService logService) {
         this.deliveryDriverRepository = deliveryDriverRepository;
-        this.adminRepository = adminRepository;
         this.passwordEncoder = passwordEncoder;
+        this.logService = logService;
+    }
+
+    // 현재 사용자가 ROOT인지 확인
+    private boolean isCurrentUserRoot() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getAuthorities() != null) {
+            for (GrantedAuthority authority : authentication.getAuthorities()) {
+                if ("ROLE_ROOT".equals(authority.getAuthority())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    // 현재 사용자 이름 가져오기
+    private String getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication != null ? authentication.getName() : null;
     }
 
     @Transactional(readOnly = true)
     @Override
-    public List<DeliveryDriver> findDriverList() {
-        return deliveryDriverRepository.findAll();
+    public List<DeliveryDriverDTO> findDriverList() {
+        return deliveryDriverRepository.findAll().stream()
+                .map(DeliveryDriverDTO::new)
+                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
     @Override
-    public Optional<DeliveryDriver> findDriverById(int driverId) {
-        return deliveryDriverRepository.findById(driverId);
+    public Optional<DeliveryDriverDTO> findDriverById(int driverId) {
+        return deliveryDriverRepository.findById(driverId).map(DeliveryDriverDTO::new);
     }
 
     @Override
     @Transactional
-    public ResponseEntity<String> saveDriver(DeliveryDriver driver, int requestorAdminCode) {
-        // 루트 관리자 확인
-        Optional<Admin> requestorAdmin = adminRepository.findById(requestorAdminCode);
-        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
+    public ResponseEntity<String> saveDriver(DeliveryDriverDTO driverDTO) {
+        if (!isCurrentUserRoot()) {
             return ResponseEntity.status(403).body("배송기사 등록은 루트 관리자만 가능합니다.");
         }
 
-        // 필수 필드 확인
-        if (driver.getDriverName() == null || driver.getDriverId() == null || driver.getDriverPwd() == null || driver.getDriverPhone() == null) {
-            return ResponseEntity.badRequest().body("필수 항목(deliveryManName, deliveryManId, deliveryManPwd, deliveryManPhone)을 모두 입력해야 합니다.");
+        if (driverDTO.getDriverName() == null || driverDTO.getDriverId() == null || driverDTO.getDriverPwd() == null || driverDTO.getDriverPhone() == null) {
+            return ResponseEntity.badRequest().body("필수 항목을 모두 입력해야 합니다.");
         }
-
-        driver.setDriverPwd(passwordEncoder.encode(driver.getDriverPwd()));
 
         // 중복 ID 확인
-        if (deliveryDriverRepository.findByDriverId(driver.getDriverId()).isPresent()) {
-            return ResponseEntity.badRequest().body("이미 존재하는 ID입니다.");
+        if (deliveryDriverRepository.findByDriverId(driverDTO.getDriverId()).isPresent()) {
+            return ResponseEntity.status(409).body("이미 존재하는 ID입니다.");
         }
 
-        // 날짜 포맷터
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String now = LocalDateTime.now().format(formatter);
 
-        // 등록일 및 수정일 설정
-        driver.setDriverEnrollDate(now);
-        driver.setDriverUpdateDate(now);
+        DeliveryDriver driver = DeliveryDriver.builder()
+                .driverName(driverDTO.getDriverName())
+                .driverId(driverDTO.getDriverId())
+                .driverPwd(passwordEncoder.encode(driverDTO.getDriverPwd()))
+                .driverRole(driverDTO.getDriverRole())
+                .driverPhone(driverDTO.getDriverPhone())
+                .driverStatus(driverDTO.isDriverStatus())
+                .driverPwdCheckCount(driverDTO.getDriverPwdCheckCount())
+                .driverEnrollDate(now)
+                .driverUpdateDate(now)
+                .build();
 
         deliveryDriverRepository.save(driver);
         return ResponseEntity.ok("신규 배송기사 등록이 완료되었습니다.");
@@ -77,10 +104,9 @@ public class DeliveryDriverServiceImpl implements DeliveryDriverService {
 
     @Transactional
     @Override
-    public ResponseEntity<String> updateDriver(int driverId, DeliveryDriver updatedDriver, Integer requestorAdminCode, Integer requestorDriverCode) {
-        // 관리자 권한 확인
-        boolean isAdmin = requestorAdminCode != null && adminRepository.findById(requestorAdminCode).isPresent();
-        boolean isDriver = requestorDriverCode != null && requestorDriverCode == driverId;
+    public ResponseEntity<String> updateDriver(int driverId, DeliveryDriverDTO updatedDriverDTO) {
+        boolean isAdmin = isCurrentUserRoot();
+        boolean isDriver = getCurrentUser() != null && updatedDriverDTO.getDriverId().equals(getCurrentUser());
 
         if (!isAdmin && !isDriver) {
             return ResponseEntity.status(403).body("수정 권한이 없습니다.");
@@ -91,11 +117,10 @@ public class DeliveryDriverServiceImpl implements DeliveryDriverService {
             DeliveryDriver driver = existingDriver.get();
 
             if (isAdmin || isDriver) {
-                driver.setDriverName(updatedDriver.getDriverName());
-                driver.setDriverPwd(passwordEncoder.encode(updatedDriver.getDriverPwd()));
-                driver.setDriverPhone(updatedDriver.getDriverPhone());
+                driver.setDriverName(updatedDriverDTO.getDriverName());
+                driver.setDriverPwd(passwordEncoder.encode(updatedDriverDTO.getDriverPwd()));
+                driver.setDriverPhone(updatedDriverDTO.getDriverPhone());
 
-                // 수정일 업데이트
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
                 driver.setDriverUpdateDate(LocalDateTime.now().format(formatter));
 
@@ -111,10 +136,8 @@ public class DeliveryDriverServiceImpl implements DeliveryDriverService {
 
     @Transactional
     @Override
-    public ResponseEntity<String> deleteDriver(int driverId, int requestorAdminCode) {
-        // 관리자 권한 확인
-        Optional<Admin> requestorAdmin = adminRepository.findById(requestorAdminCode);
-        if (requestorAdmin.isEmpty() || requestorAdmin.get().getAdminCode() != 1) {
+    public ResponseEntity<String> deleteDriver(int driverId) {
+        if (!isCurrentUserRoot()) {
             return ResponseEntity.status(403).body("배송기사 삭제는 루트 관리자만 가능합니다.");
         }
 
@@ -122,12 +145,10 @@ public class DeliveryDriverServiceImpl implements DeliveryDriverService {
         if (existingDriver.isPresent()) {
             DeliveryDriver driver = existingDriver.get();
 
-            // 이미 비활성화된 경우 처리
             if (driver.getDriverDeleteDate() != null) {
-                return ResponseEntity.badRequest().body("이미 비활성화된 배송기사입니다.");
+                return ResponseEntity.status(409).body("이미 비활성화된 배송기사입니다.");
             }
 
-            // DeleteDate 남기기
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             driver.setDriverDeleteDate(LocalDateTime.now().format(formatter));
 
@@ -138,8 +159,21 @@ public class DeliveryDriverServiceImpl implements DeliveryDriverService {
         }
     }
 
+    // 비밀번호 초기화
     @Override
-    public int findDriverCodeByName(String userName) {
-        return deliveryDriverRepository.findByDriverName(userName).getDriverCode();
+    @Transactional
+    public ResponseEntity<String> resetDriverPassword(int driverId) {
+        if (!isCurrentUserRoot()) {
+            return ResponseEntity.status(403).body("비밀번호 초기화는 루트 관리자만 가능합니다.");
+        }
+
+        DeliveryDriver driver = deliveryDriverRepository.findById(driverId)
+                .orElseThrow(() -> new RuntimeException("배송기사 코드를 찾을 수 없음: " + driverId));
+
+        driver.setDriverPwd(passwordEncoder.encode("1234"));
+        deliveryDriverRepository.save(driver);
+        String username = getCurrentUser();
+        logService.saveLog(username, LogStatus.수정, "비밀번호 초기화: " + driver.getDriverName(), "DeliveryDriver");
+        return ResponseEntity.ok("배송기사 비밀번호 초기화가 완료되었습니다.");
     }
 }
