@@ -60,6 +60,4 @@ public class Franchise {
     @ToString.Exclude
     private Admin admin;
 
-    @OneToMany(mappedBy = "franchise")
-    private List<DeliveryDriver> deliveryDrivers;
 }
