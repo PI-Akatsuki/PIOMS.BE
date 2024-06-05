@@ -14,6 +14,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class FranchiseWarehouseDTO {
     private int franchiseWarehouseCode;
     private int franchiseWarehouseTotal;
@@ -33,15 +34,4 @@ public class FranchiseWarehouseDTO {
         this.product = new ProductDTO(franchiseWarehouse.getProduct());
     }
 
-    @Override
-    public String toString() {
-        return "FranchiseWarehouseDTO{" +
-                "  Code=" + franchiseWarehouseCode +
-                ", Total=" + franchiseWarehouseTotal +
-                ", Count=" + franchiseWarehouseCount +
-                ", Enable=" + franchiseWarehouseEnable +
-                ", Favorite=" + franchiseWarehouseFavorite +
-                ", product=" + product.getProductCode() +
-                '}';
-    }
 }

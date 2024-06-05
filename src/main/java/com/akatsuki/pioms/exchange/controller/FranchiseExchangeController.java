@@ -22,7 +22,7 @@ public class FranchiseExchangeController {
         this.exchangeService = exchangeService;
     }
 
-    @GetMapping("/exchanges")
+    @GetMapping("/exchange/list")
     public ResponseEntity<List<ResponseExchange>> getMyExchanges(){
         List<ExchangeDTO> exchangeDTOS = exchangeService.getFrOwnerExchanges();
 
