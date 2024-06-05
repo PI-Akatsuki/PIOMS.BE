@@ -34,10 +34,13 @@ import com.akatsuki.pioms.order.aggregate.OrderStat;
 import com.akatsuki.pioms.order.dto.OrderDTO;
 import com.akatsuki.pioms.order.repository.OrderRepository;
 import com.akatsuki.pioms.order.service.OrderService;
+import com.akatsuki.pioms.product.dto.ProductDTO;
+import com.akatsuki.pioms.product.service.ProductService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -53,6 +56,7 @@ public class DashboardServiceImpl implements DashboardService {
     private final AskService askService;
     private final FranchiseOwnerService franchiseOwnerService;
     private final InvoiceService invoiceService;
+    private final ProductService productService;
 
     private final FranchiseWarehouseService franchiseWarehouseService;
 
@@ -67,8 +71,14 @@ public class DashboardServiceImpl implements DashboardService {
     @Autowired
     private InvoiceRepository invoiceRepository;
 
+
     @Autowired
-    public DashboardServiceImpl(GetUserInfo getUserInfo, FranchiseService franchiseService, AdminInfoService adminInfoService, OrderService orderService, ExchangeService exchangeService, CompanyService companyService, NoticeService noticeService, AskService askService, FranchiseOwnerService franchiseOwnerService, InvoiceService invoiceService, FranchiseWarehouseService franchiseWarehouseService) {
+    public DashboardServiceImpl(GetUserInfo getUserInfo, FranchiseService franchiseService,
+                                AdminInfoService adminInfoService, OrderService orderService,
+                                ExchangeService exchangeService, CompanyService companyService,
+                                NoticeService noticeService, ProductService productService,
+                                AskService askService, FranchiseOwnerService franchiseOwnerService,
+                                InvoiceService invoiceService, FranchiseWarehouseService franchiseWarehouseService) {
         this.getUserInfo = getUserInfo;
         this.franchiseService = franchiseService;
         this.adminInfoService = adminInfoService;
@@ -80,7 +90,7 @@ public class DashboardServiceImpl implements DashboardService {
         this.franchiseOwnerService = franchiseOwnerService;
         this.invoiceService = invoiceService;
         this.franchiseWarehouseService = franchiseWarehouseService;
-
+        this.productService = productService;
     }
 
 
@@ -93,15 +103,11 @@ public class DashboardServiceImpl implements DashboardService {
         List<Franchise> franchises = franchiseService.findFranchiseList();
         List<ExchangeDTO> exchanges = exchangeService.getExchangesByAdminCode();
         List<NoticeVO> notices = noticeService.getAllNoticeList();
-        AskListDTO asks = askService.getAllAskList();
+        AskListDTO askList = askService.getAllAskList();
+        List<AskDTO> asks = new ArrayList<>(askList.getAsks());
 
-        System.out.println("company = " + company);
-        System.out.println("orderStat = " + orderStat);
-        System.out.println("franchises = " + franchises);
-        System.out.println("exchanges = " + exchanges);
-        System.out.println("notices = " + notices);
-        System.out.println("asks = " + asks);
-        return new ResponseAdminDashBoard(company,orderStat,franchises,exchanges,notices,asks);
+        List<ProductDTO> products = productService.findNotEnoughProducts();
+        return new ResponseAdminDashBoard(company,orderStat,franchises,exchanges,notices,asks,products);
     }
 
     @Override
@@ -114,14 +120,9 @@ public class DashboardServiceImpl implements DashboardService {
         List<Franchise> franchises = franchiseService.findFranchiseByAdminCode(adminCode);
         List<ExchangeDTO> exchanges = exchangeService.getExchangesByAdminCode();
         List<NoticeVO> notices = noticeService.getAllNoticeList();
-        AskListDTO asks = askService.getAllAskList();
+        AskListDTO askList = askService.getAllAskList();
+        List<AskDTO> asks = new ArrayList<>(askList.getAsks());
 
-        System.out.println("company = " + company);
-        System.out.println("orderStat = " + orderStat);
-        System.out.println("franchises = " + franchises);
-        System.out.println("exchanges = " + exchanges);
-        System.out.println("notices = " + notices);
-        System.out.println("asks = " + asks);
         return new ResponseAdminDashBoard(company,orderStat,franchises,exchanges,notices,asks);
     }
 
