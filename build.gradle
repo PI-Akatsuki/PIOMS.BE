@@ -72,6 +72,9 @@ dependencies {
         exclude group: "org.hamcrest", module: "hamcrest-core"
     }
 
+    // PDF
+    implementation 'org.apache.pdfbox:pdfbox:2.0.24'
+
     // Google Cloud
     implementation 'org.springframework.cloud:spring-cloud-gcp-starter:1.2.5.RELEASE'
     implementation 'org.springframework.cloud:spring-cloud-gcp-storage:1.2.5.RELEASE'

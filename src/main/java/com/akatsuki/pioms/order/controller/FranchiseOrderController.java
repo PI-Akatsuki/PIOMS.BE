@@ -54,7 +54,7 @@ public class FranchiseOrderController {
         return ResponseEntity.ok("put finished");
     }
 
-    @GetMapping("/orders")
+    @GetMapping("/order/list")
     public ResponseEntity<OrderListVO> getFranchiseOrderList(){
         List<OrderDTO> orders = franchiseOrderFacade.getOrderListByFranchiseCode();
         if (orders.isEmpty() ){

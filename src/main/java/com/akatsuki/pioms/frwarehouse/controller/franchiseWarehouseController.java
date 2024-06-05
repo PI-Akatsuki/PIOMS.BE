@@ -6,7 +6,7 @@ import com.akatsuki.pioms.frwarehouse.aggregate.RequestFranchiseWarehouse;
 import com.akatsuki.pioms.frwarehouse.aggregate.ResponseFranchiseWarehouse;
 import com.akatsuki.pioms.frwarehouse.dto.FranchiseWarehouseDTO;
 import com.akatsuki.pioms.frwarehouse.service.FranchiseWarehouseService;
-import com.akatsuki.pioms.product.dto.ProductDTO;
+import com.akatsuki.pioms.jwt.JWTUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,11 +20,14 @@ import java.util.List;
 public class franchiseWarehouseController {
 
     private final FranchiseWarehouseService franchiseWarehouseService;
+    private final JWTUtil jwtUtil;
     private final GetUserInfo getUserInfo;
 
     @Autowired
-    public franchiseWarehouseController(FranchiseWarehouseService franchiseWarehouseService, GetUserInfo getUserInfo) {
+    public franchiseWarehouseController(FranchiseWarehouseService franchiseWarehouseService, JWTUtil jwtUtil
+                , GetUserInfo getUserInfo) {
         this.franchiseWarehouseService = franchiseWarehouseService;
+        this.jwtUtil = jwtUtil;
         this.getUserInfo = getUserInfo;
     }
 
@@ -44,10 +47,10 @@ public class franchiseWarehouseController {
         return ResponseEntity.ok(responseWarehouse);
     }
 
-    @PostMapping("/update/{franchiseWarehouseCode}")
+    @PutMapping("/update/{franchiseWarehouseCode}") // PostMapping -> PutMapping으로 수정했습니다.
     @Operation(summary = "사라졌을 상품을 위한 재고 수정 기능")
-    public ResponseEntity<String> updateWarehouseCount(@PathVariable int franchiseWarehouseCode, @RequestBody RequestFranchiseWarehouse request, int requesterAdminCode) {
-        return franchiseWarehouseService.updateWarehouseCount(franchiseWarehouseCode,request, requesterAdminCode);
+    public ResponseEntity<String> updateWarehouseCount(@PathVariable int franchiseWarehouseCode, @RequestBody RequestFranchiseWarehouse request) {
+        return franchiseWarehouseService.updateWarehouseCount(franchiseWarehouseCode, request);
     }
 
     @PutMapping("/toggleFavorite/{franchiseWarehouseCode}")
@@ -81,28 +84,35 @@ public class franchiseWarehouseController {
 
     @GetMapping("/list")
     public ResponseEntity<List<FranchiseWarehouseDTO>> getFrWarehouseList(){
-        return ResponseEntity.ok(franchiseWarehouseService.getFrWarehouseList());
+        List<FranchiseWarehouseDTO>franchiseWarehouseDTOS = franchiseWarehouseService.getFrWarehouseList();
+        System.out.println("franchiseWarehouseDTOS = " + franchiseWarehouseDTOS);
+        return ResponseEntity.ok(franchiseWarehouseDTOS);
     }
-
-//    @Operation(summary = "상품 리스트 조회", description = "가맹점 코드로 상품 리스트를 조회합니다.")
-//    @GetMapping("/list/product")
-//    public ResponseEntity<List<ProductDTO>> getProductsByFranchiseCode() {
-//        int franchiseCode = getUserInfo.getFranchiseOwnerCode(); // 토큰에서 franchiseCode 가져오기
-//        List<ProductDTO> productList = franchiseWarehouseService.getProductsByFranchiseCode(franchiseCode);
-//        return ResponseEntity.ok(productList);
-//    }
 
     @Operation(summary = "상품 리스트 조회", description = "가맹점 코드로 상품 리스트를 조회합니다.")
     @GetMapping("/list/product")
-    public ResponseEntity<List<ProductDTO>> getProductsByFranchiseCode() {
-        int franchiseCode;
-        try {
-            franchiseCode = getUserInfo.getFranchiseOwnerCode(); // 토큰에서 franchiseCode 가져오기
-        } catch (Exception e) {
-            franchiseCode = 3; // 하드코딩된 값
-        }
-
-        List<ProductDTO> productList = franchiseWarehouseService.getProductsByFranchiseCode(franchiseCode);
+    public ResponseEntity<List<FranchiseWarehouseDTO>> getProductsByFranchiseCode(@RequestHeader("Authorization") String token) {
+        int franchiseOwnerCode = jwtUtil.getUserCode(extractToken(token)); // 토큰에서 franchiseOwnerCode 가져오기
+        List<FranchiseWarehouseDTO> productList = franchiseWarehouseService.getProductsByFranchiseOwnerCode(franchiseOwnerCode);
+//        System.out.println("productList = " + productList);
         return ResponseEntity.ok(productList);
     }
+
+    @GetMapping("/favorites/by-owner")
+    @Operation(summary = "점주별 즐겨찾기 상품 조회")
+    public ResponseEntity<List<FranchiseWarehouseDTO>> findFavoritesByOwner() {
+        int franchiseOwnerCode = getUserInfo.getFranchiseOwnerCode();
+        List<FranchiseWarehouseDTO> favorites = franchiseWarehouseService.findFavoritesByOwner(franchiseOwnerCode);
+        return ResponseEntity.ok(favorites);
+    }
+
+
+    private String extractToken(String bearerToken) {
+        if (bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+        throw new RuntimeException("Invalid token format");
+    }
+
+
 }

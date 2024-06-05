@@ -44,16 +44,14 @@ public class AdminOrderController {
         this.orderFacade = orderFacade;
     }
 
-    @GetMapping("/orders")
+    @GetMapping("/order/list")
     @Operation(summary = "관리자가 관리하고 있는 모든 가맹점들의 발주 리스트를 조회합니다.")
     public ResponseEntity<List<OrderVO>> getFranchisesOrderList(
-//            , @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size
     ){
         List<OrderDTO> orderDTOS = orderFacade.getOrderListByAdminCode();
         if (orderDTOS.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
-//        orderDTOS = Pagination.splitPage(orderDTOS, page, size);
         List<OrderVO> orderVOS = new ArrayList<>();
         for (int i = 0; i < orderDTOS.size(); i++) {
             orderVOS.add(new OrderVO(orderDTOS.get(i)));

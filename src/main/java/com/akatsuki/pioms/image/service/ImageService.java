@@ -62,4 +62,34 @@ ImageService {
         return images.get(0);
     }
 
+    public void changeImage(int productCode, MultipartFile file) {
+        try {
+            Image image = imageRepository.findByProductCode(productCode).get(0);
+
+            if (image==null){
+                return;
+            }
+
+            ClassPathResource resource = new ClassPathResource(credentialsLocation);
+            GoogleCredentials credentials = GoogleCredentials.fromStream(resource.getInputStream());
+
+            Storage storage = StorageOptions.newBuilder()
+                    .setCredentials(credentials)
+                    .setProjectId(projectId)
+                    .build()
+                    .getService();
+
+            String fileName = UUID.randomUUID().toString().substring(0, 6);
+
+            BlobId blobId = BlobId.of(bucketName, fileName);
+            BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
+
+            byte[] bytes = file.getBytes();
+            Blob blob = storage.create(blobInfo, bytes);
+            image.setUrl(blob.getMediaLink());
+            imageRepository.save(image);
+        } catch (Exception e){
+            return;
+        }
+    }
 }

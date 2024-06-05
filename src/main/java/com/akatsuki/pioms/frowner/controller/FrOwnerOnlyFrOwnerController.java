@@ -7,8 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
 @RestController
 @RequestMapping("franchise/mypage")
 public class FrOwnerOnlyFrOwnerController {
@@ -31,10 +29,9 @@ public class FrOwnerOnlyFrOwnerController {
     @PutMapping("/update/{franchiseOwnerCode}")
     public ResponseEntity<String> updateFranchiseOwner(
             @PathVariable int franchiseOwnerCode,
-            @RequestBody FranchiseOwnerDTO updatedFranchiseOwner,
-            @RequestParam int requestorAdminCode
+            @RequestBody FranchiseOwnerDTO updatedFranchiseOwner
     ) {
-        return franchiseOwnerService.updateFranchiseOwner(franchiseOwnerCode, updatedFranchiseOwner, requestorAdminCode);
+        return franchiseOwnerService.updateFranchiseOwner(franchiseOwnerCode, updatedFranchiseOwner);
     }
 
     @GetMapping("/owner/{franchiseOwnerCode}")
@@ -42,5 +39,4 @@ public class FrOwnerOnlyFrOwnerController {
         FranchiseOwnerDTO franchiseOwnerDTO = franchiseOwnerService.getFranchiseOwnerWithFranchiseName(franchiseOwnerCode);
         return ResponseEntity.ok(franchiseOwnerDTO);
     }
-
 }

@@ -8,6 +8,7 @@ import com.akatsuki.pioms.company.service.CompanyService;
 import com.akatsuki.pioms.config.GetUserInfo;
 import com.akatsuki.pioms.dashboard.aggregate.ResponseAdminDashBoard;
 import com.akatsuki.pioms.dashboard.aggregate.ResponseDriverDashBoard;
+import com.akatsuki.pioms.dashboard.aggregate.ResponseFranchiseDashBoard;
 import com.akatsuki.pioms.driver.aggregate.DeliveryDriver;
 import com.akatsuki.pioms.driver.repository.DeliveryDriverRepository;
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
@@ -20,6 +21,8 @@ import com.akatsuki.pioms.frowner.aggregate.FranchiseOwner;
 import com.akatsuki.pioms.frowner.dto.FranchiseOwnerDTO;
 import com.akatsuki.pioms.frowner.repository.FranchiseOwnerRepository;
 import com.akatsuki.pioms.frowner.service.FranchiseOwnerService;
+import com.akatsuki.pioms.frwarehouse.dto.FranchiseWarehouseDTO;
+import com.akatsuki.pioms.frwarehouse.service.FranchiseWarehouseService;
 import com.akatsuki.pioms.invoice.dto.InvoiceDTO;
 import com.akatsuki.pioms.invoice.repository.InvoiceRepository;
 import com.akatsuki.pioms.invoice.service.InvoiceService;
@@ -49,6 +52,8 @@ public class DashboardServiceImpl implements DashboardService {
     private final FranchiseOwnerService franchiseOwnerService;
     private final InvoiceService invoiceService;
 
+    private final FranchiseWarehouseService franchiseWarehouseService;
+
     @Autowired
     private DeliveryDriverRepository deliveryDriverRepository;
     @Autowired
@@ -61,7 +66,7 @@ public class DashboardServiceImpl implements DashboardService {
     private InvoiceRepository invoiceRepository;
 
     @Autowired
-    public DashboardServiceImpl(GetUserInfo getUserInfo, FranchiseService franchiseService, AdminInfoService adminInfoService, OrderService orderService, ExchangeService exchangeService, CompanyService companyService, NoticeService noticeService, AskService askService, FranchiseOwnerService franchiseOwnerService,InvoiceService invoiceService) {
+    public DashboardServiceImpl(GetUserInfo getUserInfo, FranchiseService franchiseService, AdminInfoService adminInfoService, OrderService orderService, ExchangeService exchangeService, CompanyService companyService, NoticeService noticeService, AskService askService, FranchiseOwnerService franchiseOwnerService, InvoiceService invoiceService, FranchiseWarehouseService franchiseWarehouseService) {
         this.getUserInfo = getUserInfo;
         this.franchiseService = franchiseService;
         this.adminInfoService = adminInfoService;
@@ -72,6 +77,8 @@ public class DashboardServiceImpl implements DashboardService {
         this.askService = askService;
         this.franchiseOwnerService = franchiseOwnerService;
         this.invoiceService = invoiceService;
+        this.franchiseWarehouseService = franchiseWarehouseService;
+
     }
 
 
@@ -81,7 +88,7 @@ public class DashboardServiceImpl implements DashboardService {
         int rootCode = getUserInfo.getAdminCode();
         CompanyVO company = companyService.findInformation();
         OrderStat orderStat = orderService.getOrderStat(rootCode);
-        List<Franchise> franchises = franchiseService.findFranchiseList();
+        List<FranchiseDTO> franchises = franchiseService.findFranchiseList();
         List<ExchangeDTO> exchanges = exchangeService.getExchangesByAdminCode();
         List<NoticeVO> notices = noticeService.getAllNoticeList();
         AskListDTO asks = askService.getAllAskList();
@@ -102,7 +109,7 @@ public class DashboardServiceImpl implements DashboardService {
 
         CompanyVO company = companyService.findInformation();
         OrderStat orderStat = orderService.getOrderStat(adminCode);
-        List<Franchise> franchises = franchiseService.findFranchiseByAdminCode(adminCode);
+        List<FranchiseDTO> franchises = franchiseService.findFranchiseByAdminCode(adminCode);
         List<ExchangeDTO> exchanges = exchangeService.getExchangesByAdminCode();
         List<NoticeVO> notices = noticeService.getAllNoticeList();
         AskListDTO asks = askService.getAllAskList();
@@ -114,6 +121,24 @@ public class DashboardServiceImpl implements DashboardService {
         System.out.println("notices = " + notices);
         System.out.println("asks = " + asks);
         return new ResponseAdminDashBoard(company,orderStat,franchises,exchanges,notices,asks);
+    }
+
+    @Override
+    @Transactional
+    public ResponseFranchiseDashBoard getFranchiseDash() {
+        int franchiseOwnerCode = getUserInfo.getFranchiseOwnerCode();
+        List<OrderDTO> orders = orderService.getOrderListByFranchiseOwnerCode(franchiseOwnerCode);
+        OrderStat orderStat = new OrderStat(orders);
+        List<NoticeVO> notices = noticeService.getAllNoticeList();
+        AskListDTO asks = askService.getAllAskList();
+        List<FranchiseWarehouseDTO> favorites = franchiseWarehouseService.findFavoritesByOwner(franchiseOwnerCode);
+
+        System.out.println("franchiseOwnerCode = " + franchiseOwnerCode);
+        System.out.println("orders = " + orders);
+        System.out.println("notices = " + notices);
+        System.out.println("asks = " + asks);
+        System.out.println("favorites = " + favorites);
+        return new ResponseFranchiseDashBoard(orderStat,notices,asks,favorites);
     }
 
     @Override
