@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("admin")
+@RequestMapping("/admin")
 @Tag(name = "관리자 정보", description = "Admin Info")
 public class AdminInfoController {
 
@@ -31,7 +31,7 @@ public class AdminInfoController {
     }
 
     // 관리자 상세 조회
-    @Operation(summary = "본사 관리자 상세조회", description = "본사 관리자를 조회합니다.")
+    @Operation(summary = "본사 관리자 상세 조회", description = "본사 관리자를 조회합니다.")
     @GetMapping("/list/detail/{adminCode}")
     public ResponseEntity<AdminDTO> getAdminById(@PathVariable int adminCode) {
         return adminService.findAdminById(adminCode);
@@ -59,5 +59,12 @@ public class AdminInfoController {
     @DeleteMapping("/delete/{adminCode}")
     public ResponseEntity<String> deleteAdmin(@PathVariable int adminCode) {
         return adminService.deleteAdmin(adminCode);
+    }
+
+    // 관리자 비밀번호 초기화
+    @Operation(summary = "본사 관리자 비밀번호 초기화", description = "본사 관리자 비밀번호를 초기화합니다.")
+    @PostMapping("/reset-password/{adminCode}")
+    public ResponseEntity<String> resetAdminPassword(@PathVariable int adminCode) {
+        return adminService.resetAdminPassword(adminCode);
     }
 }

@@ -29,6 +29,7 @@ public class AdminDTO {
     private String updateDate;
     private String deleteDate;
     private List<Integer> franchiseCodes;
+    private List<String> franchiseNames;
     private AdminLoginRequest adminLoginRequest;
     private int franchiseCount;
 }

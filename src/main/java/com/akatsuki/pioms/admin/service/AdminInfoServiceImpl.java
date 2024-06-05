@@ -9,16 +9,20 @@ import com.akatsuki.pioms.log.service.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,6 +30,7 @@ public class AdminInfoServiceImpl implements AdminInfoService {
     private final AdminRepository adminRepository;
     private final LogService logService;
     private final PasswordEncoder passwordEncoder;
+    private static final Logger logger = LoggerFactory.getLogger(AdminInfoServiceImpl.class);
 
     @Autowired
     public AdminInfoServiceImpl(AdminRepository adminRepository, LogService logService, PasswordEncoder passwordEncoder) {
@@ -40,9 +45,15 @@ public class AdminInfoServiceImpl implements AdminInfoService {
     }
 
     private boolean isCurrentUserRoot() {
-        String currentUsername = getCurrentUser();
-        Admin requestorAdmin = adminRepository.findByAdminId(currentUsername).orElse(null);
-        return requestorAdmin != null && "ROLE_ROOT".equals(requestorAdmin.getAdminRole());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getAuthorities() != null) {
+            for (GrantedAuthority authority : authentication.getAuthorities()) {
+                if ("ROLE_ROOT".equals(authority.getAuthority())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private AdminDTO convertToDTO(Admin admin) {
@@ -64,6 +75,11 @@ public class AdminInfoServiceImpl implements AdminInfoService {
                         .map(Franchise::getFranchiseCode)
                         .collect(Collectors.toList())
                 : null);
+        adminDTO.setFranchiseNames(admin.getFranchise() != null ?
+                admin.getFranchise().stream()
+                        .map(Franchise::getFranchiseName)
+                        .collect(Collectors.toList())
+                : null);
         adminDTO.setFranchiseCount(admin.getFranchiseCount());
         return adminDTO;
     }
@@ -71,7 +87,8 @@ public class AdminInfoServiceImpl implements AdminInfoService {
     @Transactional(readOnly = true)
     @Override
     public List<AdminDTO> findAdminList() {
-        return adminRepository.findAll().stream()
+        logger.info("Fetching all admins from the database with franchise names");
+        return adminRepository.findAllWithFranchiseNames().stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
@@ -79,6 +96,7 @@ public class AdminInfoServiceImpl implements AdminInfoService {
     @Transactional(readOnly = true)
     @Override
     public ResponseEntity<AdminDTO> findAdminById(int adminCode) {
+        logger.info("Fetching admin details for adminCode: {}", adminCode);
         Admin admin = adminRepository.findById(adminCode).orElse(null);
         if (admin != null) {
             return ResponseEntity.ok(convertToDTO(admin));
@@ -90,15 +108,30 @@ public class AdminInfoServiceImpl implements AdminInfoService {
     @Override
     @Transactional
     public ResponseEntity<String> registerAdmin(AdminDTO adminDTO) {
+        logger.info("Attempting to register new admin with ID: {}", adminDTO.getAdminId());
         if (!isCurrentUserRoot()) {
+            logger.warn("Non-root user attempted to register a new admin");
             return ResponseEntity.status(403).body("신규 관리자 등록은 루트 관리자만 가능합니다.");
         }
 
+        if (adminDTO.getAdminId().length() > 13) {
+            logger.warn("Admin ID exceeds maximum length: {}", adminDTO.getAdminId());
+            return ResponseEntity.status(400).body("아이디는 13자 이상일 수 없습니다.");
+        }
+
+        String idRegex = "^[a-zA-Z0-9]*$";
+        if (!Pattern.matches(idRegex, adminDTO.getAdminId())) {
+            logger.warn("Admin ID contains invalid characters: {}", adminDTO.getAdminId());
+            return ResponseEntity.status(400).body("아이디는 영문자와 숫자만 포함할 수 있습니다.");
+        }
+
         if (adminRepository.findByAdminId(adminDTO.getAdminId()).isPresent()) {
+            logger.warn("Attempted to register admin with duplicate ID: {}", adminDTO.getAdminId());
             return ResponseEntity.status(400).body("중복된 아이디가 존재합니다.");
         }
 
         if (adminDTO.getFranchiseCodes() != null && adminDTO.getFranchiseCodes().size() > 6) {
+            logger.warn("Attempted to register admin with more than 6 franchises");
             return ResponseEntity.badRequest().body("관리자는 최대 6개의 가맹점만 등록할 수 있습니다.");
         }
 
@@ -187,10 +220,6 @@ public class AdminInfoServiceImpl implements AdminInfoService {
             return ResponseEntity.status(403).body("관리자 비활성화(삭제)는 루트 관리자만 가능합니다.");
         }
 
-        if (adminCode == 1) {
-            return ResponseEntity.badRequest().body("adminCode 1번은 비활성화(삭제)할 수 없습니다.");
-        }
-
         Admin admin = adminRepository.findById(adminCode).orElse(null);
         if (admin != null) {
             if (!admin.isAdminStatus()) {
@@ -209,6 +238,25 @@ public class AdminInfoServiceImpl implements AdminInfoService {
             String username = getCurrentUser();
             logService.saveLog(username, LogStatus.삭제, admin.getAdminName(), "Admin");
             return ResponseEntity.ok("관리자 비활성화(삭제)가 완료되었습니다.");
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<String> resetAdminPassword(int adminCode) {
+        if (!isCurrentUserRoot()) {
+            return ResponseEntity.status(403).body("비밀번호 초기화는 루트 관리자만 가능합니다.");
+        }
+
+        Admin admin = adminRepository.findById(adminCode).orElse(null);
+        if (admin != null) {
+            admin.setAdminPwd(passwordEncoder.encode("1234"));
+            adminRepository.save(admin);
+            String username = getCurrentUser();
+            logService.saveLog(username, LogStatus.수정, "비밀번호 초기화: " + admin.getAdminName(), "Admin");
+            return ResponseEntity.ok("관리자 비밀번호 초기화가 완료되었습니다.");
         } else {
             return ResponseEntity.notFound().build();
         }

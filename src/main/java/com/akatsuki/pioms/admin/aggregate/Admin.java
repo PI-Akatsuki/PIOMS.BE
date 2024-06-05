@@ -4,7 +4,6 @@ import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import jakarta.persistence.*;
 import lombok.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.apache.commons.lang3.builder.ToStringExclude;
 import org.hibernate.annotations.Formula;
 
 import java.util.List;
