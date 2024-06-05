@@ -1,12 +1,15 @@
 package com.akatsuki.pioms.franchise.dto;
 
-import com.akatsuki.pioms.driver.aggregate.DeliveryDriver;
+import com.akatsuki.pioms.driver.dto.DeliveryDriverDTO;
 import com.akatsuki.pioms.franchise.aggregate.DELIVERY_DATE;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import com.akatsuki.pioms.frowner.dto.FranchiseOwnerDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @NoArgsConstructor
@@ -23,7 +26,7 @@ public class FranchiseDTO {
     private String franchiseBusinessNum;
     private DELIVERY_DATE franchiseDeliveryDate;
     private FranchiseOwnerDTO franchiseOwner;
-    private DeliveryDriver deliveryDriver;
+    private List<DeliveryDriverDTO> deliveryDrivers;
 
     private int adminCode;
     private String adminName;
@@ -41,6 +44,10 @@ public class FranchiseDTO {
         this.franchiseOwner = new FranchiseOwnerDTO(franchise.getFranchiseOwner());
         this.adminCode = franchise.getAdmin().getAdminCode();
         this.adminName = franchise.getAdmin().getAdminName();
-        this.deliveryDriver = franchise.getDeliveryDriver();
+        if (franchise.getDeliveryDrivers() != null) {
+            this.deliveryDrivers = franchise.getDeliveryDrivers().stream()
+                    .map(DeliveryDriverDTO::new)
+                    .collect(Collectors.toList());
+        }
     }
 }
