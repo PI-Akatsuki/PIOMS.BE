@@ -1,7 +1,6 @@
 package com.akatsuki.pioms.excel.admin;
 
-import com.akatsuki.pioms.admin.dto.AdminDTO;
-import com.akatsuki.pioms.franchise.aggregate.Franchise;
+import com.akatsuki.pioms.franchise.dto.FranchiseDTO;
 import com.akatsuki.pioms.franchise.service.FranchiseService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.poi.ss.usermodel.*;
@@ -24,9 +23,9 @@ public class FranchiseExcelController {
 
     @GetMapping(value = "/franchise-excel")
     public void excelDownload(HttpServletResponse response) throws Exception {
-    List<Franchise> franchiseList = franchiseService.findFranchiseList();
+        List<FranchiseDTO> franchiseList = franchiseService.findFranchiseList();
         Workbook wb = new XSSFWorkbook();
-        Sheet sheet = wb.createSheet("관리자 목록 시트");
+        Sheet sheet = wb.createSheet("가맹점 목록 시트");
         Row row = null;
         Cell cell = null;
         int rowNum = 0;
@@ -56,8 +55,8 @@ public class FranchiseExcelController {
 
         // Header
         String[] headers = {
-                "가맹코드","가맹점명","주소","전화번호","등록일","수정일","삭제일",
-                "사업자등록번호","배송요일","점주코드","관리자코드","배송기사코드"
+                "가맹코드", "가맹점명", "주소", "전화번호", "등록일", "수정일", "삭제일",
+                "사업자등록번호", "배송요일", "점주코드", "점주명", "관리자코드", "관리자명", "배송기사코드", "배송기사명"
         };
         row = sheet.createRow(rowNum++);
         for (int i = 0; i < headers.length; i++) {
@@ -66,7 +65,7 @@ public class FranchiseExcelController {
             cell.setCellValue(headers[i]);
         }
         // Body
-        for (Franchise dto : franchiseList) {
+        for (FranchiseDTO dto : franchiseList) {
             row = sheet.createRow(rowNum++);
             cell = row.createCell(0);
             cell.setCellStyle(bodyStyle);
@@ -100,16 +99,25 @@ public class FranchiseExcelController {
             cell.setCellValue(dto.getFranchiseOwner().getFranchiseOwnerCode());
             cell = row.createCell(10);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getAdmin().getAdminCode());
+            cell.setCellValue(dto.getFranchiseOwner().getFranchiseOwnerName());
             cell = row.createCell(11);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getDeliveryDriver().getDriverCode());
+            cell.setCellValue(dto.getAdminCode());
+            cell = row.createCell(12);
+            cell.setCellStyle(bodyStyle);
+            cell.setCellValue(dto.getAdminName());
+            cell = row.createCell(13);
+            cell.setCellStyle(bodyStyle);
+            cell.setCellValue(dto.getDeliveryDriver() != null ? String.valueOf(dto.getDeliveryDriver().getDriverCode()) : "");
+            cell = row.createCell(14);
+            cell.setCellStyle(bodyStyle);
+            cell.setCellValue(dto.getDeliveryDriver() != null ? dto.getDeliveryDriver().getDriverName() : "");
         }
 
         // Column width auto-sizing
-        for(int k = 0 ; k < headers.length ; k++){
+        for (int k = 0; k < headers.length; k++) {
             sheet.autoSizeColumn(k);
-            sheet.setColumnWidth(k, (sheet.getColumnWidth(k))+(short)1024); //너비 더 넓게
+            sheet.setColumnWidth(k, (sheet.getColumnWidth(k)) + (short) 1024); //너비 더 넓게
         }
 
         // 컨텐츠 타입과 파일명 지정
