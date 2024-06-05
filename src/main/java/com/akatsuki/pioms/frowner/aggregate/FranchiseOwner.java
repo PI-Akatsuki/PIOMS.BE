@@ -1,5 +1,6 @@
 package com.akatsuki.pioms.frowner.aggregate;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
@@ -15,6 +16,7 @@ import com.akatsuki.pioms.franchise.aggregate.Franchise;
 public class FranchiseOwner {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "franchise_owner_code")
     private int franchiseOwnerCode;
 
@@ -42,9 +44,6 @@ public class FranchiseOwner {
     @Column(name = "franchise_owner_pwd_check")
     private int ownerPwdCheckCount;
 
-    @Column(name = "franchise_owner_dormancy")
-    private boolean franchiseOwnerDormancy;
-
     @Column(name = "franchise_owner_enroll_date")
     private String franchiseOwnerEnrollDate;
 
@@ -56,6 +55,6 @@ public class FranchiseOwner {
 
     @OneToOne(mappedBy = "franchiseOwner")
     @ToString.Exclude
+    @JsonIgnore
     private Franchise franchise;
-
 }

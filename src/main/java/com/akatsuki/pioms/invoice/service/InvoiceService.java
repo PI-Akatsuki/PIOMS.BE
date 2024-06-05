@@ -63,4 +63,15 @@ public interface InvoiceService {
     // 배송상태수정 시 상태 변경
     @Transactional
     boolean modifyInvoiceStatusByDriver(int invoiceCode, int driverCode, DELIVERY_STATUS deliveryStatus);
+
+    // 배송상태조회 - 배송전 상태의 송장 수 조회
+    int countStatusBeforeDeliveryDriverInvoices(int driverCode);
+
+    // 배송상태조회 - 배송중 상태의 송장 수 조회
+    int countStatusIngDeliveryDriverInvoices(int driverCode);
+
+    // 배송상태조회 - 배송완료 상태의 송장 수 조회
+    int countStatusCompleteDeliveryDriverInvoices(int driverCode);
+
+    List<InvoiceDTO> getInvoicesByDriverCode(int driverCode);
 }

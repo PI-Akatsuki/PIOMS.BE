@@ -5,6 +5,7 @@ import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import com.akatsuki.pioms.franchise.aggregate.DELIVERY_DATE;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import com.akatsuki.pioms.franchise.dto.FranchiseDTO;
+import com.akatsuki.pioms.invoice.aggregate.DELIVERY_STATUS;
 import com.akatsuki.pioms.invoice.dto.InvoiceDTO;
 import com.akatsuki.pioms.order.aggregate.Order;
 import com.akatsuki.pioms.order.aggregate.OrderProduct;
@@ -27,6 +28,7 @@ import java.util.List;
 public class OrderDTO {
 
     private int orderCode;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime orderDate;
     private int orderTotalPrice;
     private ORDER_CONDITION orderCondition;
@@ -44,13 +46,15 @@ public class OrderDTO {
 
     private int AdminCode;
     private String AdminName;
-
+    private String adminPhone;
     private ExchangeDTO exchange;
 
     private List<OrderProductDTO> orderProductList;
 
     private int invoiceCode;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime invoiceDate;
+    private DELIVERY_STATUS deliveryStatus;
 
 
     public OrderDTO(Order order) {
@@ -68,7 +72,7 @@ public class OrderDTO {
         this.franchiseOwnerPhone = order.getFranchise().getFranchiseOwner().getFranchiseOwnerPhone();
         this.AdminCode= order.getFranchise().getAdmin().getAdminCode();
         this.AdminName= order.getFranchise().getAdmin().getAdminName();
-
+        this.adminPhone = order.getFranchise().getAdmin().getAdminPhone();
         if (order.getExchange()!=null) {
             this.exchange = new ExchangeDTO(order.getExchange());
         }
@@ -81,6 +85,7 @@ public class OrderDTO {
         if (order.getInvoice()!=null){
             invoiceCode = order.getInvoice().getInvoiceCode();
             invoiceDate = order.getInvoice().getInvoiceDate();
+            deliveryStatus = order.getInvoice().getDeliveryStatus();
         }
 
 

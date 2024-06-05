@@ -38,29 +38,33 @@ public class AdminOnlyFrOwnerController {
     @Operation(summary = "프랜차이즈 점주 등록", description = "신규 프랜차이즈 점주를 등록합니다.")
     @PostMapping("/register")
     public ResponseEntity<String> registerFranchiseOwner(
-            @RequestBody FranchiseOwnerDTO franchiseOwnerDTO,
-            @RequestParam int requestorAdminCode
+            @RequestBody FranchiseOwnerDTO franchiseOwnerDTO
     ) {
-        return franchiseOwnerService.registerFranchiseOwner(franchiseOwnerDTO, requestorAdminCode);
+        return franchiseOwnerService.registerFranchiseOwner(franchiseOwnerDTO);
     }
 
     @Operation(summary = "프랜차이즈 점주 정보 수정", description = "기존 프랜차이즈 점주의 정보를 수정합니다.")
     @PutMapping("/update/{franchiseOwnerCode}")
     public ResponseEntity<String> updateFranchiseOwner(
             @PathVariable int franchiseOwnerCode,
-            @RequestBody FranchiseOwnerDTO updatedFranchiseOwner,
-            @RequestParam int requestorAdminCode
+            @RequestBody FranchiseOwnerDTO updatedFranchiseOwner
     ) {
-        return franchiseOwnerService.updateFranchiseOwner(franchiseOwnerCode, updatedFranchiseOwner, requestorAdminCode);
+        return franchiseOwnerService.updateFranchiseOwner(franchiseOwnerCode, updatedFranchiseOwner);
     }
 
     @Operation(summary = "프랜차이즈 점주 삭제", description = "기존 프랜차이즈 점주를 삭제합니다.")
     @DeleteMapping("/delete/{franchiseOwnerCode}")
     public ResponseEntity<String> deleteFranchiseOwner(
-            @PathVariable int franchiseOwnerCode,
-            @RequestParam int requestorAdminCode
+            @PathVariable int franchiseOwnerCode
     ) {
-        return franchiseOwnerService.deleteFranchiseOwner(franchiseOwnerCode, requestorAdminCode);
+        return franchiseOwnerService.deleteFranchiseOwner(franchiseOwnerCode);
     }
 
+    @Operation(summary = "프랜차이즈 점주 비밀번호 초기화", description = "프랜차이즈 점주의 비밀번호를 초기화합니다.")
+    @PostMapping("/reset-password/{franchiseOwnerCode}")
+    public ResponseEntity<String> resetFranchiseOwnerPassword(
+            @PathVariable int franchiseOwnerCode
+    ) {
+        return franchiseOwnerService.resetFranchiseOwnerPassword(franchiseOwnerCode);
+    }
 }

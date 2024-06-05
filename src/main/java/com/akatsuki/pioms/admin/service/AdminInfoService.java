@@ -1,6 +1,5 @@
 package com.akatsuki.pioms.admin.service;
 
-import com.akatsuki.pioms.admin.aggregate.Admin;
 import com.akatsuki.pioms.admin.dto.AdminDTO;
 import org.springframework.http.ResponseEntity;
 
@@ -22,5 +21,9 @@ public interface AdminInfoService {
 
     // 비활성화(삭제)
     ResponseEntity<String> deleteAdmin(int adminCode);
+
+    // 비밀번호 초기화
+    ResponseEntity<String> resetAdminPassword(int adminCode);
+
 
 }

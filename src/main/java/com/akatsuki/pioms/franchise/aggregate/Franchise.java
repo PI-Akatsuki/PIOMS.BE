@@ -1,12 +1,12 @@
 package com.akatsuki.pioms.franchise.aggregate;
 
 import com.akatsuki.pioms.admin.aggregate.Admin;
-
 import com.akatsuki.pioms.driver.aggregate.DeliveryDriver;
-import com.akatsuki.pioms.franchise.dto.FranchiseDTO;
 import com.akatsuki.pioms.frowner.aggregate.FranchiseOwner;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Entity
 @Table(name = "franchise")
@@ -59,4 +59,5 @@ public class Franchise {
     @JoinColumn(name = "admin_code", referencedColumnName = "admin_code")
     @ToString.Exclude
     private Admin admin;
+
 }

@@ -11,7 +11,9 @@ public interface CategoryFirstService {
 
     List<CategoryFirstDTO> findCategoryFirstByCode(int categoryFirstCode);
 
-    ResponseEntity<String> updateCategoryFirst(int categoryFirstCode, RequestCategoryFirst request, int requesterAdminCode);
+    ResponseEntity<String> updateCategoryFirst(int categoryFirstCode, RequestCategoryFirst request);
 
-    ResponseEntity<String> postCategoryFirst(RequestCategoryFirst request, int requesterAdminCode);
+    ResponseEntity<String> postCategoryFirst(RequestCategoryFirst request);
+
+    ResponseEntity<String> deleteCategoryFirst(int categoryFirstCode);
 }

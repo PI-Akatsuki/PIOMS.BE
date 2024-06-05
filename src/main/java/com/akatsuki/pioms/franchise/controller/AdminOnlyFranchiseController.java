@@ -1,9 +1,8 @@
 package com.akatsuki.pioms.franchise.controller;
 
-import com.akatsuki.pioms.franchise.aggregate.Franchise;
+import com.akatsuki.pioms.franchise.dto.FranchiseDTO;
 import com.akatsuki.pioms.franchise.service.FranchiseService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,9 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
-@Tag(name = "프랜차이즈(가맹점)", description = "Franchise")
 @RestController
-@RequestMapping("admin/franchise")
+@RequestMapping("/admin/franchise")
 public class AdminOnlyFranchiseController {
 
     private final FranchiseService franchiseService;
@@ -23,47 +21,42 @@ public class AdminOnlyFranchiseController {
         this.franchiseService = franchiseService;
     }
 
-    // 프랜차이즈 전체 조회
-    @Operation(summary = "프랜차이즈 전체 조회", description = "프랜차이즈 전체 조회")
+    @Operation(summary = "프랜차이즈 전체 조회", description = "전체 프랜차이즈를 조회합니다.")
     @GetMapping("/list")
-    public ResponseEntity<List<Franchise>> getAdminList() {
-        List<Franchise> franchiseList = franchiseService.findFranchiseList();
+    public ResponseEntity<List<FranchiseDTO>> getFranchiseList() {
+        List<FranchiseDTO> franchiseList = franchiseService.findFranchiseList();
         return ResponseEntity.ok(franchiseList);
     }
 
-    // 프랜차이즈 상세 조회
-    @Operation(summary = "프랜차이즈 상세 조회", description = "프랜차이즈 상세 조회")
-    @GetMapping("/list/detail/{franchiseCode}")
-    public ResponseEntity<Franchise> getFranchiseById(@PathVariable int franchiseCode) {
-        Optional<Franchise> franchise = franchiseService.findFranchiseById(franchiseCode);
+    @Operation(summary = "프랜차이즈 상세 조회", description = "프랜차이즈 상세 정보를 조회합니다.")
+    @GetMapping("/detail/{franchiseCode}")
+    public ResponseEntity<FranchiseDTO> getFranchiseById(@PathVariable int franchiseCode) {
+        Optional<FranchiseDTO> franchise = franchiseService.findFranchiseById(franchiseCode);
         return franchise.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // 프랜차이즈 등록
+    @Operation(summary = "프랜차이즈 등록", description = "신규 프랜차이즈를 등록합니다.")
     @PostMapping("/register")
     public ResponseEntity<String> registerFranchise(
-            @RequestBody Franchise franchise,
-            @RequestParam int requestorAdminCode
+            @RequestBody FranchiseDTO franchiseDTO
     ) {
-        return franchiseService.saveFranchise(franchise, requestorAdminCode);
+        return franchiseService.saveFranchise(franchiseDTO);
     }
 
-    // 프랜차이즈 수정
-    @PutMapping("/update")
+    @Operation(summary = "프랜차이즈 정보 수정", description = "기존 프랜차이즈의 정보를 수정합니다.")
+    @PutMapping("/update/{franchiseCode}")
     public ResponseEntity<String> updateFranchise(
-            @RequestParam int requestorCode,
-            @RequestBody Franchise updatedFranchise) {
-        return franchiseService.updateFranchise(updatedFranchise.getFranchiseCode(), updatedFranchise, requestorCode, false);
-
-    }
-
-    // 프랜차이즈 삭제
-    @DeleteMapping("/delete/{franchiseCode}")
-    public ResponseEntity<String> deleteFranchise(
             @PathVariable int franchiseCode,
-            @RequestParam int requestorAdminCode) {
-        return franchiseService.deleteFranchise(franchiseCode, requestorAdminCode);
+            @RequestBody FranchiseDTO updatedFranchiseDTO,
+            @RequestParam int requestorCode
+    ) {
+        return franchiseService.updateFranchise(franchiseCode, updatedFranchiseDTO, requestorCode, false);
     }
 
+    @Operation(summary = "프랜차이즈 삭제", description = "기존 프랜차이즈를 삭제합니다.")
+    @DeleteMapping("/delete/{franchiseCode}")
+    public ResponseEntity<String> deleteFranchise(@PathVariable int franchiseCode) {
+        return franchiseService.deleteFranchise(franchiseCode);
+    }
 }

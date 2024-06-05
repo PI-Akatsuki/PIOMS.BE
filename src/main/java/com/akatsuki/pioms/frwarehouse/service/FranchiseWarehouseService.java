@@ -11,13 +11,13 @@ import java.util.List;
 public interface FranchiseWarehouseService {
     void saveProduct(int productCode, int changeVal, int franchiseCode);
 
-    boolean checkEnableToAddExchange(RequestExchange requestExchange);
+    boolean checkEnableToAddExchangeAndChangeEnableCnt(RequestExchange requestExchange, int franchiseCode);
 
     List<FranchiseWarehouseDTO> getAllWarehouse();
 
     List<FranchiseWarehouseDTO> getWarehouseByWarehouseCode(int franchiseWarehouseCode);
 
-    ResponseEntity<String> updateWarehouseCount(int franchiseWarehouseCode, RequestFranchiseWarehouse request, int requesterAdminCode);
+    ResponseEntity<String> updateWarehouseCount(int franchiseWarehouseCode, RequestFranchiseWarehouse request);
 
     void toggleFavorite(int franchiseWarehouseCode);
 
@@ -25,7 +25,14 @@ public interface FranchiseWarehouseService {
 
     List<FranchiseWarehouse> findAllFavorites();
 
-    List<FranchiseWarehouseDTO> getFrWarehouseList(int franchiseOwnerCode);
+    List<FranchiseWarehouseDTO> getFrWarehouseList();
 
     void saveProductWhenDeleteExchange(int productCode, int exchangeProductCount, int franchiseCode);
+
+    void saveProductWhenUpdateExchangeToCompany(int productCode, int i, int franchiseCode);
+
+    List<FranchiseWarehouseDTO> getProductsByFranchiseOwnerCode(int franchiseOwnerCode);
+
+    List<FranchiseWarehouseDTO> findFavoritesByOwner(int franchiseOwnerCode);
 }
+

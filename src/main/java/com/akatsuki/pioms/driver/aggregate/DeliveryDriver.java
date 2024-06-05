@@ -1,7 +1,11 @@
 package com.akatsuki.pioms.driver.aggregate;
 
+import com.akatsuki.pioms.franchise.aggregate.Franchise;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -33,15 +37,6 @@ public class DeliveryDriver {
     @Column(name = "delivery_man_phone")
     private String driverPhone;
 
-    @Column(name = "delivery_man_status")
-    private boolean driverStatus;
-
-    @Column(name = "delivery_man_pwd_check")
-    private int driverPwdCheckCount;
-
-    @Column(name = "delivery_man_dormancy")
-    private boolean driverDormancy;
-
     @Column(name = "delivery_man_enroll_date")
     private String driverEnrollDate;
 
@@ -51,4 +46,14 @@ public class DeliveryDriver {
     @Column(name = "delivery_man_delete_date")
     private String driverDeleteDate;
 
+    @Column(name = "delivery_man_pwd_check")
+    private int driverPwdCheckCount;
+
+    @Column(name = "delivery_man_status")
+    private boolean driverStatus;
+
+    @OneToMany(mappedBy = "deliveryDriver")
+    @JsonIgnore
+    @ToString.Exclude
+    private List<Franchise> franchises;
 }

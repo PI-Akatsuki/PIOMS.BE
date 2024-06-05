@@ -1,18 +1,17 @@
 package com.akatsuki.pioms.admin.aggregate;
 
-import com.akatsuki.pioms.admin.dto.AdminDTO;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import jakarta.persistence.*;
 import lombok.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.Formula;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-@Builder
 @ToString
 @Entity
 @Table(name = "admin")
@@ -42,16 +41,13 @@ public class Admin {
     private String accessNumber;
 
     @Column(name = "admin_role")
-    private String  adminRole;
+    private String adminRole;
 
     @Column(name = "admin_status")
     private boolean adminStatus;
 
     @Column(name = "admin_pwd_check")
     private int pwdCheckCount;
-
-    @Column(name = "admin_dormancy")
-    private boolean adminDormancy;
 
     @Column(name = "admin_enroll_date")
     private String enrollDate;
@@ -63,6 +59,9 @@ public class Admin {
     private String deleteDate;
 
     @OneToMany(mappedBy = "admin")
+    @JsonIgnore
     private List<Franchise> franchise;
 
+    @Formula("(select count(f.franchise_code) from franchise f where f.admin_code = admin_code)")
+    private int franchiseCount;
 }

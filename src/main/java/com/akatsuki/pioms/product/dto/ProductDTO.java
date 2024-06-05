@@ -66,4 +66,10 @@ public class ProductDTO {
         this.categoryFirstCode = product.getCategoryThird().getCategorySecond().getCategoryFirst().getCategoryFirstCode();
         this.CategoryFirstName = product.getCategoryThird().getCategorySecond().getCategoryFirst().getCategoryFirstName();
     }
+    public String getProductGender() {
+        if (productGender == null) {
+            return "UNKNOWN"; // 또는 적절한 기본 값
+        }
+        return productGender.toString();
+    }
 }

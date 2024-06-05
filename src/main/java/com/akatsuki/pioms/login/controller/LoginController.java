@@ -9,7 +9,6 @@ import com.akatsuki.pioms.login.aggregate.FranchiseOwnerLoginRequest;
 import com.akatsuki.pioms.login.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,18 +27,33 @@ public class LoginController {
         this.loginService = loginService;
     }
 
-    @PostMapping("admin/login")
+    @PostMapping("/admin/login")
     public ResponseEntity<Admin> adminLogin(@RequestBody AdminLoginRequest adminLoginRequest) {
+        if (adminLoginRequest == null) {
+            logger.warning("AdminLoginRequest가 null입니다");
+            return ResponseEntity.badRequest().build();
+        }
+        logger.info("AdminLoginRequest 수신됨: " + adminLoginRequest);
         return loginService.adminLogin(adminLoginRequest.getAdminId(), adminLoginRequest.getPassword(), adminLoginRequest.getAccessNumber());
     }
 
-    @PostMapping("franchise/login")
-    public ResponseEntity<FranchiseOwner> frOwnerLogin(@RequestBody FranchiseOwnerLoginRequest franchiseOwnerLoginRequest) {
-        return loginService.frOwnerLogin(franchiseOwnerLoginRequest.getFrOwnerId(), franchiseOwnerLoginRequest.getFrOwnerPassword());
+    @PostMapping("/franchise/login")
+    public ResponseEntity<FranchiseOwner> franchiseOwnerLogin(@RequestBody FranchiseOwnerLoginRequest franchiseOwnerLoginRequest) {
+        if (franchiseOwnerLoginRequest == null) {
+            logger.warning("FranchiseOwnerLoginRequest가 null입니다");
+            return ResponseEntity.badRequest().build();
+        }
+        logger.info("FranchiseOwnerLoginRequest 수신됨: " + franchiseOwnerLoginRequest);
+        return loginService.franchiseOwnerLogin(franchiseOwnerLoginRequest.getFrOwnerId(), franchiseOwnerLoginRequest.getFrOwnerPassword());
     }
 
-    @PostMapping("driver/login")
+    @PostMapping("/driver/login")
     public ResponseEntity<DeliveryDriver> driverLogin(@RequestBody DeliveryDriverLoginRequest deliveryDriverLoginRequest) {
-        return loginService.driverLogin(deliveryDriverLoginRequest.getDriverId(), deliveryDriverLoginRequest.getDriverPassword());
+        if (deliveryDriverLoginRequest == null) {
+            logger.warning("DeliveryDriverLoginRequest가 null입니다");
+            return ResponseEntity.badRequest().build();
+        }
+        logger.info("DeliveryDriverLoginRequest 수신됨: " + deliveryDriverLoginRequest);
+        return loginService.deliveryDriverLogin(deliveryDriverLoginRequest.getDriverId(), deliveryDriverLoginRequest.getDriverPassword());
     }
 }

@@ -6,13 +6,7 @@ import com.akatsuki.pioms.frowner.aggregate.FranchiseOwner;
 import org.springframework.http.ResponseEntity;
 
 public interface LoginService {
-
-    // 관리자 로그인
-    ResponseEntity<Admin> adminLogin(String adminId, String password, String accessNumber);
-
-    // 오너 로그인
-    ResponseEntity<FranchiseOwner> frOwnerLogin(String frOwnerId, String frOwnerPassword);
-
-    // 배송기사 로그인
-    ResponseEntity<DeliveryDriver> driverLogin(String driverId, String driverPassword);
+    ResponseEntity<Admin> adminLogin(String adminId, String adminPassword, String accessNumber);
+    ResponseEntity<FranchiseOwner> franchiseOwnerLogin(String franchiseOwnerId, String franchiseOwnerPassword);
+    ResponseEntity<DeliveryDriver> deliveryDriverLogin(String driverId, String driverPassword);
 }

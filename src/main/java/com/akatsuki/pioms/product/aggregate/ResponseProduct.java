@@ -71,7 +71,7 @@ public class ResponseProduct {
         this.productContent = productDTO.getProductContent();
         this.productColor = productDTO.getProductColor();
         this.productSize = productDTO.getProductSize();
-        this.productGender = productDTO.getProductGender();
+        this.productGender = PRODUCT_GENDER.valueOf(productDTO.getProductGender());
         this.productTotalCount = productDTO.getProductTotalCount();
         this.productStatus = productDTO.getProductStatus();
         this.productExposureStatus = productDTO.isProductExposureStatus();

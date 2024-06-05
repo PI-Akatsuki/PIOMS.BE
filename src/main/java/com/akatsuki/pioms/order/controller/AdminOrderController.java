@@ -1,9 +1,7 @@
 package com.akatsuki.pioms.order.controller;
 
-import com.akatsuki.pioms.config.Pagination;
 import com.akatsuki.pioms.order.dto.OrderDTO;
 import com.akatsuki.pioms.order.service.AdminOrderFacade;
-import com.akatsuki.pioms.order.aggregate.OrderListVO;
 import com.akatsuki.pioms.order.aggregate.OrderVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -41,73 +39,51 @@ import java.util.List;
 @Tag(name = "Admin Order API" ,description = "관리자 관련 API 명세서입니다.")
 public class AdminOrderController {
     AdminOrderFacade orderFacade;
-
     @Autowired
     public AdminOrderController(AdminOrderFacade orderFacade) {
         this.orderFacade = orderFacade;
     }
 
-    @GetMapping("/orders")
+    @GetMapping("/order/list")
     @Operation(summary = "관리자가 관리하고 있는 모든 가맹점들의 발주 리스트를 조회합니다.")
-    public ResponseEntity<List<OrderVO>> getFranchisesOrderList(@RequestParam(name = "adminCode") int adminCode ,
-                                                                 @RequestParam(defaultValue = "0") int page,
-                                                                 @RequestParam(defaultValue = "20") int size ){
-        List<OrderDTO> orderDTOS = orderFacade.getOrderListByAdminCode(adminCode);
+    public ResponseEntity<List<OrderVO>> getFranchisesOrderList(
+    ){
+        List<OrderDTO> orderDTOS = orderFacade.getOrderListByAdminCode();
         if (orderDTOS.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
-
-        orderDTOS = Pagination.splitPage(orderDTOS, page, size);
         List<OrderVO> orderVOS = new ArrayList<>();
         for (int i = 0; i < orderDTOS.size(); i++) {
             orderVOS.add(new OrderVO(orderDTOS.get(i)));
         }
         return ResponseEntity.ok().body(orderVOS);
     }
-    /**
-     * <h2>모든 가맹점 승인대기 발주 목록 조회</h2>
-     * */
-    @GetMapping("/unchecked-orders")
-    @Operation(summary = "관리자가 관리하는 모든 가맹점들 중 승인 하지 않은 발주 리스틀 조회합니다.")
-    public ResponseEntity<OrderListVO> getFranchisesUncheckedOrderList(@RequestParam(name = "adminCode") int adminCode,
-                                                                       @RequestParam(defaultValue = "0") int page,
-                                                                       @RequestParam(defaultValue = "3") int size ){
-        List<OrderDTO> orderDTO = orderFacade.getAdminUncheckedOrders(adminCode);
-
-        if (orderDTO == null)
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-
-        orderDTO = Pagination.splitPage(orderDTO,page,size);
-        return ResponseEntity.ok().body(new OrderListVO(orderDTO));
-    }
 
     @PutMapping("/order/{orderCode}/accept")
     @Operation(summary = "승인 대기 중인 발주를 승인합니다.")
-    public ResponseEntity<OrderVO> acceptOrder(@RequestParam(name = "adminCode") int adminCode, @PathVariable int orderCode){
-        OrderDTO orderDTO = orderFacade.acceptOrder(adminCode, orderCode);
-        System.out.println("승인 완료");
-        System.out.println("orderDTO = " + orderDTO);
-        if (orderDTO == null){
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
-        }
-        return ResponseEntity.ok().body(new OrderVO(orderDTO));
+    public ResponseEntity<Integer> acceptOrder( @PathVariable int orderCode){
+        int result = orderFacade.accpetOrder(orderCode);
+        if (result==6)
+            return ResponseEntity.ok(result);
+        if(result==0)
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(result);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
     }
 
     @PutMapping("/order/{orderId}/deny")
     @Operation(summary = "승인 대기 중인 발주를 거절합니다.")
-    public ResponseEntity<OrderVO> denyOrder(@RequestParam(name = "adminCode") int adminCode,@PathVariable int orderId, @RequestParam String denyMessage){
-        System.out.println("denyMessage = " + denyMessage);
-        OrderDTO orderDTO = orderFacade.denyOrder(adminCode,orderId,denyMessage);
-        if (orderDTO == null){
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+    public ResponseEntity<Integer> denyOrder(@PathVariable int orderId, @RequestParam String denyMessage){
+        int result = orderFacade.denyOrder(orderId,denyMessage);
+        if (result == 0){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-        return ResponseEntity.ok(new OrderVO(orderDTO));
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/order/{orderCode}")
     @Operation(summary = "발주를 상세 조회합니다.")
-    public ResponseEntity<OrderVO> getOrder(@RequestParam(name = "adminCode") int adminCode, @PathVariable int orderCode){
-        OrderDTO orderDTO = orderFacade.getAdminOrder(adminCode,orderCode);
+    public ResponseEntity<OrderVO> getOrder(@PathVariable int orderCode){
+        OrderDTO orderDTO = orderFacade.getDetailOrderByAdminCode(orderCode);
         if(orderDTO == null){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         }
