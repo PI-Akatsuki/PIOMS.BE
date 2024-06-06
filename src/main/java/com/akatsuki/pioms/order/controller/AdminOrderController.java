@@ -49,8 +49,9 @@ public class AdminOrderController {
     public ResponseEntity<List<OrderVO>> getFranchisesOrderList(
     ){
         List<OrderDTO> orderDTOS = orderFacade.getOrderListByAdminCode();
-        if (orderDTOS.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        if ( orderDTOS==null||orderDTOS.isEmpty()) {
+//            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+            return ResponseEntity.ok(null);
         }
         List<OrderVO> orderVOS = new ArrayList<>();
         for (int i = 0; i < orderDTOS.size(); i++) {
