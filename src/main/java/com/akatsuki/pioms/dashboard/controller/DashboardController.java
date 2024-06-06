@@ -21,7 +21,7 @@ public class DashboardController {
 
     @GetMapping("/admin/rootDashboard")
     public ResponseEntity<ResponseAdminDashBoard> getRootDash(){
-        ResponseAdminDashBoard responseAdminDashBoard = dashboardService.getRootDash();
+        ResponseAdminDashBoard responseAdminDashBoard = dashboardService.getAdminDash();
         return ResponseEntity.ok(responseAdminDashBoard);
     }
     @GetMapping("/admin/adminDashboard")
