@@ -45,7 +45,8 @@ public class AskDTO {
         this.askTitle = ask.getAskTitle();
         this.franchiseOwnerCode = ask.getFranchiseOwner().getFranchiseOwnerCode();
         this.franchiseOwnerName = ask.getFranchiseOwner().getFranchiseOwnerName();
-        this.franchiseName = ask.getFranchiseOwner().getFranchise().getFranchiseName();
+        if (ask.getFranchiseOwner().getFranchise()!=null)
+            this.franchiseName = ask.getFranchiseOwner().getFranchise().getFranchiseName();
         this.adminCode = ask.getAdmin().getAdminCode();
     }
 }
