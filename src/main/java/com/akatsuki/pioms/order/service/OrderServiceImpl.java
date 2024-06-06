@@ -79,7 +79,7 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     @Transactional(readOnly = false)
-    public int postFranchiseOrder(FranchiseDTO franchiseDTO, RequestOrderVO requestOrder){
+    public int postFranchiseOrder(FranchiseDTO franchiseDTO, RequestOrderVO requestOrder, int price){
 
         // 이미 존재하는 발주 있는지 확인
         if (requestOrder.getProducts() == null || requestOrder.getProducts().isEmpty() ||
@@ -89,16 +89,17 @@ public class OrderServiceImpl implements OrderService{
             return 0;
         }
         try {
-            postOrder(franchiseDTO, requestOrder);
+            postOrder(franchiseDTO, requestOrder, price);
             return 1;
         }
         catch (Exception e){
             return -1;
         }
     }
-    private void postOrder(FranchiseDTO franchiseDTO, RequestOrderVO requestOrder) {
+    private void postOrder(FranchiseDTO franchiseDTO, RequestOrderVO requestOrder,int price) {
         Order order = new Order(ORDER_CONDITION.승인대기, franchiseDTO);
-        order.setOrderTotalPrice(requestOrder.getOrderTotalPrice());
+        order.setOrderTotalPrice(price);
+
         Order result = orderRepository.save(order);
         requestOrder.getProducts().forEach((productCode, count) -> {
             orderProductRepository.save(new OrderProduct(count, 0, result, productCode));
@@ -143,15 +144,17 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     @Transactional
-    public boolean putFranchiseOrder(int franchiseOwnerCode, RequestPutOrder requestOrder) {
+    public boolean putFranchiseOrder(int franchiseOwnerCode, RequestPutOrder requestOrder, int price) {
         Order order = orderRepository.findById(requestOrder.getOrderCode())
                 .orElseThrow(() -> new IllegalArgumentException("Order not found"));
         if (order.getFranchise().getFranchiseOwner().getFranchiseOwnerCode() != franchiseOwnerCode) {
             return false;
         }
-        if (order.getOrderCondition() != ORDER_CONDITION.승인대기 && order.getOrderCondition() != ORDER_CONDITION.승인거부 ) {
+        if (order.getOrderCondition() != ORDER_CONDITION.승인대기
+                && order.getOrderCondition() != ORDER_CONDITION.승인거부 ) {
             return false;
         }
+        order.setOrderTotalPrice(price);
         putOrder(requestOrder, order);
         return true;
     }
@@ -162,6 +165,7 @@ public class OrderServiceImpl implements OrderService{
         orderProductRepository.deleteAllByOrderOrderCode(order.getOrderCode());
         // 주문서 상태 업데이트
         order.setOrderCondition(ORDER_CONDITION.승인대기);
+
         // 새로운 상품 리스트 추가
         requestOrder.getProducts().forEach((productCode, count) -> {
             OrderProduct newOrderProduct = new OrderProduct(count, 0, order, productCode);

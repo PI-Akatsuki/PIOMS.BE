@@ -26,6 +26,7 @@ public class OrderStat {
     private int inspectionFinishCnt;
 
     public OrderStat(List<OrderDTO> orders) {
+        if(orders == null) return;
         for (int i = 0; i < orders.size(); i++) {
             ORDER_CONDITION orderCondition = orders.get(i).getOrderCondition();
             if (orderCondition == 승인대기) waitCnt++;
