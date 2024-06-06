@@ -74,7 +74,7 @@ public class AskFranchiseController {
     /**
      * 문의사항 수정
      * */
-    @PutMapping("/update/{askCode}")
+    @PutMapping("/update/ask/{askCode}")
     public ResponseEntity<?> updateAsk(@PathVariable int askCode, @RequestBody AskUpdateDTO askUpdateDTO) {
         try {
             Ask updatedAsk = askService.updateAsk(askCode, askUpdateDTO);
