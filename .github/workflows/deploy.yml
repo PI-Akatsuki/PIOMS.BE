@@ -47,12 +47,12 @@ jobs:
             jwt:
               secret: \${SPRING_JWT_SECRET}
             cloud:
-              gcp:
-                storage:
-                  credentials:
-                    location: \${SPRING_CLOUD_GCP_STORAGE_LOCATION}
-                  project-id: \${SPRING_CLOUD_GCP_STORAGE_PROJECT_ID}
-                  bucket: \${SPRING_CLOUD_GCP_STORAGE_BUCKET}
+              aws:
+                s3:
+                  bucket: \${SPRING_CLOUD_AWS_S3_BUCKET}
+                  region: \${SPRING_CLOUD_AWS_S3_REGION}
+                  access-key: \${AWS_ACCESS_KEY_ID}
+                  secret-key: \${AWS_SECRET_ACCESS_KEY}
             jpa:
               show-sql: false
               database: mysql
@@ -98,9 +98,10 @@ jobs:
           RDS_DB_NAME: ${{ secrets.RDS_DB_NAME }}
           RDS_USERNAME: ${{ secrets.RDS_USERNAME }}
           RDS_PASSWORD: ${{ secrets.RDS_PASSWORD }}
-          SPRING_CLOUD_GCP_STORAGE_LOCATION: ${{ secrets.SPRING_CLOUD_GCP_STORAGE_LOCATION }}
-          SPRING_CLOUD_GCP_STORAGE_PROJECT_ID: ${{ secrets.SPRING_CLOUD_GCP_STORAGE_PROJECT_ID }}
-          SPRING_CLOUD_GCP_STORAGE_BUCKET: ${{ secrets.SPRING_CLOUD_GCP_STORAGE_BUCKET }}
+          SPRING_CLOUD_AWS_S3_BUCKET: ${{ secrets.SPRING_CLOUD_AWS_S3_BUCKET }}
+          SPRING_CLOUD_AWS_S3_REGION: ${{ secrets.SPRING_CLOUD_AWS_S3_REGION }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           SPRING_JWT_SECRET: ${{ secrets.SPRING_JWT_SECRET }}
           REDIS_HOST: ${{ secrets.REDIS_HOST }}
           REDIS_PORT: ${{ secrets.REDIS_PORT }}
