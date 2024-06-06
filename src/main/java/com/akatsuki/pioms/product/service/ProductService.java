@@ -11,10 +11,8 @@ import com.akatsuki.pioms.product.dto.ProductDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -38,7 +36,7 @@ public interface ProductService {
     // 발주 신청 가능 여부 확인
     boolean checkOrderEnable(Map<Integer,Integer> orderProductMap);
 
-    Boolean postProductWithImage(RequestProduct request, MultipartFile image);
+    String postProductWithImage(RequestProduct request, MultipartFile image);
 
     void importExchangeProducts(RequestExchange requestExchange);
 
