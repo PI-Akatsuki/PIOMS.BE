@@ -90,7 +90,7 @@ public class DeliveryDriverServiceImpl implements DeliveryDriverService {
                 .driverName(driverDTO.getDriverName())
                 .driverId(driverDTO.getDriverId())
                 .driverPwd(passwordEncoder.encode(driverDTO.getDriverPwd()))
-                .driverRole(driverDTO.getDriverRole())
+                .driverRole("ROLE_DRIVER")
                 .driverPhone(driverDTO.getDriverPhone())
                 .driverStatus(driverDTO.isDriverStatus())
                 .driverPwdCheckCount(driverDTO.getDriverPwdCheckCount())
