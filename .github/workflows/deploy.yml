@@ -1,4 +1,4 @@
-name: AkatsukiBE
+name: PIOMSBE
 
 permissions:
   contents: read
@@ -184,7 +184,7 @@ jobs:
       - name: Create new Elastic Beanstalk application version
         run: |
           aws elasticbeanstalk create-application-version \
-            --application-name akatsukiBE \
+            --application-name PIOMSBE \
             --version-label github-action-${{steps.current-time.outputs.formattedTime}} \
             --source-bundle S3Bucket=elasticbeanstalk-ap-northeast-2-730335325274,S3Key=deploy/deploy.zip
         env:
@@ -195,7 +195,7 @@ jobs:
       - name: Update Elastic Beanstalk environment
         run: |
           aws elasticbeanstalk update-environment \
-            --environment-name AkatsukiBE-env \
+            --environment-name PIOMSBE-env \
             --version-label github-action-${{steps.current-time.outputs.formattedTime}}
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
