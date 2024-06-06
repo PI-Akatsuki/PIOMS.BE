@@ -44,7 +44,7 @@ public interface OrderService {
     // 가맹점에서 새로운 발주를 생성합니다.
     // 생성을 정상적으로 한 경우 true를 반환합니다.
     // 비정상적인 생성인 경우: 신청한 상품이 본사 창고의 보유량보다 많은 경우. 발주서와 가맹점 코드가 불일치 하는 경우
-    int postFranchiseOrder(FranchiseDTO franchise, RequestOrderVO order);
+    int postFranchiseOrder(FranchiseDTO franchise, RequestOrderVO order,int price);
 
     // 관리자가 승인대기 중인 발주를 승낙하여 결과를 String으로 반환힙니다.
     // 정상적으로 이루어진 경우: 관리자 코드와 주문코드의 관리자 코드가 일치. OrderCondition이 승인대기인 경우
@@ -81,7 +81,7 @@ public interface OrderService {
     // 발주가 정상적으로 생성되면 true, 비정상적인 경우 false를 반환합니다.
     // 정상적으로 이루어진 경우: 발주서와 가맹점 코드가 일치. 발주서 상태가 승인 대기인 경우.
     // 비정상적으로 이루어진 경우: 발주서와 가맹점 코드 불일치. 발주서 상태가 승인 대기가 아닌 경우
-    boolean putFranchiseOrder(int franchiseOwnerCode, RequestPutOrder order);
+    boolean putFranchiseOrder(int franchiseOwnerCode, RequestPutOrder order, int price);
 
     boolean findOrderByExchangeCode(int exchangeCode);
 

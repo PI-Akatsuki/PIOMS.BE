@@ -37,7 +37,7 @@ public class FranchiseOrderController {
         return ResponseEntity.ok().body(result);
     }
 
-    @PutMapping("/order")
+    @PutMapping("/order") // 발주 수정
     public ResponseEntity<String> putFranchiseOrder( @RequestBody RequestPutOrder order){
         boolean result = franchiseOrderFacade.putFranchiseOrder(order);
         if(!result)
