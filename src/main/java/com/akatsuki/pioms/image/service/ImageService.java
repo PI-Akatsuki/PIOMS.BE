@@ -11,6 +11,7 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
+import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.core.sync.RequestBody;
 
 import java.io.IOException;
@@ -46,7 +47,7 @@ public class ImageService {
                 .build();
     }
 
-    public boolean uploadImage(int productCode, MultipartFile file) {
+    public String uploadImage(int productCode, MultipartFile file) {
         try {
             S3Client s3 = createS3Client();
 
@@ -55,15 +56,21 @@ public class ImageService {
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                     .bucket(bucketName)
                     .key(fileName)
+                    .acl(ObjectCannedACL.PUBLIC_READ)  // Public Read 권한 부여
                     .build();
 
             s3.putObject(putObjectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
 
-            Image image = imageRepository.save(new Image(fileName, productCode));
+            String imageUrl = String.format("https://%s.s3.%s.amazonaws.com/%s", bucketName, region, fileName);
+
+            Image image = new Image(imageUrl, productCode);
+            imageRepository.save(image);
+
+            return imageUrl;
         } catch (S3Exception | IOException e) {
-            return false;
+            e.printStackTrace();
+            return null;
         }
-        return true;
     }
 
     public Image getImageByProductCode(int productCode) {
@@ -73,12 +80,12 @@ public class ImageService {
         return images.get(0);
     }
 
-    public void changeImage(int productCode, MultipartFile file) {
+    public String changeImage(int productCode, MultipartFile file) {
         try {
             Image image = imageRepository.findByProductCode(productCode).get(0);
 
             if (image == null) {
-                return;
+                return null;
             }
 
             S3Client s3 = createS3Client();
@@ -88,13 +95,17 @@ public class ImageService {
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                     .bucket(bucketName)
                     .key(fileName)
+                    .acl(ObjectCannedACL.PUBLIC_READ)
                     .build();
 
             s3.putObject(putObjectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
-            image.setUrl(fileName);
+            image.setUrl(String.format("https://%s.s3.%s.amazonaws.com/%s", bucketName, region, fileName));
             imageRepository.save(image);
+
+            return image.getUrl();
         } catch (S3Exception | IOException e) {
-            return;
+            e.printStackTrace();
+            return null;
         }
     }
 }

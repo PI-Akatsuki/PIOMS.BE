@@ -212,7 +212,7 @@ public class ProductServiceImpl implements ProductService {
         System.out.println("Updated Product Count: " + updatedProduct.getProductCount());
 
         // 재고가 5이하로 떨어지면 알림 전송
-        int threshold = 5;
+        int threshold = 100;
         if (updatedProduct.getProductCount() <= threshold) {
             try {
                 sendKakaoAlert(updatedProduct.getProductName(), updatedProduct.getProductCount());
@@ -294,7 +294,7 @@ public class ProductServiceImpl implements ProductService {
         productRepository.save(product);
 
         // 재고가 5이하로 떨어지면 알림 전송
-        int threshold = 5;
+        int threshold = 100;
         if (product.getProductCount() <= threshold) {
             sendKakaoAlert(product.getProductName(), product.getProductCount());
         }
@@ -310,8 +310,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Boolean postProductWithImage(RequestProduct request, MultipartFile image) {
-
+    public String postProductWithImage(RequestProduct request, MultipartFile image) {
 
         ProductDTO productDTO = postProduct2(request, 1);
         return googleImage.uploadImage(productDTO.getProductCode(), image);
