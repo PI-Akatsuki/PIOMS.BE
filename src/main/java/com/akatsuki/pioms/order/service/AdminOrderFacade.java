@@ -68,12 +68,15 @@ public class AdminOrderFacade {
     @Transactional(readOnly = false)
     public int accpetOrder(int orderCode){
         int adminCode= getUserInfo.getAdminCode();
-        System.out.println("adminCode = " + adminCode);
+
         OrderDTO order;
         ExchangeDTO exchangeDTO;
         int success=0;
         try {
             order = orderService.getOrderById(orderCode);
+            if(order.getAdminCode()!=adminCode &&adminCode!=1){
+                throw new Exception("접근 권한 없음");
+            }
             if (order.getOrderCondition() != ORDER_CONDITION.승인대기 ||
                     !productService.checkOrderEnable(convertListToMap(order.getOrderProductList()) ))
                 throw new Exception("승인 대기가 아님");

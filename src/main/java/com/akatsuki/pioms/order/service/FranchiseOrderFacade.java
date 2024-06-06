@@ -53,8 +53,8 @@ public class FranchiseOrderFacade {
                 || orderService.findUnprocessedOrder(franchiseOwnerCode)
         )
             return 0;
-
-        int result = orderService.postFranchiseOrder(franchise,requestOrderVO);
+        int price = productService.getOrderTotalPrice(requestOrderVO.getProducts());
+        int result = orderService.postFranchiseOrder(franchise,requestOrderVO,price);
         return result;
     }
 
@@ -96,12 +96,19 @@ public class FranchiseOrderFacade {
             }
         });
         orderService.putOrderCondition(order.getOrderCode(),ORDER_CONDITION.검수완료);
+
         return true;
     }
 
     public boolean putFranchiseOrder(RequestPutOrder order) {
         int franchiseOwnerCode= getUserInfo.getFranchiseOwnerCode();
-        return orderService.putFranchiseOrder(franchiseOwnerCode,order);
+        if(!productService.checkOrderEnable(order.getProducts()) ){
+            return false;
+        }
+        System.out.println("put order processing..");
+        int price = productService.getOrderTotalPrice(order.getProducts());
+        System.out.println("price = " + price);
+        return orderService.putFranchiseOrder(franchiseOwnerCode,order, price);
     }
 
     public OrderDTO getOrderByFranchiseCode(int orderCode) {

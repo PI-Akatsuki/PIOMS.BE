@@ -12,6 +12,7 @@ import com.akatsuki.pioms.exchange.aggregate.EXCHANGE_PRODUCT_STATUS;
 import com.akatsuki.pioms.exchange.dto.ExchangeProductDTO;
 import com.akatsuki.pioms.log.etc.LogStatus;
 import com.akatsuki.pioms.log.service.LogService;
+import com.akatsuki.pioms.order.aggregate.RequestOrderVO;
 import com.akatsuki.pioms.order.dto.OrderDTO;
 import com.akatsuki.pioms.product.aggregate.ResponseProduct;
 import com.akatsuki.pioms.product.aggregate.ResponseProductWithImage;
@@ -486,5 +487,19 @@ public class ProductServiceImpl implements ProductService {
         List<ProductDTO> productDTOS = new ArrayList<>();
         products.forEach(product -> productDTOS.add(new ProductDTO(product)));
         return productDTOS;
+    }
+
+    @Override
+    public int getOrderTotalPrice(Map<Integer,Integer> requestOrderVO) {
+
+        var ref = new Object() {
+            int totalPrice = 0;
+        };
+        requestOrderVO.forEach((code,cnt)->{
+            ref.totalPrice += productRepository.findById(code).get().getProductPrice()*cnt;
+            System.out.println("ref = " + ref.totalPrice);
+        });
+        System.out.println("ref = " + ref.totalPrice);
+        return ref.totalPrice;
     }
 }

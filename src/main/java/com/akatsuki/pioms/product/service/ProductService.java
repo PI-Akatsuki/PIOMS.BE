@@ -2,6 +2,7 @@ package com.akatsuki.pioms.product.service;
 
 import com.akatsuki.pioms.exchange.aggregate.RequestExchange;
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
+import com.akatsuki.pioms.order.aggregate.RequestOrderVO;
 import com.akatsuki.pioms.order.dto.OrderDTO;
 import com.akatsuki.pioms.product.aggregate.RequestProduct;
 import com.akatsuki.pioms.product.aggregate.ResponseProduct;
@@ -51,4 +52,6 @@ public interface ProductService {
     ResponseEntity<String> updateProductWithImage(int productCode, RequestProduct request);
 
     List<ProductDTO> findNotEnoughProducts();
+
+    int getOrderTotalPrice(Map<Integer,Integer> requestOrderVO);
 }
