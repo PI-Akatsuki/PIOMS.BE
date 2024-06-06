@@ -68,4 +68,7 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
     int findUnprocessedOrder(@Param("franchiseOwnerCode") int franchiseOwnerCode);
 
     List<Order> findAllByFranchiseDeliveryDriverDriverCode(int driverCode);
+
+    @Query("SELECT o FROM Order o ORDER BY o.orderDate DESC")
+    List<Order> findAllDesc();
 }

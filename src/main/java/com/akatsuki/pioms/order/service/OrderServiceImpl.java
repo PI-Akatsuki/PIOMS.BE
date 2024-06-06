@@ -36,7 +36,7 @@ public class OrderServiceImpl implements OrderService{
         List<Order> orderList;
         if (adminCode==1){
             // 루트 관리자는 전부
-            orderList = orderRepository.findAll();
+            orderList = orderRepository.findAllDesc();
         }else
             orderList = orderRepository.findAllByFranchiseAdminAdminCodeOrderByOrderDateDesc(adminCode);
         if (orderList == null || orderList.isEmpty())
