@@ -76,8 +76,12 @@ dependencies {
     implementation 'org.apache.pdfbox:pdfbox:2.0.24'
 
     // Google Cloud
-    implementation 'org.springframework.cloud:spring-cloud-gcp-starter:1.2.5.RELEASE'
-    implementation 'org.springframework.cloud:spring-cloud-gcp-storage:1.2.5.RELEASE'
+//    implementation 'org.springframework.cloud:spring-cloud-gcp-starter:1.2.5.RELEASE'
+//    implementation 'org.springframework.cloud:spring-cloud-gcp-storage:1.2.5.RELEASE'
+
+    // S3
+    implementation 'software.amazon.awssdk:s3:2.17.89'
+
 }
 
 tasks.named('test') {
