@@ -75,7 +75,7 @@ public class AdminProductController {
     @PostMapping("/image")
     @Operation(summary = "상품 이미지 등록", description = "상품 이미지 등록 기능")
     public ResponseEntity<Boolean> postImage(RequestProduct request) {
-        Boolean result = productService.postProductWithImage(request, request.getFile());
+        Boolean result = Boolean.valueOf(productService.postProductWithImage(request, request.getFile()));
         return ResponseEntity.ok(result);
     }
 
