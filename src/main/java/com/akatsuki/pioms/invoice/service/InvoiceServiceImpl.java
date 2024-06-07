@@ -1,6 +1,7 @@
 package com.akatsuki.pioms.invoice.service;
 
 
+import com.akatsuki.pioms.config.GetUserInfo;
 import com.akatsuki.pioms.exchange.service.ExchangeService;
 import com.akatsuki.pioms.franchise.aggregate.DELIVERY_DATE;
 import com.akatsuki.pioms.franchise.dto.FranchiseDTO;
@@ -31,14 +32,16 @@ public class InvoiceServiceImpl implements InvoiceService {
     final private FranchiseService franchiseService;
     final private OrderService orderService;
     final private ExchangeService exchangeService;
+    final private GetUserInfo getUserInfo;
 
 
     @Autowired
-    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, FranchiseService franchiseService, OrderService orderService, ExchangeService exchangeService) {
+    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, FranchiseService franchiseService, OrderService orderService, ExchangeService exchangeService, GetUserInfo getUserInfo) {
         this.invoiceRepository = invoiceRepository;
         this.franchiseService = franchiseService;
         this.orderService = orderService;
         this.exchangeService = exchangeService;
+        this.getUserInfo = getUserInfo;
     }
 
     public LocalDateTime setDeliveryTime(LocalDateTime orderTime, DELIVERY_DATE deliveryDate){
@@ -86,13 +89,14 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 
     @Override
-    public List<InvoiceDTO> getAdminInvoiceList(int adminCode) {
+    public List<InvoiceDTO> getAdminInvoiceList() {
+        int adminCode = getUserInfo.getAdminCode();
         List<Invoice> invoices;
 
         if (adminCode==1)
-            invoices = invoiceRepository.findAll();
+            invoices = invoiceRepository.findAllByOrderDesc();
         else
-            invoices = invoiceRepository.findAllByOrderFranchiseAdminAdminCode(adminCode);
+            invoices = invoiceRepository.findAllByOrderFranchiseAdminAdminCodeOrderByInvoiceDateDesc(adminCode);
 
         List<InvoiceDTO> invoiceDTOS= new ArrayList<>();
         for (int i = 0; i < invoices.size(); i++) {

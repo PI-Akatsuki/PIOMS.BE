@@ -29,8 +29,8 @@ public class AdminInvoiceController {
 
     @GetMapping("/invoice/list")
     @Operation(summary = "모든 가맹점의 송장 조회",description = "관리자가 관리하는 모든 가맹점의 송장들을 조회합니다.")
-    public ResponseEntity<ResponseInvoiceList> getInvoiceList(@RequestParam int adminCode){
-        List<InvoiceDTO> invoiceList = invoiceService.getAdminInvoiceList(adminCode);
+    public ResponseEntity<ResponseInvoiceList> getInvoiceList(){
+        List<InvoiceDTO> invoiceList = invoiceService.getAdminInvoiceList();
         if (invoiceList.isEmpty()){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
