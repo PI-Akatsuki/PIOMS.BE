@@ -11,6 +11,7 @@
 //import org.junit.jupiter.api.Test;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.boot.test.context.SpringBootTest;
+//import org.springframework.boot.test.mock.mockito.MockBean;
 //import org.springframework.http.ResponseEntity;
 //
 //import java.time.LocalDateTime;
@@ -26,13 +27,10 @@
 //    @Autowired
 //    private CategoryFirstService categoryFirstService;
 //
-//    @Autowired
+//    @MockBean
 //    private CategoryFirstRepository categoryFirstRepository;
 //
 //    private CategoryFirst categoryFirst;
-//    private Admin admin;
-//
-//    static RequestCategoryFirst request;
 //
 //
 //    @BeforeEach
@@ -72,7 +70,7 @@
 //        requestCategory.setCategoryFirstCode(20);
 //        requestCategory.setCategoryFirstName("test");
 //
-//        ResponseEntity<String> postCategory = categoryFirstService.postCategoryFirst(requestCategory, 1);
+//        ResponseEntity<String> postCategory = categoryFirstService.postCategoryFirst(requestCategory);
 //        System.out.println("postCategory = " + postCategory);
 //
 //        assertNotNull(postCategory);
@@ -86,7 +84,7 @@
 //        RequestCategoryFirst requestCategory = new RequestCategoryFirst();
 //        requestCategory.setCategoryFirstName("test22");
 //
-//        ResponseEntity<String> updateCategory = categoryFirstService.updateCategoryFirst(1, requestCategory,1);
+//        ResponseEntity<String> updateCategory = categoryFirstService.updateCategoryFirst(1, requestCategory);
 //        System.out.println("updateCategory = " + updateCategory);
 //
 //        assertNotNull(updateCategory);
