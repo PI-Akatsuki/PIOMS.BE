@@ -211,7 +211,7 @@ public class ProductServiceImpl implements ProductService {
         System.out.println("Old Product Count: " + oldProductCount);
         System.out.println("Updated Product Count: " + updatedProduct.getProductCount());
 
-        // 재고가 5이하로 떨어지면 알림 전송
+        // 재고가 100이하로 떨어지면 알림 전송
         int threshold = 100;
         if (updatedProduct.getProductCount() <= threshold) {
             try {
@@ -293,7 +293,7 @@ public class ProductServiceImpl implements ProductService {
         product.setProductCount(product.getProductCount() - requestProduct);
         productRepository.save(product);
 
-        // 재고가 5이하로 떨어지면 알림 전송
+        // 재고가 100하로 떨어지면 알림 전송
         int threshold = 100;
         if (product.getProductCount() <= threshold) {
             sendKakaoAlert(product.getProductName(), product.getProductCount());
@@ -463,8 +463,8 @@ public class ProductServiceImpl implements ProductService {
         System.out.println("Old Product Count: " + oldProductCount);
         System.out.println("Updated Product Count: " + updatedProduct.getProductCount());
 
-        // 재고가 5이하로 떨어지면 알림 전송
-        int threshold = 5;
+        // 재고가 100이하로 떨어지면 알림 전송
+        int threshold = 100;
         if (updatedProduct.getProductCount() < threshold) {
             try {
                 sendKakaoAlert(updatedProduct.getProductName(), updatedProduct.getProductCount());

@@ -104,7 +104,7 @@ public class SecurityConfig {
                                         "/admin/exceldownload/**",
                                         "/admin/adminDashboard").hasRole("ADMIN")
                                 .requestMatchers("/admin/**").hasRole("ROOT")
-                                .requestMatchers("/franchise/**").hasAnyRole("OWNER")
+                                .requestMatchers("/franchise/**").hasRole("OWNER")
                                 .requestMatchers("/driver/**").hasRole("DRIVER")
                                 .anyRequest().authenticated()
                 )
