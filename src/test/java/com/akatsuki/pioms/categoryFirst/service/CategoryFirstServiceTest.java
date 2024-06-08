@@ -5,6 +5,7 @@ import com.akatsuki.pioms.categoryFirst.dto.CategoryFirstCreateDTO;
 import com.akatsuki.pioms.categoryFirst.dto.CategoryFirstDTO;
 import com.akatsuki.pioms.categoryFirst.dto.CategoryFirstUpdateDTO;
 import com.akatsuki.pioms.categoryFirst.repository.CategoryFirstRepository;
+import com.akatsuki.pioms.config.MockRedisConfig;
 import com.akatsuki.pioms.log.etc.LogStatus;
 import com.akatsuki.pioms.log.service.LogServiceImpl;
 import jakarta.transaction.Transactional;
@@ -14,8 +15,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +31,9 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
+@ActiveProfiles("test")
+@TestPropertySource(locations = "classpath:application-test.yml")
+@Import(MockRedisConfig.class)
 @Transactional
 class CategoryFirstServiceTest {
 
