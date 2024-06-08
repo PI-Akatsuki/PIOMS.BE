@@ -14,13 +14,19 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.test.context.support.WithMockUser;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @Transactional
@@ -41,6 +47,7 @@ class CategoryFirstServiceTest {
     @BeforeEach
     void init() {
         categoryFirst = new CategoryFirst(1) ;
+        categoryFirstRepository.save(categoryFirst);
     }
 
     @Test
@@ -81,32 +88,57 @@ class CategoryFirstServiceTest {
     @Test
     @DisplayName("카테고리(대) 수정")
     @WithMockUser(username = "root", roles = {"ROOT"})
-    void modifyCategoryFirst() throws Exception{
+    void modifyCategoryFirst() throws Exception {
         // Given
         int categoryFirstCode = categoryFirst.getCategoryFirstCode();
         CategoryFirstUpdateDTO categoryFirstUpdateDTO = new CategoryFirstUpdateDTO();
         categoryFirstUpdateDTO.setCategoryFirstName("Test updatedName");
 
+        when(categoryFirstRepository.findById(anyInt())).thenReturn(Optional.of(categoryFirst));
+        when(categoryFirstRepository.save(any(CategoryFirst.class))).thenReturn(categoryFirst);
+
         // When
         CategoryFirst result = categoryFirstService.modifyCategoryFirst(categoryFirstCode, categoryFirstUpdateDTO);
-        logService.saveLog("root", LogStatus.수정,categoryFirst.getCategoryFirstName(),"CategoryFirst");
 
+        // Verify logService call
+        logService.saveLog("root", LogStatus.수정, result.getCategoryFirstName(), "CategoryFirst");
+
+        // Then
         assertNotNull(result);
-        assertEquals("updatedName", result.getCategoryFirstName());
+        assertEquals("Test updatedName", result.getCategoryFirstName());
     }
+//        // Given
+//        int categoryFirstCode = categoryFirst.getCategoryFirstCode();
+//        CategoryFirstUpdateDTO categoryFirstUpdateDTO = new CategoryFirstUpdateDTO();
+//        categoryFirstUpdateDTO.setCategoryFirstName("Test updatedName");
+//
+//        // When
+//        CategoryFirst result = categoryFirstService.modifyCategoryFirst(categoryFirstCode, categoryFirstUpdateDTO);
+//        logService.saveLog("root", LogStatus.수정,categoryFirst.getCategoryFirstName(),"CategoryFirst");
+//
+//        assertNotNull(result);
+//        assertEquals("updatedName", result.getCategoryFirstName());
 
+    @Test
+    @DisplayName("카테고리(대) 삭제")
+    @WithMockUser(username = "root", roles = {"ROOT"})
+    void deleteCategoryFirst() throws Exception {
+        // Given
+        int categoryFirstCode = categoryFirst.getCategoryFirstCode();
 
+        // Mocking findById to return the categoryFirst
+        when(categoryFirstRepository.findById(anyInt())).thenReturn(Optional.of(categoryFirst));
 
-//    void updateCategoryFirst() {
-//
-//        RequestCategoryFirst requestCategory = new RequestCategoryFirst();
-//        requestCategory.setCategoryFirstName("test22");
-//
-//        ResponseEntity<String> updateCategory = categoryFirstService.updateCategoryFirst(1, requestCategory);
-//        System.out.println("updateCategory = " + updateCategory);
-//
-//        assertNotNull(updateCategory);
-//        assertEquals("카테고리(대) 수정 완료!", updateCategory.getBody());
-//
-//    }
+        // Mocking the delete method
+        doNothing().when(categoryFirstRepository).delete(any(CategoryFirst.class));
+
+        // When
+        ResponseEntity<String> response = categoryFirstService.deleteCategoryFirst(categoryFirstCode);
+        logService.saveLog("root", LogStatus.삭제,categoryFirst.getCategoryFirstName(),"CategoryFirst");
+
+        // Then
+        assertNotNull(response);
+        assertEquals("카테고리 소분류 삭제 완료", response.getBody());
+
+    }
 }

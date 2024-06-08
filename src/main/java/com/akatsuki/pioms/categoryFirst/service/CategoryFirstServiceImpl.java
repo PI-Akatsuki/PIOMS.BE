@@ -128,7 +128,7 @@ public class CategoryFirstServiceImpl implements CategoryFirstService {
     @Override
     public CategoryFirst modifyCategoryFirst(int categoryFirstCode, CategoryFirstUpdateDTO categoryFirstUpdateDTO) {
         CategoryFirst categoryFirst = categoryFirstRepository.findById(categoryFirstCode).
-                orElseThrow(() -> new RuntimeException("CategoryFirst not found with id: " + categoryFirstCode));
+                orElseThrow(() -> new EntityNotFoundException("CategoryFirst not found with id: " + categoryFirstCode));
 
         categoryFirst.setCategoryFirstName(categoryFirstUpdateDTO.getCategoryFirstName());
         categoryFirstRepository.save(categoryFirst);
