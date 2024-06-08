@@ -117,7 +117,6 @@ class OrderServiceImplTest {
         ExchangeDTO exchangeDTO = new ExchangeDTO();
         exchangeDTO.setExchangeCode(200);
 
-        Order order = new Order();
         when(orderRepository.findById(orderCode)).thenReturn(Optional.of(order));
         when(orderRepository.save(any(Order.class))).thenReturn(order);
         //when
@@ -144,4 +143,20 @@ class OrderServiceImplTest {
     }
 
 
+    @Test
+    void testDenyOrder_Success() {
+        //given
+        int adminCode = 1;
+        int orderCode = 100;
+        ExchangeDTO exchangeDTO = new ExchangeDTO();
+        exchangeDTO.setExchangeCode(200);
+
+        when(orderRepository.findById(orderCode)).thenReturn(Optional.of(order));
+        //when
+        int result = orderService.denyOrder(adminCode, orderCode, "denied");
+        //then
+        assertNotNull(result);
+    }
+
+    
 }
