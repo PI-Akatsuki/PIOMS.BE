@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class OrderServiceImpl implements OrderService{
@@ -31,34 +32,40 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     @Transactional(readOnly = true)
-    public List<OrderDTO> getOrderListByAdminCode(int adminCode){
-
+    public List<OrderDTO> getOrderListByAdminCode(int adminCode) {
         List<Order> orderList;
-        if (adminCode==1){
+        if (adminCode == 1) {
             // 루트 관리자는 전부
             orderList = orderRepository.findAllDesc();
-        }else
+            System.out.println("find all orderList = " + orderList);
+        } else {
             orderList = orderRepository.findAllByFranchiseAdminAdminCodeOrderByOrderDateDesc(adminCode);
-        if (orderList == null || orderList.isEmpty())
+        }
+        System.out.println("orderList = " + orderList);
+        if (orderList == null || orderList.isEmpty()) {
             return null;
+        }
         List<OrderDTO> orderDTOList = new ArrayList<>();
-        orderList.forEach(order-> {
+        for (Order order : orderList) {
             orderDTOList.add(new OrderDTO(order));
-        });
+        }
         return orderDTOList;
     }
 
+
     @Override
     @Transactional(readOnly = false)
-    public OrderDTO acceptOrder(int adminCode,int orderCode, ExchangeDTO exchange) {
-        Order order = orderRepository.findById(orderCode).orElseThrow();
+    public OrderDTO acceptOrder(int adminCode, int orderCode, ExchangeDTO exchange) {
+        Order order = orderRepository.findById(orderCode)
+                .orElseThrow(() -> new IllegalArgumentException("Order not found with code: " + orderCode));
         order.setOrderCondition(ORDER_CONDITION.승인완료);
-        if (exchange!=null) {
+        if (exchange != null) {
             Exchange exchange1 = new Exchange();
             exchange1.setExchangeCode(exchange.getExchangeCode());
             order.setExchange(exchange1);
         }
-        order=orderRepository.save(order);
+        order = orderRepository.save(order);
+        System.out.println("order = " + order);
         return new OrderDTO(order);
     }
 

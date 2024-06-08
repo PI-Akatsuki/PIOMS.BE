@@ -5,6 +5,7 @@
 //import com.akatsuki.pioms.exchange.repository.ExchangeRepository;
 //import com.akatsuki.pioms.exchange.service.ExchangeService;
 //import com.akatsuki.pioms.franchise.aggregate.Franchise;
+//import com.akatsuki.pioms.franchise.dto.FranchiseDTO;
 //import com.akatsuki.pioms.franchise.service.FranchiseService;
 //import com.akatsuki.pioms.frwarehouse.dto.FranchiseWarehouseDTO;
 //import com.akatsuki.pioms.frwarehouse.service.FranchiseWarehouseService;
@@ -69,7 +70,7 @@
 //        // 1. 초기 설정
 //        int adminCode = 1;
 //        int franchiseCode = 1;
-//        Franchise franchise = franchiseService.findFranchiseById(franchiseCode).orElseThrow();
+//        FranchiseDTO franchise = franchiseService.findFranchiseById(franchiseCode).orElseThrow();
 //
 //        List<ExchangeProductVO> exchangeProductVOS = Stream.of(
 //                new ExchangeProductVO(1, 1, EXCHANGE_PRODUCT_STATUS.교환),
