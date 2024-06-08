@@ -24,8 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -96,27 +95,23 @@ class OrderServiceImplTest {
 
     @Test
     void testGetOrderListByAdminCode() {
+        //given
         List<Order> orderList = new ArrayList<>();
         orderList.add(order);
-
-        // Mock 설정
         when(orderRepository.findAllDesc()).thenReturn(orderList);
-
-        // Mock 설정 후 출력 확인
         List<Order> mockOrderList = orderRepository.findAllDesc();
         System.out.println("Mock 설정 후 orderRepository.findAllDesc() = " + mockOrderList);
-
-        // 서비스 호출
+        //when
         List<OrderDTO> orders = orderService.getOrderListByAdminCode(1);
-
-        // 검증
+        //then
         assertNotNull(orders);
         assertEquals(1, orders.size());
         verify(orderRepository, times(2)).findAllDesc();
     }
 
     @Test
-    void testAcceptOrder() {
+    void testAcceptOrder_Success() {
+        //given
         int adminCode = 1;
         int orderCode = 100;
         ExchangeDTO exchangeDTO = new ExchangeDTO();
@@ -125,14 +120,28 @@ class OrderServiceImplTest {
         Order order = new Order();
         when(orderRepository.findById(orderCode)).thenReturn(Optional.of(order));
         when(orderRepository.save(any(Order.class))).thenReturn(order);
-
+        //when
         OrderDTO result = orderService.acceptOrder(adminCode, orderCode, exchangeDTO);
-
+        //then
         assertNotNull(result);
         assertEquals(ORDER_CONDITION.승인완료, order.getOrderCondition());
         assertEquals(200, order.getExchange().getExchangeCode());
     }
 
+    @Test
+    void testAcceptOrder_OrderNotFound() {
+        //given
+        int adminCode = 1;
+        int orderCode = 100;
+        ExchangeDTO exchangeDTO = new ExchangeDTO();
+        exchangeDTO.setExchangeCode(200);
+        when(orderRepository.findById(orderCode)).thenReturn(Optional.empty());
+        // when
+        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+                orderService.acceptOrder(adminCode, orderCode, exchangeDTO));
+        //then
+        assertEquals("Order not found with code: 100", exception.getMessage());
+    }
 
 
 }

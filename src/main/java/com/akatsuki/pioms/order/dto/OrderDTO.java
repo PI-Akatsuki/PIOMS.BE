@@ -61,16 +61,18 @@ public class OrderDTO {
         this.orderTotalPrice= order.getOrderTotalPrice();
         this.orderCondition= order.getOrderCondition();
         this.orderReason= order.getOrderReason();
-        this.franchiseCode= order.getFranchise().getFranchiseCode();
-        this.franchiseName= order.getFranchise().getFranchiseName();
-        this.deliveryDate= order.getFranchise().getFranchiseDeliveryDate();
-        this.franchiseOwnerCode = order.getFranchise().getFranchiseOwner().getFranchiseOwnerCode();
-        this.franchiseOwnerName = order.getFranchise().getFranchiseOwner().getFranchiseOwnerName();
-        this.franchiseAddress = order.getFranchise().getFranchiseAddress();
-        this.franchiseOwnerPhone = order.getFranchise().getFranchiseOwner().getFranchiseOwnerPhone();
-        this.AdminCode= order.getFranchise().getAdmin().getAdminCode();
-        this.AdminName= order.getFranchise().getAdmin().getAdminName();
-        this.adminPhone = order.getFranchise().getAdmin().getAdminPhone();
+        if (order.getFranchise()!=null) {
+            this.franchiseCode = order.getFranchise().getFranchiseCode();
+            this.franchiseName = order.getFranchise().getFranchiseName();
+            this.deliveryDate = order.getFranchise().getFranchiseDeliveryDate();
+            this.franchiseOwnerCode = order.getFranchise().getFranchiseOwner().getFranchiseOwnerCode();
+            this.franchiseOwnerName = order.getFranchise().getFranchiseOwner().getFranchiseOwnerName();
+            this.franchiseAddress = order.getFranchise().getFranchiseAddress();
+            this.franchiseOwnerPhone = order.getFranchise().getFranchiseOwner().getFranchiseOwnerPhone();
+            this.AdminCode = order.getFranchise().getAdmin().getAdminCode();
+            this.AdminName = order.getFranchise().getAdmin().getAdminName();
+            this.adminPhone = order.getFranchise().getAdmin().getAdminPhone();
+        }
         if (order.getExchange()!=null) {
             this.exchange = new ExchangeDTO(order.getExchange());
         }
