@@ -131,7 +131,7 @@ class CategoryThirdServiceTest {
 
         doNothing().when(categoryThirdRepository).delete(any(CategoryThird.class));
 
-        // Then
+        // When
         ResponseEntity<String> response = categoryThirdService.deleteCategoryThird(categoryThirdCode);
         logService.saveLog("root", LogStatus.삭제,categoryThird.getCategoryThirdName(),"CategoryThird");
 
