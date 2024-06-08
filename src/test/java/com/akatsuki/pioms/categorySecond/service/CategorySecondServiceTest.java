@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +24,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -109,6 +111,26 @@ class CategorySecondServiceTest {
         // Then
         assertNotNull(result);
         assertEquals("Test updatedName", result.getCategorySecondName());
+    }
+
+    @Test
+    @DisplayName("카테고리(중) 삭제")
+    @WithMockUser(username = "root", roles = {"ROOT"})
+    void deleteCategorySecond() throws Exception {
+        // Given
+        int categorySecondCode = categorySecond.getCategorySecondCode();
+
+        when(categorySecondRepository.findById(anyInt())).thenReturn(Optional.of(categorySecond));
+
+        doNothing().when(categorySecondRepository).delete(any(CategorySecond.class));
+
+        // When
+        ResponseEntity<String> response = categorySecondService.deleteCategorySecond(categorySecondCode);
+        logService.saveLog("root", LogStatus.삭제,categorySecond.getCategorySecondName(),"CategorySecond");
+
+        // Then
+        assertNotNull(response);
+        assertEquals("카테고리(중) 삭제 완료", response.getBody());
     }
 }
 //    @Test
