@@ -162,12 +162,22 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
 
     @Override
     public CategoryThirdDTO createCategoryThird(CategoryThirdCreateDTO categoryThirdCreateDTO) {
-        return null;
+        CategoryThird categoryThird = new CategoryThird();
+        categoryThird.setCategoryThirdName(categoryThirdCreateDTO.getCategoryThirdName());
+        categoryThirdRepository.save(categoryThird);
+        logService.saveLog("root", LogStatus.등록, categoryThird.getCategoryThirdName(), "CategoryThird");
+        return new CategoryThirdDTO(categoryThird);
     }
 
     @Override
     public CategoryThird modifyCategoryThird(int categoryThirdCode, CategoryThirdUpdateDTO categoryThirdUpdateDTO) {
-        return null;
+        CategoryThird categoryThird = categoryThirdRepository.findById(categoryThirdCode)
+                .orElseThrow(() -> new EntityNotFoundException("CategoryThird not found with id: " + categoryThirdCode));
+
+        categoryThird.setCategoryThirdName(categoryThirdUpdateDTO.getCategoryThirdName());
+        categoryThirdRepository.save(categoryThird);
+        logService.saveLog("root", LogStatus.수정,categoryThird.getCategoryThirdName(),"CategoryThird");
+        return categoryThirdRepository.save(categoryThird);
     }
 
 }
