@@ -136,20 +136,25 @@ class ProductServiceTest {
     }
 
     @Test
-    @DisplayName("상품 삭제")
+    @DisplayName("상품 노출 상태 변경")
     @WithMockUser(username = "root", roles = {"ROOT"})
     void deleteProduct() throws Exception {
         // Given
-        int productCode = product.getProductCode();
+        int productCode = 123;
+        Product product = new Product();
+        product.setProductCode(productCode);
+        product.setProductName("Test Product");
+        product.setProductExposureStatus(true);
 
         when(productRepository.findById(anyInt())).thenReturn(Optional.of(product));
-
-        doNothing().when(productRepository).delete(any(Product.class));
+        doNothing().when(logService).saveLog(any(String.class), any(LogStatus.class), any(String.class), any(String.class));
 
         // When
         ResponseEntity<String> response = productService.deleteProduct(productCode);
-        logService.saveLog("root", LogStatus.삭제, productName, "Product");
 
+        // Then
+        assertNotNull(response);
+        assertEquals("상품의 노출상태가 미노출로 변경되었습니다.", response.getBody());
     }
 }
 //    @Test
