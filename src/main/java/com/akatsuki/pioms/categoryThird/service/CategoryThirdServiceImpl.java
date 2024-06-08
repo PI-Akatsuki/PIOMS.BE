@@ -7,7 +7,9 @@ import com.akatsuki.pioms.categorySecond.repository.CategorySecondRepository;
 import com.akatsuki.pioms.categoryThird.aggregate.CategoryThird;
 import com.akatsuki.pioms.categoryThird.aggregate.RequestCategoryThird;
 import com.akatsuki.pioms.categoryThird.aggregate.ResponseCategoryThird;
+import com.akatsuki.pioms.categoryThird.dto.CategoryThirdCreateDTO;
 import com.akatsuki.pioms.categoryThird.dto.CategoryThirdDTO;
+import com.akatsuki.pioms.categoryThird.dto.CategoryThirdUpdateDTO;
 import com.akatsuki.pioms.categoryThird.repository.CategoryThirdRepository;
 import com.akatsuki.pioms.log.etc.LogStatus;
 import com.akatsuki.pioms.log.service.LogService;
@@ -156,6 +158,16 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
             responseCategoryThirds.add(new ResponseCategoryThird(categoryThird));
         });
         return responseCategoryThirds;
+    }
+
+    @Override
+    public CategoryThirdDTO createCategoryThird(CategoryThirdCreateDTO categoryThirdCreateDTO) {
+        return null;
+    }
+
+    @Override
+    public CategoryThird modifyCategoryThird(int categoryThirdCode, CategoryThirdUpdateDTO categoryThirdUpdateDTO) {
+        return null;
     }
 
 }
