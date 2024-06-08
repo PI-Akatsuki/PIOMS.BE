@@ -4,7 +4,9 @@ import com.akatsuki.pioms.admin.aggregate.Admin;
 import com.akatsuki.pioms.admin.repository.AdminRepository;
 import com.akatsuki.pioms.categoryFirst.aggregate.CategoryFirst;
 import com.akatsuki.pioms.categoryFirst.aggregate.ResponseCategoryFirst;
+import com.akatsuki.pioms.categoryFirst.dto.CategoryFirstCreateDTO;
 import com.akatsuki.pioms.categoryFirst.dto.CategoryFirstDTO;
+import com.akatsuki.pioms.categoryFirst.dto.CategoryFirstUpdateDTO;
 import com.akatsuki.pioms.categoryFirst.repository.CategoryFirstRepository;
 import com.akatsuki.pioms.categoryFirst.aggregate.RequestCategoryFirst;
 import com.akatsuki.pioms.log.etc.LogStatus;
@@ -112,5 +114,26 @@ public class CategoryFirstServiceImpl implements CategoryFirstService {
         categoryFirstRepository.delete(categoryFirst);
         logService.saveLog("root", LogStatus.삭제,categoryFirst.getCategoryFirstName(),"CategoryFirst");
         return ResponseEntity.badRequest().body("카테고리 소분류 삭제 완료");
+    }
+
+    @Override
+    public CategoryFirstDTO createCategoryFirst(CategoryFirstCreateDTO categoryFirstCreateDTO) {
+        CategoryFirst categoryFirst = new CategoryFirst();
+        categoryFirst.setCategoryFirstName(categoryFirstCreateDTO.getCategoryFirstName());
+        categoryFirstRepository.save(categoryFirst);
+        logService.saveLog("root", LogStatus.등록,categoryFirst.getCategoryFirstName(),"CategoryFirst");
+        return new CategoryFirstDTO(categoryFirst);
+    }
+
+    @Override
+    public CategoryFirst modifyCategoryFirst(int categoryFirstCode, CategoryFirstUpdateDTO categoryFirstUpdateDTO) {
+        CategoryFirst categoryFirst = categoryFirstRepository.findById(categoryFirstCode).
+                orElseThrow(() -> new RuntimeException("CategoryFirst not found with id: " + categoryFirstCode));
+
+        categoryFirst.setCategoryFirstName(categoryFirstUpdateDTO.getCategoryFirstName());
+        categoryFirstRepository.save(categoryFirst);
+
+        logService.saveLog("root", LogStatus.수정,categoryFirst.getCategoryFirstName(),"CategoryFirst");
+        return categoryFirstRepository.save(categoryFirst);
     }
 }

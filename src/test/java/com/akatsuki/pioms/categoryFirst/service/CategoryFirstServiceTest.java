@@ -1,9 +1,11 @@
 package com.akatsuki.pioms.categoryFirst.service;
 
 import com.akatsuki.pioms.categoryFirst.aggregate.CategoryFirst;
-import com.akatsuki.pioms.categoryFirst.aggregate.RequestCategoryFirst;
+import com.akatsuki.pioms.categoryFirst.dto.CategoryFirstCreateDTO;
 import com.akatsuki.pioms.categoryFirst.dto.CategoryFirstDTO;
+import com.akatsuki.pioms.categoryFirst.dto.CategoryFirstUpdateDTO;
 import com.akatsuki.pioms.categoryFirst.repository.CategoryFirstRepository;
+import com.akatsuki.pioms.log.etc.LogStatus;
 import com.akatsuki.pioms.log.service.LogServiceImpl;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.test.context.support.WithMockUser;
 
 import java.time.LocalDateTime;
@@ -39,13 +40,7 @@ class CategoryFirstServiceTest {
 
     @BeforeEach
     void init() {
-        categoryFirst = new CategoryFirst();
-        categoryFirst.setCategoryFirstCode(10);
-        categoryFirst.setCategoryFirstName("test");
-        categoryFirst.setCategoryFirstEnrollDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-        categoryFirst.setCategoryFirstUpdateDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-
-        categoryFirstRepository.save(categoryFirst);
+        categoryFirst = new CategoryFirst(1) ;
     }
 
     @Test
@@ -70,30 +65,48 @@ class CategoryFirstServiceTest {
     @Test
     @DisplayName("카테고리(대) 신규 등록")
     @WithMockUser(username = "root", roles = {"ROOT"})
-    void postCategoryFirst() {
-        RequestCategoryFirst requestCategory = new RequestCategoryFirst();
-        requestCategory.setCategoryFirstCode(20);
-        requestCategory.setCategoryFirstName("test");
+    void createCategoryFirst() {
+        // Given
+        CategoryFirstCreateDTO categoryFirstCreateDTO = new CategoryFirstCreateDTO();
+        categoryFirstCreateDTO.setCategoryFirstName("Test Name");
 
-        ResponseEntity<String> postCategory = categoryFirstService.postCategoryFirst(requestCategory);
-        System.out.println("postCategory = " + postCategory);
-
-        assertNotNull(postCategory);
-        assertEquals("카테고리(대) 생성 완료!", postCategory.getBody());
+        // When
+        CategoryFirstDTO result = categoryFirstService.createCategoryFirst(categoryFirstCreateDTO);
+        logService.saveLog("root", LogStatus.등록,categoryFirst.getCategoryFirstName(),"CategoryFirst");
+        // Then
+        assertNotNull(result);
+        assertEquals("Test Name", result.getCategoryFirstName());
     }
 
     @Test
     @DisplayName("카테고리(대) 수정")
-    void updateCategoryFirst() {
+    @WithMockUser(username = "root", roles = {"ROOT"})
+    void modifyCategoryFirst() throws Exception{
+        // Given
+        int categoryFirstCode = categoryFirst.getCategoryFirstCode();
+        CategoryFirstUpdateDTO categoryFirstUpdateDTO = new CategoryFirstUpdateDTO();
+        categoryFirstUpdateDTO.setCategoryFirstName("Test updatedName");
 
-        RequestCategoryFirst requestCategory = new RequestCategoryFirst();
-        requestCategory.setCategoryFirstName("test22");
+        // When
+        CategoryFirst result = categoryFirstService.modifyCategoryFirst(categoryFirstCode, categoryFirstUpdateDTO);
+        logService.saveLog("root", LogStatus.수정,categoryFirst.getCategoryFirstName(),"CategoryFirst");
 
-        ResponseEntity<String> updateCategory = categoryFirstService.updateCategoryFirst(1, requestCategory);
-        System.out.println("updateCategory = " + updateCategory);
-
-        assertNotNull(updateCategory);
-        assertEquals("카테고리(대) 수정 완료!", updateCategory.getBody());
-
+        assertNotNull(result);
+        assertEquals("updatedName", result.getCategoryFirstName());
     }
+
+
+
+//    void updateCategoryFirst() {
+//
+//        RequestCategoryFirst requestCategory = new RequestCategoryFirst();
+//        requestCategory.setCategoryFirstName("test22");
+//
+//        ResponseEntity<String> updateCategory = categoryFirstService.updateCategoryFirst(1, requestCategory);
+//        System.out.println("updateCategory = " + updateCategory);
+//
+//        assertNotNull(updateCategory);
+//        assertEquals("카테고리(대) 수정 완료!", updateCategory.getBody());
+//
+//    }
 }
