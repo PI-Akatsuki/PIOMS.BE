@@ -147,7 +147,7 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         logService.saveLog(username, LogStatus.삭제,categoryThird.getCategoryThirdName(),"CategoryThird");
-        return ResponseEntity.badRequest().body("해당 카테고리(소) 카테고리가 성공적으로 삭제되었습니다!");
+        return ResponseEntity.badRequest().body("카테고리(소) 삭제 완료");
     }
 
     @Override

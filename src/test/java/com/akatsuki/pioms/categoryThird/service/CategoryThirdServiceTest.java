@@ -27,6 +27,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -115,6 +116,26 @@ class CategoryThirdServiceTest {
         assertEquals("Test updatedName", result.getCategoryThirdName());
     }
 
+    @Test
+    @DisplayName("카테고리(소) 삭제")
+    @WithMockUser(username = "root", roles = {"ROOT"})
+    void deleteCategoryThird() throws Exception {
+        // Given
+        int categoryThirdCode = categoryThird.getCategoryThirdCode();
+
+        when(categoryThirdRepository.findById(anyInt())).thenReturn(Optional.of(categoryThird));
+
+        doNothing().when(categoryThirdRepository).delete(any(CategoryThird.class));
+
+        // Then
+        ResponseEntity<String> response = categoryThirdService.deleteCategoryThird(categoryThirdCode);
+        logService.saveLog("root", LogStatus.삭제,categoryThird.getCategoryThirdName(),"CategoryThird");
+
+        // Then
+        assertNotNull(response);
+        assertEquals("카테고리(소) 삭제 완료", response.getBody());
+
+    }
 }
 //    @Test
 //    @DisplayName("카테고리(소) 신규 등록")
