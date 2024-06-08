@@ -88,10 +88,70 @@ jobs:
               org.hibernate: ERROR
           EOL
 
+      - name: Create application-test.yml.template
+        run: |
+          mkdir -p src/test/resources
+          cat > src/test/resources/application-test.yml.template <<EOL
+          server:
+            port: 5000
+            tomcat:
+              uri-encoding: UTF-8
+
+          spring:
+            cloud:
+              aws:
+                s3:
+                  bucket: \${SPRING_CLOUD_AWS_S3_BUCKET}
+                  region: \${SPRING_CLOUD_AWS_S3_REGION}
+                  access-key: \${AWS_ACCESS_KEY_ID}
+                  secret-key: \${AWS_SECRET_ACCESS_KEY}
+
+            application:
+              name: pioms-test
+            main:
+              allow-bean-definition-overriding: true
+            jwt:
+              secret: \${SPRING_JWT_SECRET}
+            jpa:
+              show-sql: true
+              hibernate:
+                ddl-auto: create-drop
+              database-platform: org.hibernate.dialect.H2Dialect
+
+            datasource:
+              driver-class-name: org.h2.Driver
+              url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+              username: sa
+              password:
+            cache:
+              type: redis
+            data:
+              redis:
+                host: localhost
+                port: 6379
+
+          kakao:
+            api:
+              url: \${KAKAO_URL}
+              key: \$${KAKAO_KEY}
+              user_id: \{KAKAO_USER_ID}
+              sender: \${KAKAO_SENDER}
+              client_secret: \${KAKAO_CLIENT_SECRET}
+              token: \${KAKAO_TOKEN}
+
+          logging:
+            level:
+              root: INFO
+              org.springframework.web: DEBUG
+              org.hibernate: ERROR
+          EOL
+
       - name: Set Yaml
         run: |
           envsubst < src/main/resources/application.yml.template > src/main/resources/application.yml
+          envsubst < src/test/resources/application-test.yml.template > src/test/resources/application-test.yml
           cat src/main/resources/application.yml
+          cat src/test/resources/application-test.yml
         env:
           RDS_HOSTNAME: ${{ secrets.RDS_HOSTNAME }}
           RDS_PORT: ${{ secrets.RDS_PORT }}
