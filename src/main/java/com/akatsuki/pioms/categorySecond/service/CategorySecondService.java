@@ -1,7 +1,9 @@
 package com.akatsuki.pioms.categorySecond.service;
 
 import com.akatsuki.pioms.categorySecond.aggregate.*;
+import com.akatsuki.pioms.categorySecond.dto.CategorySecondCreateDTO;
 import com.akatsuki.pioms.categorySecond.dto.CategorySecondDTO;
+import com.akatsuki.pioms.categorySecond.dto.CategorySecondUpdateDTO;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -18,4 +20,7 @@ public interface CategorySecondService {
     List<ResponseCategorySecond> getCategorySecondInFirst(int categoryFirstCode);
 
     ResponseEntity<String> deleteCategorySecond(int categorySecondCode);
+
+    CategorySecondDTO createCategorySecond(CategorySecondCreateDTO categorySecondCreateDTO);
+    CategorySecond modifyCategorySecond(int categorySecondCode, CategorySecondUpdateDTO categorySecondUpdateDTO);
 }

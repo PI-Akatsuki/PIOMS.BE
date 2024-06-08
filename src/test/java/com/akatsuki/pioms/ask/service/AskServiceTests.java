@@ -145,26 +145,26 @@
 //        }
 //    }
 //
-//    @DisplayName("점주별 작성한 문의사항 조회")
-//    @Test
-//    void getAsksByFranchiseOwnerId() {
-//        // Given
-//        int franchiseOwnerId = 1;
-//        List<Ask> askList = askRepository.findByFranchiseOwner_FranchiseOwnerCode(franchiseOwnerId);
-//        List<AskDTO> expectedAskDTOList = new ArrayList<>();
-//        askList.forEach(ask -> expectedAskDTOList.add(new AskDTO(ask)));
-//        AskListDTO expectedAskListDTO = new AskListDTO(expectedAskDTOList);
-//
-//        // When
-//        AskListDTO actualAskListDTO = askService.getAsksByFranchiseOwnerId(franchiseOwnerId);
-//
-//        // Then
-//        assertNotNull(actualAskListDTO);
-//        assertEquals(expectedAskListDTO.getAsks().size(), actualAskListDTO.getAsks().size());
-//        for (int i = 0; i < expectedAskListDTO.getAsks().size(); i++) {
-//            assertEquals(expectedAskListDTO.getAsks().get(i).getAskContent(), actualAskListDTO.getAsks().get(i).getAskContent());
-//        }
-//    }
+////    @DisplayName("점주별 작성한 문의사항 조회")
+////    @Test
+////    void getAsksByFranchiseOwnerId() {
+////        // Given
+////        int franchiseOwnerId = 1;
+////        List<Ask> askList = askRepository.findByFranchiseOwner_FranchiseOwnerCode(franchiseOwnerId);
+////        List<AskDTO> expectedAskDTOList = new ArrayList<>();
+////        askList.forEach(ask -> expectedAskDTOList.add(new AskDTO(ask)));
+////        AskListDTO expectedAskListDTO = new AskListDTO(expectedAskDTOList);
+////
+////        // When
+////        AskListDTO actualAskListDTO = askService.getAsksByFranchiseOwnerId(franchiseOwnerId);
+////
+////        // Then
+////        assertNotNull(actualAskListDTO);
+////        assertEquals(expectedAskListDTO.getAsks().size(), actualAskListDTO.getAsks().size());
+////        for (int i = 0; i < expectedAskListDTO.getAsks().size(); i++) {
+////            assertEquals(expectedAskListDTO.getAsks().get(i).getAskContent(), actualAskListDTO.getAsks().get(i).getAskContent());
+////        }
+////    }
 //
 //    @DisplayName("문의사항 답변")
 //    @Test
