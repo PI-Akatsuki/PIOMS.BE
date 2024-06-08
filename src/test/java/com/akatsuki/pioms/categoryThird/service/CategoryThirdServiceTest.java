@@ -5,6 +5,7 @@ import com.akatsuki.pioms.categoryThird.aggregate.RequestCategoryThird;
 import com.akatsuki.pioms.categoryThird.aggregate.ResponseCategoryThird;
 import com.akatsuki.pioms.categoryThird.dto.CategoryThirdCreateDTO;
 import com.akatsuki.pioms.categoryThird.dto.CategoryThirdDTO;
+import com.akatsuki.pioms.categoryThird.dto.CategoryThirdUpdateDTO;
 import com.akatsuki.pioms.categoryThird.repository.CategoryThirdRepository;
 import com.akatsuki.pioms.log.etc.LogStatus;
 import com.akatsuki.pioms.log.service.LogServiceImpl;
@@ -21,8 +22,12 @@ import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @Transactional
@@ -91,7 +96,24 @@ class CategoryThirdServiceTest {
     @Test
     @DisplayName("카테고리(소) 수정")
     @WithMockUser(username = "root", roles = {"ROOT"})
+    void modifyCategoryThird() throws Exception {
+        // Given
+        int categoryThirdCode = categoryThird.getCategoryThirdCode();
+        CategoryThirdUpdateDTO categoryThirdUpdateDTO = new CategoryThirdUpdateDTO();
+        categoryThirdUpdateDTO.setCategoryThirdName("Test updatedName");
 
+        when(categoryThirdRepository.findById(anyInt())).thenReturn(Optional.of(categoryThird));
+        when(categoryThirdRepository.save(any(CategoryThird.class))).thenReturn(categoryThird);
+
+        // When
+        CategoryThird result = categoryThirdService.modifyCategoryThird(categoryThirdCode, categoryThirdUpdateDTO);
+
+        logService.saveLog("root", LogStatus.수정,categoryThird.getCategoryThirdName(),"CategoryThird");
+
+        // Then
+        assertNotNull(result);
+        assertEquals("Test updatedName", result.getCategoryThirdName());
+    }
 
 }
 //    @Test
