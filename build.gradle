@@ -31,8 +31,6 @@ dependencies {
 
     // Redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-    testImplementation 'com.github.fppt:jedis-mock:0.1.22'
-    implementation 'redis.clients:jedis:4.2.3'
 
     // Web
     implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -65,7 +63,7 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
     implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
-    // Excel POI
+    // excel POI
     implementation 'org.apache.poi:poi:5.2.5'
     implementation 'org.apache.poi:poi-ooxml:5.2.5'
 
@@ -77,11 +75,13 @@ dependencies {
     // PDF
     implementation 'org.apache.pdfbox:pdfbox:2.0.24'
 
+    // Google Cloud
+//    implementation 'org.springframework.cloud:spring-cloud-gcp-starter:1.2.5.RELEASE'
+//    implementation 'org.springframework.cloud:spring-cloud-gcp-storage:1.2.5.RELEASE'
+
     // S3
     implementation 'software.amazon.awssdk:s3:2.17.89'
 
-    // H2 Database - 테스트용
-    runtimeOnly 'com.h2database:h2'
 }
 
 tasks.named('test') {
