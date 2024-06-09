@@ -67,7 +67,7 @@ public class FranchiseOrderFacade {
     public boolean putFranchiseOrderCheck(RequestPutOrderCheck requestPutOrder){
         int franchiseOwnerCode= getUserInfo.getFranchiseOwnerCode();
         int franchiseCode = franchiseService.findFranchiseByFranchiseOwnerCode(franchiseOwnerCode).getFranchiseCode();
-        OrderDTO order = orderService.getOrderByFranchiseOwnerCode(franchiseCode,requestPutOrder.getOrderCode());
+        OrderDTO order = orderService.getOrder(franchiseCode,requestPutOrder.getOrderCode());
         if (order==null || requestPutOrder.getRequestProduct().size() != order.getOrderProductList().size()){
             return false;
         }
@@ -114,6 +114,6 @@ public class FranchiseOrderFacade {
     public OrderDTO getOrderByFranchiseCode(int orderCode) {
         int franchiseOwnerCode= getUserInfo.getFranchiseOwnerCode();
         int franchiseCode = franchiseService.findFranchiseByFranchiseOwnerCode(franchiseOwnerCode).getFranchiseCode();
-        return orderService.getOrderByFranchiseOwnerCode(franchiseCode,orderCode);
+        return orderService.getOrder(franchiseCode,orderCode);
     }
 }

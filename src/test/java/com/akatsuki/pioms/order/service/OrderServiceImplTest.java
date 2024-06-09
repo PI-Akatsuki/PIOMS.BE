@@ -182,7 +182,7 @@ class OrderServiceImplTest {
         //given
         when(orderRepository.findById(1)).thenReturn(Optional.ofNullable(order));
         //when
-        OrderDTO orderDTO = orderService.getOrderByFranchiseOwnerCode(1,1);
+        OrderDTO orderDTO = orderService.getOrder(1,1);
         //then
         assertNotNull(orderDTO);
     }

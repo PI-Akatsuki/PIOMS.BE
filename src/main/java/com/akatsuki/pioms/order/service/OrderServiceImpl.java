@@ -130,7 +130,7 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     @Transactional(readOnly = true)
-    public OrderDTO getOrderByFranchiseOwnerCode(int franchiseCode, int orderCode){
+    public OrderDTO getOrder(int franchiseCode,int orderCode){
         Order order = orderRepository.findById(orderCode).orElseThrow();
         if(franchiseCode!= order.getFranchise().getFranchiseCode()){
             System.out.println("가맹점 코드, 주문의 가맹점 코드 불일치!");
