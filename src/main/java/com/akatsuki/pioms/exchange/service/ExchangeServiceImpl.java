@@ -191,8 +191,8 @@ public class ExchangeServiceImpl implements ExchangeService{
         for (int i = 0; i < products.size(); i++) {
             ExchangeProductVO product = products.get(i);
             int productCode = product.getExchangeProductCode();
-            ExchangeProduct exchangeProduct = exchangeProductRepository.findById(productCode).orElseThrow();
-            if (exchangeProduct.getExchangeProductCount() != product.getExchangeProductCount()) {
+            ExchangeProduct exchangeProduct = exchangeProductRepository.findById(productCode).orElse(null);
+            if (exchangeProduct==null ||exchangeProduct.getExchangeProductCount() != product.getExchangeProductCount()) {
                 return false;
             }
             if (product.getExchangeProductNormalCount() + product.getExchangeProductDiscount() != exchangeProduct.getExchangeProductCount()) {
@@ -278,11 +278,13 @@ public class ExchangeServiceImpl implements ExchangeService{
             return;
         }
         exchange.setExchangeStatus(EXCHANGE_STATUS.처리대기);
-        exchange.getProducts().forEach(exchangeProduct ->
-                franchiseWarehouseService.saveProductWhenUpdateExchangeToCompany(
+        exchange.getProducts().forEach(exchangeProduct ->{
+                if(exchangeProduct.getProduct()!=null)
+                    franchiseWarehouseService.saveProductWhenUpdateExchangeToCompany(
                         exchangeProduct.getProduct().getProductCode(),
                         exchangeProduct.getExchangeProductCount(),
-                        exchange.getFranchise().getFranchiseCode()));
+                        exchange.getFranchise().getFranchiseCode());
+                });
         exchangeRepository.save(exchange);
     }
 
@@ -294,11 +296,13 @@ public class ExchangeServiceImpl implements ExchangeService{
         //FIN
         int adminCode=getUserInfo.getAdminCode();
         Exchange exchangeEntity = exchangeRepository.findById(exchangeCode).orElse(null);
+        System.out.println("exchangeEntity = " + exchangeEntity);
         if (exchangeEntity == null){
             System.out.println("없는 교환 코드");
             return null;
         }
         if (exchangeEntity.getExchangeStatus()!=EXCHANGE_STATUS.처리대기){
+            System.out.println("exchangeEntity.getExchangeStatus() = " + exchangeEntity.getExchangeStatus());
             return null;
         }
         if (exchangeEntity.getFranchise().getAdmin().getAdminCode() != adminCode && adminCode !=1) {

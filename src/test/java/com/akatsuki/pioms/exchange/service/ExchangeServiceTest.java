@@ -1,196 +1,353 @@
-//package com.akatsuki.pioms.exchange.service;
-//
-//import com.akatsuki.pioms.exchange.aggregate.*;
-//import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
-//import com.akatsuki.pioms.exchange.dto.ExchangeProductDTO;
-//import com.akatsuki.pioms.exchange.repository.ExchangeProductRepository;
-//import com.akatsuki.pioms.exchange.repository.ExchangeRepository;
-//import org.junit.jupiter.api.BeforeAll;
-//import org.junit.jupiter.api.Test;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.test.context.SpringBootTest;
-//import org.springframework.transaction.annotation.Transactional;
-//
-//import java.util.ArrayList;
-//import java.util.List;
-//import java.util.stream.Stream;
-//
-//import static org.junit.jupiter.api.Assertions.*;
-//
-//@SpringBootTest
-//@Transactional
-//class ExchangeServiceTest {
-//
-//    private ExchangeService exchangeService;
-//    private ExchangeRepository exchangeRepository;
-//    private ExchangeProductRepository exchangeProductRepository;
-//
-//    static List<ExchangeProductVO> exchangeProductVOS;
-//    static RequestExchange exchange;
-//
-//    @Autowired
-//    public ExchangeServiceTest(ExchangeService exchangeService, ExchangeRepository exchangeRepository, ExchangeProductRepository exchangeProductRepository) {
-//        this.exchangeService = exchangeService;
-//        this.exchangeRepository = exchangeRepository;
-//        this.exchangeProductRepository = exchangeProductRepository;
-//    }
-//
-//    @BeforeAll
-//    static void init(){
-//        // 테스트 할 반송 저장
-//        exchangeProductVOS = Stream.of(
-//                new ExchangeProductVO(1, 2,EXCHANGE_PRODUCT_STATUS.교환),
-//                new ExchangeProductVO(2, 3,EXCHANGE_PRODUCT_STATUS.폐기),
-//                new ExchangeProductVO(3, 4,EXCHANGE_PRODUCT_STATUS.교환),
-//                new ExchangeProductVO(4, 5,EXCHANGE_PRODUCT_STATUS.폐기)
-//        ).toList();
-//        exchange = new RequestExchange(1,EXCHANGE_STATUS.반송신청,exchangeProductVOS);
-//    }
-//
-//    @Test
-//    void findExchangeToSend() {
-//        //given
-//        int franchiseCode = 1;
-//        ExchangeDTO exchangeDTO = exchangeService.postExchange(franchiseCode,exchange);
-//        EXCHANGE_STATUS exchangeStatus = EXCHANGE_STATUS.반송신청;
-//        Exchange repo = exchangeRepository.findByFranchiseFranchiseCodeAndExchangeStatus(franchiseCode,exchangeStatus);
-//
-//        //when
-//        ExchangeDTO service = exchangeService.findExchangeToSend(franchiseCode);
-//
-//        //then
-//        assertEquals(exchangeDTO.getExchangeCode(), repo.getExchangeCode());
-//        assertEquals(exchangeDTO.getExchangeCode(), service.getExchangeCode());
-//    }
-//
-//    @Test
-//    void getExchanges() {
-//        //given
-//        List<Exchange> exchanges = exchangeRepository.findAll();
-//        //when
-//        List<ExchangeDTO> exchangeDTOS = exchangeService.getExchanges();
-//        //then
-//        assertEquals(exchanges.size(), exchangeDTOS.size());
-//    }
-//
-//
-//    @Test
-//    void getExchangesByAdminCode() {
-//        //given
-//        int adminCode = 1;
-//        List<Exchange> exchanges = exchangeRepository.findAllByFranchiseAdminAdminCode(adminCode);
-//        //when
-//        List<ExchangeDTO> exchangeDTOS = exchangeService.getExchangesByAdminCode(adminCode);
-//        //then
-//        assertEquals(exchanges.size(),exchangeDTOS.size());
-//    }
-//    @Test
-//    void putExchange() {
-//        //given
-//        int adminCode=2;
-//        int franchiseCode=1;
-//        ExchangeDTO exchangeDTO = exchangeService.postExchange(franchiseCode,exchange);
-//        List<ExchangeProductVO> exchangeProductVOS1 = new ArrayList<>();
-//
-//        for (ExchangeProductDTO exchangeProduct : exchangeDTO.getExchangeProducts()) {
-//            exchangeProductVOS1.add(new ExchangeProductVO(
-//                    exchangeProduct.getExchangeProductCode()
-//                    , exchangeProduct.getExchangeProductCount()
-//                    , exchangeProduct.getExchangeProductCount()-1
-//                    , 1));
-//        }
-//        RequestExchange request = new RequestExchange(1,EXCHANGE_STATUS.반송신청,exchangeProductVOS1);
-//
-//        //when
-//        ExchangeDTO exchangeDTO1 = exchangeService.putExchange(adminCode,exchangeDTO.getExchangeCode(),request);
-//
-//        //then
-//        assertNotEquals(exchangeDTO1,exchangeDTO);
-//        for (ExchangeProductDTO exchangeProduct : exchangeDTO1.getExchangeProducts()) {
-//            assertEquals(
-//                    exchangeProduct.getExchangeProductNormalCount()+ exchangeProduct.getExchangeProductDiscount()
-//                    , exchangeProduct.getExchangeProductCount() );
-//        }
-//
-//    }
-//
-//    @Test
-//    void postExchange() {
-//        //given
-//        int adminCode=1;
-//        int franchiseCode=1;
-//        //when
-//        ExchangeDTO exchangeDTO = exchangeService.postExchange(franchiseCode,exchange);
-//        //then
-//        assertEquals(exchange.getExchangeStatus(), exchangeDTO.getExchangeStatus());
-//        assertEquals(exchange.getFranchiseCode(), exchangeDTO.getFranchise().getFranchiseCode());
-//        assertEquals(exchange.getProducts().size(),exchangeDTO.getExchangeProducts().size());
-//    }
-//
-//    @Test
-//    void getExchangeProductsWithStatus() {
-//        //given
-//        int adminCode=2;
-//        int franchiseCode=1;
-//        ExchangeDTO exchangeDTO = exchangeService.postExchange(franchiseCode,exchange);
-//        //when
-//        List<ExchangeProductDTO> exchangeDTOS1 = exchangeService.getExchangeProductsWithStatus(exchangeDTO.getExchangeCode(),EXCHANGE_PRODUCT_STATUS.교환);
-//        List<ExchangeProductDTO> exchangeDTOS2 = exchangeService.getExchangeProductsWithStatus(exchangeDTO.getExchangeCode(),EXCHANGE_PRODUCT_STATUS.폐기);
-//        //then
-//        assertEquals(exchangeDTOS1.size(),2);
-//        assertEquals(exchangeDTOS2.size(),2);
-//    }
-//
-//    @Test
-//    void getAdminExchange() {
-//        //given
-//        int adminCode=2;
-//        int franchiseCode=1;
-//        ExchangeDTO exchangeDTO = exchangeService.postExchange(franchiseCode,exchange);
-//
-//        //when
-//        ExchangeDTO exchangeDTO1 = exchangeService.getAdminExchange(adminCode,exchangeDTO.getExchangeCode());
-//        //then
-//        assertEquals(exchangeDTO1.getExchangeCode(),exchangeDTO.getExchangeCode());
-//    }
-//
-//    @Test
-//    void getFranchiseExchange(){
-//        //given
-//        int franchiseCode = 1;
-//        ExchangeDTO exchangeDTO = exchangeService.postExchange(franchiseCode,exchange);
-//        int exchangeCode = exchangeDTO.getExchangeCode();
-//        //when
-//        ExchangeDTO exchangeDTO1 = exchangeService.getFranchiseExchange(franchiseCode,exchangeCode);
-//        //then
-//        assertNotNull(exchangeDTO1);
-//        assertEquals(exchangeDTO1.getExchangeCode(), exchangeCode);
-//
-//    }
-//
-//    @Test
-//    void getFrOwnerExchanges() {
-//        //given
-//        int franchiseOwnerCode= 1;
-//        int franchisCode = 1;
-//        List<Exchange> exchanges = exchangeRepository.findAllByFranchiseFranchiseOwnerFranchiseOwnerCode(franchiseOwnerCode);
-//        //when
-//        List<ExchangeDTO> exchangeDTOS = exchangeService.getFrOwnerExchanges(franchiseOwnerCode);
-//        //then
-//        assertEquals(exchanges.size(), exchangeDTOS.size());
-//    }
-//
-//
-//    @Test
-//    void deleteExchange() {
-//        //given
-//        int franchiseOwnerCode= 1;
-//        int franchiseCode = 1;
-//        ExchangeDTO exchangeDTO = exchangeService.postExchange(franchiseCode,exchange);
-//        //when
-//        exchangeService.deleteExchange(franchiseOwnerCode,exchangeDTO.getExchangeCode());
-//        //then
-//        assertNull(exchangeService.getFranchiseExchange(franchiseCode,exchangeDTO.getExchangeCode()));
-//
-//    }
-//}
+package com.akatsuki.pioms.exchange.service;
+
+import com.akatsuki.pioms.admin.aggregate.Admin;
+import com.akatsuki.pioms.config.GetUserInfo;
+import com.akatsuki.pioms.driver.aggregate.DeliveryDriver;
+import com.akatsuki.pioms.exchange.aggregate.*;
+import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
+import com.akatsuki.pioms.exchange.repository.ExchangeProductRepository;
+import com.akatsuki.pioms.exchange.repository.ExchangeRepository;
+import com.akatsuki.pioms.franchise.aggregate.DELIVERY_DATE;
+import com.akatsuki.pioms.franchise.aggregate.Franchise;
+import com.akatsuki.pioms.franchise.dto.FranchiseDTO;
+import com.akatsuki.pioms.franchise.service.FranchiseService;
+import com.akatsuki.pioms.frowner.aggregate.FranchiseOwner;
+import com.akatsuki.pioms.frwarehouse.service.FranchiseWarehouseService;
+import com.akatsuki.pioms.order.aggregate.Order;
+import com.akatsuki.pioms.order.dto.OrderDTO;
+import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
+import com.akatsuki.pioms.order.service.OrderService;
+import com.akatsuki.pioms.product.aggregate.Product;
+import com.akatsuki.pioms.product.service.ProductService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+@Transactional
+class ExchangeServiceTest {
+
+    @Mock
+    private ExchangeRepository exchangeRepository;
+
+    @Mock
+    private ExchangeProductRepository exchangeProductRepository;
+
+    @Mock
+    private FranchiseWarehouseService franchiseWarehouseService;
+
+    @Mock
+    private OrderService orderService;
+
+    @Mock
+    private FranchiseService franchiseService;
+
+    @Mock
+    private ProductService productService;
+
+    @Mock
+    private GetUserInfo getUserInfo;
+
+    @InjectMocks
+    private ExchangeServiceImpl exchangeService;
+
+    private Exchange exchange;
+    private ExchangeProduct exchangeProduct;
+    private RequestExchange requestExchange;
+    private Order order;
+    private Admin admin;
+    private Franchise franchise;
+    private Product product;
+    private FranchiseOwner franchiseOwner;
+    private DeliveryDriver deliveryDriver;
+
+    @BeforeEach
+    void setUp() {
+        admin = Admin.builder()
+                .adminCode(1)
+                .adminId("root")
+                .accessNumber("rootAccess")
+                .adminStatus(true)
+                .adminName("root")
+                .adminEmail("root@example.com")
+                .adminPhone("010-1234-5678")
+                .enrollDate("2023-01-01 00:00:00")
+                .updateDate("2023-01-01 00:00:00")
+                .adminRole("ROLE_ROOT")
+                .franchise(new ArrayList<>())
+                .build();
+
+        franchiseOwner = FranchiseOwner.builder()
+                .franchiseOwnerCode(1)
+                .franchiseOwnerName("test")
+                .franchiseOwnerId("sadf")
+                .franchiseRole("ROLE_OWNER")
+                .build();
+
+        deliveryDriver = DeliveryDriver.builder()
+                .driverCode(1)
+                .driverId("driver")
+                .driverName("driver")
+                .driverRole("ROLE_DRIVER").build();
+
+        franchise = Franchise.builder()
+                .franchiseCode(1)
+                .franchiseOwner(franchiseOwner)
+                .admin(admin)
+                .franchiseName("franchise")
+                .franchiseDeliveryDate(DELIVERY_DATE.월_목)
+                .deliveryDriver(deliveryDriver)
+                .build();
+
+        order = Order.builder()
+                .orderCode(1)
+                .orderCondition(ORDER_CONDITION.승인대기)
+                .franchise(franchise)
+                .orderProductList(null)
+                .build();
+        exchange = new Exchange();
+        exchange.setExchangeCode(1);
+        exchange.setExchangeDate(LocalDateTime.now());
+        exchange.setExchangeStatus(EXCHANGE_STATUS.반송신청);
+//        exchange.setFranchise(franchise);
+
+        exchangeProduct = new ExchangeProduct();
+        exchangeProduct.setExchangeProductCount(10);
+
+        List<ExchangeProduct> products = new ArrayList<>();
+        products.add(exchangeProduct);
+        exchange.setProducts(products);
+
+        List<ExchangeProductVO> productVOs = new ArrayList<>();
+        ExchangeProductVO productVO = new ExchangeProductVO(1,1,"",10,10,0,EXCHANGE_PRODUCT_STATUS.교환);
+        productVOs.add(productVO);
+        requestExchange = new RequestExchange(EXCHANGE_STATUS.반송신청,productVOs);
+    }
+
+    @Test
+    void testFindExchangeToSend() {
+        //given
+        when(exchangeRepository.findByFranchiseFranchiseCodeAndExchangeStatus(1, EXCHANGE_STATUS.반송신청))
+                .thenReturn(exchange);
+        when(exchangeRepository.save(any(Exchange.class))).thenReturn(exchange);
+
+        //when
+        ExchangeDTO result = exchangeService.findExchangeToSend(1);
+
+        //then
+        assertNotNull(result);
+        assertEquals(EXCHANGE_STATUS.반송중, result.getExchangeStatus());
+        verify(exchangeRepository, times(1))
+                .findByFranchiseFranchiseCodeAndExchangeStatus(1, EXCHANGE_STATUS.반송신청);
+    }
+
+    @Test
+    void testGetExchangesByAdminCode_RootAdmin() {
+        //given
+        when(getUserInfo.getAdminCode()).thenReturn(1);
+        when(exchangeRepository.findAll()).thenReturn(List.of(exchange));
+
+        //when
+        List<ExchangeDTO> result = exchangeService.getExchangesByAdminCode();
+
+        //then
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        verify(exchangeRepository, times(1)).findAll();
+    }
+
+    @Test
+    void testGetExchangesByAdminCode_NonRootAdmin() {
+        //given
+        when(getUserInfo.getAdminCode()).thenReturn(2);
+        when(exchangeRepository.findAllByFranchiseAdminAdminCodeOrderByExchangeDateDesc(2))
+                .thenReturn(List.of(exchange));
+
+        //when
+        List<ExchangeDTO> result = exchangeService.getExchangesByAdminCode();
+
+        //then
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        verify(exchangeRepository, times(1))
+                .findAllByFranchiseAdminAdminCodeOrderByExchangeDateDesc(2);
+    }
+
+    @Test
+    void testPostExchange() {
+        //given
+        when(getUserInfo.getFranchiseOwnerCode()).thenReturn(1);
+        when(franchiseService.findFranchiseByFranchiseOwnerCode(1)).thenReturn(new FranchiseDTO(franchise));
+        when(exchangeRepository.existsByFranchiseFranchiseCodeAndExchangeStatus(1, EXCHANGE_STATUS.반송신청))
+                .thenReturn(false);
+        when(franchiseWarehouseService.checkEnableToAddExchangeAndChangeEnableCnt(any(RequestExchange.class), eq(1)))
+                .thenReturn(true);
+        when(exchangeRepository.save(any(Exchange.class))).thenReturn(exchange);
+        when(exchangeProductRepository.save(any(ExchangeProduct.class))).thenReturn(exchangeProduct);
+        when(exchangeRepository.findById(anyInt())).thenReturn(Optional.of(exchange));
+
+        //when
+        ExchangeDTO result = exchangeService.postExchange(requestExchange);
+
+        //then
+        assertNotNull(result);
+        assertEquals(EXCHANGE_STATUS.반송신청, result.getExchangeStatus());
+        verify(exchangeRepository, times(1)).save(any(Exchange.class));
+        verify(exchangeProductRepository, times(1)).save(any(ExchangeProduct.class));
+    }
+
+    @Test
+    void testGetExchangeByAdminCode() {
+        //given
+        exchange.setFranchise(franchise);
+        when(getUserInfo.getAdminCode()).thenReturn(1);
+        when(exchangeRepository.findById(1)).thenReturn(Optional.of(exchange));
+
+        //when
+        ExchangeDTO result = exchangeService.getExchangeByAdminCode(1);
+
+        //then
+        assertNotNull(result);
+    }
+
+    @Test
+    void testGetExchangeByFranchiseOwnerCode() {
+        //given
+        exchange.setFranchise(franchise);
+        when(getUserInfo.getFranchiseOwnerCode()).thenReturn(1);
+        when(exchangeRepository.findById(1)).thenReturn(Optional.of(exchange));
+
+        //when
+        ExchangeDTO result = exchangeService.getExchangeByFranchiseOwnerCode(1);
+
+        //then
+        assertNotNull(result);
+    }
+
+    @Test
+    void testGetFrOwnerExchanges() {
+        //given
+        when(getUserInfo.getFranchiseOwnerCode()).thenReturn(1);
+        when(exchangeRepository.findAllByFranchiseFranchiseOwnerFranchiseOwnerCodeOrderByExchangeDateDesc(1))
+                .thenReturn(List.of(exchange));
+
+        //when
+        List<ExchangeDTO> result = exchangeService.getFrOwnerExchanges();
+
+        //then
+        assertNotNull(result);
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    void testDeleteExchange() {
+        //given
+        when(getUserInfo.getFranchiseOwnerCode()).thenReturn(1);
+        when(exchangeRepository.findById(1)).thenReturn(Optional.of(exchange));
+        when(orderService.findOrderByExchangeCode(1)).thenReturn(false);
+        exchange.setFranchise(franchise);
+        exchange.setProducts(new ArrayList<>());
+        //when
+        boolean result = exchangeService.deleteExchange(1);
+
+        //then
+        assertTrue(result);
+        verify(exchangeRepository, times(1)).deleteById(1);
+    }
+
+    @Test
+    void testUpdateExchangeStartDelivery() {
+        //given
+        when(exchangeRepository.findAllByFranchiseFranchiseCodeAndExchangeStatus(1, EXCHANGE_STATUS.반환대기))
+                .thenReturn(List.of(exchange));
+
+        //when
+        exchangeService.updateExchangeStartDelivery(1);
+
+        //then
+        assertEquals(EXCHANGE_STATUS.반환중, exchange.getExchangeStatus());
+    }
+
+    @Test
+    void testUpdateExchangeEndDelivery() {
+        //given
+        when(exchangeRepository.findAllByFranchiseFranchiseCodeAndExchangeStatus(1, EXCHANGE_STATUS.반환중))
+                .thenReturn(List.of(exchange));
+
+        //when
+        boolean result = exchangeService.updateExchangeEndDelivery(1);
+
+        //then
+        assertTrue(result);
+        assertEquals(EXCHANGE_STATUS.반환완료, exchange.getExchangeStatus());
+        verify(exchangeRepository, times(1)).save(exchange);
+    }
+
+    @Test
+    void testUpdateExchangeToCompany() {
+        //given
+        exchange.setFranchise(franchise);
+        when(exchangeRepository.findById(1)).thenReturn(Optional.of(exchange));
+
+        //when
+        exchangeService.updateExchangeToCompany(1);
+
+        //then
+        assertEquals(EXCHANGE_STATUS.처리대기, exchange.getExchangeStatus());
+        verify(exchangeRepository, times(1)).save(exchange);
+    }
+
+    @Test
+    void testProcessArrivedExchange() throws JsonProcessingException {
+        //given
+        Exchange requiredExchange = exchange;
+        exchange.setFranchise(franchise);
+        requiredExchange.setExchangeStatus(EXCHANGE_STATUS.처리대기);
+
+        System.out.println("requiredExchange = " + requiredExchange);
+
+        when(getUserInfo.getAdminCode()).thenReturn(1);
+        when(exchangeRepository.findById(1)).thenReturn(Optional.of(requiredExchange));
+//        when(productService.importExchangeProducts(any(RequestExchange.class))).thenReturn(true);
+        when(exchangeProductRepository.findById(any(Integer.class))) .thenReturn(Optional.ofNullable(exchangeProduct));
+        Exchange wantedResult = exchange;
+        when(exchangeRepository.save(any(Exchange.class))).thenReturn(wantedResult);
+
+        //when
+        ExchangeDTO result = exchangeService.processArrivedExchange(1, requestExchange);
+
+        //then
+        assertNotNull(result);
+        assertEquals(EXCHANGE_STATUS.처리완료, result.getExchangeStatus());
+        verify(exchangeRepository, times(1)).save(exchange);
+    }
+
+    @Test
+    void testAfterAcceptOrder() {
+        //given
+        OrderDTO order = new OrderDTO();
+        order.setFranchiseCode(1);
+        when(exchangeRepository.findAllByFranchiseFranchiseCodeAndExchangeStatus(1, EXCHANGE_STATUS.처리완료))
+                .thenReturn(List.of(exchange));
+
+        //when
+        exchangeService.afterAcceptOrder(order);
+
+        //then
+        assertEquals(EXCHANGE_STATUS.반환대기, exchange.getExchangeStatus());
+        verify(exchangeRepository, times(1)).save(exchange);
+    }
+}
