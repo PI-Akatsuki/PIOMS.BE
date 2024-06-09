@@ -1,6 +1,7 @@
 package com.akatsuki.pioms.invoice.service;
 
 import com.akatsuki.pioms.invoice.aggregate.ResponseDriverInvoice;
+import com.akatsuki.pioms.invoice.aggregate.ResponseInvoiceDetail;
 import com.akatsuki.pioms.invoice.dto.InvoiceDTO;
 import com.akatsuki.pioms.invoice.aggregate.DELIVERY_STATUS;
 import com.akatsuki.pioms.order.dto.OrderDTO;
@@ -74,4 +75,7 @@ public interface InvoiceService {
     int countStatusCompleteDeliveryDriverInvoices(int driverCode);
 
     List<InvoiceDTO> getInvoicesByDriverCode(int driverCode);
+
+    // 배송기사 id로 배송 조회 시 송장 상세조회 기능 구현
+    ResponseInvoiceDetail getInvoiceDetail(int invoiceCode);
 }
