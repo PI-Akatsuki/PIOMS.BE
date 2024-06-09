@@ -77,34 +77,34 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .formLogin(formLogin -> formLogin.disable())
                 .httpBasic(httpBasic -> httpBasic.disable())
-                .logout(logout -> logout.disable())
+                .logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/"))
                 .authorizeHttpRequests(authorize -> authorize
-                                .requestMatchers("/", "/reissue", "/admin/login", "/franchise/login", "/driver/login", "/admin/product/sendKakaoAlert").permitAll()
-                                .requestMatchers(
-                                        "/admin/info",
-                                        "/admin/home",
-                                        "/admin/list/**",
-                                        "/admin/category/first/list/**",
-                                        "/admin/category/second/list/**",
-                                        "/admin/category/third/list/**",
-                                        "/admin/driver/list/**",
-                                        "/admin/franchise/list/**",
-                                        "/admin/franchise/owner/list/**",
-                                        "/admin/franchise/owner/update/**",
-                                        "/admin/product/list/**",
-                                        "/admin/specs/**",
-                                        "/admin/order/**",
-                                        "/admin/invoice/**",
-                                        "/admin/exchange/**",
-                                        "/admin/notice/list/**",
-                                        "/admin/ask/**",
-                                        "/admin/pdfdownload/**",
-                                        "/admin/exceldownload/**",
-                                        "/admin/adminDashboard").hasAnyRole("ADMIN","ROOT")
-                                .requestMatchers("/admin/**").hasRole("ROOT")
-                                .requestMatchers("/franchise/**").hasRole("OWNER")
-                                .requestMatchers("/driver/**").hasRole("DRIVER")
-                                .anyRequest().authenticated()
+                        .requestMatchers("/", "/reissue", "/admin/login", "/franchise/login", "/driver/login", "/admin/product/sendKakaoAlert").permitAll()
+                        .requestMatchers(
+                                "/admin/info",
+                                "/admin/home",
+                                "/admin/list/**",
+                                "/admin/category/first/list/**",
+                                "/admin/category/second/list/**",
+                                "/admin/category/third/list/**",
+                                "/admin/driver/list/**",
+                                "/admin/franchise/list/**",
+                                "/admin/franchise/owner/list/**",
+                                "/admin/franchise/**",
+                                "/admin/product/list/**",
+                                "/admin/specs/**",
+                                "/admin/order/**",
+                                "/admin/invoice/**",
+                                "/admin/exchange/**",
+                                "/admin/notice/list/**",
+                                "/admin/ask/**",
+                                "/admin/pdfdownload/**",
+                                "/admin/exceldownload/**",
+                                "/admin/adminDashboard").hasAnyRole("ADMIN", "ROOT")
+                        .requestMatchers("/admin/**").hasRole("ROOT")
+                        .requestMatchers("/franchise/**").hasRole("OWNER")
+                        .requestMatchers("/driver/**").hasRole("DRIVER")
+                        .anyRequest().authenticated()
                 )
                 .addFilterBefore(new CustomLogoutFilter(jwtUtil, redisTokenService), LogoutFilter.class)
                 .addFilterBefore(new JWTFilter(jwtUtil, adminRepository, franchiseOwnerRepository, deliveryDriverRepository), UsernamePasswordAuthenticationFilter.class)
