@@ -36,7 +36,9 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 
     @Autowired
-    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, FranchiseService franchiseService, OrderService orderService, ExchangeService exchangeService, GetUserInfo getUserInfo) {
+    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, FranchiseService franchiseService,
+                              OrderService orderService, ExchangeService exchangeService,
+                              GetUserInfo getUserInfo) {
         this.invoiceRepository = invoiceRepository;
         this.franchiseService = franchiseService;
         this.orderService = orderService;
