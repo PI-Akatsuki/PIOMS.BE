@@ -21,6 +21,7 @@ import com.akatsuki.pioms.product.aggregate.Product;
 import com.akatsuki.pioms.product.service.ProductService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -138,6 +139,7 @@ class ExchangeServiceTest {
     }
 
     @Test
+    @DisplayName("본사에서 가맹점으로 돌려보내야할 교환 상품을 가진 처리완료 상태의 발주 리스트 조회 ")
     void testFindExchangeToSend() {
         //given
         when(exchangeRepository.findByFranchiseFranchiseCodeAndExchangeStatus(1, EXCHANGE_STATUS.반송신청))
@@ -155,6 +157,7 @@ class ExchangeServiceTest {
     }
 
     @Test
+    @DisplayName("루트관리자가 조회할 때")
     void testGetExchangesByAdminCode_RootAdmin() {
         //given
         when(getUserInfo.getAdminCode()).thenReturn(1);
@@ -170,6 +173,7 @@ class ExchangeServiceTest {
     }
 
     @Test
+    @DisplayName("본사 관리자가 조회할 때")
     void testGetExchangesByAdminCode_NonRootAdmin() {
         //given
         when(getUserInfo.getAdminCode()).thenReturn(2);
@@ -187,6 +191,7 @@ class ExchangeServiceTest {
     }
 
     @Test
+    @DisplayName("반품서 신청")
     void testPostExchange() {
         //given
         when(getUserInfo.getFranchiseOwnerCode()).thenReturn(1);
@@ -210,6 +215,7 @@ class ExchangeServiceTest {
     }
 
     @Test
+    @DisplayName("관리자의 반품 조회")
     void testGetExchangeByAdminCode() {
         //given
         exchange.setFranchise(franchise);
@@ -224,6 +230,7 @@ class ExchangeServiceTest {
     }
 
     @Test
+    @DisplayName("점주의 반품 조회")
     void testGetExchangeByFranchiseOwnerCode() {
         //given
         exchange.setFranchise(franchise);
@@ -238,6 +245,7 @@ class ExchangeServiceTest {
     }
 
     @Test
+    @DisplayName("가맹점주가 자신의 반품서들을 조회할 때")
     void testGetFrOwnerExchanges() {
         //given
         when(getUserInfo.getFranchiseOwnerCode()).thenReturn(1);
@@ -253,6 +261,7 @@ class ExchangeServiceTest {
     }
 
     @Test
+    @DisplayName("반품서 삭제")
     void testDeleteExchange() {
         //given
         when(getUserInfo.getFranchiseOwnerCode()).thenReturn(1);
@@ -269,6 +278,7 @@ class ExchangeServiceTest {
     }
 
     @Test
+    @DisplayName("반환대기중인 상품 처리")
     void testUpdateExchangeStartDelivery() {
         //given
         when(exchangeRepository.findAllByFranchiseFranchiseCodeAndExchangeStatus(1, EXCHANGE_STATUS.반환대기))
@@ -282,6 +292,7 @@ class ExchangeServiceTest {
     }
 
     @Test
+    @DisplayName("배송기사가 배송완료 시 발생될 이벤트")
     void testUpdateExchangeEndDelivery() {
         //given
         when(exchangeRepository.findAllByFranchiseFranchiseCodeAndExchangeStatus(1, EXCHANGE_STATUS.반환중))
@@ -297,6 +308,7 @@ class ExchangeServiceTest {
     }
 
     @Test
+    @DisplayName("배송완료시 가맹에서 본사로 보낼 반품 처리")
     void testUpdateExchangeToCompany() {
         //given
         exchange.setFranchise(franchise);
@@ -311,6 +323,7 @@ class ExchangeServiceTest {
     }
 
     @Test
+    @DisplayName("관리자가 가맹으로부터 온 반품 검수")
     void testProcessArrivedExchange() throws JsonProcessingException {
         //given
         Exchange requiredExchange = exchange;
@@ -336,6 +349,7 @@ class ExchangeServiceTest {
     }
 
     @Test
+    @DisplayName("발주 승인 후 발주에 대하여 반환 대기중인 상품들 처리 준비시킴")
     void testAfterAcceptOrder() {
         //given
         OrderDTO order = new OrderDTO();

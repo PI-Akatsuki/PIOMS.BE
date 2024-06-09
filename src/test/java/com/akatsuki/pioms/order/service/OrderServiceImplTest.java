@@ -17,6 +17,7 @@ import com.akatsuki.pioms.order.repository.OrderProductRepository;
 import com.akatsuki.pioms.order.repository.OrderRepository;
 import com.akatsuki.pioms.product.aggregate.Product;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -96,6 +97,7 @@ class OrderServiceImplTest {
     }
 
     @Test
+    @DisplayName("관리자가 관리하는 발주 목록  조회")
     void testGetOrderListByAdminCode() {
         //given
         List<Order> orderList = new ArrayList<>();
@@ -112,6 +114,7 @@ class OrderServiceImplTest {
     }
 
     @Test
+    @DisplayName("발주 승인 성공 시")
     void testAcceptOrder_Success() {
         //given
         int adminCode = 1;
@@ -130,6 +133,7 @@ class OrderServiceImplTest {
     }
 
     @Test
+    @DisplayName("발주 승인 실패 시")
     void testAcceptOrder_OrderNotFound() {
         //given
         int adminCode = 1;
@@ -146,7 +150,8 @@ class OrderServiceImplTest {
 
 
     @Test
-    void testDenyOrder_Success() {
+    @DisplayName("발주 거절")
+    void testDenyOrder() {
         //given
         int adminCode = 1;
         int orderCode = 100;
@@ -162,6 +167,7 @@ class OrderServiceImplTest {
 
 
     @Test
+    @DisplayName("발주 생성")
     void postOrder(){
         //given
         Map<Integer,Integer> map = new HashMap<>();
@@ -178,6 +184,7 @@ class OrderServiceImplTest {
     //when
     //then
     @Test
+    @DisplayName("점주가 관리하는 발주 조회")
     void getOrderByFranchiseOwnerCode(){
         //given
         when(orderRepository.findById(1)).thenReturn(Optional.ofNullable(order));
@@ -188,6 +195,7 @@ class OrderServiceImplTest {
     }
 
     @Test
+    @DisplayName("발주 수정")
     void putFranchiseOrder(){
         //given
         Map<Integer,Integer> map = new HashMap<>();
