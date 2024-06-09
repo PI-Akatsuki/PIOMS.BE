@@ -216,6 +216,42 @@ public class ExchangeServiceImpl implements ExchangeService{
     }
 
 
+
+    @Override
+    @Transactional
+    public void afterAcceptOrder(OrderDTO order) {
+        // 주문 승인 후 처리 되어 있는 교환들 반환대기로 변경
+        // 본사 재고도 미리 뻄
+        List<Exchange> exchanges = exchangeRepository.findAllByFranchiseFranchiseCodeAndExchangeStatus(order.getFranchiseCode(),EXCHANGE_STATUS.처리완료);
+        if (exchanges.isEmpty())
+            return;
+        exchanges.forEach(exchange -> {
+            exchange.setExchangeStatus(EXCHANGE_STATUS.반환대기);
+
+            exchangeRepository.save(exchange);
+        });
+        saveExchangeAndProduct(exchanges);
+    }
+
+    private void saveExchangeAndProduct(List<Exchange> exchanges) {
+        exchanges.forEach(exchange -> {
+            exchange.setExchangeStatus(EXCHANGE_STATUS.반환대기);
+            for (int i = 0; i <exchange.getProducts().size(); i++) {
+                if (exchange.getProducts().get(i).getExchangeProductStatus() != EXCHANGE_PRODUCT_STATUS.교환)
+                    return;
+                int productCode= exchange.getProducts().get(i).getProduct().getProductCode();
+                int cnt = exchange.getProducts().get(i).getExchangeProductCount();
+                try {
+                    productService.productMinusCnt(cnt,productCode);
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            exchangeRepository.save(exchange);
+        });
+    }
+
+
     @Override
     @Transactional
     public void updateExchangeStartDelivery(int franchiseCode) {
@@ -312,37 +348,5 @@ public class ExchangeServiceImpl implements ExchangeService{
         return new ExchangeDTO(exchangeRepository.findById(exchangeCode).orElseThrow());
     }
 
-    @Override
-    @Transactional
-    public void afterAcceptOrder(OrderDTO order) {
-        // 주문 승인 후 처리 되어 있는 교환들 반환대기로 변경
-        // 본사 재고도 미리 뻄
-        List<Exchange> exchanges = exchangeRepository.findAllByFranchiseFranchiseCodeAndExchangeStatus(order.getFranchiseCode(),EXCHANGE_STATUS.처리완료);
-        if (exchanges.isEmpty())
-            return;
-        exchanges.forEach(exchange -> {
-            exchange.setExchangeStatus(EXCHANGE_STATUS.반환대기);
 
-            exchangeRepository.save(exchange);
-        });
-        saveExchangeAndProduct(exchanges);
-    }
-
-    private void saveExchangeAndProduct(List<Exchange> exchanges) {
-        exchanges.forEach(exchange -> {
-            exchange.setExchangeStatus(EXCHANGE_STATUS.반환대기);
-            for (int i = 0; i <exchange.getProducts().size(); i++) {
-                if (exchange.getProducts().get(i).getExchangeProductStatus() != EXCHANGE_PRODUCT_STATUS.교환)
-                    return;
-                int productCode= exchange.getProducts().get(i).getProduct().getProductCode();
-                int cnt = exchange.getProducts().get(i).getExchangeProductCount();
-                try {
-                    productService.productMinusCnt(cnt,productCode);
-                } catch (JsonProcessingException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-            exchangeRepository.save(exchange);
-        });
-    }
 }
