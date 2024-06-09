@@ -80,7 +80,6 @@ public class SecurityConfig {
                 .logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/"))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/", "/reissue", "/admin/login", "/franchise/login", "/driver/login", "/admin/product/sendKakaoAlert").permitAll()
-                        .requestMatchers("/admin/**").hasRole("ROOT")
                         .requestMatchers(
                                 "/admin/info",
                                 "/admin/home",
@@ -102,6 +101,7 @@ public class SecurityConfig {
                                 "/admin/pdfdownload/**",
                                 "/admin/exceldownload/**",
                                 "/admin/adminDashboard").hasAnyRole("ADMIN", "ROOT")
+                        .requestMatchers("/admin/**").hasRole("ROOT")
                         .requestMatchers("/franchise/**").hasRole("OWNER")
                         .requestMatchers("/driver/**").hasRole("DRIVER")
                         .anyRequest().authenticated()
