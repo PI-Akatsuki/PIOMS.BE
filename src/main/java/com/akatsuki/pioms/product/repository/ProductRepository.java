@@ -17,6 +17,6 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     List<Product> findAllByProductExposureStatusTrue();
 
-    @Query("SELECT a FROM Product a WHERE a.productCount<=5 ")
+    @Query("SELECT a FROM Product a WHERE a.productCount<=100 ")
     List<Product> findNotEnoughProducts();
 }

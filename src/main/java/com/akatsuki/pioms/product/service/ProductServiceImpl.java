@@ -16,7 +16,9 @@ import com.akatsuki.pioms.order.aggregate.RequestOrderVO;
 import com.akatsuki.pioms.order.dto.OrderDTO;
 import com.akatsuki.pioms.product.aggregate.ResponseProduct;
 import com.akatsuki.pioms.product.aggregate.ResponseProductWithImage;
+import com.akatsuki.pioms.product.dto.ProductCreateDTO;
 import com.akatsuki.pioms.product.dto.ProductDTO;
+import com.akatsuki.pioms.product.dto.ProductUpdateDTO;
 import com.akatsuki.pioms.product.repository.ProductRepository;
 import com.akatsuki.pioms.categoryThird.aggregate.CategoryThird;
 import com.akatsuki.pioms.product.aggregate.Product;
@@ -211,7 +213,7 @@ public class ProductServiceImpl implements ProductService {
         System.out.println("Old Product Count: " + oldProductCount);
         System.out.println("Updated Product Count: " + updatedProduct.getProductCount());
 
-        // 재고가 5이하로 떨어지면 알림 전송
+        // 재고가 100이하로 떨어지면 알림 전송
         int threshold = 100;
         if (updatedProduct.getProductCount() <= threshold) {
             try {
@@ -293,7 +295,7 @@ public class ProductServiceImpl implements ProductService {
         product.setProductCount(product.getProductCount() - requestProduct);
         productRepository.save(product);
 
-        // 재고가 5이하로 떨어지면 알림 전송
+        // 재고가 100하로 떨어지면 알림 전송
         int threshold = 100;
         if (product.getProductCount() <= threshold) {
             sendKakaoAlert(product.getProductName(), product.getProductCount());
@@ -463,8 +465,8 @@ public class ProductServiceImpl implements ProductService {
         System.out.println("Old Product Count: " + oldProductCount);
         System.out.println("Updated Product Count: " + updatedProduct.getProductCount());
 
-        // 재고가 5이하로 떨어지면 알림 전송
-        int threshold = 5;
+        // 재고가 100이하로 떨어지면 알림 전송
+        int threshold = 100;
         if (updatedProduct.getProductCount() < threshold) {
             try {
                 sendKakaoAlert(updatedProduct.getProductName(), updatedProduct.getProductCount());
@@ -500,5 +502,46 @@ public class ProductServiceImpl implements ProductService {
         });
         System.out.println("ref = " + ref.totalPrice);
         return ref.totalPrice;
+    }
+
+    @Override
+    public ProductDTO createProduct(ProductCreateDTO productCreateDTO) {
+        Product product = new Product();
+        product.setProductName(productCreateDTO.getProductName());
+        product.setProductPrice(productCreateDTO.getProductPrice());
+        product.setProductContent(productCreateDTO.getProductContent());
+        product.setProductExposureStatus(productCreateDTO.isProductExposureStatus());
+        product.setProductDiscount(productCreateDTO.getProductDiscount());
+        product.setProductColor(productCreateDTO.getProductColor());
+        product.setProductSize(productCreateDTO.getProductSize());
+        product.setProductTotalCount(productCreateDTO.getProductTotalCount());
+        product.setProductStatus(productCreateDTO.getProductStatus());
+        product.setProductNoticeCount(productCreateDTO.getProductNoticeCount());
+        product.setProductCount(productCreateDTO.getProductCount());
+
+        productRepository.save(product);
+        logService.saveLog("root", LogStatus.등록, product.getProductName(), "Product");
+        return new ProductDTO(product);
+    }
+
+    @Override
+    public Product modifyProduct(int productCode, ProductUpdateDTO productUpdateDTO) {
+        Product product = productRepository.findById(productCode)
+                .orElseThrow(()-> new EntityNotFoundException("Product not found with id:" + productCode));
+        product.setProductName(productUpdateDTO.getProductName());
+        product.setProductPrice(productUpdateDTO.getProductPrice());
+        product.setProductContent(productUpdateDTO.getProductContent());
+        product.setProductExposureStatus(productUpdateDTO.isProductExposureStatus());
+        product.setProductDiscount(productUpdateDTO.getProductDiscount());
+        product.setProductColor(productUpdateDTO.getProductColor());
+        product.setProductSize(productUpdateDTO.getProductSize());
+        product.setProductTotalCount(productUpdateDTO.getProductTotalCount());
+        product.setProductStatus(productUpdateDTO.getProductStatus());
+        product.setProductNoticeCount(productUpdateDTO.getProductNoticeCount());
+        product.setProductCount(productUpdateDTO.getProductCount());
+
+        productRepository.save(product);
+        logService.saveLog("root", LogStatus.수정, product.getProductName(), "Product");
+        return productRepository.save(product);
     }
 }

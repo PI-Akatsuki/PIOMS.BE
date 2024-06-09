@@ -21,7 +21,6 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -80,7 +79,6 @@ public class SecurityConfig {
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .logout(logout -> logout.disable())
                 .authorizeHttpRequests(authorize -> authorize
-//                        .requestMatchers("/**").permitAll()
                                 .requestMatchers("/", "/reissue", "/admin/login", "/franchise/login", "/driver/login", "/admin/product/sendKakaoAlert").permitAll()
                                 .requestMatchers(
                                         "/admin/info",
@@ -104,7 +102,7 @@ public class SecurityConfig {
                                         "/admin/exceldownload/**",
                                         "/admin/adminDashboard").hasRole("ADMIN")
                                 .requestMatchers("/admin/**").hasRole("ROOT")
-                                .requestMatchers("/franchise/**").hasAnyRole("OWNER")
+                                .requestMatchers("/franchise/**").hasRole("OWNER")
                                 .requestMatchers("/driver/**").hasRole("DRIVER")
                                 .anyRequest().authenticated()
                 )

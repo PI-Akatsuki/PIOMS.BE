@@ -34,7 +34,7 @@ public interface InvoiceService {
      * <h2>4. Delete Invoice : 아직 처리 되지 않은 주문 삭제 </h2>
      * */
 
-    List<InvoiceDTO> getAdminInvoiceList(int adminCode);
+    List<InvoiceDTO> getAdminInvoiceList();
     InvoiceDTO getInvoiceByAdminCode(int adminCode, int invoiceCode);
     InvoiceDTO putInvoice(int adminCode,int invoiceCode, DELIVERY_STATUS invoiceStatus);
 

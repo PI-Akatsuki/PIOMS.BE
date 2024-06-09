@@ -43,6 +43,7 @@ public class ProductDTO {
     private String CategoryFirstName;
 
     public ProductDTO(Product product) {
+        if(product==null) return;
         this.productCode = product.getProductCode();
         this.productName = product.getProductName();
         this.productPrice = product.getProductPrice();

@@ -1,6 +1,7 @@
 package com.akatsuki.pioms.invoice.service;
 
 
+
 import com.akatsuki.pioms.company.repository.CompanyRepository;
 import com.akatsuki.pioms.config.GetUserInfo;
 import com.akatsuki.pioms.exchange.service.ExchangeService;
@@ -36,6 +37,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     final private FranchiseService franchiseService;
     final private OrderService orderService;
     final private ExchangeService exchangeService;
+
     private final GetUserInfo getUserInfo;
     private final CompanyRepository companyRepository;
     private final FranchiseRepository franchiseRepository;
@@ -45,6 +47,14 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Autowired
     public InvoiceServiceImpl(InvoiceRepository invoiceRepository, FranchiseService franchiseService, OrderService orderService, ExchangeService exchangeService, GetUserInfo getUserInfo, CompanyRepository companyRepository, FranchiseRepository franchiseRepository1, OrderRepository orderRepository, FranchiseOwnerService franchiseOwnerService) {
+    final private GetUserInfo getUserInfo;
+
+
+    @Autowired
+    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, FranchiseService franchiseService,
+                              OrderService orderService, ExchangeService exchangeService,
+                              GetUserInfo getUserInfo) {
+
         this.invoiceRepository = invoiceRepository;
         this.franchiseService = franchiseService;
         this.orderService = orderService;
@@ -101,13 +111,14 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 
     @Override
-    public List<InvoiceDTO> getAdminInvoiceList(int adminCode) {
+    public List<InvoiceDTO> getAdminInvoiceList() {
+        int adminCode = getUserInfo.getAdminCode();
         List<Invoice> invoices;
 
         if (adminCode==1)
-            invoices = invoiceRepository.findAll();
+            invoices = invoiceRepository.findAllByOrderDesc();
         else
-            invoices = invoiceRepository.findAllByOrderFranchiseAdminAdminCode(adminCode);
+            invoices = invoiceRepository.findAllByOrderFranchiseAdminAdminCodeOrderByInvoiceDateDesc(adminCode);
 
         List<InvoiceDTO> invoiceDTOS= new ArrayList<>();
         for (int i = 0; i < invoices.size(); i++) {

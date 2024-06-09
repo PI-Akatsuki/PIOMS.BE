@@ -3,6 +3,7 @@ package com.akatsuki.pioms.excel.franchise;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 @RestController
 @RequestMapping("franchise/pdfdownload")
@@ -28,12 +30,73 @@ public class FrOwnerManualPDFController {
             PDPage page = new PDPage();
             document.addPage(page);
 
+            // 폰트 로드
+            InputStream fontStream = getClass().getResourceAsStream("/fonts/malgun.ttf");
+            PDType0Font font = PDType0Font.load(document, fontStream);
+
             try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
                 contentStream.beginText();
-                // 기본 폰트 설정 (예: Times-Roman)
-                contentStream.setFont(PDType1Font.HELVETICA, 12);
+                // 한글 폰트 설정
+                contentStream.setFont(font, 12);
                 contentStream.newLineAtOffset(100, 700);
-                contentStream.showText("FrOwnerManualPDF");
+                contentStream.showText("### 가맹점주 메뉴얼\n" +
+                        "\n" +
+                        "가맹점주는 자신의 가맹점과 관련된 모든 작업을 수행할 수 있습니다.\n" +
+                        "\n" +
+                        "### 즐겨찾기 관리\n" +
+                        "\n" +
+                        "- **조회**: 즐겨찾기를 조회할 수 있습니다.\n" +
+                        "- **수정**: 즐겨찾기를 수정할 수 있습니다.\n" +
+                        "\n" +
+                        "### 가맹점 관리\n" +
+                        "\n" +
+                        "- **조회**: 자신의 가맹점 정보를 조회할 수 있습니다.\n" +
+                        "- **수정**: 자신의 가맹점 정보를 수정할 수 있습니다.\n" +
+                        "\n" +
+                        "### 점주 정보 관리\n" +
+                        "\n" +
+                        "- **조회**: 자신의 정보를 조회할 수 있습니다.\n" +
+                        "- **수정**: 자신의 정보를 수정할 수 있습니다.\n" +
+                        "\n" +
+                        "### 배송기사 관리\n" +
+                        "\n" +
+                        "- **조회**: 배송기사의 이름 정도를 조회할 수 있습니다. 상세 조회는 불가합니다.\n" +
+                        "\n" +
+                        "### 상품 관리\n" +
+                        "\n" +
+                        "- **조회**: 상품 정보를 조회할 수 있습니다.\n" +
+                        "- **수정**: 상품 정보를 수정할 수 있습니다.\n" +
+                        "\n" +
+                        "### 상품카테고리 관리\n" +
+                        "\n" +
+                        "- **조회**: 상품카테고리 정보를 조회할 수 있습니다.\n" +
+                        "\n" +
+                        "### 배송정보 + 발주 관리\n" +
+                        "\n" +
+                        "- **등록**: 새로운 배송정보와 발주를 등록할 수 있습니다.\n" +
+                        "- **조회**: 배송정보와 발주 내역을 조회할 수 있습니다.\n" +
+                        "- **수정**: 배송정보와 발주 내역을 수정할 수 있습니다.\n" +
+                        "- **삭제**: 배송정보와 발주 내역을 삭제할 수 있습니다.\n" +
+                        "\n" +
+                        "### 반품 및 교환 처리\n" +
+                        "\n" +
+                        "- **등록**: 새로운 반품 및 교환 내역을 등록할 수 있습니다.\n" +
+                        "- **조회**: 반품 및 교환 내역을 조회할 수 있습니다.\n" +
+                        "- **삭제**: 반품 및 교환 내역을 삭제할 수 있습니다.\n" +
+                        "\n" +
+                        "### 통계 조회\n" +
+                        "\n" +
+                        "- **조회**: 통계 정보를 조회할 수 있습니다.\n" +
+                        "\n" +
+                        "### 공지사항 조회\n" +
+                        "\n" +
+                        "- **조회**: 공지사항을 조회할 수 있습니다.\n" +
+                        "\n" +
+                        "### 문의사항 관리\n" +
+                        "\n" +
+                        "- **등록**: 새로운 문의사항을 등록할 수 있습니다.\n" +
+                        "- **조회**: 자신이 작성한 문의사항을 조회할 수 있습니다.\n" +
+                        "- **수정**: 관리자 조회 전까지 자신이 작성한 문의사항을 수정할 수 있습니다.");
                 contentStream.endText();
             }
 
@@ -45,7 +108,7 @@ public class FrOwnerManualPDFController {
 
         // ResponseEntity 설정
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=frOwnerManual.pdf")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=adminManual.pdf")
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(resource);
     }
