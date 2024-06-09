@@ -100,13 +100,13 @@ public class OrderServiceImpl implements OrderService{
             return 1;
         }
         catch (Exception e){
+            System.err.println("post failed");
             return -1;
         }
     }
     private void postOrder(FranchiseDTO franchiseDTO, RequestOrderVO requestOrder,int price) {
         Order order = new Order(ORDER_CONDITION.승인대기, franchiseDTO);
         order.setOrderTotalPrice(price);
-
         Order result = orderRepository.save(order);
         requestOrder.getProducts().forEach((productCode, count) -> {
             orderProductRepository.save(new OrderProduct(count, 0, result, productCode));
@@ -130,7 +130,7 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     @Transactional(readOnly = true)
-    public OrderDTO getOrder(int franchiseCode,int orderCode){
+    public OrderDTO getOrderByFranchiseOwnerCode(int franchiseCode, int orderCode){
         Order order = orderRepository.findById(orderCode).orElseThrow();
         if(franchiseCode!= order.getFranchise().getFranchiseCode()){
             System.out.println("가맹점 코드, 주문의 가맹점 코드 불일치!");

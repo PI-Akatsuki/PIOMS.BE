@@ -5,8 +5,12 @@ import com.akatsuki.pioms.driver.aggregate.DeliveryDriver;
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import com.akatsuki.pioms.franchise.aggregate.DELIVERY_DATE;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
+import com.akatsuki.pioms.franchise.dto.FranchiseDTO;
 import com.akatsuki.pioms.frowner.aggregate.FranchiseOwner;
 import com.akatsuki.pioms.order.aggregate.Order;
+import com.akatsuki.pioms.order.aggregate.OrderProduct;
+import com.akatsuki.pioms.order.aggregate.RequestOrderVO;
+import com.akatsuki.pioms.order.aggregate.RequestPutOrder;
 import com.akatsuki.pioms.order.dto.OrderDTO;
 import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
 import com.akatsuki.pioms.order.repository.OrderProductRepository;
@@ -20,9 +24,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -158,5 +160,46 @@ class OrderServiceImplTest {
         assertNotNull(result);
     }
 
-    
+
+    @Test
+    void postOrder(){
+        //given
+        Map<Integer,Integer> map = new HashMap<>();
+        map.put(1,1);
+        RequestOrderVO requestOrderVO = new RequestOrderVO(map,1,0);
+        when(orderRepository.save(any(Order.class))).thenReturn(order);
+        when(orderProductRepository.save(any(OrderProduct.class))).thenReturn(new OrderProduct());
+        //when
+        int result = orderService.postFranchiseOrder(new FranchiseDTO(franchise),requestOrderVO,0);
+        //then
+        assertEquals(1,result);
+    }
+    //given
+    //when
+    //then
+    @Test
+    void getOrderByFranchiseOwnerCode(){
+        //given
+        when(orderRepository.findById(1)).thenReturn(Optional.ofNullable(order));
+        //when
+        OrderDTO orderDTO = orderService.getOrderByFranchiseOwnerCode(1,1);
+        //then
+        assertNotNull(orderDTO);
+    }
+
+    @Test
+    void putFranchiseOrder(){
+        //given
+        Map<Integer,Integer> map = new HashMap<>();
+        map.put(1,1);
+        RequestPutOrder requestOrderVO = new RequestPutOrder(1, map);
+        when(orderRepository.findById(1)).thenReturn(Optional.ofNullable(order));
+        when(orderProductRepository.save(any(OrderProduct.class))).thenReturn(new OrderProduct());
+        //when
+        boolean result = orderService.putFranchiseOrder(1,requestOrderVO,0);
+        //then
+        assertTrue(result);
+    }
+
+
 }
