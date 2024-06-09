@@ -83,7 +83,8 @@ public class CustomLogoutFilter extends GenericFilterBean {
             return;
         }
 
-        redisTokenService.deleteRefreshToken(userId);
+        // Redis에서 Refresh 지우는거
+//        redisTokenService.deleteRefreshToken(userId);
 
         Cookie cookie = new Cookie("refresh", null);
         cookie.setMaxAge(0);
