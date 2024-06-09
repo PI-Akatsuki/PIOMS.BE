@@ -192,12 +192,14 @@ public class FranchiseServiceImpl implements FranchiseService {
         }
     }
 
+    // 사용자 코드로 프랜차이즈 조회
     @Override
     public FranchiseDTO findFranchiseByFranchiseOwnerCode(int franchiseOwnerCode) {
         Franchise franchise = franchiseRepository.findByFranchiseOwnerFranchiseOwnerCode(franchiseOwnerCode);
         return new FranchiseDTO(franchise);
     }
 
+    // 드라이버 코드로 프랜차이즈 리스트 조회
     @Override
     public List<FranchiseDTO> findFranchiseListByDriverCode(int driverCode) {
         return franchiseRepository.findAllByDeliveryDriverDriverCode(driverCode).stream()
@@ -205,10 +207,27 @@ public class FranchiseServiceImpl implements FranchiseService {
                 .collect(Collectors.toList());
     }
 
+    // 관리자 코드로 프랜차이즈 리스트 조회
     @Override
     public List<FranchiseDTO> findFranchiseByAdminCode(int adminCode) {
         return franchiseRepository.findAllByAdminAdminCode(adminCode).stream()
                 .map(FranchiseDTO::new)
                 .collect(Collectors.toList());
+    }
+
+    // 사용자 아이디로 프랜차이즈 리스트 조회 (루트 사용자가 아닌 경우)
+    @Override
+    public List<FranchiseDTO> findFranchiseListByUser(String userId) {
+        if (userId == null || isCurrentUserRoot()) {
+            return findFranchiseList();
+        }
+
+        Optional<Admin> adminOptional = adminRepository.findByAdminId(userId);
+        if (adminOptional.isPresent()) {
+            Admin admin = adminOptional.get();
+            return findFranchiseByAdminCode(admin.getAdminCode());
+        }
+
+        return List.of();
     }
 }
