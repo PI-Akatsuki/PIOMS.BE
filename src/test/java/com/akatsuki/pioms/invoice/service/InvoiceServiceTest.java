@@ -1,223 +1,342 @@
-//package com.akatsuki.pioms.invoice.service;
-//
-//import com.akatsuki.pioms.invoice.aggregate.DELIVERY_STATUS;
-//import com.akatsuki.pioms.invoice.aggregate.Invoice;
-//import com.akatsuki.pioms.invoice.aggregate.ResponseDriverInvoice;
-//import com.akatsuki.pioms.invoice.dto.InvoiceDTO;
-//import com.akatsuki.pioms.invoice.repository.InvoiceRepository;
-//import com.akatsuki.pioms.order.aggregate.Order;
-//import com.akatsuki.pioms.order.aggregate.RequestOrderVO;
-//import com.akatsuki.pioms.order.dto.OrderDTO;
-//import com.akatsuki.pioms.order.dto.OrderProductDTO;
-//import com.akatsuki.pioms.order.repository.OrderRepository;
-//import com.akatsuki.pioms.order.service.AdminOrderFacade;
-//import com.akatsuki.pioms.order.service.FranchiseOrderFacade;
-//import org.junit.jupiter.api.DisplayName;
-//import org.junit.jupiter.api.Test;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.test.context.SpringBootTest;
-//import org.springframework.http.ResponseEntity;
-//import org.springframework.transaction.annotation.Transactional;
-//
-//
-//import java.time.LocalDateTime;
-//import java.util.ArrayList;
-//import java.util.HashMap;
-//import java.util.List;
-//import java.util.Map;
-//
-//import static org.junit.jupiter.api.Assertions.*;
-//
-//@SpringBootTest
-//@Transactional
-//class InvoiceServiceTest {
-//
-//    InvoiceService invoiceService;
-//    InvoiceRepository invoiceRepository;
-//    AdminOrderFacade orderFacade;
-//    FranchiseOrderFacade franchiseOrderFacade;
-//
-//    @Autowired
-//    private OrderRepository orderRepository;
-//
-//    static int adminCode = 1;
-//    static int franchiseCode = 1;
-//
-//
-//    @Autowired
-//    public InvoiceServiceTest(InvoiceService invoiceService, InvoiceRepository invoiceRepository, AdminOrderFacade orderFacade, OrderRepository orderRepository) {
-//        this.invoiceService = invoiceService;
-//        this.invoiceRepository = invoiceRepository;
-//        this.orderFacade = orderFacade;
-//        this.orderRepository = orderRepository;
-//    }
-//
-////    @Test
-////    void postInvoiceAndPut() {
-////        // this test located in Order Test
-////        // 이 메서드는 주문이 생성된 이후에 바로 이루어지는 것으로 주문 후 확인 가능하다~!
-////        int franchiseCode = 1;
-////
-////        Map<Integer,Integer> requestProducts = new HashMap<>() {{
-////            put(1, 1);
-////            put(2, 2);
-////            put(3, 3);
-////        }};
-////        RequestOrderVO requestOrderVO = new RequestOrderVO(requestProducts,franchiseCode);
-////
-////        List<Invoice>  invoices = invoiceRepository.findByOrderFranchiseFranchiseCode(franchiseCode);
-////        int invoicesCnt = invoices.size();
-////        System.out.println("invoicesCnt = " + invoicesCnt);
-////        OrderDTO orderDTO = franchiseOrderFacade.postFranchiseOrder(franchiseCode,requestOrderVO);
-////        if (orderDTO==null) {
-////            assertEquals(true, true);
-////            return;
-////        }
-////
-////        int lastOrderCode = orderDTO.getOrderCode();
-////        int adminCode = orderDTO.getAdminCode();
-////        OrderDTO orderDTOCmp = orderFacade.acceptOrder(adminCode,lastOrderCode);
-////
-////        List<Invoice> invoicesCmp = invoiceRepository.findByOrderFranchiseFranchiseCode(franchiseCode);
-////        boolean result = invoiceRepository.existsByOrderOrderCode(orderDTO.getOrderCode());
-////        System.out.println("invoicesCmp.size() = " + invoicesCmp.size());
-////        assertNotEquals(invoicesCnt,invoicesCmp.size());
-////        assertEquals(true, result);
-////
-////
-////        // Put
-////        //when
-////        Invoice invoiceForPut = invoicesCmp.get(invoicesCmp.size()-1);
-////        invoiceService.putInvoice(adminCode,invoiceForPut.getInvoiceCode(), DELIVERY_STATUS.배송완료);
-////        assertEquals(DELIVERY_STATUS.배송완료, invoiceForPut.getDeliveryStatus());
-////    }
-//
-//    @Test
-//    @DisplayName(value = "배송 상태 전체조회 테스트 성공")
-//    void getAllDriverInvoiceList() {
-//
-//        // given
-//        List<Invoice> invoiceList = invoiceRepository.findAll();
-//
-//        // when
-//        List<ResponseDriverInvoice> responseDriverInvoices = invoiceService.getAllDriverInvoiceList(1);
-//
-//        // then
-//        assertEquals(invoiceList.size(), responseDriverInvoices.size());
-//    }
-//
-//
-//    @Test
-//    @DisplayName("배송 상태 상세조회(배송전) 테스트 성공")
-//    void getStatusBeforeDeliveryDriverInvoiceList() {
-//
-//        // given
-//        int driverCode = 1;
-//        List<ResponseDriverInvoice> invoiceAllList = invoiceService.getAllDriverInvoiceList(driverCode);
-//
-//        // when
-//        List<ResponseDriverInvoice> result = invoiceService.getStatusBeforeDeliveryDriverInvoiceList(driverCode);
-//        System.out.println("result1 = " + result);
-//
-//        // then
-//        long expectedCount = invoiceAllList.stream()
-//                .filter(invoiceDTO -> invoiceDTO.getDeliveryStatus() == DELIVERY_STATUS.배송전)
-//                .count();
-//
-//        assertEquals(expectedCount, result.size());
-//        for(ResponseDriverInvoice invoiceDTO : result) {
-//            assertEquals(DELIVERY_STATUS.배송전, invoiceDTO.getDeliveryStatus());
-//        }
-//    }
-//
-//    @Test
-//    @DisplayName(value = "배송 상태 상세조회(배송중) 테스트 성공")
-//    void getStatusIngDeliveryDriverInvoiceList() {
-//
-//        // given
-//        int driverCode = 1;
-//        List<ResponseDriverInvoice> invoiceAllList = invoiceService.getAllDriverInvoiceList(driverCode);
-//
-//        // when
-//        List<ResponseDriverInvoice> result = invoiceService.getStatusIngDeliveryDriverInvoiceList(driverCode);
-//        System.out.println("result2 = " + result);
-//
-//        // then
-//        long expectedCount = invoiceAllList.stream()
-//                .filter(invoiceDTO -> invoiceDTO.getDeliveryStatus() == DELIVERY_STATUS.배송중)
-//                .count();
-//
-//        assertEquals(expectedCount, result.size());
-//        for (ResponseDriverInvoice invoiceDTO : result) {
-//            assertEquals(DELIVERY_STATUS.배송중, invoiceDTO.getDeliveryStatus());
-//        }
-//
-//    }
-//
-//    @Test
-//    @DisplayName(value = "배송 상태 상세조회(배송완료) 테스트 성공")
-//    void getStatusCompleteDeliveryDriverInvoiceList() {
-//
-//        // given
-//        int driverCode = 1;
-//        List<ResponseDriverInvoice> invoiceAllList = invoiceService.getAllDriverInvoiceList(driverCode);
-//
-//        // when
-//        List<ResponseDriverInvoice> result = invoiceService.getStatusCompleteDeliveryDriverInvoiceList(driverCode);
-//        System.out.println("result3 = " + result);
-//
-//        // then
-//        long expectedCount = invoiceAllList.stream()
-//                .filter(invoiceDTO -> invoiceDTO.getDeliveryStatus() == DELIVERY_STATUS.배송완료)
-//                .count();
-//
-//        assertEquals(expectedCount, result.size());
-//        for (ResponseDriverInvoice invoiceDTO : result) {
-//            assertEquals(DELIVERY_STATUS.배송완료, invoiceDTO.getDeliveryStatus());
-//        }
-//    }
-//
-//    @Test
-//    @DisplayName(value = "배송기사가 배송 상태 수정 테스트 성공")
-//    void modifyInvoiceStatusByDriver() {
-//
-//        // given
-//        int invoiceCode = 25;
-//        int driverCode = 1;
-//        int requestCode = 17;
-//        DELIVERY_STATUS initialStatus = DELIVERY_STATUS.배송전;
-//        DELIVERY_STATUS updatedStatus = DELIVERY_STATUS.배송중;
-//        LocalDateTime initialDate = LocalDateTime.parse("2024-05-12T11:23:45"); // ISO 8601 형식으로 변경
-//
-//        // Order 엔티티 생성 및 설정
-//        Order order = new Order();
-//        order.setOrderCode(requestCode);
-//
-//        orderRepository.save(order);
-//
-//        Invoice invoice = new Invoice();
-//        invoice.setInvoiceCode(invoiceCode);
-//        invoice.setDeliveryStatus(initialStatus);
-//        invoice.setInvoiceDate(initialDate);
-//        invoice.setOrder(order); // request_code 설정
-//
-//        // 미리 저장소에 초기 상태의 인보이스를 저장 (실제 테스트 환경에 따라 달라질 수 있음)
-//        invoiceRepository.save(invoice);
-//
-//        // 저장된 송장이 DB에 존재하는지 확인
-//        Invoice savedInvoice = invoiceRepository.findById(invoiceCode).orElse(null);
-//        assertNotNull(savedInvoice, "저장된 송장은 null이어서는 안됩니다.");
-//
-//        // when
-//        boolean modifyInvoice = invoiceService.modifyInvoiceStatusByDriver(invoiceCode, driverCode, updatedStatus);
-//        System.out.println("modifyInvoice = " + modifyInvoice);
-//
-//        // 변경된 인보이스를 다시 조회
-//        Invoice updatedInvoice = invoiceRepository.findById(invoiceCode).orElse(null);
-//
-//        // then
-//        assertNotNull(updatedInvoice, "수정된 송장은 null이어서는 안됩니다.");
-//        assertEquals(updatedStatus, updatedInvoice.getDeliveryStatus());
-//
-//    }
-//}
+package com.akatsuki.pioms.invoice.service;
+
+import com.akatsuki.pioms.admin.aggregate.Admin;
+import com.akatsuki.pioms.config.GetUserInfo;
+import com.akatsuki.pioms.driver.aggregate.DeliveryDriver;
+import com.akatsuki.pioms.exchange.service.ExchangeService;
+import com.akatsuki.pioms.franchise.aggregate.DELIVERY_DATE;
+import com.akatsuki.pioms.franchise.aggregate.Franchise;
+import com.akatsuki.pioms.franchise.dto.FranchiseDTO;
+import com.akatsuki.pioms.franchise.service.FranchiseService;
+import com.akatsuki.pioms.frowner.aggregate.FranchiseOwner;
+import com.akatsuki.pioms.invoice.aggregate.DELIVERY_STATUS;
+import com.akatsuki.pioms.invoice.aggregate.Invoice;
+import com.akatsuki.pioms.invoice.aggregate.ResponseDriverInvoice;
+import com.akatsuki.pioms.invoice.dto.InvoiceDTO;
+import com.akatsuki.pioms.invoice.repository.InvoiceRepository;
+import com.akatsuki.pioms.order.aggregate.Order;
+import com.akatsuki.pioms.order.dto.OrderDTO;
+import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
+import com.akatsuki.pioms.order.service.OrderService;
+import com.akatsuki.pioms.product.aggregate.Product;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+@Transactional
+class InvoiceServiceImplTest {
+
+    @Mock
+    private InvoiceRepository invoiceRepository;
+
+    @Mock
+    private FranchiseService franchiseService;
+
+    @Mock
+    private OrderService orderService;
+
+    @Mock
+    private ExchangeService exchangeService;
+
+    @Mock
+    private GetUserInfo getUserInfo;
+
+    @InjectMocks
+    private InvoiceServiceImpl invoiceService;
+
+    private Invoice invoice;
+    private Order order;
+    private Admin admin;
+    private Franchise franchise;
+    private Product product;
+    private FranchiseOwner franchiseOwner;
+    private DeliveryDriver deliveryDriver;
+    @BeforeEach
+    void setUp() {
+        admin = Admin.builder()
+                .adminCode(1)
+                .adminId("root")
+                .accessNumber("rootAccess")
+                .adminStatus(true)
+                .adminName("root")
+                .adminEmail("root@example.com")
+                .adminPhone("010-1234-5678")
+                .enrollDate("2023-01-01 00:00:00")
+                .updateDate("2023-01-01 00:00:00")
+                .adminRole("ROLE_ROOT")
+                .franchise(new ArrayList<>())
+                .build();
+
+        franchiseOwner = FranchiseOwner.builder()
+                .franchiseOwnerCode(1)
+                .franchiseOwnerName("test")
+                .franchiseOwnerId("sadf")
+                .franchiseRole("ROLE_OWNER")
+                .build();
+
+        deliveryDriver = DeliveryDriver.builder()
+                .driverCode(1)
+                .driverId("driver")
+                .driverName("driver")
+                .driverRole("ROLE_DRIVER").build();
+
+        franchise = Franchise.builder()
+                .franchiseCode(1)
+                .franchiseOwner(franchiseOwner)
+                .admin(admin)
+                .franchiseName("franchise")
+                .franchiseDeliveryDate(DELIVERY_DATE.월_목)
+                .deliveryDriver(deliveryDriver)
+                .build();
+
+        order = Order.builder()
+                .orderCode(1)
+                .orderCondition(ORDER_CONDITION.승인대기)
+                .franchise(franchise)
+                .orderProductList(null)
+                .orderDate(LocalDateTime.now())
+                .build();
+
+        invoice = new Invoice();
+        invoice.setOrder(order);
+        invoice.setDeliveryStatus(DELIVERY_STATUS.배송전);
+    }
+
+    @Test
+    void testAfterAcceptOrder() {
+        //given
+        when(invoiceRepository.save(any(Invoice.class))).thenReturn(invoice);
+        //when
+        invoiceService.afterAcceptOrder(new OrderDTO(order));
+        //then
+        verify(invoiceRepository, times(1)).save(any(Invoice.class));
+    }
+
+    @Test
+    void testGetAdminInvoiceList_RootAdmin() {
+        //given
+        when(getUserInfo.getAdminCode()).thenReturn(1);
+        when(invoiceRepository.findAllByOrderDesc()).thenReturn(List.of(invoice));
+        //when
+        List<InvoiceDTO> result = invoiceService.getAdminInvoiceList();
+        //then
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        verify(invoiceRepository, times(1)).findAllByOrderDesc();
+    }
+
+    @Test
+    void testGetAdminInvoiceList_NonRootAdmin() {
+        //given
+        when(getUserInfo.getAdminCode()).thenReturn(2);
+        when(invoiceRepository.findAllByOrderFranchiseAdminAdminCodeOrderByInvoiceDateDesc(2))
+                .thenReturn(List.of(invoice));
+        //when
+        List<InvoiceDTO> result = invoiceService.getAdminInvoiceList();
+        //then
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        verify(invoiceRepository, times(1))
+                .findAllByOrderFranchiseAdminAdminCodeOrderByInvoiceDateDesc(2);
+    }
+
+    @Test
+    void testGetInvoiceByAdminCode() {
+        //given
+        when(invoiceRepository.findById(1)).thenReturn(Optional.of(invoice));
+        //when
+        InvoiceDTO result = invoiceService.getInvoiceByAdminCode(1, 1);
+        //then
+        assertNotNull(result);
+    }
+
+    @Test
+    void testGetFranchiseInvoiceList() {
+        //given
+        when(invoiceRepository.findAllByOrderFranchiseFranchiseOwnerFranchiseOwnerCode(1))
+                .thenReturn(List.of(invoice));
+        //when
+        List<InvoiceDTO> result = invoiceService.getFranchiseInvoiceList(1);
+        //then
+        assertNotNull(result);
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    void testGetInvoiceByFranchiseOwnerCode() {
+        //given
+        when(invoiceRepository.findById(1)).thenReturn(Optional.of(invoice));
+        //when
+        InvoiceDTO result = invoiceService.getInvoiceByFranchiseOwnerCode(1, 1);
+        //then
+        assertNotNull(result);
+    }
+
+    @Test
+    void testPutInvoice() {
+        //given
+        when(invoiceRepository.findById(1)).thenReturn(Optional.of(invoice));
+        when(invoiceRepository.save(any(Invoice.class))).thenReturn(invoice);
+        //when
+        InvoiceDTO result = invoiceService.putInvoice(1, 1, DELIVERY_STATUS.배송중);
+        //then
+        assertNotNull(result);
+        assertEquals(DELIVERY_STATUS.배송중, result.getDeliveryStatus());
+    }
+
+    @Test
+    void testCheckInvoiceStatus() {
+        //given
+        invoice.setDeliveryStatus(DELIVERY_STATUS.배송완료);
+        when(invoiceRepository.findByOrderOrderCode(1)).thenReturn(invoice);
+        //when
+        Boolean result = invoiceService.checkInvoiceStatus(1);
+        //then
+        assertTrue(result);
+    }
+
+    @Test
+    void testGetInvoiceByOrderCode() {
+        //given
+        when(invoiceRepository.findByOrderOrderCode(1)).thenReturn(invoice);
+        //when
+        InvoiceDTO result = invoiceService.getInvoiceByOrderCode(1);
+        //then
+        assertNotNull(result);
+    }
+
+    @Test
+    void testDeleteInvoice() {
+        //given
+        when(invoiceRepository.findById(1)).thenReturn(Optional.of(invoice));
+        //when
+        boolean result = invoiceService.deleteInvoice(1, 1);
+        //then
+        assertTrue(result);
+        verify(invoiceRepository, times(1)).deleteById(1);
+    }
+
+    @Test
+    void testGetAllDriverInvoiceList() {
+        //given
+        when(franchiseService.findFranchiseListByDriverCode(1))
+                .thenReturn(List.of(new FranchiseDTO()));
+        when(invoiceRepository.findByOrderFranchiseFranchiseCode(anyInt()))
+                .thenReturn(List.of(invoice));
+        //when
+        List<ResponseDriverInvoice> result = invoiceService.getAllDriverInvoiceList(1);
+        //then
+        assertNotNull(result);
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    void testGetStatusBeforeDeliveryDriverInvoiceList() {
+        //given
+        when(franchiseService.findFranchiseListByDriverCode(1))
+                .thenReturn(List.of(new FranchiseDTO()));
+        when(invoiceRepository.findByOrderFranchiseFranchiseCode(anyInt()))
+                .thenReturn(List.of(invoice));
+        //when
+        List<ResponseDriverInvoice> result = invoiceService.getStatusBeforeDeliveryDriverInvoiceList(1);
+        //then
+        assertNotNull(result);
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    void testGetStatusIngDeliveryDriverInvoiceList() {
+        //given
+        invoice.setDeliveryStatus(DELIVERY_STATUS.배송중);
+        when(franchiseService.findFranchiseListByDriverCode(1))
+                .thenReturn(List.of(new FranchiseDTO()));
+        when(invoiceRepository.findByOrderFranchiseFranchiseCode(anyInt()))
+                .thenReturn(List.of(invoice));
+        //when
+        List<ResponseDriverInvoice> result = invoiceService.getStatusIngDeliveryDriverInvoiceList(1);
+        //then
+        assertNotNull(result);
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    void testGetStatusCompleteDeliveryDriverInvoiceList() {
+        //given
+        invoice.setDeliveryStatus(DELIVERY_STATUS.배송완료);
+        when(franchiseService.findFranchiseListByDriverCode(1))
+                .thenReturn(List.of(new FranchiseDTO()));
+        when(invoiceRepository.findByOrderFranchiseFranchiseCode(anyInt()))
+                .thenReturn(List.of(invoice));
+        //when
+        List<ResponseDriverInvoice> result = invoiceService.getStatusCompleteDeliveryDriverInvoiceList(1);
+        //then
+        assertNotNull(result);
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    void testModifyInvoiceStatusByDriver() {
+        //given
+        when(invoiceRepository.findById(1)).thenReturn(Optional.of(invoice));
+        when(invoiceRepository.save(any(Invoice.class))).thenReturn(invoice);
+        //when
+        boolean result = invoiceService.modifyInvoiceStatusByDriver(1, 1, DELIVERY_STATUS.배송중);
+        //then
+        assertTrue(result);
+        assertEquals(DELIVERY_STATUS.배송중, invoice.getDeliveryStatus());
+    }
+
+    @Test
+    void testCountStatusBeforeDeliveryDriverInvoices() {
+        //given
+        when(franchiseService.findFranchiseListByDriverCode(1))
+                .thenReturn(List.of(new FranchiseDTO()));
+        when(invoiceRepository.findByOrderFranchiseFranchiseCode(anyInt()))
+                .thenReturn(List.of(invoice));
+        //when
+        int result = invoiceService.countStatusBeforeDeliveryDriverInvoices(1);
+        //then
+        assertEquals(1, result);
+    }
+
+    @Test
+    void testCountStatusIngDeliveryDriverInvoices() {
+        //given
+        invoice.setDeliveryStatus(DELIVERY_STATUS.배송중);
+        when(franchiseService.findFranchiseListByDriverCode(1))
+                .thenReturn(List.of(new FranchiseDTO()));
+        when(invoiceRepository.findByOrderFranchiseFranchiseCode(anyInt()))
+                .thenReturn(List.of(invoice));
+        //when
+        int result = invoiceService.countStatusIngDeliveryDriverInvoices(1);
+        //then
+        assertEquals(1, result);
+    }
+
+    @Test
+    void testCountStatusCompleteDeliveryDriverInvoices() {
+        //given
+        invoice.setDeliveryStatus(DELIVERY_STATUS.배송완료);
+        when(franchiseService.findFranchiseListByDriverCode(1))
+                .thenReturn(List.of(new FranchiseDTO()));
+        when(invoiceRepository.findByOrderFranchiseFranchiseCode(anyInt()))
+                .thenReturn(List.of(invoice));
+        //when
+        int result = invoiceService.countStatusCompleteDeliveryDriverInvoices(1);
+        //then
+        assertEquals(1, result);
+    }
+}

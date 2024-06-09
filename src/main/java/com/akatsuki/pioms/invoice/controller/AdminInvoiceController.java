@@ -39,6 +39,7 @@ public class AdminInvoiceController {
     }
 
     @GetMapping("/invoice/{invoiceCode}")
+    @Operation(summary = "가맹점의 송장 상세 조회")
     public ResponseEntity<ResponseInvoice> getInvoice(@RequestParam int adminCode ,@PathVariable int invoiceCode){
         InvoiceDTO invoiceDTO = invoiceService.getInvoiceByAdminCode(adminCode,invoiceCode);
         if (invoiceDTO==null)
@@ -47,6 +48,7 @@ public class AdminInvoiceController {
     }
 
     @PutMapping("/invoice/{invoiceCode}/{invoiceStatus}")
+    @Operation(summary = "송장의 배송 상태 변경")
     public ResponseEntity<ResponseInvoice> putInvoice(@RequestParam int adminCode, @PathVariable int invoiceCode, @PathVariable DELIVERY_STATUS invoiceStatus){
         InvoiceDTO invoice = invoiceService.putInvoice(adminCode,invoiceCode, invoiceStatus);
 

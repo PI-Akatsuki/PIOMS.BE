@@ -191,8 +191,8 @@ public class ExchangeServiceImpl implements ExchangeService{
         for (int i = 0; i < products.size(); i++) {
             ExchangeProductVO product = products.get(i);
             int productCode = product.getExchangeProductCode();
-            ExchangeProduct exchangeProduct = exchangeProductRepository.findById(productCode).orElseThrow();
-            if (exchangeProduct.getExchangeProductCount() != product.getExchangeProductCount()) {
+            ExchangeProduct exchangeProduct = exchangeProductRepository.findById(productCode).orElse(null);
+            if (exchangeProduct==null ||exchangeProduct.getExchangeProductCount() != product.getExchangeProductCount()) {
                 return false;
             }
             if (product.getExchangeProductNormalCount() + product.getExchangeProductDiscount() != exchangeProduct.getExchangeProductCount()) {
@@ -216,19 +216,26 @@ public class ExchangeServiceImpl implements ExchangeService{
     }
 
 
+
     @Override
     @Transactional
-    public void updateExchangeStartDelivery(int franchiseCode) {
-        // 배송 시작하게 되면 이 떄 반환대기로 있는 교환품목 같이 배송
-        List<Exchange> exchanges = exchangeRepository.findAllByFranchiseFranchiseCodeAndExchangeStatus(franchiseCode,EXCHANGE_STATUS.반환대기);
+    public void afterAcceptOrder(OrderDTO order) {
+        // 주문 승인 후 처리 되어 있는 교환들 반환대기로 변경
+        // 본사 재고도 미리 뻄
+        List<Exchange> exchanges = exchangeRepository.findAllByFranchiseFranchiseCodeAndExchangeStatus(order.getFranchiseCode(),EXCHANGE_STATUS.처리완료);
         if (exchanges.isEmpty())
             return;
+        exchanges.forEach(exchange -> {
+            exchange.setExchangeStatus(EXCHANGE_STATUS.반환대기);
+
+            exchangeRepository.save(exchange);
+        });
         saveExchangeAndProduct(exchanges);
     }
 
     private void saveExchangeAndProduct(List<Exchange> exchanges) {
         exchanges.forEach(exchange -> {
-            exchange.setExchangeStatus(EXCHANGE_STATUS.반환중);
+            exchange.setExchangeStatus(EXCHANGE_STATUS.반환대기);
             for (int i = 0; i <exchange.getProducts().size(); i++) {
                 if (exchange.getProducts().get(i).getExchangeProductStatus() != EXCHANGE_PRODUCT_STATUS.교환)
                     return;
@@ -240,6 +247,20 @@ public class ExchangeServiceImpl implements ExchangeService{
                     throw new RuntimeException(e);
                 }
             }
+            exchangeRepository.save(exchange);
+        });
+    }
+
+
+    @Override
+    @Transactional
+    public void updateExchangeStartDelivery(int franchiseCode) {
+        // 배송 시작하게 되면 이 떄 반환대기로 있는 교환품목 같이 배송
+        List<Exchange> exchanges = exchangeRepository.findAllByFranchiseFranchiseCodeAndExchangeStatus(franchiseCode,EXCHANGE_STATUS.반환대기);
+        if (exchanges.isEmpty())
+            return;
+        exchanges.forEach(exchange -> {
+            exchange.setExchangeStatus(EXCHANGE_STATUS.반환중);
             exchangeRepository.save(exchange);
         });
     }
@@ -278,11 +299,13 @@ public class ExchangeServiceImpl implements ExchangeService{
             return;
         }
         exchange.setExchangeStatus(EXCHANGE_STATUS.처리대기);
-        exchange.getProducts().forEach(exchangeProduct ->
-                franchiseWarehouseService.saveProductWhenUpdateExchangeToCompany(
+        exchange.getProducts().forEach(exchangeProduct ->{
+                if(exchangeProduct.getProduct()!=null)
+                    franchiseWarehouseService.saveProductWhenUpdateExchangeToCompany(
                         exchangeProduct.getProduct().getProductCode(),
                         exchangeProduct.getExchangeProductCount(),
-                        exchange.getFranchise().getFranchiseCode()));
+                        exchange.getFranchise().getFranchiseCode());
+                });
         exchangeRepository.save(exchange);
     }
 
@@ -294,11 +317,13 @@ public class ExchangeServiceImpl implements ExchangeService{
         //FIN
         int adminCode=getUserInfo.getAdminCode();
         Exchange exchangeEntity = exchangeRepository.findById(exchangeCode).orElse(null);
+        System.out.println("exchangeEntity = " + exchangeEntity);
         if (exchangeEntity == null){
             System.out.println("없는 교환 코드");
             return null;
         }
         if (exchangeEntity.getExchangeStatus()!=EXCHANGE_STATUS.처리대기){
+            System.out.println("exchangeEntity.getExchangeStatus() = " + exchangeEntity.getExchangeStatus());
             return null;
         }
         if (exchangeEntity.getFranchise().getAdmin().getAdminCode() != adminCode && adminCode !=1) {
@@ -323,18 +348,5 @@ public class ExchangeServiceImpl implements ExchangeService{
         return new ExchangeDTO(exchangeRepository.findById(exchangeCode).orElseThrow());
     }
 
-    @Override
-    @Transactional
-    public void afterAcceptOrder(OrderDTO order) {
-        // 주문 승인 후 처리 되어 있는 교환들 반환대기로 변경
-        // 수량은 배송 출발시 변경 될 예정
-        List<Exchange> exchanges = exchangeRepository.findAllByFranchiseFranchiseCodeAndExchangeStatus(order.getFranchiseCode(),EXCHANGE_STATUS.처리완료);
-        if (exchanges.isEmpty())
-            return;
-        exchanges.forEach(exchange -> {
-            exchange.setExchangeStatus(EXCHANGE_STATUS.반환대기);
-            exchangeRepository.save(exchange);
-        });
-    }
 
 }

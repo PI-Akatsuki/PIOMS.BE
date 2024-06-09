@@ -5,6 +5,7 @@ import com.akatsuki.pioms.invoice.dto.InvoiceDTO;
 import com.akatsuki.pioms.invoice.service.InvoiceService;
 import com.akatsuki.pioms.invoice.aggregate.ResponseInvoice;
 import com.akatsuki.pioms.invoice.aggregate.ResponseInvoiceList;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,7 @@ public class FranchiseInvoiceController {
     }
     // 가맹점은 조회만 가능하다.
     @GetMapping("/invoice/list")
+    @Operation(summary = "점주의 모든 배송 리스트 조회")
     public ResponseEntity<ResponseInvoiceList> getInvoiceList(@RequestParam int franchiseOwnerCode){
         List<InvoiceDTO> invoiceList = invoiceService.getFranchiseInvoiceList(franchiseOwnerCode);
         if (invoiceList.isEmpty())
@@ -32,6 +34,7 @@ public class FranchiseInvoiceController {
     }
 
     @GetMapping("/invoice/{invoiceCode}")
+    @Operation(summary = "점주의 송장 상세 조회")
     public ResponseEntity<ResponseInvoice> getInvoice(@RequestParam int franchiseOwnerCode,@PathVariable int invoiceCode){
         InvoiceDTO invoiceDTO = invoiceService.getInvoiceByFranchiseOwnerCode(franchiseOwnerCode,invoiceCode);
         if (invoiceDTO==null)
