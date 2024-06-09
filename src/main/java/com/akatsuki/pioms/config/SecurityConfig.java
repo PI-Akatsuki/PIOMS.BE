@@ -100,7 +100,7 @@ public class SecurityConfig {
                                         "/admin/ask/**",
                                         "/admin/pdfdownload/**",
                                         "/admin/exceldownload/**",
-                                        "/admin/adminDashboard").hasRole("ADMIN")
+                                        "/admin/adminDashboard").hasAnyRole("ADMIN","ROOT")
                                 .requestMatchers("/admin/**").hasRole("ROOT")
                                 .requestMatchers("/franchise/**").hasRole("OWNER")
                                 .requestMatchers("/driver/**").hasRole("DRIVER")
@@ -123,8 +123,9 @@ public class SecurityConfig {
     @Bean
     public RoleHierarchy roleHierarchy() {
         RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
-        String hierarchy = "ROLE_ROOT > ROLE_ADMIN\nROLE_ADMIN > ROLE_OWNER";
+        String hierarchy = "ROLE_ROOT > ROLE_ADMIN\nROLE_ADMIN > ROLE_OWNER\nROLE_ADMIN > ROLE_DRIVER";
         roleHierarchy.setHierarchy(hierarchy);
         return roleHierarchy;
     }
+
 }
