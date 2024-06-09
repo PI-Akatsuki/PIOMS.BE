@@ -1,18 +1,23 @@
 package com.akatsuki.pioms.invoice.service;
 
 
+import com.akatsuki.pioms.company.repository.CompanyRepository;
+import com.akatsuki.pioms.config.GetUserInfo;
 import com.akatsuki.pioms.exchange.service.ExchangeService;
 import com.akatsuki.pioms.franchise.aggregate.DELIVERY_DATE;
+import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import com.akatsuki.pioms.franchise.dto.FranchiseDTO;
+import com.akatsuki.pioms.franchise.repository.FranchiseRepository;
 import com.akatsuki.pioms.franchise.service.FranchiseService;
-import com.akatsuki.pioms.invoice.aggregate.Invoice;
-import com.akatsuki.pioms.invoice.aggregate.ResponseDriverInvoice;
+import com.akatsuki.pioms.frowner.service.FranchiseOwnerService;
+import com.akatsuki.pioms.invoice.aggregate.*;
 import com.akatsuki.pioms.invoice.dto.InvoiceDTO;
-import com.akatsuki.pioms.invoice.aggregate.DELIVERY_STATUS;
 import com.akatsuki.pioms.invoice.repository.InvoiceRepository;
 import com.akatsuki.pioms.order.aggregate.Order;
+import com.akatsuki.pioms.order.aggregate.OrderProduct;
 import com.akatsuki.pioms.order.dto.OrderDTO;
 import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
+import com.akatsuki.pioms.order.repository.OrderRepository;
 import com.akatsuki.pioms.order.service.OrderService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,14 +36,24 @@ public class InvoiceServiceImpl implements InvoiceService {
     final private FranchiseService franchiseService;
     final private OrderService orderService;
     final private ExchangeService exchangeService;
+    private final GetUserInfo getUserInfo;
+    private final CompanyRepository companyRepository;
+    private final FranchiseRepository franchiseRepository;
+    private final OrderRepository orderRepository;
+    private final FranchiseOwnerService franchiseOwnerService;
 
 
     @Autowired
-    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, FranchiseService franchiseService, OrderService orderService, ExchangeService exchangeService) {
+    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, FranchiseService franchiseService, OrderService orderService, ExchangeService exchangeService, GetUserInfo getUserInfo, CompanyRepository companyRepository, FranchiseRepository franchiseRepository1, OrderRepository orderRepository, FranchiseOwnerService franchiseOwnerService) {
         this.invoiceRepository = invoiceRepository;
         this.franchiseService = franchiseService;
         this.orderService = orderService;
         this.exchangeService = exchangeService;
+        this.getUserInfo = getUserInfo;
+        this.companyRepository = companyRepository;
+        this.franchiseRepository = franchiseRepository1;
+        this.orderRepository = orderRepository;
+        this.franchiseOwnerService = franchiseOwnerService;
     }
 
     public LocalDateTime setDeliveryTime(LocalDateTime orderTime, DELIVERY_DATE deliveryDate){
@@ -352,4 +367,19 @@ public class InvoiceServiceImpl implements InvoiceService {
         return invoiceDTOS;
     }
 
+    // 배송기사 id로 배송 조회 시 송장 상세조회 기능 구현
+    @Override
+    public ResponseInvoiceDetail getInvoiceDetail(int invoiceCode) {
+        Invoice invoice = invoiceRepository.findByInvoiceCode(invoiceCode);
+
+
+//        if (invoice != null) {
+//            throw new RuntimeException("송장을 찾을 수 없습니다.");
+//        }
+        Order order = invoice.getOrder();
+        List<OrderProduct> orderProductList = order.getOrderProductList();
+        Franchise franchise = order.getFranchise();
+
+        return new ResponseInvoiceDetail(invoice, order, franchise, orderProductList);
+    }
 }
