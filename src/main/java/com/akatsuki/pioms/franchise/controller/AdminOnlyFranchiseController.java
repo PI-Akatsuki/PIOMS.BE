@@ -35,7 +35,7 @@ public class AdminOnlyFranchiseController {
             franchiseList = franchiseService.findFranchiseList();
         } else {
             String userId = authentication.getName();
-            franchiseList = franchiseService.findFranchiseListByUser(userId);
+            franchiseList = franchiseService.findFranchiseByAdminCode();
         }
 
         return ResponseEntity.ok(franchiseList);
