@@ -1,5 +1,6 @@
 package com.akatsuki.pioms.frowner.service;
 
+import com.akatsuki.pioms.config.GetUserInfo;
 import com.akatsuki.pioms.frowner.aggregate.FranchiseOwner;
 import com.akatsuki.pioms.frowner.dto.FranchiseOwnerDTO;
 import com.akatsuki.pioms.frowner.repository.FranchiseOwnerRepository;
@@ -28,11 +29,14 @@ public class FranchiseOwnerServiceImpl implements FranchiseOwnerService {
     private final LogService logService;
     private final PasswordEncoder passwordEncoder;
 
+    private final GetUserInfo getUserInfo;
+
     @Autowired
-    public FranchiseOwnerServiceImpl(FranchiseOwnerRepository franchiseOwnerRepository, LogService logService, PasswordEncoder passwordEncoder) {
+    public FranchiseOwnerServiceImpl(FranchiseOwnerRepository franchiseOwnerRepository, LogService logService, PasswordEncoder passwordEncoder, GetUserInfo getUserInfo) {
         this.franchiseOwnerRepository = franchiseOwnerRepository;
         this.logService = logService;
         this.passwordEncoder = passwordEncoder;
+        this.getUserInfo = getUserInfo;
     }
 
     // 현재 사용자가 ROOT인지 확인
@@ -58,7 +62,13 @@ public class FranchiseOwnerServiceImpl implements FranchiseOwnerService {
     @Transactional(readOnly = true)
     @Override
     public List<FranchiseOwnerDTO> findAllFranchiseOwners() {
+        int adminCode = getUserInfo.getAdminCode();
+        if (adminCode == 1) {
         return franchiseOwnerRepository.findAll().stream()
+                .map(FranchiseOwnerDTO::new)
+                .collect(Collectors.toList());
+        }
+        return franchiseOwnerRepository.findAllByFranchiseAdminAdminCode(adminCode).stream()
                 .map(FranchiseOwnerDTO::new)
                 .collect(Collectors.toList());
     }
