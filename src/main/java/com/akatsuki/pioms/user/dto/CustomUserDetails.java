@@ -9,27 +9,31 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
+@Getter
 public class CustomUserDetails implements UserDetails {
 
-    @Getter
-    private Admin admin;
-    @Getter
-    private FranchiseOwner franchiseOwner;
-    @Getter
-    private DeliveryDriver deliveryDriver;
-    private Collection<? extends GrantedAuthority> authorities;
+    private final Admin admin;
+    private final FranchiseOwner franchiseOwner;
+    private final DeliveryDriver deliveryDriver;
+    private final Collection<? extends GrantedAuthority> authorities;
 
     public CustomUserDetails(Admin admin, Collection<? extends GrantedAuthority> authorities) {
         this.admin = admin;
+        this.franchiseOwner = null;
+        this.deliveryDriver = null;
         this.authorities = authorities;
     }
 
     public CustomUserDetails(FranchiseOwner franchiseOwner, Collection<? extends GrantedAuthority> authorities) {
+        this.admin = null;
         this.franchiseOwner = franchiseOwner;
+        this.deliveryDriver = null;
         this.authorities = authorities;
     }
 
     public CustomUserDetails(DeliveryDriver deliveryDriver, Collection<? extends GrantedAuthority> authorities) {
+        this.admin = null;
+        this.franchiseOwner = null;
         this.deliveryDriver = deliveryDriver;
         this.authorities = authorities;
     }
