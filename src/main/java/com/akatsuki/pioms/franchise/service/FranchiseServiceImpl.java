@@ -1,6 +1,7 @@
 package com.akatsuki.pioms.franchise.service;
 
 import com.akatsuki.pioms.admin.aggregate.Admin;
+import com.akatsuki.pioms.config.GetUserInfo;
 import com.akatsuki.pioms.franchise.aggregate.DELIVERY_DATE;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import com.akatsuki.pioms.franchise.dto.FranchiseDTO;
@@ -30,12 +31,14 @@ public class FranchiseServiceImpl implements FranchiseService {
     private final FranchiseRepository franchiseRepository;
     private final AdminRepository adminRepository;
     private final LogService logService;
+    private final GetUserInfo getUserInfo;
 
     @Autowired
-    public FranchiseServiceImpl(FranchiseRepository franchiseRepository, AdminRepository adminRepository, LogService logService) {
+    public FranchiseServiceImpl(FranchiseRepository franchiseRepository, AdminRepository adminRepository, LogService logService, GetUserInfo getUserInfo) {
         this.franchiseRepository = franchiseRepository;
         this.adminRepository = adminRepository;
         this.logService = logService;
+        this.getUserInfo = getUserInfo;
     }
 
     // 현재 사용자가 ROOT인지 확인
@@ -61,6 +64,8 @@ public class FranchiseServiceImpl implements FranchiseService {
     @Transactional(readOnly = true)
     @Override
     public List<FranchiseDTO> findFranchiseList() {
+
+//        List<Franchise> franchiseList = franchiseRepository.findAllByAdminAdminCode(adminCode);
         return franchiseRepository.findAll().stream()
                 .map(FranchiseDTO::new)
                 .collect(Collectors.toList());
@@ -209,7 +214,8 @@ public class FranchiseServiceImpl implements FranchiseService {
 
     // 관리자 코드로 프랜차이즈 리스트 조회
     @Override
-    public List<FranchiseDTO> findFranchiseByAdminCode(int adminCode) {
+    public List<FranchiseDTO> findFranchiseByAdminCode() {
+        int adminCode = getUserInfo.getAdminCode();
         return franchiseRepository.findAllByAdminAdminCode(adminCode).stream()
                 .map(FranchiseDTO::new)
                 .collect(Collectors.toList());
@@ -225,7 +231,7 @@ public class FranchiseServiceImpl implements FranchiseService {
         Optional<Admin> adminOptional = adminRepository.findByAdminId(userId);
         if (adminOptional.isPresent()) {
             Admin admin = adminOptional.get();
-            return findFranchiseByAdminCode(admin.getAdminCode());
+            return findFranchiseByAdminCode();
         }
 
         return List.of();
