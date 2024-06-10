@@ -6,6 +6,7 @@ import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import com.akatsuki.pioms.franchise.dto.FranchiseDTO;
 import com.akatsuki.pioms.franchise.repository.FranchiseRepository;
 import com.akatsuki.pioms.admin.repository.AdminRepository;
+import com.akatsuki.pioms.frowner.aggregate.FranchiseOwner;
 import com.akatsuki.pioms.log.etc.LogStatus;
 import com.akatsuki.pioms.log.service.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,6 +89,13 @@ public class FranchiseServiceImpl implements FranchiseService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String now = LocalDateTime.now().format(formatter);
 
+        FranchiseOwner franchiseOwner;
+        if (franchiseDTO.getFranchiseOwner() == null || franchiseDTO.getFranchiseOwner().getFranchiseOwnerCode() == 0) {
+            return ResponseEntity.badRequest().body("프랜차이즈 소유자는 필수 항목입니다.");
+        } else {
+            franchiseOwner = franchiseDTO.getFranchiseOwner().toEntity();
+        }
+
         Franchise franchise = Franchise.builder()
                 .franchiseName(franchiseDTO.getFranchiseName())
                 .franchiseAddress(franchiseDTO.getFranchiseAddress())
@@ -96,7 +104,7 @@ public class FranchiseServiceImpl implements FranchiseService {
                 .franchiseUpdateDate(now)
                 .franchiseBusinessNum(franchiseDTO.getFranchiseBusinessNum())
                 .franchiseDeliveryDate(franchiseDTO.getFranchiseDeliveryDate())
-                .franchiseOwner(franchiseDTO.getFranchiseOwner().toEntity())
+                .franchiseOwner(franchiseOwner)
                 .deliveryDriver(franchiseDTO.getDeliveryDriver())
                 .admin(adminRepository.findById(franchiseDTO.getAdminCode()).orElse(null))
                 .build();
@@ -105,6 +113,7 @@ public class FranchiseServiceImpl implements FranchiseService {
         logService.saveLog(getCurrentUser(), LogStatus.등록, franchise.getFranchiseName(), "Franchise");
         return ResponseEntity.ok("신규 프랜차이즈 등록이 완료되었습니다.");
     }
+
 
     // 프랜차이즈 정보 수정
     @Override

@@ -111,7 +111,7 @@ class ProductServiceTest {
         // Given
         int productCode = product.getProductCode();
         ProductUpdateDTO productUpdateDTO = new ProductUpdateDTO();
-        productUpdateDTO.setProductName("Test Name");
+        productUpdateDTO.setProductName("Test updatedName");
         productUpdateDTO.setProductPrice(100000);
         productUpdateDTO.setProductContent("test content");
         productUpdateDTO.setProductExposureStatus(true);
@@ -132,7 +132,7 @@ class ProductServiceTest {
 
         // Then
         assertNotNull(result);
-        assertEquals("Test Name", result.getProductName());
+        assertEquals("Test updatedName", result.getProductName());
     }
 
     @Test
