@@ -32,9 +32,8 @@ public class FranchiseOnlyFranchiseController {
     @PutMapping("/update/{franchiseCode}")
     public ResponseEntity<String> updateFranchise(
             @PathVariable int franchiseCode,
-            @RequestBody FranchiseDTO updatedFranchiseDTO,
-            @RequestParam int requestorOwnerCode
+            @RequestBody FranchiseDTO updatedFranchiseDTO
     ) {
-        return franchiseService.updateFranchise(franchiseCode, updatedFranchiseDTO, requestorOwnerCode, true);
+        return franchiseService.updateFranchise(franchiseCode, updatedFranchiseDTO);
     }
 }

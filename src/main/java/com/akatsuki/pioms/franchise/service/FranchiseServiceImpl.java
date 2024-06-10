@@ -118,7 +118,7 @@ public class FranchiseServiceImpl implements FranchiseService {
     // 프랜차이즈 정보 수정
     @Override
     @Transactional
-    public ResponseEntity<String> updateFranchise(int franchiseCode, FranchiseDTO updatedFranchiseDTO, int requestorCode, boolean isOwner) {
+    public ResponseEntity<String> updateFranchise(int franchiseCode, FranchiseDTO updatedFranchiseDTO) {
         Optional<Franchise> franchiseOptional = franchiseRepository.findById(franchiseCode);
         if (franchiseOptional.isEmpty()) {
             return ResponseEntity.notFound().build();
@@ -126,11 +126,6 @@ public class FranchiseServiceImpl implements FranchiseService {
 
         Franchise franchise = franchiseOptional.get();
         StringBuilder changes = new StringBuilder();
-        if (isOwner || isAdmin(requestorCode)) {
-            updateFields(franchise, updatedFranchiseDTO, changes);
-        } else {
-            return ResponseEntity.status(403).body("수정 권한이 없습니다.");
-        }
 
         franchise.setFranchiseUpdateDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         franchiseRepository.save(franchise);
