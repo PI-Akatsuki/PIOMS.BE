@@ -23,7 +23,6 @@ public class FranchiseDTO {
     private String franchiseDeleteDate;
     private String franchiseBusinessNum;
     private DELIVERY_DATE franchiseDeliveryDate;
-    @Setter
     private FranchiseOwnerDTO franchiseOwner;
     private DeliveryDriver deliveryDriver;
 
@@ -42,7 +41,7 @@ public class FranchiseDTO {
         this.franchiseDeliveryDate = franchise.getFranchiseDeliveryDate();
         this.franchiseOwner = new FranchiseOwnerDTO(franchise.getFranchiseOwner());
         this.deliveryDriver = franchise.getDeliveryDriver();
-        this.adminCode = franchise.getAdmin().getAdminCode();
-        this.adminName = franchise.getAdmin().getAdminName();
+        this.adminCode = (franchise.getAdmin() != null) ? franchise.getAdmin().getAdminCode() : 0;
+        this.adminName = (franchise.getAdmin() != null) ? franchise.getAdmin().getAdminName() : null;
     }
 }
