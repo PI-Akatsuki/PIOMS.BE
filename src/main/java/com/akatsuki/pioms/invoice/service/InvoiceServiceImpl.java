@@ -4,6 +4,7 @@ package com.akatsuki.pioms.invoice.service;
 
 import com.akatsuki.pioms.company.repository.CompanyRepository;
 import com.akatsuki.pioms.config.GetUserInfo;
+import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import com.akatsuki.pioms.exchange.service.ExchangeService;
 import com.akatsuki.pioms.franchise.aggregate.DELIVERY_DATE;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
@@ -20,6 +21,9 @@ import com.akatsuki.pioms.order.dto.OrderDTO;
 import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
 import com.akatsuki.pioms.order.repository.OrderRepository;
 import com.akatsuki.pioms.order.service.OrderService;
+import com.akatsuki.pioms.product.aggregate.Product;
+import com.akatsuki.pioms.product.dto.ProductDTO;
+import com.akatsuki.pioms.product.etc.PRODUCT_COLOR;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -376,6 +380,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     // 배송기사 id로 배송 조회 시 송장 상세조회 기능 구현
     @Override
     public ResponseInvoiceDetail getInvoiceDetail(int invoiceCode) {
+        int driverCode= getUserInfo.getDriverCode();
         Invoice invoice = invoiceRepository.findByInvoiceCode(invoiceCode);
 
 
@@ -383,9 +388,15 @@ public class InvoiceServiceImpl implements InvoiceService {
 //            throw new RuntimeException("송장을 찾을 수 없습니다.");
 //        }
         Order order = invoice.getOrder();
-        List<OrderProduct> orderProductList = order.getOrderProductList();
+//        List<OrderProduct> orderProductList = order.getOrderProductList();
         Franchise franchise = order.getFranchise();
 
-        return new ResponseInvoiceDetail(invoice, order, franchise, orderProductList);
+        List<Product> product = new ArrayList<>();
+        for (OrderProduct orderProduct : order.getOrderProductList()) {
+            product.add(orderProduct.getProduct());
+        }
+        List<ExchangeDTO> exchangeDTOS = exchangeService.findExchangeInDeliveryCompanyToFranchise(franchise.getFranchiseOwner().getFranchiseOwnerCode());
+
+        return new ResponseInvoiceDetail(invoice, order, franchise, product, exchangeDTOS);
     }
 }

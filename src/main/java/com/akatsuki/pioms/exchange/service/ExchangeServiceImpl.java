@@ -15,6 +15,7 @@ import com.akatsuki.pioms.frwarehouse.service.FranchiseWarehouseService;
 import com.akatsuki.pioms.order.dto.OrderDTO;
 import com.akatsuki.pioms.order.service.OrderService;
 import com.akatsuki.pioms.product.aggregate.Product;
+import com.akatsuki.pioms.product.aggregate.ResponseProduct;
 import com.akatsuki.pioms.product.service.ProductService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ExchangeServiceImpl implements ExchangeService{
@@ -348,5 +350,14 @@ public class ExchangeServiceImpl implements ExchangeService{
         return new ExchangeDTO(exchangeRepository.findById(exchangeCode).orElseThrow());
     }
 
+
+
+    @Override
+    public List<ExchangeDTO> findExchangeInDeliveryCompanyToFranchise(int franchiseOwnerCode) {
+        List<Exchange> exchanges = exchangeRepository.findAllByExchangeStatusWhenDeliveryCompanyToFranchise(franchiseOwnerCode);
+        System.out.println("exchanges = " + exchanges);
+        return exchanges.stream().map(ExchangeDTO::new)
+                .collect(Collectors.toList());
+    }
 
 }
