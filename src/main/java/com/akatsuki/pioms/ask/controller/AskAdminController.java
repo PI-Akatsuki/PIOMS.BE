@@ -30,7 +30,7 @@ import java.util.Map;
  * 2. 문의사항 작성(ask/franchise/asks/write)<br>
  * 3. 문의사항 삭제(ask/franchise/asks/delete)<br>
  * */
-@Tag(name="문의사항", description = "Admin Ask")
+@Tag(name="[관리자]문의사항 API", description = "Admin Ask")
 @RestController
 @RequestMapping("/admin")
 public class AskAdminController {
@@ -89,6 +89,7 @@ public class AskAdminController {
      * 답변작성후 상태 '답변완료'변경
      * */
     @PostMapping("/ask/answer/{askId}")
+    @Operation(summary = "문의사항등록", description = "문의사항 등록입니다. 이 때 답변 완료 상태로 변경합니다.")
     public ResponseEntity<?> answerAsk(@PathVariable Integer askId, @RequestBody Map<String, String> payload) {
         try {
             String answer = payload.get("answer");

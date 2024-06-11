@@ -3,6 +3,7 @@ package com.akatsuki.pioms.notice.controller;
 import com.akatsuki.pioms.notice.aggregate.NoticeVO;
 import com.akatsuki.pioms.notice.service.NoticeService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +16,7 @@ import java.util.List;
 // 점주 공지사항 페이지
 @RestController
 @RequestMapping("driver")
+@Tag(name = "[배송기사]공지사항 API")
 public class NoticeDriverController {
 
     private final NoticeService noticeService;

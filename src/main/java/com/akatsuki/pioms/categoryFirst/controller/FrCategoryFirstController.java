@@ -4,6 +4,7 @@ import com.akatsuki.pioms.categoryFirst.aggregate.ResponseCategoryFirst;
 import com.akatsuki.pioms.categoryFirst.dto.CategoryFirstDTO;
 import com.akatsuki.pioms.categoryFirst.service.CategoryFirstService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("franchise/category/first")
+@Tag(name = "[점주]카테고리(대) API", description = "카테고리(대) 조회")
 public class FrCategoryFirstController {
 
     private final CategoryFirstService categoryFirstService;

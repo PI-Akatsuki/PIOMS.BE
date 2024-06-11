@@ -3,6 +3,7 @@ package com.akatsuki.pioms.login.controller;
 import com.akatsuki.pioms.jwt.JWTUtil;
 import com.akatsuki.pioms.login.service.RedisTokenService;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.logging.Logger;
 
 @RestController
+@Tag(name = "[시스템]토큰관리 API")
 public class ReissueController {
 
     private static final Logger logger = Logger.getLogger(ReissueController.class.getName());

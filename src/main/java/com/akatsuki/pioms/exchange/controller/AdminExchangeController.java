@@ -16,7 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/admin")
-@Tag(name = "관리자 반품 처리 API")
+@Tag(name = "[관리자]반품 API")
 public class AdminExchangeController {
     ExchangeService exchangeService;
 

@@ -1,5 +1,6 @@
 package com.akatsuki.pioms.excel.franchise;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -19,6 +20,7 @@ import java.io.InputStream;
 
 @RestController
 @RequestMapping("franchise/pdfdownload")
+@Tag(name = "[점주]점주메뉴얼다운로드 API")
 public class FrOwnerManualPDFController {
 
     @GetMapping(value = "/fraowner-pdf")

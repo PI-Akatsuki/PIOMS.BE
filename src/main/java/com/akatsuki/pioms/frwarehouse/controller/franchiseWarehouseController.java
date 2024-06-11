@@ -8,6 +8,7 @@ import com.akatsuki.pioms.frwarehouse.dto.FranchiseWarehouseDTO;
 import com.akatsuki.pioms.frwarehouse.service.FranchiseWarehouseService;
 import com.akatsuki.pioms.jwt.JWTUtil;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/franchise/warehouse")
+@Tag(name = "[점주]가맹창고 API")
 public class franchiseWarehouseController {
 
     private final FranchiseWarehouseService franchiseWarehouseService;
@@ -83,6 +85,7 @@ public class franchiseWarehouseController {
     }
 
     @GetMapping("/list")
+    @Operation(summary = "점주의 가맹점 창고 전체 조회")
     public ResponseEntity<List<FranchiseWarehouseDTO>> getFrWarehouseList(){
         List<FranchiseWarehouseDTO>franchiseWarehouseDTOS = franchiseWarehouseService.getFrWarehouseList();
         System.out.println("franchiseWarehouseDTOS = " + franchiseWarehouseDTOS);

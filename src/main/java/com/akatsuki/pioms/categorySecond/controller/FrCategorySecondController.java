@@ -4,6 +4,7 @@ import com.akatsuki.pioms.categorySecond.aggregate.ResponseCategorySecond;
 import com.akatsuki.pioms.categorySecond.dto.CategorySecondDTO;
 import com.akatsuki.pioms.categorySecond.service.CategorySecondService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("franchise/category/second")
+@Tag(name = "[점주]카테고리(중) API")
 public class FrCategorySecondController {
     private final CategorySecondService categorySecondService;
 
