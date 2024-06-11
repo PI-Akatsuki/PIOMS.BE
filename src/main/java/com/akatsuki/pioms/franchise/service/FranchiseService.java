@@ -18,7 +18,7 @@ public interface FranchiseService {
     ResponseEntity<String> saveFranchise(FranchiseDTO franchiseDTO);
 
     // 프랜차이즈 수정
-    ResponseEntity<String> updateFranchise(int franchiseCode, FranchiseDTO updatedFranchiseDTO, int requestorCode, boolean isOwner);
+    ResponseEntity<String> updateFranchise(int franchiseCode, FranchiseDTO updatedFranchiseDTO);
 
     // 프랜차이즈 삭제
     ResponseEntity<String> deleteFranchise(int franchiseCode);

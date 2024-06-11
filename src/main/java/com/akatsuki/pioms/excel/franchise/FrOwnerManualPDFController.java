@@ -4,7 +4,6 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -38,8 +37,11 @@ public class FrOwnerManualPDFController {
                 contentStream.beginText();
                 // 한글 폰트 설정
                 contentStream.setFont(font, 12);
-                contentStream.newLineAtOffset(100, 700);
-                contentStream.showText("### 가맹점주 메뉴얼\n" +
+                contentStream.setLeading(14.5f); // 줄 간격 설정
+                contentStream.newLineAtOffset(50, 750); // 시작 위치 설정
+
+                // 텍스트 줄 단위로 분리
+                String text = "### 가맹점주 메뉴얼\n" +
                         "\n" +
                         "가맹점주는 자신의 가맹점과 관련된 모든 작업을 수행할 수 있습니다.\n" +
                         "\n" +
@@ -96,7 +98,13 @@ public class FrOwnerManualPDFController {
                         "\n" +
                         "- **등록**: 새로운 문의사항을 등록할 수 있습니다.\n" +
                         "- **조회**: 자신이 작성한 문의사항을 조회할 수 있습니다.\n" +
-                        "- **수정**: 관리자 조회 전까지 자신이 작성한 문의사항을 수정할 수 있습니다.");
+                        "- **수정**: 관리자 조회 전까지 자신이 작성한 문의사항을 수정할 수 있습니다.";
+                String[] lines = text.split("\n");
+                for (String line : lines) {
+                    contentStream.showText(line);
+                    contentStream.newLine();
+                }
+
                 contentStream.endText();
             }
 
@@ -108,7 +116,7 @@ public class FrOwnerManualPDFController {
 
         // ResponseEntity 설정
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=adminManual.pdf")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=frOwnerManual.pdf")
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(resource);
     }

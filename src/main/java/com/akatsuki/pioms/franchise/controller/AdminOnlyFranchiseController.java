@@ -61,10 +61,9 @@ public class AdminOnlyFranchiseController {
     @PutMapping("/update/{franchiseCode}")
     public ResponseEntity<String> updateFranchise(
             @PathVariable int franchiseCode,
-            @RequestBody FranchiseDTO updatedFranchiseDTO,
-            @RequestParam int requestorCode
+            @RequestBody FranchiseDTO updatedFranchiseDTO
     ) {
-        return franchiseService.updateFranchise(franchiseCode, updatedFranchiseDTO, requestorCode, false);
+        return franchiseService.updateFranchise(franchiseCode, updatedFranchiseDTO);
     }
 
     @Operation(summary = "프랜차이즈 삭제", description = "기존 프랜차이즈를 삭제합니다.")

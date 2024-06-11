@@ -37,8 +37,11 @@ public class AdminManualPDFController {
                 contentStream.beginText();
                 // 한글 폰트 설정
                 contentStream.setFont(font, 12);
-                contentStream.newLineAtOffset(100, 700);
-                contentStream.showText("### 본사 관리자 메뉴얼\n" +
+                contentStream.setLeading(14.5f); // 줄 간격 설정
+                contentStream.newLineAtOffset(50, 750); // 시작 위치 설정
+
+                // 텍스트 줄 단위로 분리
+                String text = "### 본사 관리자 메뉴얼\n" +
                         "\n" +
                         "본사 관리자는 본사에 속한 특정 가맹점들에 대한 관리 권한을 가지고 있습니다.\n" +
                         "\n" +
@@ -96,7 +99,13 @@ public class AdminManualPDFController {
                         "### 문의사항 관리\n" +
                         "\n" +
                         "- **조회**: 자신이 담당하는 가맹점에 대한 문의사항을 조회할 수 있습니다.\n" +
-                        "- **수정**: 자신이 담당하는 가맹점에 대한 문의사항을 수정할 수 있습니다.");
+                        "- **수정**: 자신이 담당하는 가맹점에 대한 문의사항을 수정할 수 있습니다.";
+                String[] lines = text.split("\n");
+                for (String line : lines) {
+                    contentStream.showText(line);
+                    contentStream.newLine();
+                }
+
                 contentStream.endText();
             }
 

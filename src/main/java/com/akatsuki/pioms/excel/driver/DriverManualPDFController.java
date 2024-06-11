@@ -4,7 +4,6 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -38,8 +37,11 @@ public class DriverManualPDFController {
                 contentStream.beginText();
                 // 한글 폰트 설정
                 contentStream.setFont(font, 12);
-                contentStream.newLineAtOffset(100, 700);
-                contentStream.showText("### 배송기사 메뉴얼\n" +
+                contentStream.setLeading(14.5f);
+                contentStream.newLineAtOffset(50, 700);
+
+                // 텍스트 줄 단위로 분리
+                String text = "### 배송기사 메뉴얼\n" +
                         "\n" +
                         "배송기사는 배송 관련 정보와 상태를 관리합니다.\n" +
                         "\n" +
@@ -53,7 +55,13 @@ public class DriverManualPDFController {
                         "\n" +
                         "### 공지사항 조회\n" +
                         "\n" +
-                        "- **조회**: 공지사항을 조회할 수 있습니다.");
+                        "- **조회**: 공지사항을 조회할 수 있습니다.";
+                String[] lines = text.split("\n");
+                for (String line : lines) {
+                    contentStream.showText(line);
+                    contentStream.newLine();
+                }
+
                 contentStream.endText();
             }
 
