@@ -24,6 +24,8 @@ public class OrderProductDTO {
     private int orderCode;
     private int productCode;
     private String productName;
+    private int productSize;
+    private String productColor;
     public OrderProductDTO(OrderProduct orderProduct) {
         this.requestProductCode= orderProduct.getRequestProductCode();
         this.requestProductCount= orderProduct.getRequestProductCount();
@@ -31,5 +33,7 @@ public class OrderProductDTO {
         this.orderCode= orderProduct.getOrder().getOrderCode();
         this.productCode= orderProduct.getProduct().getProductCode();
         this.productName = orderProduct.getProduct().getProductName();
+        this.productSize = orderProduct.getProduct().getProductSize();
+        this.productColor = orderProduct.getProduct().getProductColor().name();
     }
 }

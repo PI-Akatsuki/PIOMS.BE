@@ -64,7 +64,7 @@ class CategoryThirdServiceTest {
     }
 
     @Test
-    @DisplayName("카테고리(중) 상세 조회")
+    @DisplayName("카테고리(소) 상세 조회")
     void findCategoryThirdByCode() {
         int categoryThirdCode = 1;
         List<CategoryThird> categoryThirdList = categoryThirdRepository.findByCategoryThirdCode(categoryThirdCode);
@@ -131,7 +131,7 @@ class CategoryThirdServiceTest {
 
         doNothing().when(categoryThirdRepository).delete(any(CategoryThird.class));
 
-        // Then
+        // When
         ResponseEntity<String> response = categoryThirdService.deleteCategoryThird(categoryThirdCode);
         logService.saveLog("root", LogStatus.삭제,categoryThird.getCategoryThirdName(),"CategoryThird");
 

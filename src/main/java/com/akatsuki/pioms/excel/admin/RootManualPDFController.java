@@ -37,8 +37,11 @@ public class RootManualPDFController {
                 contentStream.beginText();
                 // 한글 폰트 설정
                 contentStream.setFont(font, 12);
-                contentStream.newLineAtOffset(100, 700);
-                contentStream.showText("Root 관리자 메뉴얼\n" +
+                contentStream.setLeading(14.5f); // 줄 간격 설정
+                contentStream.newLineAtOffset(50, 750); // 시작 위치 설정
+
+                // 텍스트 줄 단위로 분리
+                String text = "Root 관리자 메뉴얼\n" +
                         "\n" +
                         "Root 관리자는 시스템 전체에 대한 모든 권한을 가지고 있습니다. 시스템의 모든 정보와 데이터를 조회, 수정, 등록, 삭제할 수 있습니다.\n" +
                         "\n" +
@@ -118,7 +121,13 @@ public class RootManualPDFController {
                         "### 문의사항 관리\n" +
                         "\n" +
                         "- **조회**: 모든 문의사항을 조회할 수 있습니다.\n" +
-                        "- **수정**: 문의사항을 수정할 수 있습니다.");
+                        "- **수정**: 문의사항을 수정할 수 있습니다.";
+                String[] lines = text.split("\n");
+                for (String line : lines) {
+                    contentStream.showText(line);
+                    contentStream.newLine();
+                }
+
                 contentStream.endText();
             }
 
@@ -130,7 +139,7 @@ public class RootManualPDFController {
 
         // ResponseEntity 설정
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=adminManual.pdf")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=rootManual.pdf")
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(resource);
     }

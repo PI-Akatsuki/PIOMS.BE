@@ -128,7 +128,7 @@ public class DashboardServiceImpl implements DashboardService {
 
         CompanyVO company = companyService.findInformation();
         OrderStat orderStat = new OrderStat(orders);
-        List<FranchiseDTO> franchises = franchiseService.findFranchiseByAdminCode(adminCode);
+        List<FranchiseDTO> franchises = franchiseService.findFranchiseByAdminCode();
         List<ExchangeDTO> exchanges = exchangeService.getExchangesByAdminCode();
         List<NoticeVO> notices = noticeService.getAllNoticeList();
         AskListDTO askList = askService.getAllAskList();
