@@ -8,14 +8,14 @@ import lombok.*;
 
 import java.util.List;
 
-@Entity
-@Table(name = "franchise")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Builder
 @ToString
+@Entity
+@Table(name = "franchise")
 public class Franchise {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

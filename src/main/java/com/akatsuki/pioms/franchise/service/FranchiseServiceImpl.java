@@ -1,12 +1,15 @@
 package com.akatsuki.pioms.franchise.service;
 
 import com.akatsuki.pioms.admin.aggregate.Admin;
+import com.akatsuki.pioms.driver.aggregate.DeliveryDriver;
+import com.akatsuki.pioms.driver.repository.DeliveryDriverRepository;
 import com.akatsuki.pioms.franchise.aggregate.DELIVERY_DATE;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import com.akatsuki.pioms.franchise.dto.FranchiseDTO;
 import com.akatsuki.pioms.franchise.repository.FranchiseRepository;
 import com.akatsuki.pioms.admin.repository.AdminRepository;
 import com.akatsuki.pioms.frowner.aggregate.FranchiseOwner;
+import com.akatsuki.pioms.frowner.repository.FranchiseOwnerRepository;
 import com.akatsuki.pioms.log.etc.LogStatus;
 import com.akatsuki.pioms.log.service.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,12 +32,16 @@ import java.util.stream.Collectors;
 public class FranchiseServiceImpl implements FranchiseService {
 
     private final FranchiseRepository franchiseRepository;
+    private final FranchiseOwnerRepository franchiseOwnerRepository;
+    private final DeliveryDriverRepository deliveryDriverRepository;
     private final AdminRepository adminRepository;
     private final LogService logService;
 
     @Autowired
-    public FranchiseServiceImpl(FranchiseRepository franchiseRepository, AdminRepository adminRepository, LogService logService) {
+    public FranchiseServiceImpl(FranchiseRepository franchiseRepository, FranchiseOwnerRepository franchiseOwnerRepository, DeliveryDriverRepository deliveryDriverRepository, AdminRepository adminRepository, LogService logService) {
         this.franchiseRepository = franchiseRepository;
+        this.franchiseOwnerRepository = franchiseOwnerRepository;
+        this.deliveryDriverRepository = deliveryDriverRepository;
         this.adminRepository = adminRepository;
         this.logService = logService;
     }
@@ -127,12 +134,31 @@ public class FranchiseServiceImpl implements FranchiseService {
         Franchise franchise = franchiseOptional.get();
         StringBuilder changes = new StringBuilder();
 
+        // Update the fields with values from DTO
+        franchise.setFranchiseName(updatedFranchiseDTO.getFranchiseName());
+        franchise.setFranchiseAddress(updatedFranchiseDTO.getFranchiseAddress());
+        franchise.setFranchiseCall(updatedFranchiseDTO.getFranchiseCall());
+        franchise.setFranchiseBusinessNum(updatedFranchiseDTO.getFranchiseBusinessNum());
+        franchise.setFranchiseDeliveryDate(updatedFranchiseDTO.getFranchiseDeliveryDate());
+
+        // Update relationships
+        if (updatedFranchiseDTO.getFranchiseOwner() != null) {
+            Optional<FranchiseOwner> ownerOptional = franchiseOwnerRepository.findById(updatedFranchiseDTO.getFranchiseOwner().getFranchiseOwnerCode());
+            ownerOptional.ifPresent(franchise::setFranchiseOwner);
+        }
+
+        if (updatedFranchiseDTO.getDeliveryDriver() != null) {
+            Optional<DeliveryDriver> driverOptional = deliveryDriverRepository.findById(updatedFranchiseDTO.getDeliveryDriver().getDriverCode());
+            driverOptional.ifPresent(franchise::setDeliveryDriver);
+        }
+
         franchise.setFranchiseUpdateDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         franchiseRepository.save(franchise);
         logChanges(changes);
 
         return ResponseEntity.ok("가맹점 정보가 성공적으로 수정 되었습니다.");
     }
+
 
     private void updateFields(Franchise franchise, FranchiseDTO updatedFranchiseDTO, StringBuilder changes) {
         checkAndUpdateField("Name", franchise.getFranchiseName(), updatedFranchiseDTO.getFranchiseName(), changes, franchise::setFranchiseName);
