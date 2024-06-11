@@ -1,7 +1,7 @@
 package com.akatsuki.pioms.login.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -9,10 +9,10 @@ import java.time.Duration;
 @Service
 public class RedisTokenService {
 
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final StringRedisTemplate redisTemplate;
 
     @Autowired
-    public RedisTokenService(RedisTemplate<String, Object> redisTemplate) {
+    public RedisTokenService(StringRedisTemplate redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
 
@@ -21,7 +21,7 @@ public class RedisTokenService {
     }
 
     public String getRefreshToken(String userId) {
-        return (String) redisTemplate.opsForValue().get("refreshToken:" + userId);
+        return redisTemplate.opsForValue().get("refreshToken:" + userId);
     }
 
     public void deleteRefreshToken(String userId) {
