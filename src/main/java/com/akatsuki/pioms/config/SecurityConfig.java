@@ -28,7 +28,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 
 @Configuration
-@EnableWebSecurity
+@EnableWebSecurity(debug = true)
 public class SecurityConfig {
 
     private final AuthenticationConfiguration authenticationConfiguration;
@@ -79,7 +79,7 @@ public class SecurityConfig {
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/"))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/", "/reissue", "/admin/login", "/franchise/login", "/driver/login", "/admin/product/sendKakaoAlert").permitAll()
+                        .requestMatchers("/", "/swagger-ui/**", "/v3/api-docs/**", "/reissue", "/admin/login", "/franchise/login", "/driver/login", "/admin/product/sendKakaoAlert").permitAll()
                         .requestMatchers(
                                 "/admin/info",
                                 "/admin/home",
