@@ -87,7 +87,8 @@ public class RequestExcelController {
             cell.setCellValue(dto.getFranchiseCode());
             cell = row.createCell(6);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getExchange().getExchangeCode());
+            if(dto.getExchange()!=null)
+                cell.setCellValue(dto.getExchange().getExchangeCode());
         }
 
         // Column width auto-sizing
