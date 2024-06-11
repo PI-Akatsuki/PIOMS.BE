@@ -28,56 +28,69 @@ public class ReissueController {
 
     @PostMapping("/reissue")
     public ResponseEntity<?> reissue(HttpServletRequest request, HttpServletResponse response) {
-        // get refresh token
-        String refreshToken = null;
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if ("refresh".equals(cookie.getName())) {
-                    refreshToken = cookie.getValue();
-                }
-            }
-        }
+        String refreshToken = extractRefreshTokenFromCookies(request.getCookies());
 
         if (refreshToken == null) {
             logger.warning("Refresh token is null");
-            return new ResponseEntity<>("refresh token null", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Refresh token is null", HttpStatus.BAD_REQUEST);
         }
 
-        // expired check
-        try {
-            jwtUtil.isExpired(refreshToken);
-        } catch (ExpiredJwtException e) {
+        if (isTokenExpired(refreshToken)) {
             logger.warning("Refresh token is expired");
-            return new ResponseEntity<>("refresh token expired", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Refresh token is expired", HttpStatus.UNAUTHORIZED);
         }
 
-        // 토큰이 refresh인지 확인 (발급시 페이로드에 명시)
-        String category = jwtUtil.getCategory(refreshToken);
-        if (!"refresh".equals(category)) {
+        if (!isRefreshToken(refreshToken)) {
             logger.warning("Invalid refresh token category");
-            return new ResponseEntity<>("invalid refresh token", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Invalid refresh token", HttpStatus.BAD_REQUEST);
         }
 
-        // Redis에서 refresh 토큰 확인
         String userId = jwtUtil.getUserId(refreshToken);
-        String storedRefreshToken = redisTokenService.getRefreshToken(userId);
-        if (storedRefreshToken == null || !storedRefreshToken.equals(refreshToken)) {
+        if (!isValidRefreshToken(refreshToken, userId)) {
             logger.warning("Refresh token does not match or not found in Redis");
-            return new ResponseEntity<>("invalid refresh token", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Invalid refresh token", HttpStatus.UNAUTHORIZED);
         }
 
-        // 필요한 정보 추출
+        String newAccessToken = createNewAccessToken(refreshToken);
+        response.setHeader("Authorization", "Bearer " + newAccessToken);
+
+        return ResponseEntity.ok().body("Bearer " + newAccessToken);
+    }
+
+    private String extractRefreshTokenFromCookies(Cookie[] cookies) {
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("refresh".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
+    }
+
+    private boolean isTokenExpired(String token) {
+        try {
+            jwtUtil.isExpired(token);
+            return false;
+        } catch (ExpiredJwtException e) {
+            return true;
+        }
+    }
+
+    private boolean isRefreshToken(String token) {
+        String category = jwtUtil.getCategory(token);
+        return "refresh".equals(category);
+    }
+
+    private boolean isValidRefreshToken(String token, String userId) {
+        String storedRefreshToken = redisTokenService.getRefreshToken(userId);
+        return storedRefreshToken != null && storedRefreshToken.equals(token);
+    }
+
+    private String createNewAccessToken(String refreshToken) {
         int userCode = jwtUtil.getUserCode(refreshToken);
         String username = jwtUtil.getUsername(refreshToken);
         String role = jwtUtil.getRole(refreshToken);
-
-        // make new JWT
-        String newAccessToken = jwtUtil.createJwt("access", userCode, userId, username, role, 600000L); // 10분 유효
-
-        // response
-        response.setHeader("Authorization", "Bearer " + newAccessToken);
-
-        return new ResponseEntity<>(HttpStatus.OK);
+        return jwtUtil.createJwt("access", userCode, jwtUtil.getUserId(refreshToken), username, role, 600000L); // 10분 유효
     }
 }

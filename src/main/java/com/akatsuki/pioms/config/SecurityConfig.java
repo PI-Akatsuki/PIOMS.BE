@@ -77,34 +77,33 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .formLogin(formLogin -> formLogin.disable())
                 .httpBasic(httpBasic -> httpBasic.disable())
-                .logout(logout -> logout.disable())
+                .logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/"))
                 .authorizeHttpRequests(authorize -> authorize
-                                .requestMatchers("/", "/reissue", "/admin/login", "/franchise/login", "/driver/login", "/admin/product/sendKakaoAlert").permitAll()
-                                .requestMatchers(
-                                        "/admin/info",
-                                        "/admin/home",
-                                        "/admin/list/**",
-                                        "/admin/category/first/list/**",
-                                        "/admin/category/second/list/**",
-                                        "/admin/category/third/list/**",
-                                        "/admin/driver/list/**",
-                                        "/admin/franchise/list/**",
-                                        "/admin/franchise/owner/list/**",
-                                        "/admin/franchise/owner/update/**",
-                                        "/admin/product/list/**",
-                                        "/admin/specs/**",
-                                        "/admin/order/**",
-                                        "/admin/invoice/**",
-                                        "/admin/exchange/**",
-                                        "/admin/notice/list/**",
-                                        "/admin/ask/**",
-                                        "/admin/pdfdownload/**",
-                                        "/admin/exceldownload/**",
-                                        "/admin/adminDashboard").hasRole("ADMIN")
-                                .requestMatchers("/admin/**").hasRole("ROOT")
-                                .requestMatchers("/franchise/**").hasRole("OWNER")
-                                .requestMatchers("/driver/**").hasRole("DRIVER")
-                                .anyRequest().authenticated()
+                        .requestMatchers("/", "/reissue", "/admin/login", "/franchise/login", "/driver/login", "/admin/product/sendKakaoAlert").permitAll()
+                        .requestMatchers(
+                                "/admin/info",
+                                "/admin/home",
+                                "/admin/list/**",
+                                "/admin/product/**",
+                                "/admin/category/**",
+                                "/admin/driver/list/**",
+                                "/admin/franchise/list/**",
+                                "/admin/franchise/owner/list/**",
+                                "/admin/franchise/**",
+                                "/admin/product/list/**",
+                                "/admin/specs/**",
+                                "/admin/order/**",
+                                "/admin/invoice/**",
+                                "/admin/exchange/**",
+                                "/admin/notice/list/**",
+                                "/admin/ask/**",
+                                "/admin/pdfdownload/**",
+                                "/admin/exceldownload/**",
+                                "/admin/adminDashboard").hasAnyRole("ADMIN", "ROOT")
+                        .requestMatchers("/admin/**").hasRole("ROOT")
+                        .requestMatchers("/franchise/**").hasRole("OWNER")
+                        .requestMatchers("/driver/**").hasRole("DRIVER")
+                        .anyRequest().authenticated()
                 )
                 .addFilterBefore(new CustomLogoutFilter(jwtUtil, redisTokenService), LogoutFilter.class)
                 .addFilterBefore(new JWTFilter(jwtUtil, adminRepository, franchiseOwnerRepository, deliveryDriverRepository), UsernamePasswordAuthenticationFilter.class)
@@ -114,7 +113,6 @@ public class SecurityConfig {
         return http.build();
     }
 
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -123,7 +121,7 @@ public class SecurityConfig {
     @Bean
     public RoleHierarchy roleHierarchy() {
         RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
-        String hierarchy = "ROLE_ROOT > ROLE_ADMIN\nROLE_ADMIN > ROLE_OWNER";
+        String hierarchy = "ROLE_ROOT > ROLE_ADMIN\nROLE_ADMIN > ROLE_OWNER\nROLE_ADMIN > ROLE_DRIVER";
         roleHierarchy.setHierarchy(hierarchy);
         return roleHierarchy;
     }
