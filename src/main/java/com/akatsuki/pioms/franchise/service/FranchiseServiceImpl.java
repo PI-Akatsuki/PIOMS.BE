@@ -147,24 +147,19 @@ public class FranchiseServiceImpl implements FranchiseService {
         franchise.setFranchiseDeliveryDate(updatedFranchiseDTO.getFranchiseDeliveryDate());
 
         // Update relationships
-        if (updatedFranchiseDTO.getFranchiseOwner() != null) { // 수정된 부분
+        if (updatedFranchiseDTO.getFranchiseOwner() != null) {
             Optional<FranchiseOwner> ownerOptional = franchiseOwnerRepository.findById(updatedFranchiseDTO.getFranchiseOwner().getFranchiseOwnerCode());
-            ownerOptional.ifPresent(franchiseOwner -> franchise.setFranchiseOwner(ownerOptional.get()));
+            ownerOptional.ifPresent(franchise::setFranchiseOwner);
         }
 
-        if (updatedFranchiseDTO.getDeliveryDriver() != null) { // 수정된 부분
+        if (updatedFranchiseDTO.getDeliveryDriver() != null) {
             Optional<DeliveryDriver> driverOptional = deliveryDriverRepository.findById(updatedFranchiseDTO.getDeliveryDriver().getDriverCode());
-            driverOptional.ifPresent(deliveryDriver -> franchise.setDeliveryDriver(driverOptional.get()));
+            driverOptional.ifPresent(franchise::setDeliveryDriver);
         }
 
         franchise.setFranchiseUpdateDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-        franchiseRepository.save(franchise);
-        logChanges(changes);
-
         return ResponseEntity.ok("가맹점 정보가 성공적으로 수정 되었습니다.");
     }
-
-
 
     private void updateFields(Franchise franchise, FranchiseDTO updatedFranchiseDTO, StringBuilder changes) {
         checkAndUpdateField("Name", franchise.getFranchiseName(), updatedFranchiseDTO.getFranchiseName(), changes, franchise::setFranchiseName);
