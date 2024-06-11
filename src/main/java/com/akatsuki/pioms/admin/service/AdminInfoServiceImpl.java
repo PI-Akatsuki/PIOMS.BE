@@ -4,6 +4,7 @@ import com.akatsuki.pioms.admin.aggregate.Admin;
 import com.akatsuki.pioms.admin.dto.AdminDTO;
 import com.akatsuki.pioms.admin.repository.AdminRepository;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
+import com.akatsuki.pioms.franchise.repository.FranchiseRepository;
 import com.akatsuki.pioms.log.etc.LogStatus;
 import com.akatsuki.pioms.log.service.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -25,12 +25,14 @@ import java.util.stream.Collectors;
 @Service
 public class AdminInfoServiceImpl implements AdminInfoService {
     private final AdminRepository adminRepository;
+    private final FranchiseRepository franchiseRepository;
     private final LogService logService;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public AdminInfoServiceImpl(AdminRepository adminRepository, LogService logService, PasswordEncoder passwordEncoder) {
+    public AdminInfoServiceImpl(AdminRepository adminRepository, FranchiseRepository franchiseRepository, LogService logService, PasswordEncoder passwordEncoder) {
         this.adminRepository = adminRepository;
+        this.franchiseRepository = franchiseRepository;
         this.logService = logService;
         this.passwordEncoder = passwordEncoder;
     }
@@ -91,29 +93,19 @@ public class AdminInfoServiceImpl implements AdminInfoService {
 
         String uuid = UUID.randomUUID().toString().replaceAll("-", "").substring(0, 8);
 
-        List<Franchise> franchises = adminDTO.getFranchiseNames() != null ?
-                adminDTO.getFranchiseNames().stream()
-                        .map(franchiseName -> {
-                            Franchise franchise = new Franchise();
-                            franchise.setFranchiseName(franchiseName);
-                            return franchise;
-                        })
-                        .collect(Collectors.toList())
-                : Collections.emptyList();
-
-        Admin admin = new Admin();
-        admin.setAdminCode(adminDTO.getAdminCode());
-        admin.setAdminName(adminDTO.getAdminName());
-        admin.setAdminId(adminDTO.getAdminId());
-        admin.setAdminPwd(passwordEncoder.encode(adminDTO.getAdminPwd()));
-        admin.setEnrollDate(now);
-        admin.setUpdateDate(now);
-        admin.setAccessNumber(uuid);
-        admin.setAdminStatus(true);
-        admin.setAdminRole("ROLE_ADMIN");
-        admin.setAdminEmail(adminDTO.getAdminEmail());
-        admin.setAdminPhone(adminDTO.getAdminPhone());
-        admin.setFranchise(franchises);
+        Admin admin = Admin.builder()
+                .adminCode(adminDTO.getAdminCode())
+                .adminName(adminDTO.getAdminName())
+                .adminId(adminDTO.getAdminId())
+                .adminPwd(passwordEncoder.encode(adminDTO.getAdminPwd()))
+                .enrollDate(now)
+                .updateDate(now)
+                .accessNumber(uuid)
+                .adminStatus(true)
+                .adminRole("ROLE_ADMIN")
+                .adminEmail(adminDTO.getAdminEmail())
+                .adminPhone(adminDTO.getAdminPhone())
+                .build();
 
         adminRepository.save(admin);
         String username = getCurrentUser();
@@ -126,8 +118,8 @@ public class AdminInfoServiceImpl implements AdminInfoService {
     public ResponseEntity<String> updateAdminInfo(int adminCode, AdminDTO updatedAdminDTO) {
         Admin admin = adminRepository.findById(adminCode).orElse(null);
         if (admin != null) {
-            if (admin.getFranchise() != null && admin.getFranchise().size() > 6) {
-                return ResponseEntity.badRequest().body("관리자는 최대 6개의 가맹점만 등록할 수 있습니다.");
+            if (admin.getFranchise() != null && admin.getFranchise().size() > 3) {
+                return ResponseEntity.badRequest().body("관리자는 최대 3개의 가맹점만 등록할 수 있습니다.");
             }
 
             StringBuilder changes = new StringBuilder();
@@ -214,4 +206,51 @@ public class AdminInfoServiceImpl implements AdminInfoService {
         logService.saveLog(username, LogStatus.수정, "비밀번호 초기화: " + admin.getAdminName(), "Admin");
         return ResponseEntity.ok("관리자 비밀번호 초기화가 완료되었습니다.");
     }
+
+    @Override
+    @Transactional
+    public ResponseEntity<String> addFranchise(int adminCode, int franchiseCode) {
+        Admin admin = adminRepository.findById(adminCode).orElse(null);
+        if (admin == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        if (admin.getFranchise() != null && admin.getFranchise().size() >= 6) {
+            return ResponseEntity.badRequest().body("관리자는 최대 6개의 가맹점만 등록할 수 있습니다.");
+        }
+
+        Franchise franchise = franchiseRepository.findById(franchiseCode)
+                .orElseThrow(() -> new RuntimeException("가맹점을 찾을 수 없음: " + franchiseCode));
+
+        if (franchise.getAdmin() != null && franchise.getAdmin().getAdminCode() == adminCode) {
+            return ResponseEntity.badRequest().body("중복된 가맹점이 존재합니다: " + franchise.getFranchiseName());
+        }
+
+        franchise.setAdmin(admin);
+        franchiseRepository.save(franchise);
+
+        return ResponseEntity.ok("가맹점 추가가 완료되었습니다.");
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<String> removeFranchise(int adminCode, int franchiseCode) {
+        Admin admin = adminRepository.findById(adminCode).orElse(null);
+        if (admin == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Franchise franchise = franchiseRepository.findById(franchiseCode)
+                .orElseThrow(() -> new RuntimeException("가맹점을 찾을 수 없음: " + franchiseCode));
+
+        if (franchise.getAdmin() == null || franchise.getAdmin().getAdminCode() != adminCode) {
+            return ResponseEntity.badRequest().body("해당 가맹점이 관리자에 존재하지 않습니다: " + franchise.getFranchiseName());
+        }
+
+        franchise.setAdmin(null);
+        franchiseRepository.save(franchise);
+
+        return ResponseEntity.ok("가맹점 제거가 완료되었습니다.");
+    }
+
 }
