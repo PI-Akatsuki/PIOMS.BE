@@ -99,7 +99,8 @@ public class SecurityConfig {
                                 "/admin/ask/**",
                                 "/admin/pdfdownload/**",
                                 "/admin/exceldownload/**",
-                                "/admin/adminDashboard").hasAnyRole("ADMIN", "ROOT")
+                                "/admin/adminDashboard",
+                                "/admin/pdfdownload/admin-pdf").hasAnyRole("ADMIN", "ROOT")
                         .requestMatchers("/admin/**").hasRole("ROOT")
                         .requestMatchers("/franchise/**").hasRole("OWNER")
                         .requestMatchers("/driver/**").hasRole("DRIVER")
