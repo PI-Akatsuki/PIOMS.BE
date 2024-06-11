@@ -242,10 +242,7 @@ public class FranchiseServiceImpl implements FranchiseService {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public List<FranchiseDTO> findFranchiseByAdminCode(int adminCode) {
-        return List.of();
-    }
+
 
     // 관리자 코드로 프랜차이즈 리스트 조회
     @Override
