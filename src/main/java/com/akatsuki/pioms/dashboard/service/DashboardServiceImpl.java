@@ -113,9 +113,10 @@ public class DashboardServiceImpl implements DashboardService {
     public ResponseAdminDashBoard getAdminDash(){
 
         int adminCode = getUserInfo.getAdminCode();
+        List<OrderDTO> orders = orderService.getOrderListByAdminCode(adminCode);
         if(adminCode==1){
             CompanyVO company = companyService.findInformation();
-            OrderStat orderStat = orderService.getOrderStat(adminCode);
+            OrderStat orderStat = new OrderStat(orders);
             List<FranchiseDTO> franchises = franchiseService.findFranchiseList();
             List<ExchangeDTO> exchanges = exchangeService.getExchangesByAdminCode();
             List<NoticeVO> notices = noticeService.getAllNoticeList();
@@ -126,8 +127,6 @@ public class DashboardServiceImpl implements DashboardService {
         }
 
         CompanyVO company = companyService.findInformation();
-//        OrderStat orderStat = orderService.getOrderStat(adminCode);
-        List<OrderDTO> orders = orderService.getOrderListByAdminCode(adminCode);
         OrderStat orderStat = new OrderStat(orders);
         List<FranchiseDTO> franchises = franchiseService.findFranchiseByAdminCode(adminCode);
         List<ExchangeDTO> exchanges = exchangeService.getExchangesByAdminCode();
