@@ -11,6 +11,8 @@ public interface FranchiseRepository extends JpaRepository<Franchise, Integer> {
 
     List<Franchise> findAllByDeliveryDriverDriverCode(int driverCode);
 
+    List<Franchise> findAllByOrderByFranchiseEnrollDateDesc();
+
     List<Franchise> findAllByAdminAdminCode(int adminCode);
 
     List<Franchise> findByFranchiseName(String franchiseName);
