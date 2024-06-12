@@ -36,4 +36,5 @@ public interface ExchangeRepository extends JpaRepository<Exchange, Integer> {
             " AND e.franchise.franchiseOwner.franchiseOwnerCode = :franchiseOwnerCode")
     List<Exchange> findAllByExchangeStatusWhenDeliveryCompanyToFranchise(@Param("franchiseOwnerCode") int franchiseOwnerCode);
 
+    List<Exchange> findAllByOrderByExchangeDateDesc();
 }
