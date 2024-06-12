@@ -36,7 +36,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/admin")
-@Tag(name = "Admin Order API" ,description = "관리자 관련 API 명세서입니다.")
+@Tag(name = "[관리자]발주 API" ,description = "관리자 관련 API 명세서입니다.")
 public class AdminOrderController {
     AdminOrderFacade orderFacade;
     @Autowired

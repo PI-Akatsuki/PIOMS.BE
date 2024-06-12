@@ -2,6 +2,7 @@ package com.akatsuki.pioms.excel.franchise;
 
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import com.akatsuki.pioms.exchange.service.ExchangeService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -13,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("franchise/exceldownload")
+@Tag(name = "[점주]반품엑셀다운로드 API")
 public class ExchangeExcelController {
 
     private final ExchangeService exchangeService;

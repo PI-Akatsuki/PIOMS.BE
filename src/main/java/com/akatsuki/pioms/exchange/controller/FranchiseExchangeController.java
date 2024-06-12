@@ -16,7 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("franchise")
-@Tag(name = "점주 반품 처리 API")
+@Tag(name = "[점주]반품 API")
 public class FranchiseExchangeController {
     ExchangeService exchangeService;
 

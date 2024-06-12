@@ -17,7 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/franchise")
-@Tag(name = "가맹 발주 처리 API")
+@Tag(name = "[점주]발주 API" ,description = "관리자 관련 API 명세서입니다.")
 public class FranchiseOrderController {
     FranchiseOrderFacade franchiseOrderFacade;
 

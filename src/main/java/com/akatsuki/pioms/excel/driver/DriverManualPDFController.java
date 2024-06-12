@@ -1,5 +1,6 @@
 package com.akatsuki.pioms.excel.driver;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -19,6 +20,7 @@ import java.io.InputStream;
 
 @RestController
 @RequestMapping("driver/pdfdownload")
+@Tag(name = "[driver]배송기사메뉴얼 다운로드 API")
 public class DriverManualPDFController {
 
     @GetMapping(value = "/driver-pdf")

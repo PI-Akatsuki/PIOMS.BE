@@ -3,12 +3,14 @@ package com.akatsuki.pioms.frowner.controller;
 import com.akatsuki.pioms.frowner.dto.FranchiseOwnerDTO;
 import com.akatsuki.pioms.frowner.service.FranchiseOwnerService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("franchise/mypage")
+@Tag(name = "[점주]점주 API")
 public class FrOwnerOnlyFrOwnerController {
     public final FranchiseOwnerService franchiseOwnerService;
 
@@ -34,6 +36,7 @@ public class FrOwnerOnlyFrOwnerController {
         return franchiseOwnerService.updateFranchiseOwner(franchiseOwnerCode, updatedFranchiseOwner);
     }
 
+    @Operation(summary = "점주 이름을 통한 정보 조회 ")
     @GetMapping("/owner/{franchiseOwnerCode}")
     public ResponseEntity<FranchiseOwnerDTO> getFranchiseOwnerWithFranchiseName(@PathVariable int franchiseOwnerCode) {
         FranchiseOwnerDTO franchiseOwnerDTO = franchiseOwnerService.getFranchiseOwnerWithFranchiseName(franchiseOwnerCode);

@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("admin/category/third")
-@Tag(name = "카테고리(소) 조회 컨트롤러", description = "카테고리(소) 조회 및 추가 수정")
+@Tag(name = "[관리자]카테고리(소) 조회 컨트롤러", description = "카테고리(소) 조회 및 추가 수정")
 public class CategoryThirdController {
 
     private final CategoryThirdService categoryThirdService;
@@ -49,11 +49,13 @@ public class CategoryThirdController {
     }
 
     @PostMapping("/create")
+    @Operation(summary = "카테고리(소) 생성")
     public ResponseEntity<String> postCategoryThird(@RequestBody RequestCategoryThird request) {
         return categoryThirdService.postCategory(request);
     }
 
     @PutMapping("/update/{categoryThirdCode}")
+    @Operation(summary = "카테고리(소) 수정")
     public ResponseEntity<String> updateCategoryThird(@PathVariable int categoryThirdCode, @RequestBody RequestCategoryThird request) {
         return categoryThirdService.updateCategory(categoryThirdCode, request);
     }

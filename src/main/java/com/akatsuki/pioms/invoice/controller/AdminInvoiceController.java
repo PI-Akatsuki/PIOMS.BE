@@ -17,7 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/admin")
-@Tag(name = "(관리자)송장[배송] API", description = "관리자의 송장[배송] 관련 API 입니다.")
+@Tag(name = "[관리자]송장/배송 API", description = "관리자의 송장[배송] 관련 API 입니다.")
 public class AdminInvoiceController {
 
     private final InvoiceService invoiceService;

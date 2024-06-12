@@ -21,7 +21,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("admin/product")
-@Tag(name="관리자 상품 CRUD 컨트롤러", description = "상품 조회,등록,수정,삭제")
+@Tag(name="[관리자]상품 API", description = "상품 조회,등록,수정,삭제")
 public class AdminProductController {
 
     private final ProductService productService;

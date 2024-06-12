@@ -1,5 +1,6 @@
 package com.akatsuki.pioms.excel.admin;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -19,6 +20,7 @@ import java.io.InputStream;
 
 @RestController
 @RequestMapping("admin/pdfdownload")
+@Tag(name = "[루트]pdf다운로드 API")
 public class RootManualPDFController {
 
     @GetMapping(value = "/root-pdf")

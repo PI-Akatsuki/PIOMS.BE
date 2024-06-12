@@ -3,6 +3,7 @@ package com.akatsuki.pioms.excel.admin;
 import com.akatsuki.pioms.driver.aggregate.DeliveryDriver;
 import com.akatsuki.pioms.driver.dto.DeliveryDriverDTO;
 import com.akatsuki.pioms.driver.service.DeliveryDriverService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("admin/exceldownload")
+@Tag(name = "[관리자]배송기사엑셀다운로드 API")
 public class DriverExcelController {
 
     private final DeliveryDriverService deliveryDriverService;

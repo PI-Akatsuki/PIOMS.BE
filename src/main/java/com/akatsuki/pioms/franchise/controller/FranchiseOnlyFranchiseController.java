@@ -3,6 +3,7 @@ package com.akatsuki.pioms.franchise.controller;
 import com.akatsuki.pioms.franchise.dto.FranchiseDTO;
 import com.akatsuki.pioms.franchise.service.FranchiseService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +12,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/franchise")
+@Tag(name = "[점주]가맹점 API")
 public class FranchiseOnlyFranchiseController {
 
     private final FranchiseService franchiseService;

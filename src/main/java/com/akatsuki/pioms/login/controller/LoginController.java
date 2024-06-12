@@ -7,6 +7,7 @@ import com.akatsuki.pioms.login.aggregate.AdminLoginRequest;
 import com.akatsuki.pioms.login.aggregate.DeliveryDriverLoginRequest;
 import com.akatsuki.pioms.login.aggregate.FranchiseOwnerLoginRequest;
 import com.akatsuki.pioms.login.service.LoginService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.logging.Logger;
 
 @RestController
+@Tag(name = "[공통]로그인 API")
 public class LoginController {
 
     private static final Logger logger = Logger.getLogger(LoginController.class.getName());

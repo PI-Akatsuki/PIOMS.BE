@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "본사정보", description = "Company Information")
+@Tag(name = "[관리자]본사정보 API", description = "Company Information")
 @RestController
 @RequestMapping("/admin")
 public class CompanyController {

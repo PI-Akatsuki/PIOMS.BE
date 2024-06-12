@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
-@Tag(name = "배송기사 관리", description = "Delivery Driver Management")
+@Tag(name = "[관리자]배송기사 관리 API", description = "Delivery Driver Management")
 @RestController
 @RequestMapping("admin/driver")
 public class AdminOnlyDriverInfoController {
