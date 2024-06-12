@@ -64,11 +64,11 @@ public class FranchiseOwnerServiceImpl implements FranchiseOwnerService {
     public List<FranchiseOwnerDTO> findAllFranchiseOwners() {
         int adminCode = getUserInfo.getAdminCode();
         if (adminCode == 1) {
-        return franchiseOwnerRepository.findAll().stream()
+        return franchiseOwnerRepository.findAllByOrderByFranchiseOwnerEnrollDateDesc().stream()
                 .map(FranchiseOwnerDTO::new)
                 .collect(Collectors.toList());
         }
-        return franchiseOwnerRepository.findAllByFranchiseAdminAdminCode(adminCode).stream()
+        return franchiseOwnerRepository.findAllByFranchiseAdminAdminCodeOrderByFranchiseOwnerEnrollDateDesc(adminCode).stream()
                 .map(FranchiseOwnerDTO::new)
                 .collect(Collectors.toList());
     }
