@@ -7,7 +7,9 @@ import com.akatsuki.pioms.categorySecond.repository.CategorySecondRepository;
 import com.akatsuki.pioms.categoryThird.aggregate.CategoryThird;
 import com.akatsuki.pioms.categoryThird.aggregate.RequestCategoryThird;
 import com.akatsuki.pioms.categoryThird.aggregate.ResponseCategoryThird;
+import com.akatsuki.pioms.categoryThird.dto.CategoryThirdCreateDTO;
 import com.akatsuki.pioms.categoryThird.dto.CategoryThirdDTO;
+import com.akatsuki.pioms.categoryThird.dto.CategoryThirdUpdateDTO;
 import com.akatsuki.pioms.categoryThird.repository.CategoryThirdRepository;
 import com.akatsuki.pioms.log.etc.LogStatus;
 import com.akatsuki.pioms.log.service.LogService;
@@ -145,7 +147,7 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         logService.saveLog(username, LogStatus.삭제,categoryThird.getCategoryThirdName(),"CategoryThird");
-        return ResponseEntity.badRequest().body("해당 카테고리(소) 카테고리가 성공적으로 삭제되었습니다!");
+        return ResponseEntity.badRequest().body("카테고리(소) 삭제 완료");
     }
 
     @Override
@@ -156,6 +158,26 @@ public class CategoryThirdServiceImpl implements CategoryThirdService{
             responseCategoryThirds.add(new ResponseCategoryThird(categoryThird));
         });
         return responseCategoryThirds;
+    }
+
+    @Override
+    public CategoryThirdDTO createCategoryThird(CategoryThirdCreateDTO categoryThirdCreateDTO) {
+        CategoryThird categoryThird = new CategoryThird();
+        categoryThird.setCategoryThirdName(categoryThirdCreateDTO.getCategoryThirdName());
+        categoryThirdRepository.save(categoryThird);
+        logService.saveLog("root", LogStatus.등록, categoryThird.getCategoryThirdName(), "CategoryThird");
+        return new CategoryThirdDTO(categoryThird);
+    }
+
+    @Override
+    public CategoryThird modifyCategoryThird(int categoryThirdCode, CategoryThirdUpdateDTO categoryThirdUpdateDTO) {
+        CategoryThird categoryThird = categoryThirdRepository.findById(categoryThirdCode)
+                .orElseThrow(() -> new EntityNotFoundException("CategoryThird not found with id: " + categoryThirdCode));
+
+        categoryThird.setCategoryThirdName(categoryThirdUpdateDTO.getCategoryThirdName());
+        categoryThirdRepository.save(categoryThird);
+        logService.saveLog("root", LogStatus.수정,categoryThird.getCategoryThirdName(),"CategoryThird");
+        return categoryThirdRepository.save(categoryThird);
     }
 
 }

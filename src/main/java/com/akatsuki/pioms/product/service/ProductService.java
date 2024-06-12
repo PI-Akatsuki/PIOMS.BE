@@ -2,18 +2,20 @@ package com.akatsuki.pioms.product.service;
 
 import com.akatsuki.pioms.exchange.aggregate.RequestExchange;
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
+import com.akatsuki.pioms.order.aggregate.RequestOrderVO;
 import com.akatsuki.pioms.order.dto.OrderDTO;
+import com.akatsuki.pioms.product.aggregate.Product;
 import com.akatsuki.pioms.product.aggregate.RequestProduct;
 import com.akatsuki.pioms.product.aggregate.ResponseProduct;
 import com.akatsuki.pioms.product.aggregate.ResponseProductWithImage;
+import com.akatsuki.pioms.product.dto.ProductCreateDTO;
 import com.akatsuki.pioms.product.dto.ProductDTO;
+import com.akatsuki.pioms.product.dto.ProductUpdateDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -37,7 +39,7 @@ public interface ProductService {
     // 발주 신청 가능 여부 확인
     boolean checkOrderEnable(Map<Integer,Integer> orderProductMap);
 
-    Boolean postProductWithImage(RequestProduct request, MultipartFile image);
+    String postProductWithImage(RequestProduct request, MultipartFile image);
 
     void importExchangeProducts(RequestExchange requestExchange);
 
@@ -51,4 +53,9 @@ public interface ProductService {
     ResponseEntity<String> updateProductWithImage(int productCode, RequestProduct request);
 
     List<ProductDTO> findNotEnoughProducts();
+
+    int getOrderTotalPrice(Map<Integer,Integer> requestOrderVO);
+
+    ProductDTO createProduct(ProductCreateDTO productCreateDTO);
+    Product modifyProduct(int productCode, ProductUpdateDTO productUpdateDTO);
 }

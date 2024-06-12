@@ -2,6 +2,7 @@ package com.akatsuki.pioms.excel.admin;
 
 import com.akatsuki.pioms.product.dto.ProductDTO;
 import com.akatsuki.pioms.product.service.ProductService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -13,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("admin/exceldownload")
+@Tag(name = "[관리자]상품엑셀다운로드 API")
 public class ProductExcelAdminController {
 
     private final ProductService productService;

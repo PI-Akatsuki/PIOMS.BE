@@ -1,4 +1,4 @@
-name: AkatsukiBE
+name: PIOMSBE
 
 permissions:
   contents: read
@@ -47,12 +47,12 @@ jobs:
             jwt:
               secret: \${SPRING_JWT_SECRET}
             cloud:
-              gcp:
-                storage:
-                  credentials:
-                    location: itability-418007-0c2a47d403c7.json
-                  project-id: itability-418007
-                  bucket: \${GCP_CREDENTIALS_JSON}
+              aws:
+                s3:
+                  bucket: \${SPRING_CLOUD_AWS_S3_BUCKET}
+                  region: \${SPRING_CLOUD_AWS_S3_REGION}
+                  access-key: \${AWS_ACCESS_KEY_ID}
+                  secret-key: \${AWS_SECRET_ACCESS_KEY}
             jpa:
               show-sql: false
               database: mysql
@@ -73,6 +73,72 @@ jobs:
                 host: \${REDIS_HOST}
                 port: \${REDIS_PORT}
                 password: \${REDIS_PWD}
+          kakao:
+            api:
+              url: \${KAKAO_URL}
+              key: \${KAKAO_KEY}
+              user_id: \${KAKAO_USER_ID}
+              sender: \${KAKAO_SENDER}
+              client_secret: \${KAKAO_CLIENT_SECRET}
+              token: \${KAKAO_TOKEN}
+          logging:
+            level:
+              root: INFO
+              org.springframework.web: DEBUG
+              org.hibernate: ERROR
+          EOL
+
+      - name: Create application-test.yml.template
+        run: |
+          mkdir -p src/test/resources
+          cat > src/test/resources/application-test.yml.template <<EOL
+          server:
+            port: 5000
+            tomcat:
+              uri-encoding: UTF-8
+
+          spring:
+            cloud:
+              aws:
+                s3:
+                  bucket: \${SPRING_CLOUD_AWS_S3_BUCKET}
+                  region: \${SPRING_CLOUD_AWS_S3_REGION}
+                  access-key: \${AWS_ACCESS_KEY_ID}
+                  secret-key: \${AWS_SECRET_ACCESS_KEY}
+
+            application:
+              name: pioms-test
+            main:
+              allow-bean-definition-overriding: true
+            jwt:
+              secret: \${SPRING_JWT_SECRET}
+            jpa:
+              show-sql: true
+              hibernate:
+                ddl-auto: create-drop
+              database-platform: org.hibernate.dialect.H2Dialect
+
+            datasource:
+              driver-class-name: org.h2.Driver
+              url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+              username: sa
+              password:
+            cache:
+              type: redis
+            data:
+              redis:
+                host: localhost
+                port: 6379
+
+          kakao:
+            api:
+              url: \${KAKAO_URL}
+              key: \$${KAKAO_KEY}
+              user_id: \{KAKAO_USER_ID}
+              sender: \${KAKAO_SENDER}
+              client_secret: \${KAKAO_CLIENT_SECRET}
+              token: \${KAKAO_TOKEN}
+
           logging:
             level:
               root: INFO
@@ -83,18 +149,29 @@ jobs:
       - name: Set Yaml
         run: |
           envsubst < src/main/resources/application.yml.template > src/main/resources/application.yml
+          envsubst < src/test/resources/application-test.yml.template > src/test/resources/application-test.yml
           cat src/main/resources/application.yml
+          cat src/test/resources/application-test.yml
         env:
           RDS_HOSTNAME: ${{ secrets.RDS_HOSTNAME }}
           RDS_PORT: ${{ secrets.RDS_PORT }}
           RDS_DB_NAME: ${{ secrets.RDS_DB_NAME }}
           RDS_USERNAME: ${{ secrets.RDS_USERNAME }}
           RDS_PASSWORD: ${{ secrets.RDS_PASSWORD }}
-          GCP_CREDENTIALS_JSON: ${{ secrets.GCP_CREDENTIALS_JSON }}
+          SPRING_CLOUD_AWS_S3_BUCKET: ${{ secrets.SPRING_CLOUD_AWS_S3_BUCKET }}
+          SPRING_CLOUD_AWS_S3_REGION: ${{ secrets.SPRING_CLOUD_AWS_S3_REGION }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           SPRING_JWT_SECRET: ${{ secrets.SPRING_JWT_SECRET }}
           REDIS_HOST: ${{ secrets.REDIS_HOST }}
           REDIS_PORT: ${{ secrets.REDIS_PORT }}
           REDIS_PWD: ${{ secrets.REDIS_PWD }}
+          KAKAO_URL: ${{ secrets.KAKAO_URL }}
+          KAKAO_KEY: ${{ secrets.KAKAO_KEY }}
+          KAKAO_USER_ID: ${{ secrets.KAKAO_USER_ID }}
+          KAKAO_SENDER: ${{ secrets.KAKAO_SENDER }}
+          KAKAO_CLIENT_SECRET: ${{ secrets.KAKAO_CLIENT_SECRET }}
+          KAKAO_TOKEN: ${{ secrets.KAKAO_TOKEN }}
 
       - name: Check for Tests
         run: |
@@ -168,7 +245,7 @@ jobs:
       - name: Create new Elastic Beanstalk application version
         run: |
           aws elasticbeanstalk create-application-version \
-            --application-name AkatsukiBE \
+            --application-name PIOMSBE \
             --version-label github-action-${{steps.current-time.outputs.formattedTime}} \
             --source-bundle S3Bucket=elasticbeanstalk-ap-northeast-2-730335325274,S3Key=deploy/deploy.zip
         env:
@@ -179,7 +256,7 @@ jobs:
       - name: Update Elastic Beanstalk environment
         run: |
           aws elasticbeanstalk update-environment \
-            --environment-name AkatsukiBE-env \
+            --environment-name PIOMSBE-env \
             --version-label github-action-${{steps.current-time.outputs.formattedTime}}
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}

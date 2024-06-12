@@ -8,14 +8,14 @@ import lombok.*;
 
 import java.util.List;
 
-@Entity
-@Table(name = "franchise")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Builder
 @ToString
+@Entity
+@Table(name = "franchise")
 public class Franchise {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -55,7 +55,7 @@ public class Franchise {
     @ManyToOne
     private DeliveryDriver deliveryDriver;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "admin_code", referencedColumnName = "admin_code")
     @ToString.Exclude
     private Admin admin;

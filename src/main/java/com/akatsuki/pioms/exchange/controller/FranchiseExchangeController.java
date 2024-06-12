@@ -4,6 +4,8 @@ import com.akatsuki.pioms.exchange.aggregate.RequestExchange;
 import com.akatsuki.pioms.exchange.aggregate.ResponseExchange;
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import com.akatsuki.pioms.exchange.service.ExchangeService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("franchise")
+@Tag(name = "[점주]반품 API")
 public class FranchiseExchangeController {
     ExchangeService exchangeService;
 
@@ -23,6 +26,7 @@ public class FranchiseExchangeController {
     }
 
     @GetMapping("/exchange/list")
+    @Operation(summary = "점주 자신의 모든 반품서들을 조회합니다.")
     public ResponseEntity<List<ResponseExchange>> getMyExchanges(){
         List<ExchangeDTO> exchangeDTOS = exchangeService.getFrOwnerExchanges();
 
@@ -39,6 +43,7 @@ public class FranchiseExchangeController {
     }
 
     @GetMapping("/exchange/{exchangeCode}")
+    @Operation(summary = "점주가 자신의 발주를 상세 조회합니다.")
     public ResponseEntity<ResponseExchange> getMyExchange(@PathVariable int exchangeCode){
         ExchangeDTO exchangeDTO = exchangeService.getExchangeByFranchiseOwnerCode(exchangeCode);
         if (exchangeDTO == null)
@@ -47,10 +52,9 @@ public class FranchiseExchangeController {
     }
 
     @PostMapping("exchange")
+    @Operation(summary = "점주가 새로운 반품서를 생성합니다. ")
     public ResponseEntity<ResponseExchange> postExchange( @RequestBody RequestExchange requestExchange){
-        System.out.println("requestExchange = " + requestExchange);
         ExchangeDTO exchange=  exchangeService.postExchange(requestExchange);
-        System.out.println("exchange = " + exchange);
         if (exchange==null)
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         System.out.println("/");
@@ -58,6 +62,7 @@ public class FranchiseExchangeController {
     }
 
     @DeleteMapping("/exchange/{exchangeCode}")
+    @Operation(summary = "점주가 자신의 반품서를 제거합니다.")
     public ResponseEntity<String> deleteExchange(@PathVariable int exchangeCode){
 
         boolean isDelete = exchangeService.deleteExchange(exchangeCode);

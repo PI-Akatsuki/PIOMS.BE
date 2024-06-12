@@ -3,6 +3,9 @@ package com.akatsuki.pioms.driver.dto;
 import com.akatsuki.pioms.driver.aggregate.DeliveryDriver;
 import lombok.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -21,7 +24,7 @@ public class DeliveryDriverDTO {
     private String driverEnrollDate;
     private String driverUpdateDate;
     private String driverDeleteDate;
-    private String driverStatusString;
+    private Map<String,String> franchises;
 
     public DeliveryDriverDTO(DeliveryDriver deliveryDriver) {
         this.driverCode = deliveryDriver.getDriverCode();
@@ -35,6 +38,15 @@ public class DeliveryDriverDTO {
         this.driverEnrollDate = deliveryDriver.getDriverEnrollDate();
         this.driverUpdateDate = deliveryDriver.getDriverUpdateDate();
         this.driverDeleteDate = deliveryDriver.getDriverDeleteDate();
-        this.driverStatusString = deliveryDriver.isDriverStatus() ? "활성화" : "비활성화";
+        this.franchises = new HashMap<>();
+        if (deliveryDriver.getFranchises() != null && !deliveryDriver.getFranchises().isEmpty()){
+            deliveryDriver.getFranchises().forEach(franchise -> {
+                franchises.put(franchise.getFranchiseName(),franchise.getFranchiseAddress());
+            });
+        }
+    }
+
+    public String driverStatus() {
+        return this.driverStatus ? "활성화" : "비활성화";
     }
 }

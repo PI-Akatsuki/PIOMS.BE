@@ -4,6 +4,7 @@ import com.akatsuki.pioms.admin.aggregate.Admin;
 import com.akatsuki.pioms.ask.aggregate.ASK_STATUS;
 import com.akatsuki.pioms.ask.aggregate.Ask;
 import com.akatsuki.pioms.frowner.aggregate.FranchiseOwner;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,8 +22,11 @@ public class AskDTO {
     private String askContent;
     private ASK_STATUS askStatus;
     private String askAnswer;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime askEnrollDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime askUpdateDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime askCommentDate;
     private String askTitle;
     private int franchiseOwnerCode;
@@ -41,7 +45,8 @@ public class AskDTO {
         this.askTitle = ask.getAskTitle();
         this.franchiseOwnerCode = ask.getFranchiseOwner().getFranchiseOwnerCode();
         this.franchiseOwnerName = ask.getFranchiseOwner().getFranchiseOwnerName();
-        this.franchiseName = ask.getFranchiseOwner().getFranchise().getFranchiseName();
+        if (ask.getFranchiseOwner().getFranchise()!=null)
+            this.franchiseName = ask.getFranchiseOwner().getFranchise().getFranchiseName();
         this.adminCode = ask.getAdmin().getAdminCode();
     }
 }

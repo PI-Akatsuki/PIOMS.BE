@@ -3,6 +3,7 @@ package com.akatsuki.pioms.driver.controller;
 import com.akatsuki.pioms.driver.dto.DeliveryDriverDTO;
 import com.akatsuki.pioms.driver.service.DeliveryDriverService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +12,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("driver")
+@Tag(name = "[배송기사] 배송기사 API")
 public class DriverOnlyDriverInfoController {
 
     private final DeliveryDriverService deliveryDriverService;

@@ -17,7 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/admin")
-@Tag(name = "(관리자)송장[배송] API", description = "관리자의 송장[배송] 관련 API 입니다.")
+@Tag(name = "[관리자]송장/배송 API", description = "관리자의 송장[배송] 관련 API 입니다.")
 public class AdminInvoiceController {
 
     private final InvoiceService invoiceService;
@@ -29,8 +29,8 @@ public class AdminInvoiceController {
 
     @GetMapping("/invoice/list")
     @Operation(summary = "모든 가맹점의 송장 조회",description = "관리자가 관리하는 모든 가맹점의 송장들을 조회합니다.")
-    public ResponseEntity<ResponseInvoiceList> getInvoiceList(@RequestParam int adminCode){
-        List<InvoiceDTO> invoiceList = invoiceService.getAdminInvoiceList(adminCode);
+    public ResponseEntity<ResponseInvoiceList> getInvoiceList(){
+        List<InvoiceDTO> invoiceList = invoiceService.getAdminInvoiceList();
         if (invoiceList.isEmpty()){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
@@ -39,6 +39,7 @@ public class AdminInvoiceController {
     }
 
     @GetMapping("/invoice/{invoiceCode}")
+    @Operation(summary = "가맹점의 송장 상세 조회")
     public ResponseEntity<ResponseInvoice> getInvoice(@RequestParam int adminCode ,@PathVariable int invoiceCode){
         InvoiceDTO invoiceDTO = invoiceService.getInvoiceByAdminCode(adminCode,invoiceCode);
         if (invoiceDTO==null)
@@ -47,6 +48,7 @@ public class AdminInvoiceController {
     }
 
     @PutMapping("/invoice/{invoiceCode}/{invoiceStatus}")
+    @Operation(summary = "송장의 배송 상태 변경")
     public ResponseEntity<ResponseInvoice> putInvoice(@RequestParam int adminCode, @PathVariable int invoiceCode, @PathVariable DELIVERY_STATUS invoiceStatus){
         InvoiceDTO invoice = invoiceService.putInvoice(adminCode,invoiceCode, invoiceStatus);
 

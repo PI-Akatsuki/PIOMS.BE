@@ -5,7 +5,7 @@ import com.akatsuki.pioms.dashboard.aggregate.ResponseDriverDashBoard;
 import com.akatsuki.pioms.dashboard.aggregate.ResponseFranchiseDashBoard;
 
 public interface DashboardService {
-    ResponseAdminDashBoard getRootDash();
+//    ResponseAdminDashBoard getRootDash();
 
     ResponseAdminDashBoard getAdminDash();
 

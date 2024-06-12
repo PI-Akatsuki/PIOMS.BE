@@ -93,32 +93,42 @@ public class DashboardServiceImpl implements DashboardService {
     }
 
 
-    @Override
-    public ResponseAdminDashBoard getRootDash(){
-
-        int rootCode = getUserInfo.getAdminCode();
-        CompanyVO company = companyService.findInformation();
-        OrderStat orderStat = orderService.getOrderStat(rootCode);
-        List<FranchiseDTO> franchises = franchiseService.findFranchiseList();
-        List<ExchangeDTO> exchanges = exchangeService.getExchangesByAdminCode();
-        List<NoticeVO> notices = noticeService.getAllNoticeList();
-        AskListDTO askList = askService.getAllAskList();
-        List<AskDTO> asks = new ArrayList<>(askList.getAsks());
-
-        List<ProductDTO> products = productService.findNotEnoughProducts();
-        return new ResponseAdminDashBoard(company,orderStat,franchises,exchanges,notices,asks,products);
-    }
+//    @Override
+//    public ResponseAdminDashBoard getRootDash(){
+//
+//        int rootCode = getUserInfo.getAdminCode();
+//        CompanyVO company = companyService.findInformation();
+//        OrderStat orderStat = orderService.getOrderStat(rootCode);
+//        List<FranchiseDTO> franchises = franchiseService.findFranchiseList();
+//        List<ExchangeDTO> exchanges = exchangeService.getExchangesByAdminCode();
+//        List<NoticeVO> notices = noticeService.getAllNoticeList();
+//        AskListDTO askList = askService.getAllAskList();
+//        List<AskDTO> asks = new ArrayList<>(askList.getAsks());
+//
+//        List<ProductDTO> products = productService.findNotEnoughProducts();
+//        return new ResponseAdminDashBoard(company,orderStat,franchises,exchanges,notices,asks,products);
+//    }
 
     @Override
     public ResponseAdminDashBoard getAdminDash(){
 
         int adminCode = getUserInfo.getAdminCode();
+        List<OrderDTO> orders = orderService.getOrderListByAdminCode(adminCode);
+        if(adminCode==1){
+            CompanyVO company = companyService.findInformation();
+            OrderStat orderStat = new OrderStat(orders);
+            List<FranchiseDTO> franchises = franchiseService.findFranchiseList();
+            List<ExchangeDTO> exchanges = exchangeService.getExchangesByAdminCode();
+            List<NoticeVO> notices = noticeService.getAllNoticeList();
+            AskListDTO askList = askService.getAllAskList();
+            List<AskDTO> asks = new ArrayList<>(askList.getAsks());
+            List<ProductDTO> products = productService.findNotEnoughProducts();
+            return new ResponseAdminDashBoard(company,orderStat,franchises,exchanges,notices,asks,products);
+        }
 
         CompanyVO company = companyService.findInformation();
-//        OrderStat orderStat = orderService.getOrderStat(adminCode);
-        List<OrderDTO> orders = orderService.getOrderListByAdminCode(adminCode);
         OrderStat orderStat = new OrderStat(orders);
-        List<FranchiseDTO> franchises = franchiseService.findFranchiseByAdminCode(adminCode);
+        List<FranchiseDTO> franchises = franchiseService.findFranchiseByAdminCode();
         List<ExchangeDTO> exchanges = exchangeService.getExchangesByAdminCode();
         List<NoticeVO> notices = noticeService.getAllNoticeList();
         AskListDTO askList = askService.getAllAskList();

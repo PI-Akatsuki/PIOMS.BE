@@ -24,12 +24,9 @@ public class InvoiceDTO {
     private OrderDTO order;
 
     public InvoiceDTO(Invoice invoice) {
-        System.out.println("invoice = " + invoice);
         this.invoiceCode = invoice.getInvoiceCode();
         this.deliveryStatus = invoice.getDeliveryStatus();
         this.invoiceDate = invoice.getInvoiceDate();
-//        this.deliveryRegionDTO = new DeliveryRegionDTO(invoice.getDeliveryRegion());
         this.order = new OrderDTO(invoice.getOrder());
-
     }
 }

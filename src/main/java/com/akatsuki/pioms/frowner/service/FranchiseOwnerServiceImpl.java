@@ -1,5 +1,6 @@
 package com.akatsuki.pioms.frowner.service;
 
+import com.akatsuki.pioms.config.GetUserInfo;
 import com.akatsuki.pioms.frowner.aggregate.FranchiseOwner;
 import com.akatsuki.pioms.frowner.dto.FranchiseOwnerDTO;
 import com.akatsuki.pioms.frowner.repository.FranchiseOwnerRepository;
@@ -28,11 +29,14 @@ public class FranchiseOwnerServiceImpl implements FranchiseOwnerService {
     private final LogService logService;
     private final PasswordEncoder passwordEncoder;
 
+    private final GetUserInfo getUserInfo;
+
     @Autowired
-    public FranchiseOwnerServiceImpl(FranchiseOwnerRepository franchiseOwnerRepository, LogService logService, PasswordEncoder passwordEncoder) {
+    public FranchiseOwnerServiceImpl(FranchiseOwnerRepository franchiseOwnerRepository, LogService logService, PasswordEncoder passwordEncoder, GetUserInfo getUserInfo) {
         this.franchiseOwnerRepository = franchiseOwnerRepository;
         this.logService = logService;
         this.passwordEncoder = passwordEncoder;
+        this.getUserInfo = getUserInfo;
     }
 
     // 현재 사용자가 ROOT인지 확인
@@ -58,7 +62,13 @@ public class FranchiseOwnerServiceImpl implements FranchiseOwnerService {
     @Transactional(readOnly = true)
     @Override
     public List<FranchiseOwnerDTO> findAllFranchiseOwners() {
+        int adminCode = getUserInfo.getAdminCode();
+        if (adminCode == 1) {
         return franchiseOwnerRepository.findAll().stream()
+                .map(FranchiseOwnerDTO::new)
+                .collect(Collectors.toList());
+        }
+        return franchiseOwnerRepository.findAllByFranchiseAdminAdminCode(adminCode).stream()
                 .map(FranchiseOwnerDTO::new)
                 .collect(Collectors.toList());
     }
@@ -134,17 +144,22 @@ public class FranchiseOwnerServiceImpl implements FranchiseOwnerService {
                 .orElseThrow(() -> new RuntimeException("프랜차이즈 오너 코드를 찾을 수 없음: " + franchiseOwnerCode));
 
         StringBuilder changes = new StringBuilder();
+
         if (!Objects.equals(existingFranchiseOwner.getFranchiseOwnerPwd(), updatedFranchiseOwnerDTO.getFranchiseOwnerPwd())) {
-            changes.append(String.format("pwd 변경 '%s'에서 '%s(으)로; ", existingFranchiseOwner.getFranchiseOwnerPwd(), updatedFranchiseOwnerDTO.getFranchiseOwnerPwd()));
+            changes.append(String.format("pwd 변경 '%s'에서 '%s'으로; ", existingFranchiseOwner.getFranchiseOwnerPwd(), updatedFranchiseOwnerDTO.getFranchiseOwnerPwd()));
             existingFranchiseOwner.setFranchiseOwnerPwd(passwordEncoder.encode(updatedFranchiseOwnerDTO.getFranchiseOwnerPwd()));
         }
         if (!Objects.equals(existingFranchiseOwner.getFranchiseOwnerPhone(), updatedFranchiseOwnerDTO.getFranchiseOwnerPhone())) {
-            changes.append(String.format("phone 변경 '%s'에서 '%s'(으)로; ", existingFranchiseOwner.getFranchiseOwnerPhone(), updatedFranchiseOwnerDTO.getFranchiseOwnerPhone()));
+            changes.append(String.format("phone 변경 '%s'에서 '%s'으로; ", existingFranchiseOwner.getFranchiseOwnerPhone(), updatedFranchiseOwnerDTO.getFranchiseOwnerPhone()));
             existingFranchiseOwner.setFranchiseOwnerPhone(updatedFranchiseOwnerDTO.getFranchiseOwnerPhone());
         }
         if (!Objects.equals(existingFranchiseOwner.getFranchiseOwnerEmail(), updatedFranchiseOwnerDTO.getFranchiseOwnerEmail())) {
-            changes.append(String.format("Email 변경 '%s'에서  '%s'(으)로; ", existingFranchiseOwner.getFranchiseOwnerEmail(), updatedFranchiseOwnerDTO.getFranchiseOwnerEmail()));
+            changes.append(String.format("Email 변경 '%s'에서 '%s'으로; ", existingFranchiseOwner.getFranchiseOwnerEmail(), updatedFranchiseOwnerDTO.getFranchiseOwnerEmail()));
             existingFranchiseOwner.setFranchiseOwnerEmail(updatedFranchiseOwnerDTO.getFranchiseOwnerEmail());
+        }
+        if (existingFranchiseOwner.isFranchiseOwnerStatus() != updatedFranchiseOwnerDTO.isFranchiseOwnerStatus()) {
+            changes.append(String.format("Status 변경 '%s'에서 '%s'으로; ", existingFranchiseOwner.isFranchiseOwnerStatus(), updatedFranchiseOwnerDTO.isFranchiseOwnerStatus()));
+            existingFranchiseOwner.setFranchiseOwnerStatus(updatedFranchiseOwnerDTO.isFranchiseOwnerStatus());
         }
 
         // 수정일 업데이트
@@ -177,7 +192,6 @@ public class FranchiseOwnerServiceImpl implements FranchiseOwnerService {
         // 삭제일 설정
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         existingFranchiseOwner.setFranchiseOwnerDeleteDate(LocalDateTime.now().format(formatter));
-
         franchiseOwnerRepository.save(existingFranchiseOwner);
         String username = getCurrentUser();
         logService.saveLog(username, LogStatus.삭제, existingFranchiseOwner.getFranchiseOwnerName(), "FranchiseOwner");

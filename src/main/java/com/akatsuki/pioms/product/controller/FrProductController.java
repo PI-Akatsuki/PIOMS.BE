@@ -1,11 +1,13 @@
 package com.akatsuki.pioms.product.controller;
 
 import com.akatsuki.pioms.product.aggregate.ResponseProduct;
+import com.akatsuki.pioms.product.aggregate.ResponseProductWithImage;
 import com.akatsuki.pioms.product.dto.ProductDTO;
 import com.akatsuki.pioms.product.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,7 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("franchise/product")
-@Tag(name="가맹점 상품 CRUD 컨트롤러", description = "상품 조회,등록,수정,삭제")
+@Tag(name="[가맹점]상품 API", description = "상품 조회,등록,수정,삭제")
 public class FrProductController {
 
     private final ProductService productService;
@@ -44,4 +46,12 @@ public class FrProductController {
         return ResponseEntity.ok(responseProduct);
     }
 
+    @GetMapping("/productImage")
+    @Operation(summary = "상품 이미지 조회", description = "상품 이미지 조회 기능")
+    public ResponseEntity<List<ResponseProductWithImage>> getProducts() {
+        List<ResponseProductWithImage> responseProductImage = productService.getAllProductWithImage();
+        if (responseProductImage.isEmpty())
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+        return ResponseEntity.ok(responseProductImage);
+    }
 }

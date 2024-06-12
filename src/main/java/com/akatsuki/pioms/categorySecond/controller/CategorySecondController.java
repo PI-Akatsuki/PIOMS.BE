@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("admin/category/second")
-@Tag(name = "카테고리(중) 조회 컨트롤러", description = "카테고리(중) 조회")
+@Tag(name = "[관리자]카테고리(중) API", description = "카테고리(중) 조회")
 public class CategorySecondController {
 
     private final CategorySecondService categorySecondService;
@@ -52,17 +52,20 @@ public class CategorySecondController {
     }
 
     @PostMapping("/create")
+    @Operation(summary = "카테고리(중) 등록", description = "")
     public ResponseEntity<String> postCategorySecond(@RequestBody RequestCategorySecond request) {
         return categorySecondService.postCategorySecond(request);
 
     }
 
     @PutMapping("/update/{categorySecondCode}")
+    @Operation(summary = "카태고리(중) 수정 ", description = "")
     public ResponseEntity<String> updateCategorySecond(@PathVariable int categorySecondCode, @RequestBody RequestCategorySecond request) {
         return categorySecondService.updateCategorySecond(categorySecondCode, request);
     }
 
     @DeleteMapping("/delete/{categorySecondCode}")
+    @Operation(summary = "카태고리(중) 삭제 ", description = "")
     public ResponseEntity<String> deleteCategorySecond(@PathVariable int categorySecondCode) {
         return categorySecondService.deleteCategorySecond(categorySecondCode);
     }

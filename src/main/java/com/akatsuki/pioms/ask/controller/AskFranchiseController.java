@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-@Tag(name="문의사항", description = "Franchise Ask")
+@Tag(name="[점주]문의사항 API", description = "Franchise Ask")
 @RestController
 @RequestMapping("/franchise")
 public class AskFranchiseController {
@@ -64,6 +64,7 @@ public class AskFranchiseController {
 //    }
 
     @PostMapping("/create")
+    @Operation(summary = "문의사항 생성", description = "문의사항 생성 입니다.")
     public ResponseEntity<AskDTO> createAsk(@RequestBody AskCreateDTO askCreateDTO) {
         int franchiseOwnerCode = getUserInfo.getFranchiseOwnerCode();
         askCreateDTO.setFranchiseOwnerCode(franchiseOwnerCode);
@@ -74,7 +75,8 @@ public class AskFranchiseController {
     /**
      * 문의사항 수정
      * */
-    @PutMapping("/update/{askCode}")
+    @PutMapping("/update/ask/{askCode}")
+    @Operation(summary = "문의사항 수정", description = "")
     public ResponseEntity<?> updateAsk(@PathVariable int askCode, @RequestBody AskUpdateDTO askUpdateDTO) {
         try {
             Ask updatedAsk = askService.updateAsk(askCode, askUpdateDTO);
@@ -87,16 +89,16 @@ public class AskFranchiseController {
         }
     }
 
-    @Operation(summary = "문의사항조회", description = "점주별 문의사항 전체 조회입니다.")
     @GetMapping("/asklist")
+    @Operation(summary = "문의사항조회", description = "점주별 문의사항 전체 조회입니다.")
     public ResponseEntity<AskListDTO> getAsksByFranchiseOwner() {
         int franchiseOwnerId = getUserInfo.getFranchiseOwnerCode();  // 토큰에서 값 가져오기
         AskListDTO askListDTO = askService.getAsksByFranchiseOwnerId(franchiseOwnerId);
         return ResponseEntity.ok().body(askListDTO);
     }
 
-    @Operation(summary = "문의사항조회", description = "점주별 문의사항 상세 조회입니다.")
     @GetMapping("/owner")
+    @Operation(summary = "문의사항조회", description = "점주별 문의사항 상세 조회입니다.")
     public ResponseEntity<FranchiseOwnerDTO> getFranchiseOwnerDetails() {
         try {
             int franchiseOwnerCode = getUserInfo.getFranchiseOwnerCode();  // 토큰에서 값 가져오기

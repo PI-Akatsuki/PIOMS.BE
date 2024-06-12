@@ -36,7 +36,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/admin")
-@Tag(name = "Admin Order API" ,description = "관리자 관련 API 명세서입니다.")
+@Tag(name = "[관리자]발주 API" ,description = "관리자 관련 API 명세서입니다.")
 public class AdminOrderController {
     AdminOrderFacade orderFacade;
     @Autowired
@@ -49,8 +49,9 @@ public class AdminOrderController {
     public ResponseEntity<List<OrderVO>> getFranchisesOrderList(
     ){
         List<OrderDTO> orderDTOS = orderFacade.getOrderListByAdminCode();
-        if (orderDTOS.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        if ( orderDTOS==null||orderDTOS.isEmpty()) {
+//            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+            return ResponseEntity.ok(null);
         }
         List<OrderVO> orderVOS = new ArrayList<>();
         for (int i = 0; i < orderDTOS.size(); i++) {

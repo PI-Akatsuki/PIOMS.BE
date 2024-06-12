@@ -2,6 +2,7 @@ package com.akatsuki.pioms.excel.franchise;
 
 import com.akatsuki.pioms.product.dto.ProductDTO;
 import com.akatsuki.pioms.product.service.ProductService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("franchise/exceldownload")
 @ComponentScan
+@Tag(name = "[점주]상품엑셀다운로드 API")
 public class ProductExcelFranchiseController {
 
     private ProductService productService;

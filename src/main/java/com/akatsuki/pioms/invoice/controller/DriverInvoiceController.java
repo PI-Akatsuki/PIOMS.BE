@@ -2,6 +2,7 @@ package com.akatsuki.pioms.invoice.controller;
 
 import com.akatsuki.pioms.invoice.aggregate.DELIVERY_STATUS;
 import com.akatsuki.pioms.invoice.aggregate.ResponseDriverInvoice;
+import com.akatsuki.pioms.invoice.aggregate.ResponseInvoiceDetail;
 import com.akatsuki.pioms.invoice.service.InvoiceService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "배송상태조회 및  API", description = "배송기사별 배송상태조회관련 전체 및 상세조회 API")
+@Tag(name = "[배송기사]배송상태조회 API", description = "배송기사별 배송상태조회관련 전체 및 상세조회 API")
 @RestController
 @RequestMapping("driver")
 public class DriverInvoiceController {
@@ -80,4 +81,9 @@ public class DriverInvoiceController {
         return invoiceService.countStatusCompleteDeliveryDriverInvoices(driverCode);
     }
 
+    @Operation(summary = "배송 송장 상세조회", description = "배송기사가 가진 송장 상세조회")
+    @GetMapping("/{driverCode}/{invoiceCode}/details")
+    public ResponseInvoiceDetail getIovoiceDetails (@PathVariable int driverCode, @PathVariable int invoiceCode) {
+        return invoiceService.getInvoiceDetail(invoiceCode);
+    }
 }

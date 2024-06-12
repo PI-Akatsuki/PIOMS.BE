@@ -21,7 +21,6 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -78,20 +77,19 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .formLogin(formLogin -> formLogin.disable())
                 .httpBasic(httpBasic -> httpBasic.disable())
-                .logout(logout -> logout.disable())
+                .logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/"))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/", "/reissue", "/admin/login", "/franchise/login", "/driver/login", "/admin/product/sendKakaoAlert").permitAll()
+                        .requestMatchers("/", "/swagger-ui/**", "/v3/api-docs/**", "/reissue", "/admin/login", "/franchise/login", "/driver/login", "/admin/product/sendKakaoAlert").permitAll()
                         .requestMatchers(
                                 "/admin/info",
                                 "/admin/home",
                                 "/admin/list/**",
-                                "/admin/category/first/list/**",
-                                "/admin/category/second/list/**",
-                                "/admin/category/third/list/**",
+                                "/admin/product/**",
+                                "/admin/category/**",
                                 "/admin/driver/list/**",
                                 "/admin/franchise/list/**",
                                 "/admin/franchise/owner/list/**",
-                                "/admin/franchise/owner/update/**",
+                                "/admin/franchise/**",
                                 "/admin/product/list/**",
                                 "/admin/specs/**",
                                 "/admin/order/**",
@@ -101,9 +99,10 @@ public class SecurityConfig {
                                 "/admin/ask/**",
                                 "/admin/pdfdownload/**",
                                 "/admin/exceldownload/**",
-                                "/admin/adminDashboard").hasRole("ADMIN")
+                                "/admin/adminDashboard",
+                                "/admin/pdfdownload/admin-pdf").hasAnyRole("ADMIN", "ROOT")
                         .requestMatchers("/admin/**").hasRole("ROOT")
-                        .requestMatchers("/franchise/**").hasAnyRole("OWNER")
+                        .requestMatchers("/franchise/**").hasRole("OWNER")
                         .requestMatchers("/driver/**").hasRole("DRIVER")
                         .anyRequest().authenticated()
                 )
@@ -115,7 +114,6 @@ public class SecurityConfig {
         return http.build();
     }
 
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -124,7 +122,7 @@ public class SecurityConfig {
     @Bean
     public RoleHierarchy roleHierarchy() {
         RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
-        String hierarchy = "ROLE_ROOT > ROLE_ADMIN\nROLE_ADMIN > ROLE_OWNER";
+        String hierarchy = "ROLE_ROOT > ROLE_ADMIN\nROLE_ADMIN > ROLE_OWNER\nROLE_ADMIN > ROLE_DRIVER";
         roleHierarchy.setHierarchy(hierarchy);
         return roleHierarchy;
     }

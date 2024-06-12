@@ -2,6 +2,7 @@ package com.akatsuki.pioms.excel.admin;
 
 import com.akatsuki.pioms.franchise.dto.FranchiseDTO;
 import com.akatsuki.pioms.franchise.service.FranchiseService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -13,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("admin/exceldownload")
+@Tag(name = "[관리자]점주엑셀다운로드 API")
 public class FranchiseExcelController {
 
     private final FranchiseService franchiseService;
@@ -94,12 +96,15 @@ public class FranchiseExcelController {
             cell = row.createCell(8);
             cell.setCellStyle(bodyStyle);
             cell.setCellValue(String.valueOf(dto.getFranchiseDeliveryDate()));
+
             cell = row.createCell(9);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getFranchiseOwner().getFranchiseOwnerCode());
+            cell.setCellValue(String.valueOf(dto.getFranchiseOwner() != null ? dto.getFranchiseOwner().getFranchiseOwnerCode() : ""));
+
             cell = row.createCell(10);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getFranchiseOwner().getFranchiseOwnerName());
+            cell.setCellValue(dto.getFranchiseOwner() != null ? dto.getFranchiseOwner().getFranchiseOwnerName() : "");
+
             cell = row.createCell(11);
             cell.setCellStyle(bodyStyle);
             cell.setCellValue(dto.getAdminCode());

@@ -1,11 +1,16 @@
 package com.akatsuki.pioms.franchise.service;
 
 import com.akatsuki.pioms.admin.aggregate.Admin;
+import com.akatsuki.pioms.driver.aggregate.DeliveryDriver;
+import com.akatsuki.pioms.driver.repository.DeliveryDriverRepository;
+import com.akatsuki.pioms.config.GetUserInfo;
 import com.akatsuki.pioms.franchise.aggregate.DELIVERY_DATE;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import com.akatsuki.pioms.franchise.dto.FranchiseDTO;
 import com.akatsuki.pioms.franchise.repository.FranchiseRepository;
 import com.akatsuki.pioms.admin.repository.AdminRepository;
+import com.akatsuki.pioms.frowner.aggregate.FranchiseOwner;
+import com.akatsuki.pioms.frowner.repository.FranchiseOwnerRepository;
 import com.akatsuki.pioms.log.etc.LogStatus;
 import com.akatsuki.pioms.log.service.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,14 +33,20 @@ import java.util.stream.Collectors;
 public class FranchiseServiceImpl implements FranchiseService {
 
     private final FranchiseRepository franchiseRepository;
+    private final FranchiseOwnerRepository franchiseOwnerRepository;
+    private final DeliveryDriverRepository deliveryDriverRepository;
     private final AdminRepository adminRepository;
     private final LogService logService;
+    private final GetUserInfo getUserInfo;
 
     @Autowired
-    public FranchiseServiceImpl(FranchiseRepository franchiseRepository, AdminRepository adminRepository, LogService logService) {
+    public FranchiseServiceImpl(FranchiseRepository franchiseRepository, FranchiseOwnerRepository franchiseOwnerRepository, DeliveryDriverRepository deliveryDriverRepository, AdminRepository adminRepository, LogService logService, GetUserInfo getUserInfo) {
         this.franchiseRepository = franchiseRepository;
+        this.franchiseOwnerRepository = franchiseOwnerRepository;
+        this.deliveryDriverRepository = deliveryDriverRepository;
         this.adminRepository = adminRepository;
         this.logService = logService;
+        this.getUserInfo = getUserInfo;
     }
 
     // 현재 사용자가 ROOT인지 확인
@@ -61,6 +72,8 @@ public class FranchiseServiceImpl implements FranchiseService {
     @Transactional(readOnly = true)
     @Override
     public List<FranchiseDTO> findFranchiseList() {
+
+//        List<Franchise> franchiseList = franchiseRepository.findAllByAdminAdminCode(adminCode);
         return franchiseRepository.findAll().stream()
                 .map(FranchiseDTO::new)
                 .collect(Collectors.toList());
@@ -88,6 +101,13 @@ public class FranchiseServiceImpl implements FranchiseService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String now = LocalDateTime.now().format(formatter);
 
+        FranchiseOwner franchiseOwner;
+        if (franchiseDTO.getFranchiseOwner() == null || franchiseDTO.getFranchiseOwner().getFranchiseOwnerCode() == 0) {
+            return ResponseEntity.badRequest().body("프랜차이즈 소유자는 필수 항목입니다.");
+        } else {
+            franchiseOwner = franchiseDTO.getFranchiseOwner().toEntity();
+        }
+
         Franchise franchise = Franchise.builder()
                 .franchiseName(franchiseDTO.getFranchiseName())
                 .franchiseAddress(franchiseDTO.getFranchiseAddress())
@@ -96,7 +116,7 @@ public class FranchiseServiceImpl implements FranchiseService {
                 .franchiseUpdateDate(now)
                 .franchiseBusinessNum(franchiseDTO.getFranchiseBusinessNum())
                 .franchiseDeliveryDate(franchiseDTO.getFranchiseDeliveryDate())
-                .franchiseOwner(franchiseDTO.getFranchiseOwner().toEntity())
+                .franchiseOwner(franchiseOwner)
                 .deliveryDriver(franchiseDTO.getDeliveryDriver())
                 .admin(adminRepository.findById(franchiseDTO.getAdminCode()).orElse(null))
                 .build();
@@ -106,10 +126,11 @@ public class FranchiseServiceImpl implements FranchiseService {
         return ResponseEntity.ok("신규 프랜차이즈 등록이 완료되었습니다.");
     }
 
+
     // 프랜차이즈 정보 수정
     @Override
     @Transactional
-    public ResponseEntity<String> updateFranchise(int franchiseCode, FranchiseDTO updatedFranchiseDTO, int requestorCode, boolean isOwner) {
+    public ResponseEntity<String> updateFranchise(int franchiseCode, FranchiseDTO updatedFranchiseDTO) {
         Optional<Franchise> franchiseOptional = franchiseRepository.findById(franchiseCode);
         if (franchiseOptional.isEmpty()) {
             return ResponseEntity.notFound().build();
@@ -117,16 +138,26 @@ public class FranchiseServiceImpl implements FranchiseService {
 
         Franchise franchise = franchiseOptional.get();
         StringBuilder changes = new StringBuilder();
-        if (isOwner || isAdmin(requestorCode)) {
-            updateFields(franchise, updatedFranchiseDTO, changes);
-        } else {
-            return ResponseEntity.status(403).body("수정 권한이 없습니다.");
+
+        // Update the fields with values from DTO
+        franchise.setFranchiseName(updatedFranchiseDTO.getFranchiseName());
+        franchise.setFranchiseAddress(updatedFranchiseDTO.getFranchiseAddress());
+        franchise.setFranchiseCall(updatedFranchiseDTO.getFranchiseCall());
+        franchise.setFranchiseBusinessNum(updatedFranchiseDTO.getFranchiseBusinessNum());
+        franchise.setFranchiseDeliveryDate(updatedFranchiseDTO.getFranchiseDeliveryDate());
+
+        // Update relationships
+        if (updatedFranchiseDTO.getFranchiseOwner() != null) {
+            Optional<FranchiseOwner> ownerOptional = franchiseOwnerRepository.findById(updatedFranchiseDTO.getFranchiseOwner().getFranchiseOwnerCode());
+            ownerOptional.ifPresent(franchise::setFranchiseOwner);
+        }
+
+        if (updatedFranchiseDTO.getDeliveryDriver() != null) {
+            Optional<DeliveryDriver> driverOptional = deliveryDriverRepository.findById(updatedFranchiseDTO.getDeliveryDriver().getDriverCode());
+            driverOptional.ifPresent(franchise::setDeliveryDriver);
         }
 
         franchise.setFranchiseUpdateDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-        franchiseRepository.save(franchise);
-        logChanges(changes);
-
         return ResponseEntity.ok("가맹점 정보가 성공적으로 수정 되었습니다.");
     }
 
@@ -192,12 +223,14 @@ public class FranchiseServiceImpl implements FranchiseService {
         }
     }
 
+    // 사용자 코드로 프랜차이즈 조회
     @Override
     public FranchiseDTO findFranchiseByFranchiseOwnerCode(int franchiseOwnerCode) {
         Franchise franchise = franchiseRepository.findByFranchiseOwnerFranchiseOwnerCode(franchiseOwnerCode);
         return new FranchiseDTO(franchise);
     }
 
+    // 드라이버 코드로 프랜차이즈 리스트 조회
     @Override
     public List<FranchiseDTO> findFranchiseListByDriverCode(int driverCode) {
         return franchiseRepository.findAllByDeliveryDriverDriverCode(driverCode).stream()
@@ -205,10 +238,36 @@ public class FranchiseServiceImpl implements FranchiseService {
                 .collect(Collectors.toList());
     }
 
+
+
+    // 관리자 코드로 프랜차이즈 리스트 조회
     @Override
-    public List<FranchiseDTO> findFranchiseByAdminCode(int adminCode) {
+    public List<FranchiseDTO> findFranchiseByAdminCode() {
+        int adminCode = getUserInfo.getAdminCode();
         return franchiseRepository.findAllByAdminAdminCode(adminCode).stream()
                 .map(FranchiseDTO::new)
                 .collect(Collectors.toList());
+    }
+
+    // 사용자 아이디로 프랜차이즈 리스트 조회 (루트 사용자가 아닌 경우)
+    @Override
+    public List<FranchiseDTO> findFranchiseListByUser(String userId) {
+        if (userId == null || isCurrentUserRoot()) {
+            return findFranchiseList();
+        }
+
+        Optional<Admin> adminOptional = adminRepository.findByAdminId(userId);
+        if (adminOptional.isPresent()) {
+            Admin admin = adminOptional.get();
+            return findFranchiseByAdminCode();
+        }
+
+        return List.of();
+    }
+
+    @Override
+    public FranchiseDTO findFranchiseByFranchiseOwnerCode() {
+        int franchiseOwnerCode = getUserInfo.getFranchiseOwnerCode();
+        return new FranchiseDTO(franchiseRepository.findById(franchiseOwnerCode).get());
     }
 }

@@ -2,6 +2,7 @@ package com.akatsuki.pioms.excel.franchise;
 
 import com.akatsuki.pioms.order.dto.OrderDTO;
 import com.akatsuki.pioms.order.service.FranchiseOrderFacade;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -13,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("franchise/exceldownload")
+@Tag(name = "[점주]발주엑셀다운로드 API")
 public class RequestExcelController {
 
     private final FranchiseOrderFacade franchiseOrderFacade;
@@ -87,7 +89,8 @@ public class RequestExcelController {
             cell.setCellValue(dto.getFranchiseCode());
             cell = row.createCell(6);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getExchange().getExchangeCode());
+            if(dto.getExchange()!=null)
+                cell.setCellValue(dto.getExchange().getExchangeCode());
         }
 
         // Column width auto-sizing

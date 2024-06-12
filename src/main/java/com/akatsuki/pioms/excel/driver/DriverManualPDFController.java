@@ -1,9 +1,10 @@
 package com.akatsuki.pioms.excel.driver;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -15,9 +16,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 @RestController
 @RequestMapping("driver/pdfdownload")
+@Tag(name = "[driver]배송기사메뉴얼 다운로드 API")
 public class DriverManualPDFController {
 
     @GetMapping(value = "/driver-pdf")
@@ -28,12 +31,39 @@ public class DriverManualPDFController {
             PDPage page = new PDPage();
             document.addPage(page);
 
+            // 폰트 로드
+            InputStream fontStream = getClass().getResourceAsStream("/fonts/malgun.ttf");
+            PDType0Font font = PDType0Font.load(document, fontStream);
+
             try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
                 contentStream.beginText();
-                // 기본 폰트 설정 (예: Times-Roman)
-                contentStream.setFont(PDType1Font.HELVETICA, 12);
-                contentStream.newLineAtOffset(100, 700);
-                contentStream.showText("DriverManualPDF");
+                // 한글 폰트 설정
+                contentStream.setFont(font, 12);
+                contentStream.setLeading(14.5f);
+                contentStream.newLineAtOffset(50, 700);
+
+                // 텍스트 줄 단위로 분리
+                String text = "### 배송기사 메뉴얼\n" +
+                        "\n" +
+                        "배송기사는 배송 관련 정보와 상태를 관리합니다.\n" +
+                        "\n" +
+                        "### 배송상태 변경\n" +
+                        "\n" +
+                        "- **수정**: 배송 상태를 변경할 수 있습니다.\n" +
+                        "\n" +
+                        "### 자신의 배송 목록 조회\n" +
+                        "\n" +
+                        "- **조회**: 자신의 배송 목록을 조회할 수 있습니다.\n" +
+                        "\n" +
+                        "### 공지사항 조회\n" +
+                        "\n" +
+                        "- **조회**: 공지사항을 조회할 수 있습니다.";
+                String[] lines = text.split("\n");
+                for (String line : lines) {
+                    contentStream.showText(line);
+                    contentStream.newLine();
+                }
+
                 contentStream.endText();
             }
 
@@ -45,7 +75,7 @@ public class DriverManualPDFController {
 
         // ResponseEntity 설정
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=driverManual.pdf")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=adminManual.pdf")
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(resource);
     }

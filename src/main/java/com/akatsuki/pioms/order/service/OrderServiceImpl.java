@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class OrderServiceImpl implements OrderService{
@@ -31,34 +32,40 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     @Transactional(readOnly = true)
-    public List<OrderDTO> getOrderListByAdminCode(int adminCode){
-
+    public List<OrderDTO> getOrderListByAdminCode(int adminCode) {
         List<Order> orderList;
-        if (adminCode==1){
+        if (adminCode == 1) {
             // 루트 관리자는 전부
-            orderList = orderRepository.findAll();
-        }else
+            orderList = orderRepository.findAllDesc();
+            System.out.println("find all orderList = " + orderList);
+        } else {
             orderList = orderRepository.findAllByFranchiseAdminAdminCodeOrderByOrderDateDesc(adminCode);
-        if (orderList == null || orderList.isEmpty())
+        }
+        System.out.println("orderList = " + orderList);
+        if (orderList == null || orderList.isEmpty()) {
             return null;
+        }
         List<OrderDTO> orderDTOList = new ArrayList<>();
-        orderList.forEach(order-> {
+        for (Order order : orderList) {
             orderDTOList.add(new OrderDTO(order));
-        });
+        }
         return orderDTOList;
     }
 
+
     @Override
     @Transactional(readOnly = false)
-    public OrderDTO acceptOrder(int adminCode,int orderCode, ExchangeDTO exchange) {
-        Order order = orderRepository.findById(orderCode).orElseThrow();
+    public OrderDTO acceptOrder(int adminCode, int orderCode, ExchangeDTO exchange) {
+        Order order = orderRepository.findById(orderCode)
+                .orElseThrow(() -> new IllegalArgumentException("Order not found with code: " + orderCode));
         order.setOrderCondition(ORDER_CONDITION.승인완료);
-        if (exchange!=null) {
+        if (exchange != null) {
             Exchange exchange1 = new Exchange();
             exchange1.setExchangeCode(exchange.getExchangeCode());
             order.setExchange(exchange1);
         }
-        order=orderRepository.save(order);
+        order = orderRepository.save(order);
+        System.out.println("order = " + order);
         return new OrderDTO(order);
     }
 
@@ -79,7 +86,7 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     @Transactional(readOnly = false)
-    public int postFranchiseOrder(FranchiseDTO franchiseDTO, RequestOrderVO requestOrder){
+    public int postFranchiseOrder(FranchiseDTO franchiseDTO, RequestOrderVO requestOrder, int price){
 
         // 이미 존재하는 발주 있는지 확인
         if (requestOrder.getProducts() == null || requestOrder.getProducts().isEmpty() ||
@@ -89,16 +96,17 @@ public class OrderServiceImpl implements OrderService{
             return 0;
         }
         try {
-            postOrder(franchiseDTO, requestOrder);
+            postOrder(franchiseDTO, requestOrder, price);
             return 1;
         }
         catch (Exception e){
+            System.err.println("post failed");
             return -1;
         }
     }
-    private void postOrder(FranchiseDTO franchiseDTO, RequestOrderVO requestOrder) {
+    private void postOrder(FranchiseDTO franchiseDTO, RequestOrderVO requestOrder,int price) {
         Order order = new Order(ORDER_CONDITION.승인대기, franchiseDTO);
-        order.setOrderTotalPrice(requestOrder.getOrderTotalPrice());
+        order.setOrderTotalPrice(price);
         Order result = orderRepository.save(order);
         requestOrder.getProducts().forEach((productCode, count) -> {
             orderProductRepository.save(new OrderProduct(count, 0, result, productCode));
@@ -143,15 +151,17 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     @Transactional
-    public boolean putFranchiseOrder(int franchiseOwnerCode, RequestPutOrder requestOrder) {
+    public boolean putFranchiseOrder(int franchiseOwnerCode, RequestPutOrder requestOrder, int price) {
         Order order = orderRepository.findById(requestOrder.getOrderCode())
                 .orElseThrow(() -> new IllegalArgumentException("Order not found"));
         if (order.getFranchise().getFranchiseOwner().getFranchiseOwnerCode() != franchiseOwnerCode) {
             return false;
         }
-        if (order.getOrderCondition() != ORDER_CONDITION.승인대기 && order.getOrderCondition() != ORDER_CONDITION.승인거부 ) {
+        if (order.getOrderCondition() != ORDER_CONDITION.승인대기
+                && order.getOrderCondition() != ORDER_CONDITION.승인거부 ) {
             return false;
         }
+        order.setOrderTotalPrice(price);
         putOrder(requestOrder, order);
         return true;
     }
@@ -162,6 +172,7 @@ public class OrderServiceImpl implements OrderService{
         orderProductRepository.deleteAllByOrderOrderCode(order.getOrderCode());
         // 주문서 상태 업데이트
         order.setOrderCondition(ORDER_CONDITION.승인대기);
+
         // 새로운 상품 리스트 추가
         requestOrder.getProducts().forEach((productCode, count) -> {
             OrderProduct newOrderProduct = new OrderProduct(count, 0, order, productCode);

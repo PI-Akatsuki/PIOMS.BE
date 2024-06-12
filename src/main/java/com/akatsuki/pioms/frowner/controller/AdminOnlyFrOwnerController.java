@@ -3,6 +3,7 @@ package com.akatsuki.pioms.frowner.controller;
 import com.akatsuki.pioms.frowner.dto.FranchiseOwnerDTO;
 import com.akatsuki.pioms.frowner.service.FranchiseOwnerService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("admin/franchise/owner")
+@Tag(name = "[관리자]점주 API")
 public class AdminOnlyFrOwnerController {
 
     private final FranchiseOwnerService franchiseOwnerService;
@@ -24,7 +26,9 @@ public class AdminOnlyFrOwnerController {
     @Operation(summary = "점주 전체 조회", description = "점주 전체 목록을 조회하며, 담당 점포와 관리자도 함께 조회합니다.")
     @GetMapping("/list")
     public ResponseEntity<List<FranchiseOwnerDTO>> getOwnerListWithFranchiseAndAdmin() {
+
         List<FranchiseOwnerDTO> ownerList = franchiseOwnerService.findAllFranchiseOwners();
+
         return ResponseEntity.ok(ownerList);
     }
 

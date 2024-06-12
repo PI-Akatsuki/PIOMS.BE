@@ -5,7 +5,9 @@ import com.akatsuki.pioms.admin.repository.AdminRepository;
 import com.akatsuki.pioms.categoryFirst.aggregate.CategoryFirst;
 import com.akatsuki.pioms.categoryFirst.repository.CategoryFirstRepository;
 import com.akatsuki.pioms.categorySecond.aggregate.*;
+import com.akatsuki.pioms.categorySecond.dto.CategorySecondCreateDTO;
 import com.akatsuki.pioms.categorySecond.dto.CategorySecondDTO;
+import com.akatsuki.pioms.categorySecond.dto.CategorySecondUpdateDTO;
 import com.akatsuki.pioms.categorySecond.repository.CategorySecondRepository;
 import com.akatsuki.pioms.categoryThird.aggregate.CategoryThird;
 import com.akatsuki.pioms.log.etc.LogStatus;
@@ -133,5 +135,26 @@ public class CategorySecondServiceImpl implements CategorySecondService{
         categorySecondRepository.delete(categorySecond);
         logService.saveLog("root", LogStatus.삭제,categorySecond.getCategorySecondName(),"CategorySecond");
         return ResponseEntity.badRequest().body("카테고리(중) 삭제 완료");
+    }
+
+    @Override
+    public CategorySecondDTO createCategorySecond(CategorySecondCreateDTO categorySecondCreateDTO) {
+        CategorySecond categorySecond = new CategorySecond();
+        categorySecond.setCategorySecondName(categorySecondCreateDTO.getCategorySecondName());
+        categorySecondRepository.save(categorySecond);
+        logService.saveLog("root", LogStatus.등록,categorySecond.getCategorySecondName(),"CategorySecond");
+        return new CategorySecondDTO(categorySecond);
+    }
+
+    @Override
+    public CategorySecond modifyCategorySecond(int categorySecondCode, CategorySecondUpdateDTO categorySecondUpdateDTO) {
+        CategorySecond categorySecond = categorySecondRepository.findById(categorySecondCode).
+                orElseThrow(() -> new EntityNotFoundException("CategorySecond not found with id:" + categorySecondCode));
+
+        categorySecond.setCategorySecondName(categorySecondUpdateDTO.getCategorySecondName());
+        categorySecondRepository.save(categorySecond);
+
+        logService.saveLog("root", LogStatus.수정,categorySecond.getCategorySecondName(),"CategorySecond");
+        return categorySecondRepository.save(categorySecond);
     }
 }

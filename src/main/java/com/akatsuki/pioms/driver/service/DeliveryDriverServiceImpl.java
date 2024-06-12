@@ -78,7 +78,6 @@ public class DeliveryDriverServiceImpl implements DeliveryDriverService {
             return ResponseEntity.badRequest().body("필수 항목을 모두 입력해야 합니다.");
         }
 
-        // 중복 ID 확인
         if (deliveryDriverRepository.findByDriverId(driverDTO.getDriverId()).isPresent()) {
             return ResponseEntity.status(409).body("이미 존재하는 ID입니다.");
         }
@@ -90,9 +89,9 @@ public class DeliveryDriverServiceImpl implements DeliveryDriverService {
                 .driverName(driverDTO.getDriverName())
                 .driverId(driverDTO.getDriverId())
                 .driverPwd(passwordEncoder.encode(driverDTO.getDriverPwd()))
-                .driverRole(driverDTO.getDriverRole())
+                .driverRole("ROLE_DRIVER")
                 .driverPhone(driverDTO.getDriverPhone())
-                .driverStatus(driverDTO.isDriverStatus())
+                .driverStatus(true)
                 .driverPwdCheckCount(driverDTO.getDriverPwdCheckCount())
                 .driverEnrollDate(now)
                 .driverUpdateDate(now)
@@ -116,19 +115,30 @@ public class DeliveryDriverServiceImpl implements DeliveryDriverService {
         if (existingDriver.isPresent()) {
             DeliveryDriver driver = existingDriver.get();
 
-            if (isAdmin || isDriver) {
-                driver.setDriverName(updatedDriverDTO.getDriverName());
+            StringBuilder changes = new StringBuilder();
+
+            if (!driver.getDriverPwd().equals(passwordEncoder.encode(updatedDriverDTO.getDriverPwd()))) {
+                changes.append(String.format("pwd 변경 '%s'에서 '%s'으로; ", driver.getDriverPwd(), updatedDriverDTO.getDriverPwd()));
                 driver.setDriverPwd(passwordEncoder.encode(updatedDriverDTO.getDriverPwd()));
-                driver.setDriverPhone(updatedDriverDTO.getDriverPhone());
-
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-                driver.setDriverUpdateDate(LocalDateTime.now().format(formatter));
-
-                deliveryDriverRepository.save(driver);
-                return ResponseEntity.ok("배송기사 정보가 성공적으로 업데이트되었습니다.");
-            } else {
-                return ResponseEntity.status(403).body("수정 권한이 없습니다.");
             }
+            if (!driver.getDriverPhone().equals(updatedDriverDTO.getDriverPhone())) {
+                changes.append(String.format("phone 변경 '%s'에서 '%s'으로; ", driver.getDriverPhone(), updatedDriverDTO.getDriverPhone()));
+                driver.setDriverPhone(updatedDriverDTO.getDriverPhone());
+            }
+            if (driver.isDriverStatus() != updatedDriverDTO.isDriverStatus()) {
+                changes.append(String.format("Status 변경 '%s'에서 '%s'으로; ", driver.isDriverStatus(), updatedDriverDTO.isDriverStatus()));
+                driver.setDriverStatus(updatedDriverDTO.isDriverStatus());
+            }
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            driver.setDriverUpdateDate(LocalDateTime.now().format(formatter));
+
+            deliveryDriverRepository.save(driver);
+            String username = getCurrentUser();
+            if (changes.length() > 0) {
+                logService.saveLog(username, LogStatus.수정, changes.toString(), "DeliveryDriver");
+            }
+            return ResponseEntity.ok("배송기사 정보가 성공적으로 업데이트되었습니다.");
         } else {
             return ResponseEntity.notFound().build();
         }
@@ -141,25 +151,22 @@ public class DeliveryDriverServiceImpl implements DeliveryDriverService {
             return ResponseEntity.status(403).body("배송기사 삭제는 루트 관리자만 가능합니다.");
         }
 
-        Optional<DeliveryDriver> existingDriver = deliveryDriverRepository.findById(driverId);
-        if (existingDriver.isPresent()) {
-            DeliveryDriver driver = existingDriver.get();
+        DeliveryDriver existingDriver = deliveryDriverRepository.findById(driverId)
+                .orElseThrow(() -> new RuntimeException("배송기사 코드를 찾을 수 없음: " + driverId));
 
-            if (driver.getDriverDeleteDate() != null) {
-                return ResponseEntity.status(409).body("이미 비활성화된 배송기사입니다.");
-            }
-
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            driver.setDriverDeleteDate(LocalDateTime.now().format(formatter));
-
-            deliveryDriverRepository.save(driver);
-            return ResponseEntity.ok("배송기사가 비활성화되었습니다.");
-        } else {
-            return ResponseEntity.notFound().build();
+        if (existingDriver.getDriverDeleteDate() != null) {
+            return ResponseEntity.status(409).body("이미 비활성화된 배송기사입니다.");
         }
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        existingDriver.setDriverDeleteDate(LocalDateTime.now().format(formatter));
+        existingDriver.setDriverStatus(false);
+        deliveryDriverRepository.save(existingDriver);
+        String username = getCurrentUser();
+        logService.saveLog(username, LogStatus.삭제, existingDriver.getDriverName(), "DeliveryDriver");
+        return ResponseEntity.ok("배송기사가 비활성화되었습니다.");
     }
 
-    // 비밀번호 초기화
     @Override
     @Transactional
     public ResponseEntity<String> resetDriverPassword(int driverId) {

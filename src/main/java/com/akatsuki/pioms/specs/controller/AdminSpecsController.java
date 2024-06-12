@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/admin")
-@Tag(name = "Admin Specs API", description = "관리자 명세서 조회 관련 API")
+@Tag(name = "[관리자]발주 API", description = "관리자 명세서 조회 관련 API")
 public class AdminSpecsController {
     private final SpecsService specsService;
     @Autowired

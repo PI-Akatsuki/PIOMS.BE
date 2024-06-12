@@ -27,45 +27,36 @@ public class CustomLogoutFilter extends GenericFilterBean {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        doFilter((HttpServletRequest) request, (HttpServletResponse) response, chain);
-    }
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-    private void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
-        String requestUri = request.getRequestURI();
-        logger.info("Received request URI: " + requestUri); // 로그 추가
+        String requestUri = httpRequest.getRequestURI();
+        logger.info("Received request URI: " + requestUri);
 
-        // /admin/product/sendKakaoAlert 요청을 제외
-        if (!requestUri.matches("^\\/logout$") && !"/admin/product/sendKakaoAlert".equals(requestUri)) {
-            filterChain.doFilter(request, response);
+        if (!"/logout".equals(requestUri)) {
+            chain.doFilter(request, response);
             return;
         }
 
-        if ("/admin/product/sendKakaoAlert".equals(requestUri)) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        String requestMethod = request.getMethod();
-        logger.info("Request method: " + requestMethod); // 로그 추가
-        if (!"POST".equals(requestMethod)) {
-            filterChain.doFilter(request, response);
+        if (!"POST".equals(httpRequest.getMethod())) {
+            chain.doFilter(request, response);
             return;
         }
 
         String refresh = null;
-        Cookie[] cookies = request.getCookies();
+        Cookie[] cookies = httpRequest.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if ("refresh".equals(cookie.getName())) {
                     refresh = cookie.getValue();
-                    logger.info("Found refresh token in cookies: " + refresh); // 로그 추가
+                    logger.info("Found refresh token in cookies: " + refresh);
                 }
             }
         }
 
         if (refresh == null) {
             logger.warning("No refresh token found in cookies");
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            httpResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
 
@@ -73,32 +64,34 @@ public class CustomLogoutFilter extends GenericFilterBean {
             jwtUtil.isExpired(refresh);
         } catch (ExpiredJwtException e) {
             logger.warning("Refresh token is expired");
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            httpResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
 
         String category = jwtUtil.getCategory(refresh);
-        logger.info("Token category: " + category); // 로그 추가
+        logger.info("Token category: " + category);
         if (!"refresh".equals(category)) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            httpResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
 
         String userId = jwtUtil.getUserId(refresh);
         boolean isExist = redisTokenService.getRefreshToken(userId) != null;
         if (!isExist) {
-            logger.warning("No refresh token found in Redis for user: " + userId); // 로그 추가
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            logger.warning("No refresh token found in Redis for user: " + userId);
+            httpResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
 
-        redisTokenService.deleteRefreshToken(userId);
+        // Redis에서 Refresh 지우는거
+//        redisTokenService.deleteRefreshToken(userId);
 
         Cookie cookie = new Cookie("refresh", null);
         cookie.setMaxAge(0);
         cookie.setPath("/");
-        response.addCookie(cookie);
-        response.setStatus(HttpServletResponse.SC_OK);
-        logger.info("Logout successful for user: " + userId); // 로그 추가
+        httpResponse.addCookie(cookie);
+        httpResponse.setStatus(HttpServletResponse.SC_OK);
+        httpResponse.getWriter().write("Logout successful");
+        logger.info("Logout successful for user: " + userId);
     }
 }
