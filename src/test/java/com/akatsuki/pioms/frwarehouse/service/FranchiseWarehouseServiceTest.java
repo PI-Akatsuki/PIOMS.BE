@@ -147,6 +147,7 @@ class FranchiseWarehouseServiceTests {
     @Test
     void findFavoritesByOwnerTest() {
         // Given
+        franchiseWarehouse.setFranchiseWarehouseFavorite(true);
         when(franchiseOwnerRepository.findById(1)).thenReturn(Optional.of(franchiseOwner));
         when(franchiseWarehouseRepository.findByFranchiseCodeAndFranchiseWarehouseFavorite(1, true))
                 .thenReturn(List.of(franchiseWarehouse));
@@ -158,5 +159,6 @@ class FranchiseWarehouseServiceTests {
         assertNotNull(result);
         assertEquals(1, result.size());
         assertEquals(franchiseWarehouse.getFranchiseWarehouseCode(), result.get(0).getFranchiseWarehouseCode());
+        assertTrue(result.get(0).isFranchiseWarehouseFavorite());
     }
 }
