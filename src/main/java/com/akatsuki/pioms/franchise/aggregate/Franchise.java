@@ -55,7 +55,7 @@ public class Franchise {
     @ManyToOne
     private DeliveryDriver deliveryDriver;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "admin_code", referencedColumnName = "admin_code")
     @ToString.Exclude
     private Admin admin;
