@@ -4,6 +4,7 @@ import com.akatsuki.pioms.notice.aggregate.Notice;
 import com.akatsuki.pioms.notice.aggregate.NoticeVO;
 import com.akatsuki.pioms.notice.service.NoticeService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.modelmapper.internal.bytebuddy.build.Plugin;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,7 @@ import java.util.List;
 // 관리자 공지사항 페이지
 @RestController
 @RequestMapping("admin")
+@Tag(name = "[관리자]공지사항 API")
 public class NoticeAdminController {
 
     private final NoticeService noticeService;

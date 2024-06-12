@@ -3,6 +3,7 @@ package com.akatsuki.pioms.frowner.controller;
 import com.akatsuki.pioms.frowner.dto.FranchiseOwnerDTO;
 import com.akatsuki.pioms.frowner.service.FranchiseOwnerService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("admin/franchise/owner")
+@Tag(name = "[관리자]점주 API")
 public class AdminOnlyFrOwnerController {
 
     private final FranchiseOwnerService franchiseOwnerService;

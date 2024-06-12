@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "배송상태조회 및  API", description = "배송기사별 배송상태조회관련 전체 및 상세조회 API")
+@Tag(name = "[배송기사]배송상태조회 API", description = "배송기사별 배송상태조회관련 전체 및 상세조회 API")
 @RestController
 @RequestMapping("driver")
 public class DriverInvoiceController {

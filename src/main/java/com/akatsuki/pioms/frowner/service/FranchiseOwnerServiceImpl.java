@@ -144,17 +144,22 @@ public class FranchiseOwnerServiceImpl implements FranchiseOwnerService {
                 .orElseThrow(() -> new RuntimeException("프랜차이즈 오너 코드를 찾을 수 없음: " + franchiseOwnerCode));
 
         StringBuilder changes = new StringBuilder();
+
         if (!Objects.equals(existingFranchiseOwner.getFranchiseOwnerPwd(), updatedFranchiseOwnerDTO.getFranchiseOwnerPwd())) {
-            changes.append(String.format("pwd 변경 '%s'에서 '%s(으)로; ", existingFranchiseOwner.getFranchiseOwnerPwd(), updatedFranchiseOwnerDTO.getFranchiseOwnerPwd()));
+            changes.append(String.format("pwd 변경 '%s'에서 '%s'으로; ", existingFranchiseOwner.getFranchiseOwnerPwd(), updatedFranchiseOwnerDTO.getFranchiseOwnerPwd()));
             existingFranchiseOwner.setFranchiseOwnerPwd(passwordEncoder.encode(updatedFranchiseOwnerDTO.getFranchiseOwnerPwd()));
         }
         if (!Objects.equals(existingFranchiseOwner.getFranchiseOwnerPhone(), updatedFranchiseOwnerDTO.getFranchiseOwnerPhone())) {
-            changes.append(String.format("phone 변경 '%s'에서 '%s'(으)로; ", existingFranchiseOwner.getFranchiseOwnerPhone(), updatedFranchiseOwnerDTO.getFranchiseOwnerPhone()));
+            changes.append(String.format("phone 변경 '%s'에서 '%s'으로; ", existingFranchiseOwner.getFranchiseOwnerPhone(), updatedFranchiseOwnerDTO.getFranchiseOwnerPhone()));
             existingFranchiseOwner.setFranchiseOwnerPhone(updatedFranchiseOwnerDTO.getFranchiseOwnerPhone());
         }
         if (!Objects.equals(existingFranchiseOwner.getFranchiseOwnerEmail(), updatedFranchiseOwnerDTO.getFranchiseOwnerEmail())) {
-            changes.append(String.format("Email 변경 '%s'에서  '%s'(으)로; ", existingFranchiseOwner.getFranchiseOwnerEmail(), updatedFranchiseOwnerDTO.getFranchiseOwnerEmail()));
+            changes.append(String.format("Email 변경 '%s'에서 '%s'으로; ", existingFranchiseOwner.getFranchiseOwnerEmail(), updatedFranchiseOwnerDTO.getFranchiseOwnerEmail()));
             existingFranchiseOwner.setFranchiseOwnerEmail(updatedFranchiseOwnerDTO.getFranchiseOwnerEmail());
+        }
+        if (existingFranchiseOwner.isFranchiseOwnerStatus() != updatedFranchiseOwnerDTO.isFranchiseOwnerStatus()) {
+            changes.append(String.format("Status 변경 '%s'에서 '%s'으로; ", existingFranchiseOwner.isFranchiseOwnerStatus(), updatedFranchiseOwnerDTO.isFranchiseOwnerStatus()));
+            existingFranchiseOwner.setFranchiseOwnerStatus(updatedFranchiseOwnerDTO.isFranchiseOwnerStatus());
         }
 
         // 수정일 업데이트

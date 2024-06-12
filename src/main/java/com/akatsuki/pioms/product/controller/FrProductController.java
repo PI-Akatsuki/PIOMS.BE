@@ -19,7 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("franchise/product")
-@Tag(name="가맹점 상품 CRUD 컨트롤러", description = "상품 조회,등록,수정,삭제")
+@Tag(name="[가맹점]상품 API", description = "상품 조회,등록,수정,삭제")
 public class FrProductController {
 
     private final ProductService productService;

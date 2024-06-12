@@ -264,4 +264,10 @@ public class FranchiseServiceImpl implements FranchiseService {
 
         return List.of();
     }
+
+    @Override
+    public FranchiseDTO findFranchiseByFranchiseOwnerCode() {
+        int franchiseOwnerCode = getUserInfo.getFranchiseOwnerCode();
+        return new FranchiseDTO(franchiseRepository.findById(franchiseOwnerCode).get());
+    }
 }

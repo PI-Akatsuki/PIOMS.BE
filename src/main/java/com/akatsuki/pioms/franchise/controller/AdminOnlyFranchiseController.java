@@ -4,6 +4,7 @@ import com.akatsuki.pioms.franchise.dto.FranchiseDTO;
 import com.akatsuki.pioms.franchise.service.FranchiseService;
 import com.akatsuki.pioms.user.service.CustomUserDetailsService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -14,6 +15,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/admin/franchise")
+@Tag(name = "[관리자]가맹점 정보 API")
 public class AdminOnlyFranchiseController {
 
     private final FranchiseService franchiseService;

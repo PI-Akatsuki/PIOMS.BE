@@ -6,6 +6,7 @@ import com.akatsuki.pioms.invoice.service.InvoiceService;
 import com.akatsuki.pioms.invoice.aggregate.ResponseInvoice;
 import com.akatsuki.pioms.invoice.aggregate.ResponseInvoiceList;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/franchise")
+@Tag(name = "[점주]반품 조회 API")
 public class FranchiseInvoiceController {
 
     private final InvoiceService invoiceService;

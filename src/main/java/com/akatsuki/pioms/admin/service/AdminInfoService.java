@@ -25,5 +25,9 @@ public interface AdminInfoService {
     // 비밀번호 초기화
     ResponseEntity<String> resetAdminPassword(int adminCode);
 
+    // 가맹점 추가
+    ResponseEntity<String> addFranchise(int adminCode, int franchiseCode);
 
+    // 가맹점 제거
+    ResponseEntity<String> removeFranchise(int adminCode, int franchiseCode);
 }
