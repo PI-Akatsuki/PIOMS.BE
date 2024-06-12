@@ -98,8 +98,21 @@ public class FranchiseWarehouseServiceImpl implements FranchiseWarehouseService 
     public void saveProductWhenUpdateExchangeToCompany(int productCode, int changeVal, int franchiseCode) {
         FranchiseWarehouse franchiseWarehouse
                 = franchiseWarehouseRepository.findByProductProductCodeAndFranchiseCode(productCode, franchiseCode);
+
         franchiseWarehouse.setFranchiseWarehouseCount(franchiseWarehouse.getFranchiseWarehouseCount() - changeVal);
         franchiseWarehouseRepository.save(franchiseWarehouse);
+
+        // 재고가 5개 이하로 떨어질 때 알림톡 전송
+        int threshold = 5;
+        if (franchiseWarehouse.getFranchiseWarehouseEnable() <= threshold && franchiseWarehouse.getFranchiseWarehouseCount() <= threshold) {
+            try {
+                sendKakaoAlert(franchiseWarehouse.getProduct().getProductName(), franchiseWarehouse.getFranchiseWarehouseEnable());
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+        }
+
+
     }
 
     @Override
