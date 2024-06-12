@@ -96,12 +96,15 @@ public class FranchiseExcelController {
             cell = row.createCell(8);
             cell.setCellStyle(bodyStyle);
             cell.setCellValue(String.valueOf(dto.getFranchiseDeliveryDate()));
+
             cell = row.createCell(9);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getFranchiseOwner().getFranchiseOwnerCode());
+            cell.setCellValue(String.valueOf(dto.getFranchiseOwner() != null ? dto.getFranchiseOwner().getFranchiseOwnerCode() : ""));
+
             cell = row.createCell(10);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getFranchiseOwner().getFranchiseOwnerName());
+            cell.setCellValue(dto.getFranchiseOwner() != null ? dto.getFranchiseOwner().getFranchiseOwnerName() : "");
+
             cell = row.createCell(11);
             cell.setCellStyle(bodyStyle);
             cell.setCellValue(dto.getAdminCode());
