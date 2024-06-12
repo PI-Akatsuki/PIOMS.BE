@@ -52,7 +52,7 @@ public class DeliveryDriver {
     @Column(name = "delivery_man_status")
     private boolean driverStatus;
 
-    @OneToMany(mappedBy = "deliveryDriver")
+    @OneToMany(mappedBy = "deliveryDriver", fetch = FetchType.LAZY)
     @JsonIgnore
     @ToString.Exclude
     private List<Franchise> franchises;
