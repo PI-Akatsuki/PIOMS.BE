@@ -64,8 +64,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             userid = ((DeliveryDriver) user).getDriverId();
         }
 
-        String access = jwtUtil.createJwt("access", usercode, userid, username, role, 600000L);
-        String refresh = jwtUtil.createJwt("refresh", usercode, userid, username, role, 86400000L);
+        String access = jwtUtil.createJwt("access", usercode, userid, username, role, 86400000L);
+        String refresh = jwtUtil.createJwt("refresh", usercode, userid, username, role, 864000000L);
 
         response.setHeader("Authorization", "Bearer " + access);
 

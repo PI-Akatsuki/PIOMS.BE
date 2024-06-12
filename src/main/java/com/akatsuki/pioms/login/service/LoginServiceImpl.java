@@ -169,10 +169,10 @@ public class LoginServiceImpl implements LoginService {
     }
 
     private String createAccessToken(int usercode, String userId, String username, String role) {
-        return jwtUtil.createJwt("access", usercode, userId, username, role, 3600000L);
+        return jwtUtil.createJwt("access", usercode, userId, username, role, 86400000L);
     }
 
     private String createRefreshToken(int usercode, String userId, String username, String role) {
-        return jwtUtil.createJwt("refresh", usercode, userId, username, role, 86400000L);
+        return jwtUtil.createJwt("refresh", usercode, userId, username, role, 864000000L);
     }
 }

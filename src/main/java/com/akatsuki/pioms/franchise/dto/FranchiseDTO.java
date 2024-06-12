@@ -23,7 +23,6 @@ public class FranchiseDTO {
     private String franchiseDeleteDate;
     private String franchiseBusinessNum;
     private DELIVERY_DATE franchiseDeliveryDate;
-    @Setter
     private FranchiseOwnerDTO franchiseOwner;
     private DeliveryDriver deliveryDriver;
 

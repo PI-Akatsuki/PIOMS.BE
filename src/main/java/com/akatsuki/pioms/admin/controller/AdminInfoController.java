@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/admin")
@@ -66,5 +67,19 @@ public class AdminInfoController {
     @PostMapping("/reset-password/{adminCode}")
     public ResponseEntity<String> resetAdminPassword(@PathVariable int adminCode) {
         return adminService.resetAdminPassword(adminCode);
+    }
+
+    // 가맹점 추가
+    @Operation(summary = "가맹점 추가", description = "관리자에게 가맹점을 추가합니다.")
+    @PostMapping("/add-franchise/{adminCode}")
+    public ResponseEntity<String> addFranchise(@PathVariable int adminCode, @RequestBody Map<String, Integer> request) {
+        return adminService.addFranchise(adminCode, request.get("franchiseCode"));
+    }
+
+    // 가맹점 제거
+    @Operation(summary = "가맹점 제거", description = "관리자에게서 가맹점을 제거합니다.")
+    @DeleteMapping("/remove-franchise/{adminCode}")
+    public ResponseEntity<String> removeFranchise(@PathVariable int adminCode, @RequestBody Map<String, Integer> request) {
+        return adminService.removeFranchise(adminCode, request.get("franchiseCode"));
     }
 }
