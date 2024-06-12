@@ -56,7 +56,7 @@ public class DeliveryDriverServiceImpl implements DeliveryDriverService {
     @Transactional(readOnly = true)
     @Override
     public List<DeliveryDriverDTO> findDriverList() {
-        return deliveryDriverRepository.findAll().stream()
+        return deliveryDriverRepository.findAllByOrderByDriverEnrollDateDesc().stream()
                 .map(DeliveryDriverDTO::new)
                 .collect(Collectors.toList());
     }

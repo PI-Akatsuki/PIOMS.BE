@@ -8,6 +8,7 @@ import com.akatsuki.pioms.franchise.repository.FranchiseRepository;
 import com.akatsuki.pioms.log.etc.LogStatus;
 import com.akatsuki.pioms.log.service.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -57,7 +58,7 @@ public class AdminInfoServiceImpl implements AdminInfoService {
     @Transactional(readOnly = true)
     @Override
     public List<AdminDTO> findAdminList() {
-        return adminRepository.findAll().stream()
+        return adminRepository.findAllByOrderByEnrollDateDesc().stream()
                 .map(AdminDTO::new)
                 .collect(Collectors.toList());
     }
