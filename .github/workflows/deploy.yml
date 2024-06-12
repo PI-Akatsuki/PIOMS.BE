@@ -61,6 +61,8 @@ jobs:
                   format_sql: true
               database-platform: org.hibernate.dialect.MySQL8Dialect
               generate-ddl: false
+              default_batch_fetch_size: 1000
+
             datasource:
               driver-class-name: org.mariadb.jdbc.Driver
               url: jdbc:mariadb://\${RDS_HOSTNAME}:\${RDS_PORT}/\${RDS_DB_NAME}
