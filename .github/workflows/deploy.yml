@@ -88,6 +88,7 @@ jobs:
               root: INFO
               org.springframework.web: DEBUG
               org.hibernate: ERROR
+          
           management:
             endpoint:
               metrics:
@@ -102,7 +103,7 @@ jobs:
           
             metrics:
               tags:
-                application: ${spring.application.name}
+                application: pioms
           EOL
 
       - name: Create application-test.yml.template
