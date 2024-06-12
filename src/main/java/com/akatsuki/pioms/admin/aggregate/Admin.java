@@ -59,7 +59,7 @@ public class Admin {
     @Column(name = "admin_delete_date")
     private String deleteDate;
 
-    @OneToMany(mappedBy = "admin")
+    @OneToMany(mappedBy = "admin", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Franchise> franchise;
 
