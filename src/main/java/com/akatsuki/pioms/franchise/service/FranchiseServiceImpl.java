@@ -74,7 +74,7 @@ public class FranchiseServiceImpl implements FranchiseService {
     public List<FranchiseDTO> findFranchiseList() {
 
 //        List<Franchise> franchiseList = franchiseRepository.findAllByAdminAdminCode(adminCode);
-        return franchiseRepository.findAll().stream()
+        return franchiseRepository.findAllByOrderByFranchiseEnrollDateDesc().stream()
                 .map(FranchiseDTO::new)
                 .collect(Collectors.toList());
     }
