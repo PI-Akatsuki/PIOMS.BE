@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -48,12 +50,21 @@ public class LogExcelController {
         // align-center
         headStyle.setAlignment(HorizontalAlignment.CENTER);
 
-        // data border style
+        // body border style
         CellStyle bodyStyle = wb.createCellStyle();
         bodyStyle.setBorderTop(BorderStyle.THIN);
         bodyStyle.setBorderBottom(BorderStyle.THIN);
         bodyStyle.setBorderLeft(BorderStyle.THIN);
         bodyStyle.setBorderRight(BorderStyle.THIN);
+
+        // date style form
+        CellStyle dateStyle = wb.createCellStyle();
+        dateStyle.setBorderTop(BorderStyle.THIN);
+        dateStyle.setBorderBottom(BorderStyle.THIN);
+        dateStyle.setBorderLeft(BorderStyle.THIN);
+        dateStyle.setBorderRight(BorderStyle.THIN);
+        CreationHelper createHelper = wb.getCreationHelper();
+        dateStyle.setDataFormat(createHelper.createDataFormat().getFormat("yyyy-MM-dd HH:mm:ss"));
 
         // Header
         String[] headers = {
@@ -75,8 +86,9 @@ public class LogExcelController {
             cell.setCellStyle(bodyStyle);
             cell.setCellValue(dto.getLogChanger());
             cell = row.createCell(2);
-            cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getLogDate());
+            cell.setCellStyle(dateStyle);
+            Date date = Date.from(dto.getLogDate().atZone(ZoneId.systemDefault()).toInstant());
+            cell.setCellValue(date);
             cell = row.createCell(3);
             cell.setCellStyle(bodyStyle);
             cell.setCellValue(String.valueOf(dto.getLogStatus()));
