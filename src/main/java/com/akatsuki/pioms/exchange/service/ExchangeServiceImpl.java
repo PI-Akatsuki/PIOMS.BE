@@ -368,7 +368,8 @@ public class ExchangeServiceImpl implements ExchangeService{
             System.out.println("find all exchange");
             exchanges = exchangeRepository.findAllByOrderByExchangeDateDesc();
         }
-        exchanges = exchangeRepository.findAllByFranchiseAdminAdminCodeOrderByExchangeDateDesc(adminCode);
+        else
+            exchanges = exchangeRepository.findAllByFranchiseAdminAdminCodeOrderByExchangeDateDesc(adminCode);
         return exchanges.stream().map(ExchangeDTO::new).collect(Collectors.toList());
     }
 
