@@ -74,7 +74,6 @@ public class OrderServiceImpl implements OrderService{
     public int denyOrder(int adminCode,int orderCode, String denyMessage){
         Order order = orderRepository.findById(orderCode).orElse(null);
         if(order==null||
-                order.getFranchise().getAdmin().getAdminCode() != adminCode ||
                 order.getOrderCondition()!=ORDER_CONDITION.승인대기){
             return 0;
         }
