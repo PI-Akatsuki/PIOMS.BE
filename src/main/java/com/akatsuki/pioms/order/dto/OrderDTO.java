@@ -69,9 +69,11 @@ public class OrderDTO {
             this.franchiseOwnerName = order.getFranchise().getFranchiseOwner().getFranchiseOwnerName();
             this.franchiseAddress = order.getFranchise().getFranchiseAddress();
             this.franchiseOwnerPhone = order.getFranchise().getFranchiseOwner().getFranchiseOwnerPhone();
-            this.AdminCode = order.getFranchise().getAdmin().getAdminCode();
-            this.AdminName = order.getFranchise().getAdmin().getAdminName();
-            this.adminPhone = order.getFranchise().getAdmin().getAdminPhone();
+            if (order.getFranchise().getAdmin()!=null) {
+                this.AdminCode = order.getFranchise().getAdmin().getAdminCode();
+                this.AdminName = order.getFranchise().getAdmin().getAdminName();
+                this.adminPhone = order.getFranchise().getAdmin().getAdminPhone();
+            }
         }
         if (order.getExchange()!=null) {
             this.exchange = new ExchangeDTO(order.getExchange());
