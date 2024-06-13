@@ -344,7 +344,8 @@ public class InvoiceServiceImpl implements InvoiceService {
     public int countStatusIngDeliveryDriverInvoices(int driverCode) {
         List<ResponseDriverInvoice> responseDriverInvoices = getAllDriverInvoiceList(driverCode);
         int count = 0;
-        for (ResponseDriverInvoice responseDriverInvoice : responseDriverInvoices) {
+        for (ResponseDriverInvoice responseDriverInvoice :
+                responseDriverInvoices) {
             if (responseDriverInvoice.getDeliveryStatus() == DELIVERY_STATUS.배송중) {
                 count++;
             }

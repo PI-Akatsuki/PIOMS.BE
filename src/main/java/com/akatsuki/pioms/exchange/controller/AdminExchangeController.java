@@ -28,7 +28,7 @@ public class AdminExchangeController {
     @GetMapping("/exchange/list")
     @Operation(summary = "관리자가 자신이 관리하고 있는 모든 가맹점에 대한 반품서들을 조회할 수 있습니다.")
     public ResponseEntity<List<ResponseExchange>> getExchanges(){
-        List<ExchangeDTO> exchangeDTOS = exchangeService.getExchangesByAdminCode();
+        List<ExchangeDTO> exchangeDTOS = exchangeService.getExchangesByAdminCodeOrderByExchangeDateDesc();
         List<ResponseExchange> responseExchanges = new ArrayList<>();
         exchangeDTOS.forEach(exchangeDTO -> {
             responseExchanges.add(new ResponseExchange(exchangeDTO));

@@ -56,4 +56,6 @@ public interface ExchangeService {
     void afterAcceptOrder(OrderDTO order);
 
     List<ExchangeDTO> findExchangeInDeliveryCompanyToFranchise(int franchiseOwnerCode);
+
+    List<ExchangeDTO> getExchangesByAdminCodeOrderByExchangeDateDesc();
 }
