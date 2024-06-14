@@ -198,7 +198,6 @@ public class FranchiseOwnerServiceImpl implements FranchiseOwnerService {
         return ResponseEntity.ok("프랜차이즈 오너가 성공적으로 삭제(비활성화)되었습니다.");
     }
 
-    // 비밀번호 초기화
     @Override
     @Transactional
     public ResponseEntity<String> resetFranchiseOwnerPassword(int franchiseOwnerCode) {
@@ -209,12 +208,16 @@ public class FranchiseOwnerServiceImpl implements FranchiseOwnerService {
         FranchiseOwner franchiseOwner = franchiseOwnerRepository.findById(franchiseOwnerCode)
                 .orElseThrow(() -> new RuntimeException("프랜차이즈 오너 코드를 찾을 수 없음: " + franchiseOwnerCode));
 
-        franchiseOwner.setFranchiseOwnerPwd(passwordEncoder.encode("1234"));
+        String encodedPassword = passwordEncoder.encode("1234");
+        franchiseOwner.setFranchiseOwnerPwd(encodedPassword);
         franchiseOwnerRepository.save(franchiseOwner);
+
         String username = getCurrentUser();
         logService.saveLog(username, LogStatus.수정, "비밀번호 초기화: " + franchiseOwner.getFranchiseOwnerName(), "FranchiseOwner");
+
         return ResponseEntity.ok("프랜차이즈 오너 비밀번호 초기화가 완료되었습니다.");
     }
+
 
     @Override
     public FranchiseOwnerDTO getFranchiseOwnerWithFranchiseName(int franchiseOwnerCode) {

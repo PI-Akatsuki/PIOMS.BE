@@ -140,6 +140,10 @@ public class AdminInfoServiceImpl implements AdminInfoService {
                 admin.setAdminPhone(updatedAdminDTO.getAdminPhone());
                 changes.append("Phone: " + updatedAdminDTO.getAdminPhone() + "; ");
             }
+            if (admin.isAdminStatus() != updatedAdminDTO.isAdminStatus()) {
+                admin.setAdminStatus(updatedAdminDTO.isAdminStatus());
+                changes.append("Status: " + (updatedAdminDTO.isAdminStatus() ? "활성화" : "비활성화") + "; ");
+            }
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             admin.setUpdateDate(LocalDateTime.now().format(formatter));
@@ -201,12 +205,16 @@ public class AdminInfoServiceImpl implements AdminInfoService {
         Admin admin = adminRepository.findById(adminCode)
                 .orElseThrow(() -> new RuntimeException("관리자 코드를 찾을 수 없음: " + adminCode));
 
-        admin.setAdminPwd(passwordEncoder.encode("1234"));
+        String encodedPassword = passwordEncoder.encode("1234");
+        admin.setAdminPwd(encodedPassword);
         adminRepository.save(admin);
+
         String username = getCurrentUser();
         logService.saveLog(username, LogStatus.수정, "비밀번호 초기화: " + admin.getAdminName(), "Admin");
+
         return ResponseEntity.ok("관리자 비밀번호 초기화가 완료되었습니다.");
     }
+
 
     @Override
     @Transactional
