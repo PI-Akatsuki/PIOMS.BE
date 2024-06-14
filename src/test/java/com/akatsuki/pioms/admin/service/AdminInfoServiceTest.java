@@ -79,7 +79,7 @@ class AdminInfoServiceTest {
         // Given
         List<Admin> adminList = new ArrayList<>();
         adminList.add(admin);
-        when(adminRepository.findAll()).thenReturn(adminList);
+        when(adminRepository.findAllByOrderByEnrollDateDesc()).thenReturn(adminList);
 
         // When
         List<AdminDTO> result = adminInfoService.findAdminList();

@@ -360,4 +360,17 @@ public class ExchangeServiceImpl implements ExchangeService{
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<ExchangeDTO> getExchangesByAdminCodeOrderByExchangeDateDesc() {
+        int adminCode= getUserInfo.getAdminCode();
+        List<Exchange> exchanges;
+        if (getUserInfo.isRoot(adminCode)) {
+            System.out.println("find all exchange");
+            exchanges = exchangeRepository.findAllByOrderByExchangeDateDesc();
+        }
+        else
+            exchanges = exchangeRepository.findAllByFranchiseAdminAdminCodeOrderByExchangeDateDesc(adminCode);
+        return exchanges.stream().map(ExchangeDTO::new).collect(Collectors.toList());
+    }
+
 }

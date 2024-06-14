@@ -58,12 +58,15 @@ jobs:
               database: mysql
               properties:
                 hibernate:
-                  format_sql: true
+                  jdbc:
+                    time_zone: Asia/Seoul
               database-platform: org.hibernate.dialect.MySQL8Dialect
               generate-ddl: false
+              default_batch_fetch_size: 1000
+
             datasource:
               driver-class-name: org.mariadb.jdbc.Driver
-              url: jdbc:mariadb://\${RDS_HOSTNAME}:\${RDS_PORT}/\${RDS_DB_NAME}
+              url: jdbc:mariadb://\${RDS_HOSTNAME}:\${RDS_PORT}/\${RDS_DB_NAME}?serverTimezone=Asia/Seoul
               username: \${RDS_USERNAME}
               password: \${RDS_PASSWORD}
             cache:
@@ -86,6 +89,22 @@ jobs:
               root: INFO
               org.springframework.web: DEBUG
               org.hibernate: ERROR
+          
+          management:
+            endpoint:
+              metrics:
+                enabled: true
+              prometheus:
+                enabled: true
+          
+            endpoints:
+              web:
+                exposure:
+                  include: health, info, metrics, prometheus
+          
+            metrics:
+              tags:
+                application: pioms
           EOL
 
       - name: Create application-test.yml.template

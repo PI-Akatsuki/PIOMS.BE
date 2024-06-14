@@ -10,6 +10,8 @@ import java.util.Optional;
 public interface AdminRepository extends JpaRepository<Admin, Integer> {
     Optional<Admin> findByAdminId(String adminId);
 
+    List<Admin> findAllByOrderByEnrollDateDesc();
+
     Admin findByAdminName(String userName);
 
     @Query("SELECT a FROM Admin a LEFT JOIN FETCH a.franchise f")

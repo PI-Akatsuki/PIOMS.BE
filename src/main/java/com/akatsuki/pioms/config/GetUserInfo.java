@@ -30,6 +30,10 @@ public class GetUserInfo {
         System.out.println("userName = " + userName);
         return adminInfoRepository.findByAdminId(userName).get().getAdminCode();
     }
+
+    public boolean isRoot(int adminCode){
+        return "ROLE_ROOT".equals(adminInfoRepository.findById(adminCode).get().getAdminRole());
+    }
     public int getFranchiseOwnerCode(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userName = authentication.getName();

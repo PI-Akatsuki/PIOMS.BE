@@ -467,7 +467,7 @@ public class ProductServiceImpl implements ProductService {
 
         // 재고가 100이하로 떨어지면 알림 전송
         int threshold = 100;
-        if (updatedProduct.getProductCount() < threshold) {
+        if (updatedProduct.getProductCount() <= threshold) {
             try {
                 sendKakaoAlert(updatedProduct.getProductName(), updatedProduct.getProductCount());
             } catch (JsonProcessingException e) {

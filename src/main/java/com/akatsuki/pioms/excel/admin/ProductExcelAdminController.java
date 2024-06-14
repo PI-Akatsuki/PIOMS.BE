@@ -64,8 +64,8 @@ public class ProductExcelAdminController {
         // Header
         String[] headers = {
                 "상품코드", "상품명", "상품가격", "등록일", "수정일", "상품 설명",
-                "색상", "사이즈", "성별", "본사 총 보유량", "상태", "노출상태",
-                "알림기준 수량", "본사 폐기량", "본사 보유량", "카테고리"
+                "색상", "사이즈", "본사 총 보유량", "상태", "노출상태",
+                "알림기준 수량", "본사 폐기량", "본사 보유량", "카테고리(대)","카테고리(중)","카테고리(소)"
         };
         row = sheet.createRow(rowNum++);
         for (int i = 0; i < headers.length; i++) {
@@ -104,28 +104,31 @@ public class ProductExcelAdminController {
             cell.setCellValue(dto.getProductSize());
             cell = row.createCell(8);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getProductGender().toString());
+            cell.setCellValue(dto.getProductTotalCount());
             cell = row.createCell(9);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getProductTotalCount());
+            cell.setCellValue(dto.getProductStatus().toString());
             cell = row.createCell(10);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getProductStatus().toString());
+            cell.setCellValue(dto.isProductExposureStatus());
             cell = row.createCell(11);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.isProductExposureStatus());
+            cell.setCellValue(dto.getProductNoticeCount());
             cell = row.createCell(12);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getProductNoticeCount());
+            cell.setCellValue(dto.getProductDiscount());
             cell = row.createCell(13);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getProductDiscount());
+            cell.setCellValue(dto.getProductCount());
             cell = row.createCell(14);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getProductCount());
+            cell.setCellValue(dto.getCategoryFirstName());
             cell = row.createCell(15);
             cell.setCellStyle(bodyStyle);
-            cell.setCellValue(dto.getCategoryThirdCode());
+            cell.setCellValue(dto.getCategorySecondName());
+            cell = row.createCell(16);
+            cell.setCellStyle(bodyStyle);
+            cell.setCellValue(dto.getCategoryThirdName());
         }
 
         // Column width auto-sizing

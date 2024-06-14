@@ -16,5 +16,11 @@ public interface FranchiseOwnerRepository extends JpaRepository<FranchiseOwner, 
 
     FranchiseOwner findByFranchiseOwnerName(String userName);
 
+    // 루트 전체 조회 DESC
+    List<FranchiseOwner> findAllByOrderByFranchiseOwnerEnrollDateDesc();
+
+    // !루트 전체 조회 DESC
+    List<FranchiseOwner> findAllByFranchiseAdminAdminCodeOrderByFranchiseOwnerEnrollDateDesc(int adminCode);
+
     List<FranchiseOwner> findAllByFranchiseAdminAdminCode(int adminCode);
 }

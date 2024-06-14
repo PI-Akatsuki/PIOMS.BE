@@ -56,7 +56,7 @@ public class DeliveryDriverServiceImpl implements DeliveryDriverService {
     @Transactional(readOnly = true)
     @Override
     public List<DeliveryDriverDTO> findDriverList() {
-        return deliveryDriverRepository.findAll().stream()
+        return deliveryDriverRepository.findAllByOrderByDriverEnrollDateDesc().stream()
                 .map(DeliveryDriverDTO::new)
                 .collect(Collectors.toList());
     }
@@ -177,10 +177,14 @@ public class DeliveryDriverServiceImpl implements DeliveryDriverService {
         DeliveryDriver driver = deliveryDriverRepository.findById(driverId)
                 .orElseThrow(() -> new RuntimeException("배송기사 코드를 찾을 수 없음: " + driverId));
 
-        driver.setDriverPwd(passwordEncoder.encode("1234"));
+        String encodedPassword = passwordEncoder.encode("1234");
+        driver.setDriverPwd(encodedPassword);
         deliveryDriverRepository.save(driver);
+
         String username = getCurrentUser();
         logService.saveLog(username, LogStatus.수정, "비밀번호 초기화: " + driver.getDriverName(), "DeliveryDriver");
+
         return ResponseEntity.ok("배송기사 비밀번호 초기화가 완료되었습니다.");
     }
+
 }
