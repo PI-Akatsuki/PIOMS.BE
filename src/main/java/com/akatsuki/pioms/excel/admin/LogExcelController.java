@@ -65,7 +65,7 @@ public class LogExcelController {
         dateStyle.setBorderRight(BorderStyle.THIN);
         CreationHelper createHelper = wb.getCreationHelper();
         dateStyle.setDataFormat(createHelper.createDataFormat().getFormat("yyyy-MM-dd HH:mm:ss"));
-
+        // a
         // Header
         String[] headers = {
                 "로그코드","변경자","날짜","상태","내용","이력변경테이블"
