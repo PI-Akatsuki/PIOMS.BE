@@ -2,31 +2,26 @@ package com.akatsuki.pioms.invoice.service;
 
 
 
-import com.akatsuki.pioms.company.repository.CompanyRepository;
 import com.akatsuki.pioms.config.GetUserInfo;
 import com.akatsuki.pioms.exchange.dto.ExchangeDTO;
 import com.akatsuki.pioms.exchange.service.ExchangeService;
 import com.akatsuki.pioms.franchise.aggregate.DELIVERY_DATE;
 import com.akatsuki.pioms.franchise.aggregate.Franchise;
 import com.akatsuki.pioms.franchise.dto.FranchiseDTO;
-import com.akatsuki.pioms.franchise.repository.FranchiseRepository;
 import com.akatsuki.pioms.franchise.service.FranchiseService;
-import com.akatsuki.pioms.frowner.service.FranchiseOwnerService;
 import com.akatsuki.pioms.invoice.aggregate.*;
+import com.akatsuki.pioms.invoice.exception.InvalidAuthException;
+import com.akatsuki.pioms.invoice.exception.NotFoundException;
 import com.akatsuki.pioms.invoice.dto.InvoiceDTO;
 import com.akatsuki.pioms.invoice.repository.InvoiceRepository;
 import com.akatsuki.pioms.order.aggregate.Order;
 import com.akatsuki.pioms.order.aggregate.OrderProduct;
 import com.akatsuki.pioms.order.dto.OrderDTO;
 import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
-import com.akatsuki.pioms.order.repository.OrderRepository;
 import com.akatsuki.pioms.order.service.OrderService;
 import com.akatsuki.pioms.product.aggregate.Product;
-import com.akatsuki.pioms.product.dto.ProductDTO;
-import com.akatsuki.pioms.product.etc.PRODUCT_COLOR;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -140,12 +135,14 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     public InvoiceDTO putInvoice(int adminCode, int invoiceCode, DELIVERY_STATUS invoiceStatus) {
-        Invoice invoice = invoiceRepository.findById(invoiceCode).orElse(null);
-        if (invoice== null)
-            return  null;
-        if ( invoice.getOrder().getFranchise().getAdmin().getAdminCode() != adminCode && adminCode!=1){
-            return null;
+
+        Invoice invoice = invoiceRepository.findById(invoiceCode)
+                .orElseThrow(() -> new NotFoundException("Invalid invoice code"));
+
+        if ( (invoice.getOrder().getFranchise().getAdmin().getAdminCode() != adminCode && adminCode!=1){
+            throw new InvalidAuthException("Check Authentication");
         }
+
         invoice.setDeliveryStatus(invoiceStatus);
         invoice = invoiceRepository.save(invoice);
 
@@ -161,6 +158,7 @@ public class InvoiceServiceImpl implements InvoiceService {
             exchangeService.updateExchangeEndDelivery(invoice.getOrder().getFranchise().getFranchiseCode());
         }
         return new InvoiceDTO(invoice);
+
     }
 
 
@@ -276,10 +274,8 @@ public class InvoiceServiceImpl implements InvoiceService {
     public boolean modifyInvoiceStatusByDriver(int invoiceCode, int driverCode, DELIVERY_STATUS deliveryStatus) {
 
         // 송장이 있는지 여부
-        Invoice invoice = invoiceRepository.findById(invoiceCode).orElse(null);
-        if (invoice == null) {
-            return false;
-        }
+        Invoice invoice = invoiceRepository.findById(invoiceCode)
+                .orElseThrow(()-> new NotFoundException("Invalid invoice code"));
 
         // 배송 상태 변경 후 레포에 저장
         invoice.setDeliveryStatus(deliveryStatus);
@@ -288,9 +284,9 @@ public class InvoiceServiceImpl implements InvoiceService {
         if (deliveryStatus == DELIVERY_STATUS.배송중 ){
             // 반환 대기중인 반품품목 추가하기
             exchangeService.updateExchangeStartDelivery(invoice.getOrder().getFranchise().getFranchiseCode());
-        }
-        // 배송기사 배송완료 시 배송중 -> 배송완료
-        else if(deliveryStatus == DELIVERY_STATUS.배송완료) {
+
+        } else if(deliveryStatus == DELIVERY_STATUS.배송완료) {
+            // 배송기사 배송완료 시 배송중 -> 배송완료
             if (invoice.getOrder().getExchange() !=null)
                 exchangeService.updateExchangeToCompany(invoice.getOrder().getExchange().getExchangeCode());
             // 점주가 확인 전까지 '검수대기'
