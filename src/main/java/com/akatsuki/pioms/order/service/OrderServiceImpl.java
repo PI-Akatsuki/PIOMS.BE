@@ -8,6 +8,8 @@ import com.akatsuki.pioms.order.dto.OrderDTO;
 import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
 import com.akatsuki.pioms.order.repository.OrderProductRepository;
 import com.akatsuki.pioms.order.repository.OrderRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,15 +22,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService{
     private final OrderRepository orderRepository;
     private final OrderProductRepository orderProductRepository;
-
-    @Autowired
-    public OrderServiceImpl(OrderRepository orderRepository, OrderProductRepository orderProductRepository) {
-        this.orderRepository = orderRepository;
-        this.orderProductRepository = orderProductRepository;
-    }
 
     @Override
     @Transactional(readOnly = true)
@@ -37,11 +35,9 @@ public class OrderServiceImpl implements OrderService{
         if (adminCode == 1) {
             // 루트 관리자는 전부
             orderList = orderRepository.findAllDesc();
-            System.out.println("find all orderList = " + orderList);
         } else {
             orderList = orderRepository.findAllByFranchiseAdminAdminCodeOrderByOrderDateDesc(adminCode);
         }
-        System.out.println("orderList = " + orderList);
         if (orderList == null || orderList.isEmpty()) {
             return null;
         }
@@ -65,7 +61,6 @@ public class OrderServiceImpl implements OrderService{
             order.setExchange(exchange1);
         }
         order = orderRepository.save(order);
-        System.out.println("order = " + order);
         return new OrderDTO(order);
     }
 
@@ -99,7 +94,7 @@ public class OrderServiceImpl implements OrderService{
             return 1;
         }
         catch (Exception e){
-            System.err.println("post failed");
+            log.error("post failed");
             return -1;
         }
     }
@@ -132,7 +127,7 @@ public class OrderServiceImpl implements OrderService{
     public OrderDTO getOrder(int franchiseCode,int orderCode){
         Order order = orderRepository.findById(orderCode).orElseThrow();
         if(franchiseCode!= order.getFranchise().getFranchiseCode()){
-            System.out.println("가맹점 코드, 주문의 가맹점 코드 불일치!");
+            log.error("가맹점 코드, 주문의 가맹점 코드 불일치!");
             return null;
         }
         return new OrderDTO(order);
@@ -227,7 +222,6 @@ public class OrderServiceImpl implements OrderService{
     public boolean findUnprocessedOrder(int franchiseOwnerCode) {
         // 발주 생성 전 미처리된 발주 있는지 확인 - 미처리 있으면 true
          int result = orderRepository.findUnprocessedOrder(franchiseOwnerCode);
-        System.out.println("result = " + result);
         return result != 0;
     }
 

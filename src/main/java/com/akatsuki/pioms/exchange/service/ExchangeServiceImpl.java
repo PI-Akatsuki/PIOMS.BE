@@ -223,8 +223,11 @@ public class ExchangeServiceImpl implements ExchangeService{
     @Transactional
     public void afterAcceptOrder(OrderDTO order) {
         // 주문 승인 후 처리 되어 있는 교환들 반환대기로 변경
-        // 본사 재고도 미리 뻄
-        List<Exchange> exchanges = exchangeRepository.findAllByFranchiseFranchiseCodeAndExchangeStatus(order.getFranchiseCode(),EXCHANGE_STATUS.처리완료);
+        // 본사 재고도 수정
+        List<Exchange> exchanges = exchangeRepository
+                .findAllByFranchiseFranchiseCodeAndExchangeStatus(
+                    order.getFranchiseCode(),EXCHANGE_STATUS.처리완료
+                );
         if (exchanges.isEmpty())
             return;
         exchanges.forEach(exchange -> {

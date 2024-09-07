@@ -43,7 +43,6 @@ public class Order {
     @Column(name = "request_reason")
     private String orderReason;
 
-
     @JoinColumn(name = "franchise_code")
     @ManyToOne
     private Franchise franchise;
@@ -58,6 +57,7 @@ public class Order {
     @OneToOne(mappedBy = "order", cascade = CascadeType.PERSIST)
     private Invoice invoice;
 
+
     public Order(ORDER_CONDITION orderCondition,FranchiseDTO franchise) {
         this.orderDate = LocalDateTime.now();
         this.orderCondition = orderCondition;
@@ -65,7 +65,6 @@ public class Order {
         franchise1.setFranchiseCode(franchise.getFranchiseCode());
         this.franchise = franchise1;
     }
-
 
     public Order(OrderDTO orderDTO) {
         this.orderCode= orderDTO.getOrderCode();
@@ -92,4 +91,5 @@ public class Order {
         }
 
     }
+
 }

@@ -24,6 +24,7 @@ import com.akatsuki.pioms.order.service.OrderService;
 import com.akatsuki.pioms.product.aggregate.Product;
 import com.akatsuki.pioms.product.dto.ProductDTO;
 import com.akatsuki.pioms.product.etc.PRODUCT_COLOR;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,35 +36,14 @@ import java.util.List;
 
 @Service
 @Log4j2
+@RequiredArgsConstructor
 public class InvoiceServiceImpl implements InvoiceService {
 
     final private InvoiceRepository invoiceRepository;
     final private FranchiseService franchiseService;
     final private OrderService orderService;
     final private ExchangeService exchangeService;
-
     private final GetUserInfo getUserInfo;
-    private final CompanyRepository companyRepository;
-    private final FranchiseRepository franchiseRepository;
-    private final OrderRepository orderRepository;
-    private final FranchiseOwnerService franchiseOwnerService;
-
-
-    @Autowired
-    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, FranchiseService franchiseService, FranchiseRepository franchiseRepository1,
-                              OrderService orderService, ExchangeService exchangeService, CompanyRepository companyRepository, OrderRepository orderRepository
-                              ,GetUserInfo getUserInfo, FranchiseOwnerService franchiseOwnerService) {
-
-        this.invoiceRepository = invoiceRepository;
-        this.franchiseService = franchiseService;
-        this.orderService = orderService;
-        this.exchangeService = exchangeService;
-        this.getUserInfo = getUserInfo;
-        this.companyRepository = companyRepository;
-        this.franchiseRepository = franchiseRepository1;
-        this.orderRepository = orderRepository;
-        this.franchiseOwnerService = franchiseOwnerService;
-    }
 
     public LocalDateTime setDeliveryTime(LocalDateTime orderTime, DELIVERY_DATE deliveryDate){
 
@@ -92,7 +72,6 @@ public class InvoiceServiceImpl implements InvoiceService {
             changeDay = deliveryDay2 - day;
         }
         orderTime= orderTime.plusDays(changeDay);
-        System.out.println("orderTime = " + orderTime + " 요일: "+ orderTime.getDayOfWeek());
         return orderTime;
     }
 
@@ -306,14 +285,12 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoice.setDeliveryStatus(deliveryStatus);
         invoiceRepository.save(invoice);
 
-
         if (deliveryStatus == DELIVERY_STATUS.배송중 ){
             // 반환 대기중인 반품품목 추가하기
             exchangeService.updateExchangeStartDelivery(invoice.getOrder().getFranchise().getFranchiseCode());
-            
         }
         // 배송기사 배송완료 시 배송중 -> 배송완료
-        if(deliveryStatus == DELIVERY_STATUS.배송완료) {
+        else if(deliveryStatus == DELIVERY_STATUS.배송완료) {
             if (invoice.getOrder().getExchange() !=null)
                 exchangeService.updateExchangeToCompany(invoice.getOrder().getExchange().getExchangeCode());
             // 점주가 확인 전까지 '검수대기'

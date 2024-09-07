@@ -11,6 +11,7 @@ import com.akatsuki.pioms.order.dto.OrderProductDTO;
 import com.akatsuki.pioms.order.etc.ORDER_CONDITION;
 import com.akatsuki.pioms.product.service.ProductService;
 import com.akatsuki.pioms.specs.service.SpecsService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,29 +21,14 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class AdminOrderFacade {
     private final OrderService orderService;
     private final InvoiceService invoiceService;
     private final SpecsService specsService;
     private final ExchangeService exchangeService;
     private final ProductService productService;
-    private final FranchiseService franchiseService;
-    private final FranchiseWarehouseService franchiseWarehouseService;
     private final GetUserInfo getUserInfo;
-
-    @Autowired
-    public AdminOrderFacade(OrderService orderService, InvoiceService invoiceService, SpecsService specsService, ExchangeService exchangeService, ProductService productService, FranchiseService franchiseService, FranchiseWarehouseService franchiseWarehouseService
-        ,GetUserInfo getUserInfo
-    ) {
-        this.orderService = orderService;
-        this.invoiceService = invoiceService;
-        this.specsService = specsService;
-        this.exchangeService = exchangeService;
-        this.productService = productService;
-        this.franchiseService = franchiseService;
-        this.franchiseWarehouseService =franchiseWarehouseService;
-        this.getUserInfo = getUserInfo;
-    }
 
     public List<OrderDTO> getOrderListByAdminCode(){
         int adminCode= getUserInfo.getAdminCode();
@@ -67,57 +53,62 @@ public class AdminOrderFacade {
      6: Success!! */
     @Transactional(readOnly = false)
     public int accpetOrder(int orderCode){
-        int adminCode= getUserInfo.getAdminCode();
 
-        OrderDTO order;
-        ExchangeDTO exchangeDTO;
+        int adminCode= getUserInfo.getAdminCode();
         int success=0;
         try {
-            order = orderService.getOrderById(orderCode);
+
+            OrderDTO order = orderService.getOrderById(orderCode);
             if(order.getAdminCode()!=adminCode &&adminCode!=1){
                 throw new Exception("접근 권한 없음");
             }
             if (order.getOrderCondition() != ORDER_CONDITION.승인대기 ||
                     !productService.checkOrderEnable(convertListToMap(order.getOrderProductList()) ))
                 throw new Exception("승인 대기가 아님");
-            exchangeDTO = findExchangeToAdd(order);// find exchange to send to company
+            ExchangeDTO exchangeDTO = findExchangeToAdd(order);// 회사로 보낼 반품/교환 탐색
             success++; // 1
+
             // change order condition '승인완료', add Exchange in order
             order = orderService.acceptOrder(adminCode,orderCode,exchangeDTO);
             if(order == null)
                 throw new Exception("accpet Order problem occured!!");
             success++; // 2
+
             success +=afterAcceptOrder(order);
+
             return success;
         }catch (Exception e){
             return success;
         }
     }
-    @Transactional
-    public int afterAcceptOrder(OrderDTO order){
-        int success=0;
-        productService.exportProducts(order);  // change product count
-        success++; // 3
-        specsService.afterAcceptOrder(order); // create new specs
-        success++; // 4
-        invoiceService.afterAcceptOrder(order); // create new invoice
-        success++; // 5
-        exchangeService.afterAcceptOrder(order); // Change to waiting for return of processed exchanges
-        success++; // 6
-        return success;
-    }
 
     private ExchangeDTO findExchangeToAdd(OrderDTO order) {
-        ExchangeDTO exchangeDTO;
-        exchangeDTO = exchangeService.findExchangeToSend(order.getFranchiseCode());
-        // check enable to change exchange product
+
+        ExchangeDTO exchangeDTO = exchangeService.findExchangeToSend(order.getFranchiseCode());
+        // 반품 요소 있는지 검사
         if (exchangeDTO!=null && !productService.checkExchangeProduct(order,exchangeDTO)){
             exchangeDTO = null;
         }
         return exchangeDTO;
     }
 
+    @Transactional
+    public int afterAcceptOrder(OrderDTO order){
+        int success=0;
+        productService.exportProducts(order);  // 본사 재고 수정
+        success++; // 3
+        specsService.afterAcceptOrder(order); // 명세서 생성
+        success++; // 4
+        invoiceService.afterAcceptOrder(order); // 배송 생성
+        success++; // 5
+        exchangeService.afterAcceptOrder(order); // 본사에서 가맹으로 돌려줄 교환 제품 탐색
+        success++; // 6
+        return success;
+    }
+
+
     private Map<Integer, Integer> convertListToMap(List<OrderProductDTO> orderProductList) {
+
         Map<Integer,Integer> result = new HashMap<>();
         for (int i = 0; i < orderProductList.size(); i++) {
             OrderProductDTO orderProductDTO = orderProductList.get(i);
@@ -127,6 +118,7 @@ public class AdminOrderFacade {
     }
 
     public int denyOrder(int orderId, String denyMessage){
+
         int adminCode= getUserInfo.getAdminCode();
         return orderService.denyOrder(adminCode,orderId,denyMessage);
     }
